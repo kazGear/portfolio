@@ -1,0 +1,6 @@
+@KazApi.NET_HostAddress = http://localhost:5152
+
+GET {{KazApi.NET_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

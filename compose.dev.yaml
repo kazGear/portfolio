@@ -1,0 +1,78 @@
+services:
+  app:
+    build:
+      context: /mnt/c/repository/portfolio/frontend
+      dockerfile: Dockerfile.dev
+    working_dir: /app
+    volumes:
+      - /mnt/c/repository/portfolio/frontend:/app
+      - /app/node_modules
+    ports:
+      - "${REACT_PORT}:5173"
+    environment:
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${POSTGRES_PORT}
+      VITE_API_URL: /api
+      BROWSER: none
+
+  api:
+    build:
+      context: /mnt/c/repository/portfolio
+      dockerfile: backend/Dockerfile.dev
+    working_dir: /src/backend/KazApi.NET
+    # bind mount は backend 全体ではなく “ソースだけ” に限定
+    volumes:
+      - /mnt/c/repository/portfolio/backend:/src/backend
+      # bin/obj を上書きしないように “除外” する
+      - /src/backend/KazApi.NET/bin
+      - /src/backend/KazApi.NET/obj
+      - /src/backend/CSLib/bin
+      - /src/backend/CSLib/obj
+    ports:
+      - "${API_PORT}:5000"
+    environment:
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${POSTGRES_PORT}
+      ENVIRONMENT: ${ENVIRONMENT}
+      DOTNET_USE_POLLING_FILE_WATCHER: true
+
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - /mnt/c/repository/portfolio/docker/db/init:/docker-entrypoint-initdb.d
+    ports:
+      - "${DB_PORT}:${POSTGRES_PORT}"
+
+  nginx:
+    build:
+      context: /mnt/c/repository/portfolio
+      dockerfile: ./docker/nginx/Dockerfile.dev
+    ports:
+      - "${NGINX_HTTP_PORT}:80"
+
+  batch-autobattle:
+    build:
+      context: /mnt/c/repository/portfolio
+      dockerfile: ./batch/autoBattle/Dockerfile.dev
+    container_name: portfolio-batch-autobattle
+    # environment:
+    #   - DB_USER: ${DB_USER}
+    #   - DB_PASSWORD: ${DB_PASSWORD}
+    #   - DB_NAME: ${DB_NAME}
+    #   - DB_HOST: ${DB_HOST}
+    #   - DB_PORT: ${DB_PORT}
+    restart: "no"
+
+volumes:
+  pgdata:

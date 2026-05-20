@@ -1,0 +1,16 @@
+﻿[*.cs]
+
+# CS8618: null 非許容のフィールドには、コンストラクターの終了時に null 以外の値が入っていなければなりません。Null 許容として宣言することをご検討ください。
+dotnet_diagnostic.CS8618.severity = none
+
+# CS8602: null 参照の可能性があるものの逆参照です。
+dotnet_diagnostic.CS8602.severity = none
+
+# CS8600: Null リテラルまたは Null の可能性がある値を Null 非許容型に変換しています。
+dotnet_diagnostic.CS8600.severity = error
+
+# IDE0005: Using ディレクティブは必要ありません。
+dotnet_diagnostic.IDE0005.severity = warning
+
+# Default severity for all analyzer diagnostics
+dotnet_analyzer_diagnostic.severity = silent

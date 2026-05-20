@@ -1,0 +1,15 @@
+FROM nginx:1.25-alpine
+
+# React のビルド成果物をコピー
+COPY ./frontend/dist /usr/share/nginx/html
+
+# 本番用 nginx.conf
+COPY ./docker/nginx/nginx.prod.conf /etc/nginx/nginx.conf
+
+# server ブロック
+COPY ./docker/nginx/server.prod.conf /etc/nginx/conf.d/server.conf
+
+EXPOSE 80
+EXPOSE 443
+
+CMD ["nginx", "-g", "daemon off;"]

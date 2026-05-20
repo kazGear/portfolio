@@ -1,0 +1,29 @@
+FROM mcr.microsoft.com/dotnet/sdk:8.0
+
+RUN apt-get update && apt-get install -y cron
+
+WORKDIR /src
+
+# --- backend の csproj を先にコピー ---
+COPY backend/CSLib/CSLib.csproj backend/CSLib/
+COPY backend/KazApi.NET/KazApi.csproj backend/KazApi.NET/
+
+# --- batch の csproj もコピー ---
+COPY batch/autoBattle/autoBattle.csproj batch/autoBattle/
+
+# --- restore ---
+RUN dotnet restore batch/autoBattle/autoBattle.csproj
+
+# --- 残りのソースをコピー ---
+COPY backend backend
+COPY batch/autoBattle batch/autoBattle
+
+# --- cron 設定 ---
+COPY batch/autoBattle/crontab.txt /etc/cron.d/autobattle-cron
+RUN chmod 0644 /etc/cron.d/autobattle-cron
+RUN crontab /etc/cron.d/autobattle-cron
+RUN touch /var/log/cron.log
+
+WORKDIR /src/batch/autoBattle
+
+CMD ["cron", "-f"]

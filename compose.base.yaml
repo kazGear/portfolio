@@ -1,0 +1,34 @@
+name: portfolio
+version: "3.9"
+
+services:
+  app:
+    networks:
+      - dev-net
+
+  api:
+    networks:
+      - dev-net
+
+  db:
+    networks:
+      - dev-net
+
+  nginx:
+    networks:
+      - dev-net
+
+  batch-autobattle:
+    depends_on:
+      - db
+    networks:
+      - dev-net
+
+  # 新しいジョブを追加する場合はここに追記
+  # batch_xxx:
+
+volumes:
+  pgdata:
+
+networks:
+  dev-net:

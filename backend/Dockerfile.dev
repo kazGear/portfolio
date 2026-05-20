@@ -1,0 +1,15 @@
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS dev
+
+WORKDIR /src
+
+# csproj だけコピー（restore キャッシュ用）
+COPY ./backend/CSLib/CSLib.csproj ./backend/CSLib/
+COPY ./backend/KazApi.NET/KazApi.csproj ./backend/KazApi.NET/
+
+RUN dotnet restore ./backend/KazApi.NET/KazApi.csproj
+
+# ソースは bind mount するので COPY しない
+
+WORKDIR /src/backend/KazApi.NET
+
+ENTRYPOINT ["dotnet", "watch", "--non-interactive", "run", "--urls", "http://0.0.0.0:5000"]

@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36202.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "autoBattle", "autoBattle.csproj", "{1612262A-8281-657B-8231-C5523E84B2FC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSLib", "..\..\backend\CSLib\CSLib.csproj", "{18B5D4FB-9132-497F-E2C0-E53293CA190F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KazApi", "..\..\backend\KazApi.NET\KazApi.csproj", "{B1D3E045-15F7-52D7-3295-BA089574250E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1612262A-8281-657B-8231-C5523E84B2FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1612262A-8281-657B-8231-C5523E84B2FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1612262A-8281-657B-8231-C5523E84B2FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1612262A-8281-657B-8231-C5523E84B2FC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{18B5D4FB-9132-497F-E2C0-E53293CA190F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{18B5D4FB-9132-497F-E2C0-E53293CA190F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{18B5D4FB-9132-497F-E2C0-E53293CA190F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{18B5D4FB-9132-497F-E2C0-E53293CA190F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B1D3E045-15F7-52D7-3295-BA089574250E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B1D3E045-15F7-52D7-3295-BA089574250E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B1D3E045-15F7-52D7-3295-BA089574250E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B1D3E045-15F7-52D7-3295-BA089574250E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9A1684D2-5625-4592-853D-01B0E25E03D6}
+	EndGlobalSection
+EndGlobal

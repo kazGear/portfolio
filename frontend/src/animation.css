@@ -1,0 +1,96 @@
+/*
+アニメ－ションなし
+*/
+.noneAnimation {
+  background: linear-gradient(to bottom right, #0aff84, #e4ffe0);
+  box-shadow: darkgrey 10px 10px;
+}
+
+/*
+被ダメ点滅
+*/
+@keyframes damageFlash {
+  0% {
+    opacity: 0.0;
+  }
+  33% {
+    opacity: 1.0;
+  }
+  34% {
+    opacity: 0.0;
+  }
+  66% {
+    opacity: 1.0;
+  }
+  67% {
+    opacity: 0.0;
+  }
+  100% {
+    opacity: 1.0;
+  }
+}
+.a_damageFlash {
+  animation: 0.8s damageFlash;
+}
+
+/*
+波紋が広がる
+*/
+.ripple {
+  display: block;
+  position: relative;
+  background-color: #0aff84;
+  color: #8f8f8f;
+  text-align: center;
+  transition: 1.0s;
+}
+.ripple:before, .ripple:after {
+  content: "";
+  position: absolute;
+  z-index: -10;
+  width: 95%;
+  height: 60px;
+  background: #a3ffbc71;
+  transform: translate3d(0,0,0);
+  border-radius: 10px;
+}
+.ripple:before {
+  animation: anime 3s ease-out infinite;
+}
+.ripple:after {
+  animation: anime 3s ease-out 3s infinite;
+}
+@keyframes anime {
+  0% {
+    transform: scale(.95);
+    opacity: 1
+  }
+  90% {
+    opacity: .1
+  }
+  to {
+    transform: scale(1.2, 1.4);
+    opacity: 0
+  }
+}
+
+/*
+攻撃回避
+*/
+@keyframes dodge {
+  0% {
+    transform: translateX(0px);
+  }
+  10% {
+    transform: translateX(-70px);
+  }
+  20% {
+    transform: translateX(-75px);
+  }
+  50% {
+    transform: translateX(-80px);
+  }
+  100% {
+    transform: translateX(0px);
+  }
+}

@@ -1,0 +1,30 @@
+# --- Build stage ---
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+
+WORKDIR /src
+
+# --- csproj を先にコピー（キャッシュ効率UP） ---
+COPY CSLib/CSLib.csproj ./CSLib/
+COPY KazApi.NET/KazApi.csproj ./KazApi.NET/
+
+
+RUN dotnet restore ./KazApi.NET/KazApi.csproj
+
+# --- 残りのソースをコピー ---
+COPY . .
+
+# --- publish ---
+RUN dotnet publish ./KazApi.NET/KazApi.csproj -c Release -o /app --no-restore
+
+# --- Runtime stage ---
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
+
+WORKDIR /app
+
+COPY --from=build /app .
+
+ENV ASPNETCORE_URLS=http://0.0.0.0:5000
+
+# EXPOSE 5000
+
+ENTRYPOINT ["dotnet", "KazApi.dll"]

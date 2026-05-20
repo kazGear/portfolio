@@ -1,0 +1,1 @@
+0 22 * * * root dotnet /batch/AutoBattle.dll >> /var/log/cron.log 2>&1

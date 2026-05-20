@@ -1,0 +1,71 @@
+# ============================
+# .NET / C#
+# ============================
+bin/
+obj/
+*.user
+*.suo
+*.cache
+*.db
+*.db-shm
+*.db-wal
+
+# ASP.NET Core build cache
+staticwebassets/
+*.dswa.cache.json
+*.razor.json
+
+# launchSettings (環境依存)
+**/Properties/launchSettings.*.json
+**/Properties/launchSettings.json
+
+# ============================
+# Visual Studio
+# ============================
+.vs/
+**/.vs/
+*.csproj.user
+*.nupkg
+
+# ============================
+# Node / Frontend
+# ============================
+node_modules/
+dist/
+
+# ============================
+# Docker, DB
+# ============================
+*.tmp
+*.temp
+pgdata/
+docker/db/init/*.sql
+*.sqlite
+*.sqlite3
+
+# ============================
+# Secrets
+# ============================
+**/appsettings.Development.json
+**/appsettings.Production.json
+**/.env
+**/.env.*
+.env
+.env.dev
+.env.prod
+*.pfx
+*.p12
+*.key
+*.pem
+
+# ============================
+# OS / Editor
+# ============================
+.DS_Store
+.vscode/
+*.log
+
+# ============================
+# Git merge conflict leftovers
+# ============================
+*.orig

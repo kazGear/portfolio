@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { COLORS } from "../../lib/Constants";
 
 const SmenuTitle = styled.h2`
     height: 40px;
@@ -7,6 +8,8 @@ const SmenuTitle = styled.h2`
     padding-left: 60px;
     border-radius: 10px;
     border-collapse: collapse;
+    background: ${COLORS.LOGINED_COLOR};
+    box-shadow: 4px 4px ${COLORS.SHADOW};
 `;
 
 interface ArgProps {

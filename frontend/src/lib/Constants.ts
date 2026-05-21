@@ -28,6 +28,8 @@ export const COLORS = {
     MENU_DISABLED: "darkgray",
 
     DIALOG_FRAME: `${ACCENT_COLOR}`,
+
+    LOGINED_COLOR: `${ACCENT_COLOR}`
 } as const;
 
 export const SIZE = {

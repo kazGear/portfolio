@@ -24,11 +24,9 @@ services:
       dockerfile: backend/Dockerfile.dev
     working_dir: /src/backend/KazApi.NET
     volumes:
-      - ./backend:/src/backend
-      - /src/backend/KazApi.NET/bin
-      - /src/backend/KazApi.NET/obj
-      - /src/backend/CSLib/bin
-      - /src/backend/CSLib/obj
+      - ./backend/KazApi.NET:/src/backend/KazApi.NET
+      - ./backend/CSLib:/src/backend/CSLib
+      - ./backend/KazApi.NET/adapter:/src/backend/KazApi.NET/adapter
     ports:
       - "${API_PORT}:5000"
     environment:

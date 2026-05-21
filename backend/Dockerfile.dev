@@ -1,5 +1,8 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS dev
 
+RUN rm -rf /src/backend/KazApi.NET/bin /src/backend/KazApi.NET/obj \
+           /src/backend/CSLib/bin /src/backend/CSLib/obj
+
 WORKDIR /src
 
 # csproj だけコピー（restore キャッシュ用）

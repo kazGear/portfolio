@@ -33,3 +33,9 @@ VSで、デバッグ → プロセスにアタッチ
 これが Docker の中で動いている ASP.NET API。
 これを選んで「アタッチ」
 エンジン選択は、マネージド（Unix 用 .NET Core）
+
+### tmp memo
+1. Docker Desktop の自動起動が OFF
+Settings → General →
+
+Start Docker Desktop when you log in が OFF だと起動しない。

@@ -26,15 +26,15 @@ namespace KazApi.Controller
         [HttpPost("api/auth/login")]
         public IActionResult Login([FromQuery] string? loginId, [FromQuery] string? password)
         {
-            loginId = loginId != null ? loginId.Trim() : null; 
+            loginId = loginId != null ? loginId.Trim() : null;
             if (loginId == null || password == null) return Unauthorized();
 
             // ユーザの認証
             UserDTO? user = _service.AuthenticateUser(loginId, password);
-            
+
             // 認証失敗
             if (user == null) return Unauthorized();
-            
+
             // トークン発行
             string token = UJwt.GenerateJwtToken(user.LoginId, _configuration);
             user.Token = token;

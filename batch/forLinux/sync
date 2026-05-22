@@ -2,10 +2,25 @@
 
 set -e
 
+# Windows → WSL（backend だけ）
+WIN_BACKEND="/mnt/c/repository/portfolio/backend/"
+WSL_BACKEND="/home/kaz57guitar/portfolio/backend/"
+
+# WSL → Windows（全体）
 WSL_SRC="/home/kaz57guitar/portfolio/"
 WIN_DST="/mnt/c/repository/portfolio/"
 
-echo "=== 1. Windows 側へ差分同期（高速 & 安全） ==="
+echo "=== 1. Windows backend → WSL backend（正の反映） ==="
+rsync -azv --delete \
+  --exclude='.vs' \
+  --exclude='bin' \
+  --exclude='obj' \
+  --no-perms --no-owner --no-group \
+  "${WIN_BACKEND}" "${WSL_BACKEND}"
+
+echo "WSL backend(.NET) 更新完了"
+
+echo "=== 2. WSL 全体 → Windows（最終的な正を作る） ==="
 rsync -azv --delete \
   --exclude='.vs' \
   --exclude='bin' \
@@ -16,9 +31,9 @@ rsync -azv --delete \
   --no-perms --no-owner --no-group \
   "${WSL_SRC}" "${WIN_DST}"
 
-echo "同期完了"
+echo "Windows side 更新完了"
 
-echo "=== 2. Docker 再ビルド ==="
+echo "=== 3. Docker 再ビルド ==="
 cd "${WSL_SRC}" || exit 1
 
 docker compose --env-file .env.dev \
@@ -26,4 +41,4 @@ docker compose --env-file .env.dev \
   -f compose.dev.yaml \
   build
 
-echo "=== ビルド完了！ ==="
+echo "=== 同期完了！ ==="

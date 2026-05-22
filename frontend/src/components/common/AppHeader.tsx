@@ -27,6 +27,7 @@ const Sheader = styled.header`
     top: 0x;
     background-color: white;
     z-index: 2000;
+    position: fixed;
 `;
 const SdivButtonFrame = styled.div`
     display: flex;

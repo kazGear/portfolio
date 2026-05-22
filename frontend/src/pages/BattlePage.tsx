@@ -15,7 +15,7 @@ import { ShopDTO } from "../types/Shop";
 
 const SdivOutSideFrame = styled.div`
     position: relative;
-    margin: 20px;
+    margin: 80px 20px 20px 20px;
     height: 100%;
 `;
 const SdivMonsterWindowFrame = styled.div`

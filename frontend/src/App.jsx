@@ -1,4 +1,5 @@
 import './App.css';
+import './animation.css';
 import IndexPage from './pages/IndexPage';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import BattlePage from './pages/BattlePage';

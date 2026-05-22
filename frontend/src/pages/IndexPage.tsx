@@ -11,7 +11,7 @@ import ToEditPageBlock from "../components/indexPage/ToEditPageBlock";
 
 const SdivLinkFrame = styled.div`
     width: 90%;
-    margin: 0 auto;
+    margin: 80px auto 0;
 `;
 const SdivContentsFrame = styled.div`
     width: 50%;
@@ -24,6 +24,7 @@ const classOfAnime: string = "noneAnimation";
 const titleStyle: {} = {
     color: fontColor,
     background: backColor,
+    cursor: "default",
 }
 
 const IndexPage = () => {
@@ -89,7 +90,7 @@ const IndexPage = () => {
                 </SdivContentsFrame>
             </div>
 
-            <p style={{color: `${COLORS.ACCENT_FONT_PINK}`}}>※スマホ非対応、Chrome, edge推奨。</p>
+            <h3 style={{color: `${COLORS.ALERT_MESSAGE_COLOR}`}}>※スマホ非対応、Chrome, edge推奨。</h3>
         </SdivLinkFrame>
     );
 };

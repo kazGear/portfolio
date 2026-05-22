@@ -10,6 +10,7 @@ import EditMonsterSkillsBlock from "../components/editPage/monsterSkills/EditMon
 
 const SdivEditFrame = styled.div`
     width: 100%;
+    margin-top: 80px;
 `;
 const styleForController = {
     width: "95%",

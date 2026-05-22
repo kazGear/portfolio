@@ -38,31 +38,33 @@ const MonsterTableBody = ({editMonsters, isNowLoading}: ArgProps) => {
     }
 
     return (
-        <tbody>
-        {
-            editMonsters.map((monster, index) => (
-                <tr key={index}>
-                    {/* ID */}
-                    <BorderTd>{monster.MonsterId}</BorderTd>
-                    {/* イメージ */}
-                    <BorderTd>
-                        <Simg src={monsterImages(monster.MonsterId)}
-                             alt="モンスター" />
-                    </BorderTd>
-                    {/* 名称 */}
-                    <EditMonsterName monster={monster}/>
-                    {/* HP */}
-                    <EditMonsterHp monster={monster}/>
-                    {/* 攻撃力 */}
-                    <EditMonsterAttack monster={monster}/>
-                    {/* 速さ */}
-                    <EditMonsterSpeed monster={monster}/>
-                    {/* 弱点 */}
-                    <EditMonsterWeek weekDropDown={weekDropDown} monster={monster} setWeekDropDown={setWeekDropDown}/>
-                </tr>
-            ))
-        }
-        </tbody>
+        <table>
+            <tbody>
+            {
+                editMonsters.map((monster, index) => (
+                    <tr key={index}>
+                        {/* ID */}
+                        <BorderTd>{monster.MonsterId}</BorderTd>
+                        {/* イメージ */}
+                        <BorderTd>
+                            <Simg src={monsterImages(monster.MonsterId)}
+                                alt="モンスター" />
+                        </BorderTd>
+                        {/* 名称 */}
+                        <EditMonsterName monster={monster}/>
+                        {/* HP */}
+                        <EditMonsterHp monster={monster}/>
+                        {/* 攻撃力 */}
+                        <EditMonsterAttack monster={monster}/>
+                        {/* 速さ */}
+                        <EditMonsterSpeed monster={monster}/>
+                        {/* 弱点 */}
+                        <EditMonsterWeek weekDropDown={weekDropDown} monster={monster} setWeekDropDown={setWeekDropDown}/>
+                    </tr>
+                ))
+            }
+            </tbody>
+        </table>
     );
 }
 

@@ -11,6 +11,7 @@ import PurchaseDialog from "../components/shopPage/PurchaseDialog";
 const SshopPageFrame = styled.div`
     display: flex;
     height: 90%;
+    margin-top: 60px;
 `;
 const SdivControllerFrame = styled.div`
     width:25%;

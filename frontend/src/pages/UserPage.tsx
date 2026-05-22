@@ -16,6 +16,7 @@ import ImgUpload from "../components/common/ImgUpload";
 const SdivPageFrame = styled.div`
     display: flex;
     height: 100%;
+    margin-top: 60px;
 `;
 const SdivPageL = styled.div`
     width: 50%;

@@ -7,7 +7,7 @@ const SdivMonsterInfoFrame = styled.div`
     border: solid 4px ${COLORS.BORDER_COLOR};
     margin-bottom: 10px;
     border-radius: 10px;
-    height: 78px;
+    height: 70px;
     font-size: 15px;
     color: ${props => props.color};
     background: rgba(255, 255, 255, 0.8);

@@ -10,6 +10,7 @@ import OutSideFrame from "../components/common/OutSideFrame";
 
 const SdivOutsideFrame = styled.div`
     height: 100%;
+    margin-top: 70px;
 `;
 const SdivOptionFrame = styled.div`
     display: flex;

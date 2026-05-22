@@ -68,8 +68,9 @@ export const DAMAGE_VIEW = {
 } as const;
 
 // 環境でドメインが変化
-const DOMAIN = {
+export const DOMAIN = {
     LOCAL_HOST_API: `http://localhost:5000`,
+    DOTNET_API: `http://localhost:5000/api`,
     XSERVER_API: `https://kazapp-trial.com`,
 } as const;
 ////////////////////////////////////////////////////////////////

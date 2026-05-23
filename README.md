@@ -13,8 +13,8 @@ docker compose --env-file .env.prod -f compose.base.yaml -f compose.prod.yaml do
 
 # 開発
 
-wsl側で開発・修正を行う。
-wsl側の成果物をwin側にコピーし、win側も最新を保つ。syncコマンド or cron
+wsl側で開発・修正を行う。(apiのみWin側のVS)
+同期バッチで、win側を最新を保つ。syncコマンド or cron
 git管理はC:/repository/portfolio
 
 # C#バッチを叩く

@@ -10,14 +10,14 @@ namespace CSLib.Lib
     /// <summary>
     /// タイマーユーティリティ
     /// </summary>
-    public class UTimeMeasure
+    public class TimeMeasure
     {
         private static Stopwatch _stopWatch = new();
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        private UTimeMeasure()
+        private TimeMeasure()
         {
 
         }

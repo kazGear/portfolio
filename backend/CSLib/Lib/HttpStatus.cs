@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CSLib.Lib
+﻿namespace CSLib.Lib
 {
-    public class UHttpStatus
+    public class HttpStatus
     {
         // Informational（情報レスポンス）
 

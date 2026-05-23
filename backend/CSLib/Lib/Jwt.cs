@@ -10,7 +10,7 @@ namespace CSLib.Lib
     /// <summary>
     /// Json Web Token Util
     /// </summary>
-    public class UJwt
+    public class Jwt
     {
         /// <summary>
         /// Json Web Token の発行

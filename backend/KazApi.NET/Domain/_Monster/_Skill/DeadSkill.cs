@@ -1,5 +1,4 @@
-﻿
-using CSLib.Lib;
+﻿using CSLib.Lib;
 using KazApi.Common._Log;
 using KazApi.Domain._GameSystem;
 using KazApi.Domain.DTO;
@@ -30,7 +29,7 @@ namespace KazApi.Domain._Monster._Skill
             double rate = 1.0 - enemy.Hp / (double)enemy.MaxHp;
             rate = rate < 0.05 ? 0.05 : rate; // 最低でも５％は効く
 
-            double randomVal = new URandom().RandomDouble(0.0, 1.0);
+            double randomVal = new Randoms().RandomDouble(0.0, 1.0);
             int deadDamage = 9999;
 
             if (randomVal <= rate)

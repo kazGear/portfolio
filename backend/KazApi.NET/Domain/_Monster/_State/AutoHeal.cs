@@ -43,7 +43,7 @@ namespace KazApi.Domain._Monster._State
         public override void Impact(IMonster me, ILog<BattleMetaData> logger)
         {
             int healPoint1 = (int)(me.MaxHp * HEAL_RATE);
-            int healPoint2 = new URandom().RandomChangeInt(healPoint1, ADJUST_RATE);
+            int healPoint2 = new Randoms().RandomChangeInt(healPoint1, ADJUST_RATE);
             int healLimit = me.MaxHp - me.Hp;
             int healPointFix = healPoint2 >= healLimit ? healLimit : healPoint2;
 

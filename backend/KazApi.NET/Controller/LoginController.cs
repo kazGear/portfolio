@@ -22,7 +22,7 @@ namespace KazApi.Controller
         public ActionResult<string> FetchLoginUsers([FromBody] User? request)
         {
             // パスワード暗号化
-            request.Password = UAes.AesEncrypt(request.Password);
+            request.Password = Aes.AesEncrypt(request.Password);
 
             IEnumerable<IUser> users = _service.SelectLoginUsers(request.UserName, request.Password);
 

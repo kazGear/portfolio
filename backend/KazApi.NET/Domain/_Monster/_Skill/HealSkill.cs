@@ -21,7 +21,7 @@ namespace KazApi.Domain._Monster._Skill
             IMonster me,
             ILog<BattleMetaData> logger)
         {
-            int healPoint = new URandom().RandomChangeInt(
+            int healPoint = new Randoms().RandomChangeInt(
                 (Attack + me.Attack), CSysRate.MAGIC_SKILL_DAMAGE.Value
                 );
 

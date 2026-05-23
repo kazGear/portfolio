@@ -6,7 +6,7 @@ namespace CSLib.Lib
     /// <summary>
     /// 暗号ユーティリティ
     /// </summary>
-    public class UAes
+    public class Aes
     {
         // AES暗号化 key生成するための文字列 (256bitキー(32文字))
         private const string _aesKey = "12345678901234567890123456789012";
@@ -16,7 +16,7 @@ namespace CSLib.Lib
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        private UAes()
+        private Aes()
         {
 
         }
@@ -30,7 +30,7 @@ namespace CSLib.Lib
             string encrypted_str;
 
             // Aesオブジェクトを作成
-            using (Aes aes = Aes.Create())
+            using (System.Security.Cryptography.Aes aes = System.Security.Cryptography.Aes.Create())
             {
                 // Encryptorを作成
                 using ICryptoTransform encryptor =
@@ -63,7 +63,7 @@ namespace CSLib.Lib
             byte[] cipher = Convert.FromBase64String(base64text);
 
             // AESオブジェクトを作成
-            using (Aes aes = Aes.Create())
+            using (System.Security.Cryptography.Aes aes = System.Security.Cryptography.Aes.Create())
             {
                 // 復号器を作成
                 using ICryptoTransform decryptor =

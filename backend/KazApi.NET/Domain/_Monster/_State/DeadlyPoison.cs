@@ -52,7 +52,7 @@ namespace KazApi.Domain._Monster._State
         {
             // 毒ダメージ算出
             int poisonDamage = (int)(monster.MaxHp * POISON_DAMAGE_RATE);
-            poisonDamage = new URandom().RandomChangeInt(poisonDamage, ADJUST_RATE);
+            poisonDamage = new Randoms().RandomChangeInt(poisonDamage, ADJUST_RATE);
 
             logger.Logging(new BattleMetaData(monster.MonsterId, $"猛毒に侵されている　..."));
             logger.Logging(new BattleMetaData(

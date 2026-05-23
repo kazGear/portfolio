@@ -49,7 +49,7 @@ namespace KazApi.Service
             try
             {
                 // 暗号化
-                string encryptPass = UAes.AesEncrypt(Password);
+                string encryptPass = Aes.AesEncrypt(Password);
 
                 var param = new
                 {

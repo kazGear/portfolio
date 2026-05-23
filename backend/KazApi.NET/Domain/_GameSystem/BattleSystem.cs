@@ -1,5 +1,4 @@
 ﻿using CSLib.Lib;
-using KazApi.Common._Log;
 using KazApi.Domain._Monster;
 using KazApi.Domain._Monster._State;
 using KazApi.Domain.DTO;
@@ -18,7 +17,7 @@ namespace KazApi.Domain._GameSystem
         {
             IEnumerable<IMonster> enemies = monsters.Where(e => e.Hp > 0);
 
-            int enemyIndex = new URandom().RandomInt(0, enemies.Count());
+            int enemyIndex = new Randoms().RandomInt(0, enemies.Count());
             return enemies.ElementAt(enemyIndex);
         }
 
@@ -35,12 +34,12 @@ namespace KazApi.Domain._GameSystem
             // 必要数のモンスタを用意
             for (int i = 0; i < needAmount; i++)
             {
-                int monsterId = new URandom().RandomInt(0, monsters.Count());
+                int monsterId = new Randoms().RandomInt(0, monsters.Count());
 
                 // 同じモンスターは選べない
                 while (usedMonsterId.Contains(monsterId))
                     // ランダムに選出
-                    monsterId = new URandom().RandomInt(0, monsters.Count());
+                    monsterId = new Randoms().RandomInt(0, monsters.Count());
 
                 usedMonsterId.Add(monsterId);
 
@@ -59,7 +58,7 @@ namespace KazApi.Domain._GameSystem
             IList<IMonster> result =
                 monsters.Where(e => e.Hp > 0)
                         .OrderByDescending(
-                            e => new URandom().RandomChangeInt(e.Speed, 0.4))
+                            e => new Randoms().RandomChangeInt(e.Speed, 0.4))
                         .ToList();
 
             return result;
@@ -71,7 +70,7 @@ namespace KazApi.Domain._GameSystem
         public static bool StateIsDisabled(IState state)
         {
             bool result = false;
-            double randomNumber = new URandom().RandomDouble(0.0, 1.0);
+            double randomNumber = new Randoms().RandomDouble(0.0, 1.0);
 
             if (randomNumber < state.CancelRate) result = true;
             return result;

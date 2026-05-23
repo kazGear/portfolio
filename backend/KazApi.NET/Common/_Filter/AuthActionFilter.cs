@@ -27,7 +27,7 @@ namespace KazApi.Common._Filter
 
             if (exist)
             {
-                bool isValid = UJwt.IsValidToken(token!);
+                bool isValid = Jwt.IsValidToken(token!);
 
                 if (!isValid)
                 {

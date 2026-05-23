@@ -23,7 +23,7 @@ namespace KazApi.Service
 
         internal UserDTO? AuthenticateUser(string loginId, string password)
         {
-            string encryptPass = UAes.AesEncrypt(password);
+            string encryptPass = Aes.AesEncrypt(password);
 
             var param = new
             {

@@ -26,7 +26,7 @@ namespace KazApi.Domain._Monster
             IList<ISkill> skills = new List<ISkill>(_skills);
 
             // ランダムにスキル選択
-            int randomSkillIndex = new URandom().RandomInt(0, skills.Count());
+            int randomSkillIndex = new Randoms().RandomInt(0, skills.Count());
             ISkill skill = skills[randomSkillIndex];
             return skill;
         }

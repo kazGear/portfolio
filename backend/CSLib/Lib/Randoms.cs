@@ -3,20 +3,19 @@
     /// <summary>
     /// 乱数ユーティリティ
     /// </summary>
-    public class URandom
+    public class Randoms
     {
-        //private readonly int _seed = Environment.TickCount;
-        private readonly Random _random;
+        private readonly System.Random _random;
 
         /// <summary>
         /// コンストラクタ
         /// 乱数シードが毎回変わる
         /// </summary>
-        public URandom()
+        public Randoms()
         {
             DateTime dt = DateTime.Now;
             int seed = dt.Second + dt.Millisecond + dt.Nanosecond;
-            _random = new Random(seed);
+            _random = new System.Random(seed);
         }
 
         /// <summary>

@@ -1,4 +1,4 @@
-import { DOMAIN, KEYS } from "./Constants";
+import { KEYS } from "./Constants";
 
 interface fetchOptions {
     method?: string;
@@ -10,16 +10,17 @@ interface fetchOptions {
 export async function apiClient<T>(
     endpoint: string,
     options: fetchOptions = {}
-): Promise<T | undefined> {
+): Promise<T | undefined>
+{
     // オプション構築
     const headers: Record<string, string> = {
         "Content-Type": "application/json",
         ...(options.headers || {}),
     };
-    // トークンチェック
+    // 認証トークンチェック
     const token = localStorage.getItem(KEYS.TOKEN);
     if (token) headers["Authorization"] = `${token}`;
-    // アクセス
+    // apiアクセス
     const res = await fetch(endpoint, {
         ...options, headers,
     });

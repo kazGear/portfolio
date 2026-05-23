@@ -13,7 +13,7 @@ rsync -azv --delete \
   --exclude='.vs' \
   --exclude='bin' \
   --exclude='obj' \
-  --no-perms --no-owner --no-group \
+  --no-perms --no-owner --no-group --no-xattrs \
   "${WIN_BACKEND}" "${WSL_BACKEND}"
 
 echo "WSL backend(.NET) 更新完了"
@@ -26,7 +26,7 @@ rsync -azv --delete \
   --exclude='node_modules' \
   --exclude='dist' \
   --exclude='.git' \
-  --no-perms --no-owner --no-group \
+  --no-perms --no-owner --no-group --no-xattrs \
   "${WSL_SRC}" "${WIN_DST}"
 
 echo "Windows side 更新完了"

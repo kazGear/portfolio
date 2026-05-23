@@ -1,5 +1,6 @@
 using KazApi.Common._Filter;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.Net;
 using System.Text;
@@ -99,6 +100,13 @@ public class Startup
                                 "https://kazapp-trial.com" // 本番
                             )
                            .AllowCredentials());
+        });
+
+        // DTO > JSONバインド
+        services.AddControllers().AddJsonOptions(options =>
+        {
+            // C# のプロパティ名そのまま（PascalCase）で返す。プロパティ名が完全に合致する必要あり。
+            options.JsonSerializerOptions.PropertyNamingPolicy = null;
         });
     }
 

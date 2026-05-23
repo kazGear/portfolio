@@ -5,6 +5,7 @@ using KazApi.Repository.sql;
 using KazApi.Domain.DTO;
 using System.Transactions;
 using KazApi.Service;
+using CSLib.Lib;
 
 namespace KazApi.Controller
 {
@@ -106,20 +107,21 @@ namespace KazApi.Controller
         /// 自己破産（所持金初期化）
         /// </summary>
         [HttpPost("api/user/restartAsPlayer")]
-        public ActionResult<string> RestartAsPlayer([FromQuery] string loginId)
+        public ActionResult<string> RestartAsPlayer([FromBody] string? loginId)
         {
+            if (string.IsNullOrEmpty(loginId)) return StatusCode(HttpStatus.BadRequest);
+
             try
             {
                 _service.RestartAsPlayer(loginId);
 
                 UserDTO? user = _service.SelectUserOne(loginId);
-                return JsonConvert.SerializeObject(user);
+                return StatusCode(HttpStatus.OK, user);
             }
             catch (Exception e)
             {
-                return e.Message;
+                return StatusCode(HttpStatus.InternalServerError, new { Message = e.Message });
             }
-            
         }
 
         /// <summary>

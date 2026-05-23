@@ -5,6 +5,7 @@ import Strong from "../common/Strong";
 import { KEYS, URLS } from "../../lib/Constants";
 import { useServerWithQuery } from "../../hooks/useHooksOfCommon";
 import { useCallback, useLayoutEffect, useState } from "react";
+import { api } from "../../lib/apiClient";
 
 const SdivCashFrame = styled.div`
     height: 100px;
@@ -34,21 +35,30 @@ const CashBlock = ({user}: ArgProps) => {
     /**
      * 自己破産（所持金初期化）
      */
-    const goToServer = useServerWithQuery();
     const restartAsPlayer = useCallback(() => {
         const restart = async () => {
-            const result: UserDTO | null = await goToServer(`${URLS.RESTART_AS_PLAYER}?loginId=${loginId}`);
-            setCash(result?.Cash ?? null);
-            setBankruptcyCnt(result?.BankruptcyCnt ?? null);
+            const user: UserDTO | null = await api.POST<UserDTO>(`${URLS.RESTART_AS_PLAYER}`, loginId);
+            setCash(user?.Cash ?? null);
+            setBankruptcyCnt(user?.BankruptcyCnt ?? null);
+            console.log(user);
+            console.log(user?.Cash ?? null);
+            console.log(user?.BankruptcyCnt ?? null);
         }
         restart();
     }, [loginId]);
 
     return (
         <SdivCashFrame>
-            <p style={{margin:"20px 0 0 0"}}><Strong>所持金</Strong> : {cash != null ? cash.toLocaleString() : ""} Gil</p>
-            <p style={{margin:0}}><Strong>自己破産</Strong>（所持金初期化）<Button text="自己破産 実行" width={120} onClick={restartAsPlayer} /></p>
-            <p style={{margin:0}}><Strong>自己破産回数</Strong> : <SspanDanger>{bankruptcyCnt != null ? bankruptcyCnt : ""} 回</SspanDanger></p>
+            <p style={{margin:"20px 0 0 0"}}><Strong>
+                所持金</Strong> : {cash != null ? cash.toLocaleString() : ""} Gil
+            </p>
+            <p style={{margin:0}}>
+                <Strong>自己破産</Strong>（所持金初期化）
+                <Button text="自己破産 実行" width={120} onClick={restartAsPlayer} />
+            </p>
+            <p style={{margin:0}}>
+                <Strong>自己破産回数</Strong> : <SspanDanger>{bankruptcyCnt != null ? bankruptcyCnt : ""} 回</SspanDanger>
+            </p>
         </SdivCashFrame>
     );
 }

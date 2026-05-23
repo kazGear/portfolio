@@ -67,7 +67,6 @@ export const DAMAGE_VIEW = {
     DAMAGE_END: 2500,
 } as const;
 
-// 環境でドメインが変化
 export const DOMAIN = {
     LOCAL_HOST_API: `http://localhost:5000`,
     DOTNET_API: `http://localhost:5000/api`,

@@ -1,5 +1,6 @@
 import { useEffect, useCallback } from "react";
 import { KEYS, URLS } from "../lib/Constants";
+import { api } from "../lib/apiClient";
 
 /**
  *  トークンが有効か確認
@@ -7,17 +8,10 @@ import { KEYS, URLS } from "../lib/Constants";
 export const useCheckToken = async () => {
     useEffect(() => {
         const checkToken = async () => {
-            const token = localStorage.getItem(KEYS.TOKEN);
-
-            // ログイントークンの期限を確認
-            const option = {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', },
-            }
-            const res = await fetch(`${URLS.CHECK_LOGIN_TOKEN}?token=${token}`,option);
-
-            // 期限切れ
-            if (!res.ok) {
+            try {
+                await api.POST<Response>(URLS.CHECK_LOGIN_TOKEN);
+            } catch (err) {
+                // 期限切れ
                 window.location.href = "/LoginPage";
                 return false;
             }

@@ -14,16 +14,18 @@ export async function apiClient<T>(
 {
     // オプション構築
     const headers: Record<string, string> = {
-        "Content-Type": "application/json",
-        ...(options.headers || {}),
+        "Content-Type": "application/json", ...(options.headers || {}),
     };
+
     // 認証トークンチェック
     const token = localStorage.getItem(KEYS.TOKEN);
     if (token) headers["Authorization"] = `${token}`;
+
     // apiアクセス
     const res = await fetch(endpoint, {
         ...options, headers,
     });
+
     // エラー処理
     if (!res.ok) {
         let message = `API Error ${res.status}`;
@@ -35,6 +37,7 @@ export async function apiClient<T>(
         }
         throw new Error(message);
     }
+
     // apiのレスポンス次第でjsonParseが失敗する
     try {
         return await res.json();

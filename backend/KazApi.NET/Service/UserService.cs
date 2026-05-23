@@ -111,7 +111,7 @@ namespace KazApi.Service
             var param = new { login_id = loginId };
 
             LittleDTO<int> result = _posgre.Select<LittleDTO<int>>(UserSQL.SelectMonsterCount(), param)
-                                          .Single();
+                                           .Single();
             return result;
         }
 

@@ -47,7 +47,7 @@ namespace KazApi.Repository
                 _dbName     = Environment.GetEnvironmentVariable("DB_NAME")!;
                 _dbHost     = Environment.GetEnvironmentVariable("DB_HOST")!;
                 _dbPort     = Environment.GetEnvironmentVariable("DB_PORT")!;
-                //Console.WriteLine("docker now");
+
                 connectionString = $"Server={_dbHost};Port={_dbPort};User Id={_dbUser};Password={_dbPassword};Database={_dbName}";
             }
             else // windowsデバック

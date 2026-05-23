@@ -18,7 +18,7 @@ public class Program
             {
                 webBuilder.UseStartup<Startup>();
                 webBuilder.ConfigureKestrel((context, options) => {
-                    options.Listen(IPAddress.Any, 5000); // HTTP
+                    //options.Listen(IPAddress.Any, 5000); // HTTP
                     if (context.HostingEnvironment.IsProduction())
                     {
                         options.Listen(IPAddress.Any, 5001, listenOptions =>

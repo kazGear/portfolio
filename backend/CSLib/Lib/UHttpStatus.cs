@@ -1,9 +1,12 @@
-﻿namespace KazApi.Domain._Const
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace CSLib.Lib
 {
-    /// <summary>
-    /// HTTP ステータスコード（簡略説明付き
-    /// </summary>
-    public static class CHttpStatus
+    public class UHttpStatus
     {
         // Informational（情報レスポンス）
 
@@ -144,5 +147,4 @@
         /// <summary>511: ネットワーク認証が必要。</summary>
         public static readonly int NetworkAuthenticationRequired = 511;
     }
-
 }

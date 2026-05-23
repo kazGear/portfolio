@@ -71,4 +71,3 @@ docker/db/init/*.sql
 # Git merge conflict leftovers
 # ============================
 *.orig
-batch/forLinux/syncZone.Identifier

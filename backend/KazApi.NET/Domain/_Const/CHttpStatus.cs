@@ -44,7 +44,7 @@
         /// <summary>300: 複数の遷移先候補が存在する。</summary>
         public static readonly int MultipleChoices = 300;
         /// <summary>301: リソースが恒久的に移動した。</summary>
-*        public static readonly int MovedPermanently = 301;
+        public static readonly int MovedPermanently = 301;
         /// <summary>302: 一時的に別の場所へ移動している。</summary>
         public static readonly int Found = 302;
         /// <summary>303: 別の URI を参照すべきである。</summary>

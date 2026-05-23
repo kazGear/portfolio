@@ -34,6 +34,7 @@ export async function apiClient<T>(
         }
         throw new Error(message);
     }
+    // apiのレスポンス次第でjsonParseが失敗する
     try {
         return await res.json();
     } catch {

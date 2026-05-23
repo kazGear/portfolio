@@ -10,7 +10,7 @@ interface fetchOptions {
 export async function apiClient<T>(
     endpoint: string,
     options: fetchOptions = {}
-): Promise<T | undefined>
+): Promise<T | null>
 {
     // オプション構築
     const headers: Record<string, string> = {
@@ -39,7 +39,7 @@ export async function apiClient<T>(
     try {
         return await res.json();
     } catch {
-        return;
+        return null;
     }
 }
 

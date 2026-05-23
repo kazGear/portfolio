@@ -56,7 +56,7 @@ public class Startup
         services.AddControllers(options =>
         {
             options.Filters.Add<ExceptionFilter>();
-            options.Filters.Add<AuthActionFilter>();
+            //options.Filters.Add<AuthActionFilter>();
         })
         .AddJsonOptions(options =>
         {

@@ -2,15 +2,11 @@
 
 set -e
 
-# Windows → WSL（backend だけ）
 WIN_BACKEND="/mnt/c/repository/portfolio/backend/"
 WSL_BACKEND="/home/kaz57guitar/portfolio/backend/"
 
-# WSL → Windows（全体）
 WSL_SRC="/home/kaz57guitar/portfolio/"
 WIN_DST="/mnt/c/repository/portfolio/"
-
-CHANGED=0
 
 echo "=== 1. Windows backend → WSL backend（正の反映） ==="
 rsync -azv --delete \
@@ -19,10 +15,6 @@ rsync -azv --delete \
   --exclude='obj' \
   --no-perms --no-owner --no-group \
   "${WIN_BACKEND}" "${WSL_BACKEND}"
-
-if [ $? -ne 0 ]; then
-  CHANGED=1
-fi
 
 echo "WSL backend(.NET) 更新完了"
 
@@ -37,24 +29,6 @@ rsync -azv --delete \
   --no-perms --no-owner --no-group \
   "${WSL_SRC}" "${WIN_DST}"
 
-if [ $? -ne 0 ]; then
-  CHANGED=1
-fi
-
 echo "Windows side 更新完了"
-
-if [ $CHANGED -eq 0 ]; then
-  echo "=== 差分なし → Docker build スキップ ==="
-  echo "=== 同期完了！ ==="
-  exit 0
-fi
-
-echo "=== 差分あり → Docker 再ビルド ==="
-cd "${WSL_SRC}" || exit 1
-
-docker compose --env-file .env.dev \
-  -f compose.base.yaml \
-  -f compose.dev.yaml \
-  build
 
 echo "=== 同期完了！ ==="

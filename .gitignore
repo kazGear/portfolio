@@ -64,6 +64,8 @@ docker/db/init/*.sql
 .DS_Store
 .vscode/
 *.log
+*.Zone.Identifier
+*:Zone.Identifier
 
 # ============================
 # Git merge conflict leftovers

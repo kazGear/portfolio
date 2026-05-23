@@ -10,7 +10,7 @@ const EditMonsterAttackBlock = ({monster}: ArgProps) => {
     return (
         <>
             <BorderTd>
-                <Input styleObj={{width: "50px"}}
+                <Input styleObj={{width: "50px", textAlign: "right"}}
                        inputType="number"
                        defaultValue={monster.Attack}
                        labelTitle=""

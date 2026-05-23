@@ -1,4 +1,4 @@
-import { DOMAIN } from "./Constants";
+import { DOMAIN, KEYS } from "./Constants";
 
 interface fetchOptions {
     method?: string;
@@ -10,22 +10,19 @@ interface fetchOptions {
 export async function apiClient<T>(
     endpoint: string,
     options: fetchOptions = {}
-): Promise<T> {
+): Promise<T | undefined> {
     // オプション構築
     const headers: Record<string, string> = {
         "Content-Type": "application/json",
         ...(options.headers || {}),
     };
-
     // トークンチェック
-    const token = localStorage.getItem("token");
-    if (token) headers["Authorization"] = `Bearer ${token}`;
-
+    const token = localStorage.getItem(KEYS.TOKEN);
+    if (token) headers["Authorization"] = `${token}`;
     // アクセス
-    const res = await fetch(`${DOMAIN.DOTNET_API}${endpoint}`, {
+    const res = await fetch(endpoint, {
         ...options, headers,
     });
-
     // エラー処理
     if (!res.ok) {
         let message = `API Error ${res.status}`;
@@ -37,7 +34,11 @@ export async function apiClient<T>(
         }
         throw new Error(message);
     }
-    return res.json();
+    try {
+        return await res.json();
+    } catch {
+        return;
+    }
 }
 
 /** httpMethodヘルパー */

@@ -1,21 +1,35 @@
 import Strong from "../../common/Strong";
 
 const MonsterTableHeader = () => {
-    const prefix = " ⇒ ";
-
     return (
-        <thead>
-            <tr>
-                <td><Strong>ID</Strong></td>
-                <td><Strong>イメージ</Strong></td>
-                <td style={{paddingLeft: "10px"}}><Strong>モンスター名</Strong></td>
-                <td style={{paddingLeft: "10px"}}><Strong>HP</Strong></td>
-                <td style={{paddingLeft: "10px"}}><Strong>攻撃力</Strong></td>
-                <td style={{paddingLeft: "10px"}}><Strong>速さ</Strong></td>
-                <td><Strong>弱点</Strong></td>
-                <td style={{paddingLeft: "20px"}}> ⇒ 変更後</td>
-            </tr>
-        </thead>
+        <table style={{width: "620px"}}>
+            <thead>
+                <tr style={{textAlign: "center"}}>
+                    <td style={{width: "18px", paddingLeft: "35px"}}>
+                        <Strong>ID</Strong>
+                    </td>
+                    <td style={{width: "64px", paddingLeft: "30px"}}>
+                        <Strong>イメージ</Strong>
+                    </td>
+                    <td style={{width: "96px", paddingLeft: "20px"}}>
+                        <Strong>モンスター名</Strong>
+                    </td>
+                    <td style={{width: "24px", paddingLeft: "45px"}}>
+                        <Strong>HP</Strong>
+                    </td>
+                    <td style={{width: "48px", paddingLeft: "40px"}}>
+                        <Strong>攻撃力</Strong>
+                    </td>
+                    <td style={{width: "32px", paddingLeft: "30px"}}>
+                        <Strong>速さ</Strong>
+                    </td>
+                    <td style={{width: "32px", paddingLeft: "15px"}}>
+                        <Strong>弱点</Strong>
+                    </td>
+                    <td> ⇒ 変更後</td>
+                </tr>
+            </thead>
+        </table>
     );
 }
 

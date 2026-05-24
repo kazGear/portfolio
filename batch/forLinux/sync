@@ -2,23 +2,11 @@
 
 set -e
 
-WIN_BACKEND="/mnt/c/repository/portfolio/backend/"
-WSL_BACKEND="/home/kaz57guitar/portfolio/backend/"
+# Windows → WSL の一方向同期
+WIN_SRC="/mnt/c/repository/portfolio/"
+WSL_DST="/home/kaz57guitar/portfolio/"
 
-WSL_SRC="/home/kaz57guitar/portfolio/"
-WIN_DST="/mnt/c/repository/portfolio/"
-
-echo "=== 1. Windows backend → WSL backend（正の反映） ==="
-rsync -azv --delete \
-  --exclude='.vs' \
-  --exclude='bin' \
-  --exclude='obj' \
-  --no-perms --no-owner --no-group --no-xattrs \
-  "${WIN_BACKEND}" "${WSL_BACKEND}"
-
-echo "WSL backend(.NET) 更新完了"
-
-echo "=== 2. WSL 全体 → Windows（最終的な正を作る） ==="
+echo "=== Windows → WSL（正の反映） ==="
 rsync -azv --delete \
   --exclude='.vs' \
   --exclude='bin' \
@@ -27,8 +15,6 @@ rsync -azv --delete \
   --exclude='dist' \
   --exclude='.git' \
   --no-perms --no-owner --no-group --no-xattrs \
-  "${WSL_SRC}" "${WIN_DST}"
+  "${WIN_SRC}" "${WSL_DST}"
 
-echo "Windows side 更新完了"
-
-echo "=== 同期完了！ ==="
+echo "=== 同期完了！（Windows to WSL） ==="

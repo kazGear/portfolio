@@ -1,3 +1,4 @@
+import { isEmpty } from "./CommonLogic";
 import { KEYS } from "./Constants";
 
 interface fetchOptions {
@@ -12,16 +13,16 @@ export async function apiClient<T>(
     options: fetchOptions = {},
 ): Promise<T | null> {
     const fetchOptions = structuredClone(options);
+    fetchOptions.headers ??= {};
 
     // オプション構築
-    let headers: Record<string, string>;
     if (fetchOptions.body instanceof FormData) {
-        headers = {
+        fetchOptions.headers = {
             ...fetchOptions.headers
         };
     } else {
         fetchOptions.body = JSON.stringify(fetchOptions.body)
-        headers = {
+        fetchOptions.headers = {
             "Content-Type": "application/json",
             ...fetchOptions.headers
         };
@@ -29,11 +30,11 @@ export async function apiClient<T>(
 
     // 認証トークンチェック
     const token = localStorage.getItem(KEYS.TOKEN);
-    if (token && fetchOptions.headers !== null)
+    if (token && fetchOptions.headers !== undefined)
         fetchOptions.headers!["Authorization"] = `${token}`;
 
     // apiアクセス
-    const res = await fetch(endpoint, { ...fetchOptions, headers, });
+    const res = await fetch(endpoint, { ...fetchOptions, });
 
     // エラー処理
     if (!res.ok) {

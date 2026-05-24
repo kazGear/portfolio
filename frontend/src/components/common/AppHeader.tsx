@@ -53,14 +53,11 @@ const AppHeader = ({title}: ArgProps) => {
     const [isAdmin, setIsAdmin] = useState(false);
     const authorizedPerson: number[] = [USER_ROLE.ADMIN, USER_ROLE.SUPER_ADMIN];
     const [userImage, setUserImage] = useState<string>("");
-    const [validToken, setValidToken] = useState(false);
-
+    const validToken = useCheckLogin();
     const navigate = useNavigate();
     const currentUrl: string = window.location.href;
     const isRootPage: boolean = currentUrl.endsWith("/"); // 最初のページ
     const isRootPage2: boolean = currentUrl.endsWith("/IndexPage");
-
-    useCheckLogin(setValidToken);
 
     // ユーザー情報
     useLayoutEffect(() => {

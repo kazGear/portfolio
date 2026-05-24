@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import Button from "./Button";
 import { KEYS, URLS } from "../../lib/Constants";
 import Input from "./Input";
+import { api, apiClient } from "../../lib/apiClient";
 
 const prevImgStyle = {
     width: "90px",
@@ -30,26 +31,23 @@ const ImgUpload = ({styleObj}: ArgProps) => {
     /**
      * 選択した画像を自身のサムネとして登録
      */
-    const uploadImageHandler = async () => {
-        if (imageFile) {
-            const formData = new FormData();
-            formData.append("image", imageFile);
+    const uploadImageHandler = useCallback(() => {
+        const uploadImage = async () => {
+            if (imageFile) {
+                const formData = new FormData();
+                formData.append("image", imageFile);
+                formData.append("loginId", loginId ?? "");
 
-            try {
-                const res = await fetch(`${URLS.UPLOAD_IMAGE}?loginId=${loginId}`, {method: "POST", body: formData});
-
-                if (res.ok) {
-                    console.log('Image uploaded successfully');
-                    window.location.href = "/UserPage"; // アップロード画像即時反映
-                } else {
-                    const errorText = await res.text();
-                    console.error('Image upload failed', errorText);
+                try {
+                    await apiClient(URLS.UPLOAD_IMAGE, { body: formData, method: "PUT" });
+                    globalThis.location.href = "/UserPage"; // アップロード画像即時反映
+                } catch (err) {
+                    alert('Error image upload:' + err);
                 }
-            } catch (err) {
-                console.error('Error uploading image:', err);
             }
-        }
-    };
+        };
+        uploadImage();
+    }, [imageFile, loginId]);
 
     return (
         <div>
@@ -63,7 +61,9 @@ const ImgUpload = ({styleObj}: ArgProps) => {
                     <div style={{textAlign: "center"}}>
                         <img src={selectImage} alt="prevImage" style={prevImgStyle} />
                         <div style={{textAlign: "end"}}>
-                            <Button text="upload" onClick={uploadImageHandler} styleObj={{margin: "10px 10px 0 0"}}/>
+                            <Button text="upload"
+                                    onClick={uploadImageHandler}
+                                    styleObj={{margin: "10px 10px 0 0"}} />
                         </div>
                     </div>
                 )

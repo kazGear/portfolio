@@ -40,9 +40,6 @@ const CashBlock = ({user}: ArgProps) => {
             const user: UserDTO | null = await api.POST<UserDTO>(`${URLS.RESTART_AS_PLAYER}`, loginId);
             setCash(user?.Cash ?? null);
             setBankruptcyCnt(user?.BankruptcyCnt ?? null);
-            console.log(user);
-            console.log(user?.Cash ?? null);
-            console.log(user?.BankruptcyCnt ?? null);
         }
         restart();
     }, [loginId]);

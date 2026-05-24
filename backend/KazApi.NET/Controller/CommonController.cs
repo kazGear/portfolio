@@ -1,4 +1,5 @@
-﻿using KazApi.Domain.DTO;
+﻿using CSLib.Lib;
+using KazApi.Domain.DTO;
 using KazApi.Service;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -21,25 +22,30 @@ namespace KazApi.Controller
         /// <summary>
         /// 画像ファイルアップロード
         /// </summary>
-        [HttpPost("api/common/imgUpload")]
-        public async Task<IActionResult> UploadImage(
-            IFormFile image,
-            [FromQuery] string loginId)
-        {
-            if (image == null || image.Length == 0) 
-                return BadRequest("No file uploaded.");
+        [HttpPut("api/common/imgUpload")]
+        public async Task<IActionResult> UploadImage([FromForm] IFormFile image,
+                                                     [FromForm] string loginId
+        ) {
+            if (image == null || image.Length == 0)
+                return StatusCode(HttpStatus.BadRequest, new { Message = "No file uploaded." });
 
-            // 画像のバイナリ化
-            using (MemoryStream ms = new MemoryStream())
+            try
             {
-                await image.CopyToAsync(ms);
-                byte[] imageByte = ms.ToArray();
-                string imageBASE64 = Convert.ToBase64String(imageByte);
+                // 画像のバイナリ化
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    await image.CopyToAsync(ms);
+                    byte[] imageByte = ms.ToArray();
+                    string imageBASE64 = Convert.ToBase64String(imageByte);
 
-                _serviceCommon.UpdateImage(loginId, imageBASE64);
+                    _serviceCommon.UpdateImage(loginId, imageBASE64);
+                }
             }
-        
-            return Ok(new { message = "Image uploaded successfully" });
+            catch (Exception e)
+            {
+                return StatusCode(HttpStatus.InternalServerError, new { Message = e });
+            }
+            return StatusCode(HttpStatus.OK, new { message = "Image uploaded successfully" });
         }
 
         [HttpPost("api/common/FetchElementCode")]

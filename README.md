@@ -13,17 +13,14 @@ docker compose --env-file .env.prod -f compose.base.yaml -f compose.prod.yaml do
 
 # 開発
 
-wsl側で開発・修正を行う。(apiのみWin側のVS)
-同期バッチで、win側を最新を保つ。syncコマンド or cron
+win側で行う。動作確認、リリース前の確認は,wsl + docker
 git管理はC:/repository/portfolio
 
 # C#バッチを叩く
 
-例：
-・docker exec -it portfolio-batch-autobattle dotnet /src/batch/autoBattle/bin/Debug/net8.0/autoBattle.dll
-・swaggerから実行
+swaggerから実行
 
-# C#デバック + docker ※VSのF5で実行しないこと。
+# C#デバック + wsl + docker ※VSのF5で実行しないこと。
 
 api（ASP.NET コンテナ）が Up になっていればOK。
 

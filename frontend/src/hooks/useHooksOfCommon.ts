@@ -1,24 +1,4 @@
-import { useEffect, useCallback } from "react";
-import { KEYS, URLS } from "../lib/Constants";
-import { api } from "../lib/apiClient";
-
-/**
- *  トークンが有効か確認
- */
-export const useCheckToken = async () => {
-    useEffect(() => {
-        const checkToken = async () => {
-            try {
-                await api.POST<Response>(URLS.CHECK_LOGIN_TOKEN);
-            } catch (err) {
-                // 期限切れ
-                window.location.href = "/LoginPage";
-                return false;
-            }
-        }
-        checkToken();
-    }, []);
-}
+import {useCallback } from "react";
 
 /**
  * サーバーと通信する（リクエストのボディ使用）

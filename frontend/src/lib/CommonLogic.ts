@@ -7,6 +7,8 @@ export const isEmpty = (arg: any): boolean => {
     if (Array.isArray(arg) && arg.length <= 0) return true;
     if (typeof arg === "string" && arg === "") return true;
     if (typeof arg === "string" && arg === "null") return true;
+    if (Object.keys(arg).length === 0) return true;
+
     return false;
 }
 

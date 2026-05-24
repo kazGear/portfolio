@@ -1,30 +1,37 @@
 import { KEYS } from "./Constants";
 
 interface fetchOptions {
-    method?: string;
+    method?: "GET" | "POST" | "PUT" | "DELETE";
     headers?: { [key: string]: string };
     body?: any;
-};
+}
 
 /** APIへのアクセス基盤 */
 export async function apiClient<T>(
     endpoint: string,
-    options: fetchOptions = {}
-): Promise<T | null>
-{
+    options: fetchOptions = {},
+): Promise<T | null> {
+
     // オプション構築
-    const headers: Record<string, string> = {
-        "Content-Type": "application/json", ...(options.headers || {}),
-    };
+    let headers: Record<string, string>;
+    if (options.body instanceof FormData) {
+        headers = {
+            ...options.headers
+        };
+    } else {
+        options.body = JSON.stringify(options.body)
+        headers = {
+            "Content-Type": "application/json",
+            ...options.headers
+        };
+    }
 
     // 認証トークンチェック
     const token = localStorage.getItem(KEYS.TOKEN);
     if (token) headers["Authorization"] = `${token}`;
 
     // apiアクセス
-    const res = await fetch(endpoint, {
-        ...options, headers,
-    });
+    const res = await fetch(endpoint, { ...options, headers, });
 
     // エラー処理
     if (!res.ok) {
@@ -48,21 +55,19 @@ export async function apiClient<T>(
 
 /** httpMethodヘルパー */
 export const api = {
-    GET: <T>(url: string) =>
-        apiClient<T>(url, { method: "GET" }),
+    GET: <T>(url: string) => apiClient<T>(url, { method: "GET" }),
 
     POST: <T>(url: string, body?: any) =>
         apiClient<T>(url, {
             method: "POST",
-            body: JSON.stringify(body),
-      }),
+            body: body,
+        }),
 
     PUT: <T>(url: string, body?: any) =>
         apiClient<T>(url, {
             method: "PUT",
-            body: JSON.stringify(body),
+            body: body,
         }),
 
-    DELETE: <T>(url: string) =>
-        apiClient<T>(url, { method: "DELETE" }),
+    DELETE: <T>(url: string) => apiClient<T>(url, { method: "DELETE" }),
 };

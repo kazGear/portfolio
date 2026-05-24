@@ -28,11 +28,10 @@ const titleStyle: {} = {
 }
 
 const IndexPage = () => {
-    const [validToken, setValidToken] = useState(false);
     const [usableSettings, setUsableSettings] = useState(false);
-    const authorizedPerson: number[] = [USER_ROLE.ADMIN, USER_ROLE.SUPER_ADMIN];
-
-    useCheckLogin(setValidToken);
+    const validToken = useCheckLogin();
+    const authorizedPerson: number[] =
+        [USER_ROLE.ADMIN, USER_ROLE.SUPER_ADMIN];
 
     /**
      * 設定メニューを使用できるか
@@ -40,6 +39,7 @@ const IndexPage = () => {
     useLayoutEffect(() => {
         const role = localStorage.getItem(KEYS.USER_ROLE);
         setUsableSettings(authorizedPerson.includes(parseInt(role!)));
+        // checkToken();
     }, []);
 
     return (

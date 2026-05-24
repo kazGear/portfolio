@@ -23,7 +23,6 @@ const styleForEdit = {
     height: "75vh"
 }
 
-
 const EditPage = () => {
     const [editMonsters, setEditMonsters] = useState<EditMonsterDTO[]>([]);
     const [editMonsterSkills, setEditMonsterSkills] = useState<EditSkillsDTO[]>([]);

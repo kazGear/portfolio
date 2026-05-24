@@ -2,7 +2,6 @@ import styled from "styled-components";
 import { useState } from "react";
 import { BattleReportDTO, MonsterReportDTO } from "../types/BattleReport";
 import MonsterReport from "../components/battleResultPage/MonsterReportBlock";
-import { useCheckToken } from "../hooks/useHooksOfCommon";
 import BattleReportControllerBlock from "../components/battleResultPage/BattleReportControllerBlock";
 import BattleReportBlock from "../components/battleResultPage/BattleReportBlock";
 import MonsterReportControllerBlock from "../components/battleResultPage/MonsterReportControllerBlock";
@@ -29,8 +28,6 @@ const BattleResultPage = () => {
     const [isNowLoadingMonsterReport, setIsNowLoadingMonsterReport] = useState(false);
     const [isNowLoadingBattleReport, setIsNowLoadingBattleReport] = useState(false);
     const [sortType, setSortType] = useState("0");
-
-    useCheckToken();
 
     return (
         <SdivOutsideFrame>

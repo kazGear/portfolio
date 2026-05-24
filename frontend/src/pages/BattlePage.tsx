@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { BattleResults, MetaDataDTO, MonsterDTO } from "../types/MonsterBattle";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useCheckToken, useServerWithQuery, useServerWithJson } from "../hooks/useHooksOfCommon";
+import { useServerWithQuery, useServerWithJson } from "../hooks/useHooksOfCommon";
 import { KEYS, URLS } from "../lib/Constants";
 import { useRegistResult } from "../hooks/useHooksOfBattle";
 import { isEmpty } from "../lib/CommonLogic";
@@ -65,8 +65,6 @@ const BattlePage = () => {
 
     const [loginId, setLoginId] = useState<string | null>("");
     const [newShops, setNewShops] = useState<ShopDTO[]>([]);
-
-    useCheckToken();
 
     useEffect(() => {
         setLoginId(localStorage.getItem(KEYS.USER_ID));

@@ -11,27 +11,29 @@ export async function apiClient<T>(
     endpoint: string,
     options: fetchOptions = {},
 ): Promise<T | null> {
+    const fetchOptions = structuredClone(options);
 
     // オプション構築
     let headers: Record<string, string>;
-    if (options.body instanceof FormData) {
+    if (fetchOptions.body instanceof FormData) {
         headers = {
-            ...options.headers
+            ...fetchOptions.headers
         };
     } else {
-        options.body = JSON.stringify(options.body)
+        fetchOptions.body = JSON.stringify(fetchOptions.body)
         headers = {
             "Content-Type": "application/json",
-            ...options.headers
+            ...fetchOptions.headers
         };
     }
 
     // 認証トークンチェック
     const token = localStorage.getItem(KEYS.TOKEN);
-    if (token) headers["Authorization"] = `${token}`;
+    if (token && fetchOptions.headers !== null)
+        fetchOptions.headers!["Authorization"] = `${token}`;
 
     // apiアクセス
-    const res = await fetch(endpoint, { ...options, headers, });
+    const res = await fetch(endpoint, { ...fetchOptions, headers, });
 
     // エラー処理
     if (!res.ok) {

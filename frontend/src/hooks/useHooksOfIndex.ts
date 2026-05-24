@@ -1,12 +1,12 @@
-import { useLayoutEffect } from "react";
+import { useEffect, useState } from "react";
 import { KEYS, URLS } from "../lib/Constants";
 import { api } from "../lib/apiClient";
 
-export const useCheckLogin = (
-    setValidToken: React.Dispatch<React.SetStateAction<boolean>>
-) => {
-    useLayoutEffect(() => {
-        const checkToken = async () => {
+export const useCheckLogin = () => {
+    const [validToken, setValidToken] = useState(false);
+
+    useEffect(() => {
+            const checkToken = async () => {
             try {
                 await api.POST(URLS.CHECK_LOGIN_TOKEN);
                 setValidToken(true);
@@ -19,4 +19,5 @@ export const useCheckLogin = (
         }
         checkToken();
     }, []);
+    return validToken;
 }

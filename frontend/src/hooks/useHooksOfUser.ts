@@ -30,20 +30,20 @@ export const useLogin = () => {
                 localStorage.setItem(KEYS.USER_ROLE, user.Role.toString());
                 setToken(user.Token);
                 setShowAlert(false);
-                window.location.href = "/IndexPage";
+                globalThis.location.href = "/IndexPage";
             } else if (isEmpty(user.Token)) {
                 localStorage.removeItem(KEYS.TOKEN);
                 localStorage.removeItem(KEYS.USER_ID);
                 localStorage.removeItem(KEYS.USER_ROLE);
                 setShowAlert(true);
-                setTimeout(() => window.location.href = "/LoginPage", 2000);
+                setTimeout(() => globalThis.location.href = "/LoginPage", 2000);
             }
         } catch (err) {
             localStorage.removeItem(KEYS.TOKEN);
             localStorage.removeItem(KEYS.USER_ID);
             localStorage.removeItem(KEYS.USER_ROLE);
             setShowAlert(true);
-            setTimeout(() => window.location.href = "/LoginPage", 2000);
+            setTimeout(() => globalThis.location.href = "/LoginPage", 2000);
         }
     }, []);
     return callback;

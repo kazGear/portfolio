@@ -1,4 +1,3 @@
-import { isEmpty } from "./CommonLogic";
 import { KEYS } from "./Constants";
 
 interface fetchOptions {

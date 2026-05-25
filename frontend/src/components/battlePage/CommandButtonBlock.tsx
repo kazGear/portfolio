@@ -10,7 +10,7 @@ const SdivButtonFrame = styled.div`
 `;
 
 const resetHandler = () => {
-    window.location.reload();
+    globalThis.location.reload();
 }
 
 interface ArgProps {

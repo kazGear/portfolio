@@ -26,7 +26,7 @@ export const checkToken = () => {
             await api.POST<Response>(URLS.CHECK_LOGIN_TOKEN);
         } catch (err) {
             // 期限切れ, ログイン失敗
-            window.location.href = "/LoginPage";
+            globalThis.location.href = "/LoginPage";
         }
     }
     checkToken();

@@ -55,7 +55,7 @@ const AppHeader = ({title}: ArgProps) => {
     const [userImage, setUserImage] = useState<string>("");
     const validToken = useCheckLogin();
     const navigate = useNavigate();
-    const currentUrl: string = window.location.href;
+    const currentUrl: string = globalThis.location.href;
     const isRootPage: boolean = currentUrl.endsWith("/"); // 最初のページ
     const isRootPage2: boolean = currentUrl.endsWith("/IndexPage");
 

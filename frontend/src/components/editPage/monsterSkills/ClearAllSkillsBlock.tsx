@@ -39,7 +39,7 @@ const ClearAllSkillsBlock = ({selectEditType, setEditMonsterSkills}: ArgProps) =
                     <Button text="はい" onClick={() => {
                         initMonsterSkills();
                         setShowInitComplete(true);
-                        window.location.href = "/EditPage";
+                        globalThis.location.href = "/EditPage";
                     }
                         }/>
                 </div>

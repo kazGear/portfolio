@@ -35,7 +35,7 @@ const Sspan = styled.span`
 `;
 
 const gamesetHandler = () => {
-    window.location.reload();
+    globalThis.location.reload();
 }
 
 interface ArgProps {

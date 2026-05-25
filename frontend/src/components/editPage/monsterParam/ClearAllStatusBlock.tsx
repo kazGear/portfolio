@@ -44,7 +44,7 @@ const ClearAllStatusBlock = ({setEditMonsters, selectEditType}: ArgProps) => {
                         clearAllMonstersStatus();
                         refreshMonsterStatus(goToServer, setEditMonsters);
                         setShowInitComplete(true);
-                        window.location.href = "/EditPage"
+                        globalThis.location.href = "/EditPage"
                     }
                         }/>
                 </div>

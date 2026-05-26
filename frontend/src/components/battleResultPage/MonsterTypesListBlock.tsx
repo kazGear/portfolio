@@ -1,8 +1,8 @@
-import { ChangeEvent, useLayoutEffect, useState } from "react";
-import { useServerWithQuery } from "../../hooks/useHooksOfCommon";
+import { ChangeEvent, useEffect, useState } from "react";
 import Select from "../common/Select";
 import { URLS } from "../../lib/Constants";
 import { MonsterTypeDTO } from "../../types/BattleReport";
+import { api } from "../../lib/apiClient";
 
 interface ArgProps {
     setMonsterTypeId: React.Dispatch<React.SetStateAction<string>>;
@@ -10,12 +10,11 @@ interface ArgProps {
 
 const MonsterTypesListBlock = ({setMonsterTypeId}: ArgProps) => {
     const [monsterTypes, setMonsterTypes] = useState<MonsterTypeDTO[]>([]);
-    const goToServer = useServerWithQuery();
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         const fetchTypes = async () => {
-            const types: MonsterTypeDTO[] = await goToServer(URLS.INIT_BATTLE_REPORT);
-            setMonsterTypes(types);
+            const types = await api.GET<MonsterTypeDTO[]>(URLS.INIT_BATTLE_REPORT);
+            setMonsterTypes(types!);
         }
         fetchTypes();
     }, []);
@@ -25,19 +24,17 @@ const MonsterTypesListBlock = ({setMonsterTypeId}: ArgProps) => {
     }
 
     return (
-        <>
-            <Select title="モンスター種" onChange={changeMonsterTypeHandler}>
-                <option value="0">指定なし</option>
-                {
-                    monsterTypes.map((monster, index) => {
-                        return (
-                            <option value={monster.MonsterTypeId} key={index}>
-                                {monster.MonsterTypeName}
-                            </option>
-                    )})
-                }
-            </Select>
-        </>
+        <Select title="モンスター種" onChange={changeMonsterTypeHandler}>
+            <option value="0">指定なし</option>
+            {
+                monsterTypes.map((monster, index) => {
+                    return (
+                        <option value={monster.MonsterTypeId} key={index}>
+                            {monster.MonsterTypeName}
+                        </option>
+                )})
+            }
+        </Select>
     );
 }
 

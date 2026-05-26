@@ -1,9 +1,8 @@
-import { useCallback } from "react";
-import { useServerWithQuery } from "./useHooksOfCommon";
+import { useCallback, useEffect } from "react";
 import { KEYS, URLS } from "../lib/Constants";
 import { isEmpty } from "../lib/CommonLogic";
-import { useLayoutEffect } from "react";
 import { UserDTO } from "../types/UserManage";
+import { api } from "../lib/apiClient";
 
 interface ArgPropsLogin {
     inputLoginId: string;
@@ -15,35 +14,36 @@ interface ArgPropsLogin {
  * ユーザーのログイン処理
  */
 export const useLogin = () => {
-    const goToServer = useServerWithQuery();
     const callback = useCallback( async ({
         inputLoginId, inputPassword, setToken, setShowAlert}: ArgPropsLogin
     ) => {
         try {
-            const user: UserDTO = await goToServer(
-                `${URLS.LOGIN_USER}?loginId=${inputLoginId}&password=${inputPassword}`
-            );
+            const formData = new FormData()
+            formData.append("loginId", inputLoginId);
+            formData.append("password", inputPassword);
+            const user = await api.POST<UserDTO>(URLS.LOGIN_USER, formData);
+
             // トークン有 >>> ログイン成功
-            if (user.Token != null) {
-                localStorage.setItem(KEYS.TOKEN, user.Token);
+            if (user!.Token != null) {
+                localStorage.setItem(KEYS.TOKEN, user!.Token);
                 localStorage.setItem(KEYS.USER_ID, inputLoginId);
-                localStorage.setItem(KEYS.USER_ROLE, user.Role.toString());
-                setToken(user.Token);
+                localStorage.setItem(KEYS.USER_ROLE, user!.Role.toString());
+                setToken(user!.Token);
                 setShowAlert(false);
                 globalThis.location.href = "/IndexPage";
-            } else if (isEmpty(user.Token)) {
+            } else if (isEmpty(user!.Token)) {
                 localStorage.removeItem(KEYS.TOKEN);
                 localStorage.removeItem(KEYS.USER_ID);
                 localStorage.removeItem(KEYS.USER_ROLE);
                 setShowAlert(true);
-                setTimeout(() => globalThis.location.href = "/LoginPage", 2000);
+                setTimeout(() => globalThis.location.href = "/LoginPage", 1000);
             }
         } catch (err) {
             localStorage.removeItem(KEYS.TOKEN);
             localStorage.removeItem(KEYS.USER_ID);
             localStorage.removeItem(KEYS.USER_ROLE);
             setShowAlert(true);
-            setTimeout(() => globalThis.location.href = "/LoginPage", 2000);
+            setTimeout(() => globalThis.location.href = "/LoginPage", 1000);
         }
     }, []);
     return callback;
@@ -62,7 +62,7 @@ interface ArgPropsForCreateUsedList {
 export const useCreateUsedList = (
     {users, setUsedLoginIdList, setUsedDispNameList, setUsedDispShortNameList}: ArgPropsForCreateUsedList
 ) => {
-    useLayoutEffect(() => {
+    useEffect(() => {
         if (users !== null) {
             const usedLoginId: string[] = [];
             const usedDispName: string[] = [];

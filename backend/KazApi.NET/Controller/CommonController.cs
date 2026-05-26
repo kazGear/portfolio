@@ -48,7 +48,7 @@ namespace KazApi.Controller
             return StatusCode(HttpStatus.OK, new { message = "Image uploaded successfully" });
         }
 
-        [HttpPost("api/common/FetchElementCode")]
+        [HttpGet("api/common/FetchElementCode")]
         public ActionResult<string> FetchElementCode()
         {
             IEnumerable<CodeDTO> result = _serviceCommon.FetchElementCode();

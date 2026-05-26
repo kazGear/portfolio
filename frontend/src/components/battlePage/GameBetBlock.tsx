@@ -1,11 +1,11 @@
 import styled from "styled-components";
 import Button from "../common/Button";
-import React, { useLayoutEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { MonsterDTO } from "../../types/MonsterBattle";
 import { COLORS, KEYS, URLS } from "../../lib/Constants";
-import { useServerWithQuery } from "../../hooks/useHooksOfCommon";
 import { UserDTO } from "../../types/UserManage";
 import MonsterSelectorBlock from "./MonsterSelectorBlock";
+import { api } from "../../lib/apiClient";
 
 
 const SdivInputFrame = styled.div`
@@ -37,13 +37,12 @@ const GameBetContentsBlock = (
     }
 
     // ユーザ情報
-    const goToServer = useServerWithQuery();
-    useLayoutEffect(() => {
+    useEffect(() => {
         const selectUser = async () => {
-            const user: UserDTO = await goToServer(`${URLS.USER_INFO}?loginId=${localStorage.getItem(KEYS.USER_ID)}`);
+            const user = await api.POST<UserDTO>(URLS.USER_INFO, localStorage.getItem(KEYS.USER_ID));
             setUser(user);
-            setCash(user.Cash.toLocaleString());
-            setCashLimit(user.Cash);
+            setCash(user!.Cash.toLocaleString());
+            setCashLimit(user!.Cash);
         }
         selectUser();
     }, []);

@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { COLORS, KEYS } from "../lib/Constants";
 import DialogFrame from "../components/common/DialogFrame";
-import { useCallback, useLayoutEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useLogin } from "../hooks/useHooksOfUser";
 import UserRegistBlock from "../components/loginPage/UserRegistBlock";
 import OutSideFrame from "../components/common/OutSideFrame";
@@ -41,7 +41,7 @@ const LoginPage = () => {
     /**
      * 初期処理
      */
-    useLayoutEffect(() => {
+    useEffect(() => {
         const token = localStorage.getItem(KEYS.TOKEN);
         if (token) setToken(token);
     }, []);

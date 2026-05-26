@@ -3,10 +3,9 @@ import { COLORS, URLS } from "../../lib/Constants";
 import Button from "../common/Button";
 import FromToDate from "../common/FromTo";
 import { BattleReportDTO } from "../../types/BattleReport";
-import { useServerWithQuery } from "../../hooks/useHooksOfCommon";
 import styled from "styled-components";
 import BattleScaleListBlock from "./BattleScaleListBlock";
-import OutSideFrame from "../common/OutSideFrame";
+import { api } from "../../lib/apiClient";
 
 
 const Sh1Title = styled.h1`
@@ -23,14 +22,11 @@ interface ArgProps {
 const MonsterReportControllerBlock = (
     {setBattleReport, setIsNowLoadingBattleReport}: ArgProps
 ) => {
-    // 送信パラメータ系
     const [from, setFrom] = useState("");
     const [to, setTo] = useState("");
-     // 送信パラメータ系
     const [battleScale, setBattleScale] = useState("0");
-
     const [disable, setDisable] = useState(false);
-    const goToServer = useServerWithQuery();
+
     /**
      * 戦闘規模の選択
      */
@@ -42,13 +38,14 @@ const MonsterReportControllerBlock = (
      */
     const fetchBattleReportHandler = useCallback(async () => {
         setIsNowLoadingBattleReport(true);
-        const battleReport: BattleReportDTO[]
-            = await goToServer(
-                  `${URLS.BATTLE_REPORTS}?battleScale=${battleScale}
-                                        &from=${from}
-                                        &to=${to}`
-            );
-        setBattleReport(battleReport);
+
+        const formData = new FormData();
+        formData.append("battleScale", battleScale);
+        formData.append("from", from);
+        formData.append("to", to);
+        const battleReport = await api.POST<BattleReportDTO[]>(URLS.BATTLE_REPORTS, formData);
+
+        setBattleReport(battleReport!);
         setIsNowLoadingBattleReport(false);
     }, [battleScale, from, to]);
 

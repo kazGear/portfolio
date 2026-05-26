@@ -1,7 +1,6 @@
 import styled from "styled-components";
 import { BattleResults, MetaDataDTO, MonsterDTO } from "../types/MonsterBattle";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useServerWithQuery, useServerWithJson } from "../hooks/useHooksOfCommon";
 import { KEYS, URLS } from "../lib/Constants";
 import { useRegistResult } from "../hooks/useHooksOfBattle";
 import { isEmpty } from "../lib/CommonLogic";
@@ -12,6 +11,7 @@ import MessageWindowBlock from "../components/battlePage/MessageWindowBlock";
 import CommandButtonBlock from "../components/battlePage/CommandButtonBlock";
 import MonsterWindowBlock from "../components/battlePage/MonsterWindowBlock";
 import { ShopDTO } from "../types/Shop";
+import { api } from "../lib/apiClient";
 
 const SdivOutSideFrame = styled.div`
     position: relative;
@@ -63,11 +63,11 @@ const BattlePage = () => {
     const [showBetDialog, setShowBetDialog] = useState(false);
     const [showBattleView, setShowBattleView] = useState(false);
 
-    const [loginId, setLoginId] = useState<string | null>("");
+    const [loginId, setLoginId] = useState<string>("");
     const [newShops, setNewShops] = useState<ShopDTO[]>([]);
 
     useEffect(() => {
-        setLoginId(localStorage.getItem(KEYS.USER_ID));
+        setLoginId(localStorage.getItem(KEYS.USER_ID)!);
     }, []);
 
     /**
@@ -80,12 +80,14 @@ const BattlePage = () => {
     /**
      * ゲーム開始、モンスター初期化
     */
-   const goToServer = useServerWithQuery();
    const gameStartHandler = useCallback(async (e: any) => {
-        const initMonsters: MonsterDTO[] = await goToServer(
-            `${URLS.INIT_MONSTERS}?selectMonstersCount=${selectMonstersCount.current}&loginId=${loginId}`);
-        setMonsters([...initMonsters]);
-        setMonsterCount(initMonsters.length);
+        const formData = new FormData();
+        formData.append("selectMonstersCount", selectMonstersCount.current.toString());
+        formData.append("loginId", loginId);
+        const initMonsters = await api.POST<MonsterDTO[]>(URLS.INIT_MONSTERS, formData);
+
+        setMonsters([...initMonsters!]);
+        setMonsterCount(initMonsters!.length);
         // 画面切り替え
         setShowStartDialog(false);
         setShowBetDialog(true);
@@ -94,24 +96,21 @@ const BattlePage = () => {
     /**
      *  全モンスターが行動。戦闘ログを取得
      */
-    const goToServerWithJson = useServerWithJson();
-    const battleHandler = async () => {
-        const moveResult: BattleResults = await goToServerWithJson(
-            monsters, URLS.BATTLE_NEXT_TURN
-       );
-       console.log(moveResult.Monsters); // tmp //////////////////////////
-       setMonsters([...moveResult.Monsters]); console.log(moveResult.Monsters);
-       setBattleLog([...moveResult.BattleLog]);
-       setBattleStarted(true);
-       setMonsterCount([...moveResult.Monsters].length);
-   };
+    const battleHandler = useCallback( async () => {
+        const moveResult = await api.POST<BattleResults>(URLS.BATTLE_NEXT_TURN, monsters);
 
-    const insertResult = useServerWithJson();
+        console.log(moveResult!.Monsters); // tmp
+        setMonsters([...moveResult!.Monsters]);
+        setBattleLog([...moveResult!.BattleLog]);
+        setBattleStarted(true);
+        setMonsterCount([...moveResult!.Monsters].length);
+    }, [monsters]);
+
     const insertBattleResult = useRegistResult();
     /**
      *  各モンスターのターン送り。戦闘ログを元に描画、表現を行う
      */
-    const nextTurnHandler = async () => {
+    const nextTurnHandler = useCallback( async () => {
         const [shortLog, index] = createShortLog([...battleLog]); // モンスター１体分のログ
         setShortLog([...shortLog]);
 
@@ -123,20 +122,21 @@ const BattlePage = () => {
         // モンスターの戦績を記録
         const lastLog: MetaDataDTO | undefined = shortLog.pop();
         insertBattleResult({
-            monsters, lastLog, setResultLog, setShowResultDialog, insertResult
+            monsters, lastLog, setResultLog, setShowResultDialog
         });
         // ユーザの成績を記録
         if (!isEmpty(lastLog) && !isEmpty(lastLog!.WinnerMonsterId)) {
-            const newShops: ShopDTO[] = await goToServer(
-                `${URLS.RECORD_USER_RESULT}?betMonsterId=${betMonster?.MonsterId}
-                                            &betGil=${betGil}
-                                            &betRate=${betMonster!.BetRate}
-                                            &winningMonsterId=${lastLog?.WinnerMonsterId}
-                                            &loginId=${loginId}`
-            );
-            setNewShops(newShops);
+            const formData = new FormData();
+            formData.append("betMonsterId", betMonster!.MonsterId);
+            formData.append("betGil", betGil.toString());
+            formData.append("betRate", betMonster!.BetRate.toString());
+            formData.append("winningMonsterId", lastLog?.WinnerMonsterId!);
+            formData.append("loginId", loginId);
+
+            const newShops = await api.POST<ShopDTO[]>(URLS.RECORD_USER_RESULT, formData);
+            setNewShops(newShops!);
         }
-    }
+    }, [monsters, battleLog, monsterCount]);
 
     return (
         <>

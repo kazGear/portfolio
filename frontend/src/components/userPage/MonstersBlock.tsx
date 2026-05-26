@@ -2,11 +2,10 @@ import styled from "styled-components";
 import Strong from "../common/Strong";
 import monsterImages from "../../lib/MonsterImages";
 import { MonsterDTO } from "../../types/MonsterBattle";
-import { useLayoutEffect, useState } from "react";
-import { useServerWithQuery } from "../../hooks/useHooksOfCommon";
+import { useEffect, useState } from "react";
 import { URLS } from "../../lib/Constants";
-import BorderTd from "../common/BorderTd";
 import NowLoading from "../common/NowLoading";
+import { api } from "../../lib/apiClient";
 
 const SdivMonsters = styled.div`
     height: 100%;
@@ -54,13 +53,13 @@ const MonstersBlock = ({monsters, loginId}: ArgProps) => {
     /**
      * 使用権開放済モンスターの取得
      */
-    const goToServer = useServerWithQuery();
-    useLayoutEffect(() => {
+    useEffect(() => {
         const selectMonsterCount = async () => {
-            const monsterCount: string = await goToServer(URLS.GET_MONSTER_COUNT + `?loginId=${loginId}`);
+            const monsterCount = await api.POST<string>(URLS.GET_MONSTER_COUNT, loginId);
             setGetMonsterCount(monsterCount);
         }
         selectMonsterCount();
+
         setIsNowLoading(false);
     }, []);
 

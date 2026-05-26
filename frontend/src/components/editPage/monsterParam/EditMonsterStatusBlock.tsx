@@ -1,5 +1,4 @@
-import { useCallback, useLayoutEffect, useState } from "react";
-import { useServerWithJson, useServerWithQuery } from "../../../hooks/useHooksOfCommon";
+import { useCallback, useEffect, useState } from "react";
 import { KEYS, URLS } from "../../../lib/Constants";
 import MonsterTableHeader from "./MonsterTableHeader";
 import MonsterTableBody from "./MonsterTableBody";
@@ -7,6 +6,7 @@ import styled from "styled-components";
 import { EditMonsterDTO } from "../../../types/Edit";
 import EditStatusFinishedDialog from "./EditStatusFinishedDialog";
 import HeaderOfBody from "../../common/HeaderOfBody";
+import { api } from "../../../lib/apiClient";
 
 const Stable = styled.table`
     margin: auto;
@@ -20,31 +20,28 @@ interface ArgProps {
 
 const MonsterStatusEditBlock = ({editMonsters, setEditMonsters}: ArgProps) => {
     const [showDialog, setShowDialog] = useState(false);
-    const [isNowLoading, setIsLowLoading] = useState(true);
+    const [isNowLoading, setIsNowLoading] = useState(true);
 
     /**
      * 編集用モンスター情報
      */
-    const goToServer = useServerWithQuery();
-    useLayoutEffect(() => {
+    useEffect(() => {
         const fetchEditMonsters = async () => {
             const loginId: string | null = localStorage.getItem(KEYS.USER_ID);
-            const monsters: EditMonsterDTO[] = await goToServer(
-                URLS.FETCH_EDIT_MONSTERS + `?loginId=${loginId}`
-            );
-            setEditMonsters([...monsters]);
-            setIsLowLoading(false);
+
+            const monsters = await api.POST<EditMonsterDTO[]>(URLS.FETCH_EDIT_MONSTERS, loginId);
+
+            setEditMonsters([...monsters!]);
+            setIsNowLoading(false);
         }
         fetchEditMonsters();
     }, []);
     /**
      * 更新実行
      */
-    const goToServerWithJson = useServerWithJson();
-    const updateStatusHandler = useCallback(() => {
-        goToServerWithJson(
-            editMonsters, URLS.UPDATE_MONSTER_STATUS
-        );
+    const updateStatusHandler = useCallback( async () => {
+        await api.PUT(URLS.UPDATE_MONSTER_STATUS, editMonsters);
+
         setEditMonsters([...editMonsters]);
         setShowDialog(true);
     }, [editMonsters]);

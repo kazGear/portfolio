@@ -20,7 +20,7 @@ namespace KazApi.Controller
         /// <summary>
         /// 初期処理
         /// </summary>
-        [HttpPost("api/battleReport/init")]
+        [HttpGet("api/battleReport/init")]
         public ActionResult<string> Init()
         {
             try
@@ -38,10 +38,9 @@ namespace KazApi.Controller
         /// モンスターのレポートを取得
         /// </summary>
         [HttpPost("api/battleReport/monsterReport")]
-        public ActionResult<string> SelectMonsterReport(
-            [FromQuery] int monsterTypeId,
-            [FromQuery] int sortType,
-            [FromQuery] bool isAscOrder)
+        public ActionResult<string> SelectMonsterReport([FromForm] int monsterTypeId,
+                                                        [FromForm] int sortType,
+                                                        [FromForm] bool isAscOrder)
         {
             try
             {
@@ -70,10 +69,9 @@ namespace KazApi.Controller
         /// 戦闘のレポートを取得
         /// </summary>
         [HttpPost("api/battleReport/battleReport")]
-        public ActionResult<string> SelectBattleReport(
-            [FromQuery] int battleScale,
-            [FromQuery] string? from,
-            [FromQuery] string? to)
+        public ActionResult<string> SelectBattleReport([FromForm] int battleScale,
+                                                       [FromForm] string? from,
+                                                       [FromForm] string? to)
         {
             try
             {

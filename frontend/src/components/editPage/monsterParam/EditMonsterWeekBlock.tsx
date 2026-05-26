@@ -1,10 +1,10 @@
-import { useLayoutEffect } from "react";
-import { useServerWithQuery } from "../../../hooks/useHooksOfCommon";
+import { useEffect } from "react";
 import { CodeDTO } from "../../../types/Common";
 import { EditMonsterDTO } from "../../../types/Edit";
 import BorderTd from "../../common/BorderTd";
 import Select from "../../common/Select";
 import { URLS } from "../../../lib/Constants";
+import { api } from "../../../lib/apiClient";
 
 interface ArgProps {
     weekDropDown: CodeDTO[];
@@ -18,13 +18,10 @@ const EditMonsterWeekBlock = (
     /**
      * 弱点ドロップダウン
      */
-    const goToServer = useServerWithQuery();
-    useLayoutEffect(() => {
+    useEffect(() => {
         const fetchWeekDropDown = async () => {
-            const dropDown: CodeDTO[] = await goToServer(
-                URLS.FETCH_ELEMENT_CODE
-            );
-            setWeekDropDown(dropDown);
+            const dropDown = await api.GET<CodeDTO[]>(URLS.FETCH_ELEMENT_CODE);
+            setWeekDropDown(dropDown!);
         }
         fetchWeekDropDown();
     }, []);
@@ -35,7 +32,7 @@ const EditMonsterWeekBlock = (
             <BorderTd>
                 <Select styleObj={{width: "50px"}}
                         onChange={(e: React.ChangeEvent<HTMLSelectElement> | undefined) => {
-                            monster.AfterWeek = parseInt(e!.target.value);
+                            monster.AfterWeek = Number.parseInt(e!.target.value);
                             monster.IsChanged = true;
                         }}>
                     <option value="0"></option>

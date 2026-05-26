@@ -92,8 +92,7 @@ namespace KazApi.Repository.sql
             }
             return result;
         }
-        public static string IsAscOrder(bool isAscOrder)
-            => isAscOrder ? "ASC" : "DESC";
+        public static string IsAscOrder(bool isAscOrder) => isAscOrder ? "ASC" : "DESC";
 
         public static string SelectBattleReport(int battleScale, DateTime? from, DateTime? to)
         {

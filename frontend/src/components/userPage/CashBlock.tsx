@@ -3,8 +3,7 @@ import { UserDTO } from "../../types/UserManage";
 import Button from "../common/Button";
 import Strong from "../common/Strong";
 import { KEYS, URLS } from "../../lib/Constants";
-import { useServerWithQuery } from "../../hooks/useHooksOfCommon";
-import { useCallback, useLayoutEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { api } from "../../lib/apiClient";
 
 const SdivCashFrame = styled.div`
@@ -28,7 +27,7 @@ const CashBlock = ({user}: ArgProps) => {
     /**
      * 値更新
      */
-    useLayoutEffect(() => {
+    useEffect(() => {
         setCash(user?.Cash ?? null);
         setBankruptcyCnt(user?.BankruptcyCnt ?? null);
     }, [user]);

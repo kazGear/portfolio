@@ -1,7 +1,6 @@
 import styled from "styled-components";
 import { UserDTO } from "../types/UserManage";
 import { KEYS, URLS } from "../lib/Constants";
-import { useServerWithQuery } from "../hooks/useHooksOfCommon";
 import { MonsterDTO } from "../types/MonsterBattle";
 import CashBlock from "../components/userPage/CashBlock";
 import UserIdsBlock from "../components/userPage/UserIdsBlock";
@@ -12,6 +11,7 @@ import MonstersBlock from "../components/userPage/MonstersBlock";
 import React, { useLayoutEffect, useState } from "react";
 import OutSideFrame from "../components/common/OutSideFrame";
 import ImgUpload from "../components/common/ImgUpload";
+import { api } from "../lib/apiClient";
 
 const SdivPageFrame = styled.div`
     display: flex;
@@ -52,18 +52,17 @@ const winAndLoseStyle: React.CSSProperties = {
 
 const UserPage = () => {
     const [user, setUser] = useState<UserDTO | null>(null);
-    const [monsters, setMonsters] = useState<MonsterDTO[]>([]);
+    const [monsters, setMonsters] = useState<MonsterDTO[] | null>([]);
 
     const loginId = localStorage.getItem(KEYS.USER_ID);
 
     /**
      * ユーザ情報取得
      */
-    const select = useServerWithQuery();
     useLayoutEffect(() => {
         const selectUser = async () => {
-            const loginUser: UserDTO | null = await select(`${URLS.USER_INFO}?loginId=${loginId}`);
-            const userMonsters: MonsterDTO[] = await select(`${URLS.MONSTERS_INFO}?loginId=${loginId}`)
+            const loginUser = await api.POST<UserDTO>(URLS.USER_INFO, loginId);
+            const userMonsters = await api.POST<MonsterDTO[]>(URLS.MONSTERS_INFO, loginId);
             setUser(loginUser);
             setMonsters(userMonsters);
         }

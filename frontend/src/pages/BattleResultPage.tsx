@@ -27,7 +27,7 @@ const BattleResultPage = () => {
     const [battleReport, setBattleReport] = useState<BattleReportDTO[]>([]);
     const [isNowLoadingMonsterReport, setIsNowLoadingMonsterReport] = useState(false);
     const [isNowLoadingBattleReport, setIsNowLoadingBattleReport] = useState(false);
-    const [sortType, setSortType] = useState("0");
+    const [sortType, setSortType] = useState("1");
 
     return (
         <SdivOutsideFrame>

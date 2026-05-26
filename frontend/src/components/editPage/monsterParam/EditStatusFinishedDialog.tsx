@@ -1,4 +1,3 @@
-import { useServerWithQuery } from "../../../hooks/useHooksOfCommon";
 import { useRefreshMonsterStatus } from "../../../hooks/useHooksOfEdit";
 import { COLORS } from "../../../lib/Constants";
 import { EditMonsterDTO } from "../../../types/Edit";
@@ -17,7 +16,6 @@ const EditStatusFinishedDialog = ({
     /**
      * 更新後のステータスを反映
      */
-    const goToServer = useServerWithQuery()
     const refreshMonsterStatus = useRefreshMonsterStatus();
 
     return (
@@ -28,7 +26,7 @@ const EditStatusFinishedDialog = ({
             <div style={{textAlign: "end"}}>
                 <Button text="閉じる"
                         onClick={() => {
-                            refreshMonsterStatus(goToServer, setEditMonsters);
+                            refreshMonsterStatus(setEditMonsters);
                             setShowDialog(false);
                         }}
                         />

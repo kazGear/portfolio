@@ -1,11 +1,10 @@
-import { useCallback, useLayoutEffect, useState } from "react";
-import { useServerWithJson, useServerWithQuery } from "../../../hooks/useHooksOfCommon";
+import { useCallback, useEffect, useState } from "react";
 import { KEYS, URLS } from "../../../lib/Constants";
 import { EditSkillsDTO } from "../../../types/Edit";
 import EditSkillBlock from "./EditSkillBlock";
 import HeaderOfBody from "../../common/HeaderOfBody";
-import SkillUpdateDialog from "./SkillUpdateDialog";
-import { isNotEmittedStatement } from "typescript";
+import SkillUpdateDialog from "./SkillUpdateDialog"
+import { api } from "../../../lib/apiClient";
 
 interface ArgProps {
     editMonsterSkills: EditSkillsDTO[];
@@ -18,13 +17,12 @@ const EditMonsterSkillsBlock = ({editMonsterSkills, setEditMonsterSkills}: ArgPr
     /**
      * 編集賞モンスタースキル
      */
-    const goToServerWithQuery = useServerWithQuery();
-    useLayoutEffect(() => {
+    useEffect(() => {
         const fetchEditSkills = async () => {
-            const monsterSkills: EditSkillsDTO[] = await goToServerWithQuery(
-                URLS.FETCH_EDIT_SKILLS + `?loginId=${localStorage.getItem(KEYS.USER_ID)}`
+            const monsterSkills = await api.POST<EditSkillsDTO[]>(
+                URLS.FETCH_EDIT_SKILLS, localStorage.getItem(KEYS.USER_ID)
             );
-            setEditMonsterSkills(monsterSkills);
+            setEditMonsterSkills(monsterSkills!);
             setIsNowLoading(false);
         }
         fetchEditSkills();
@@ -32,11 +30,9 @@ const EditMonsterSkillsBlock = ({editMonsterSkills, setEditMonsterSkills}: ArgPr
     /**
      * スキル更新
      */
-    const goToServerWithJson = useServerWithJson();
+
     const updateSkillsHandler = useCallback(async () => {
-         await goToServerWithJson(
-            editMonsterSkills, URLS.CHANGE_MONSTER_SKILLS
-        );
+         await api.PUT(URLS.CHANGE_MONSTER_SKILLS, editMonsterSkills);
     }, [editMonsterSkills]);
 
     return (

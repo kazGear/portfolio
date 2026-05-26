@@ -4,9 +4,8 @@ import Select from "../common/Select";
 import Button from "../common/Button";
 import { useCallback, useState } from "react";
 import { MonsterReportDTO } from "../../types/BattleReport";
-import { useServerWithQuery } from "../../hooks/useHooksOfCommon";
 import MonsterTypesListBlock from "./MonsterTypesListBlock";
-import OutSideFrame from "../common/OutSideFrame";
+import { api } from "../../lib/apiClient";
 
 const SdivOutSideFrame = styled.div`
 
@@ -29,8 +28,6 @@ const BattleReportControllerBlock = (
     const [monsterTypeId, setMonsterTypeId] = useState("0");
     const [isAscOrder, setIsAscOrder] = useState(true);
 
-    const goToServer = useServerWithQuery();
-
     /**
      * ソート制御
      */
@@ -46,13 +43,14 @@ const BattleReportControllerBlock = (
      */
     const fetchMonsterReportHandler = useCallback(async () => {
         setIsNowLoadingMonsterReport(true);
-        const monsterReport: MonsterReportDTO[]
-            = await goToServer(
-                URLS.MONSTER_REPORTS + `?monsterTypeId=${monsterTypeId}
-                                       &sortType=${sortType}
-                                       &isAscOrder=${isAscOrder}`
-            );
-        setMonsterReport(monsterReport);
+
+        const formData = new FormData();
+        formData.append("monsterTypeId", monsterTypeId);
+        formData.append("sortType", sortType);
+        formData.append("isAscOrder", `${isAscOrder}`);
+        const monsterReport = await api.POST<MonsterReportDTO[]>(URLS.MONSTER_REPORTS, formData);
+
+        setMonsterReport(monsterReport!);
         setIsNowLoadingMonsterReport(false);
     }, [monsterTypeId, sortType, isAscOrder]);
 

@@ -1,11 +1,11 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Button from "../common/Button";
-import { useServerWithQuery } from "../../hooks/useHooksOfCommon";
 import { COLORS, KEYS, URLS } from "../../lib/Constants";
 import { UserDTO } from "../../types/UserManage";
 import { useCreateUsedList } from "../../hooks/useHooksOfUser";
 import InputUserContents from "../userRegist/InputUserBlock";
 import styled from "styled-components";
+import { api } from "../../lib/apiClient";
 
 const SbuttonFrame = styled.div`
     height: 20%;
@@ -20,7 +20,7 @@ interface ArgProps {
 
 const UserRegistBlock = ({setShowRegistForm}: ArgProps) => {
     // ユーザ関連情報
-    const [users, setUserList] = useState<UserDTO[] | null>(null);
+    const [users, setUsers] = useState<UserDTO[] | null>(null);
     const [usedLoginIdList, setUsedLoginIdList] = useState<string[] | null>(null);
     const [usedDispNameList, setUsedDispNameList] = useState<string[] | null>(null);
     const [usedDispShortNameList, setUsedDispShortNameList] = useState<string[] | null>(null);
@@ -32,8 +32,8 @@ const UserRegistBlock = ({setShowRegistForm}: ArgProps) => {
     // 入力値が使用可能か、既に登録済でないか
     const [usableLoginId, setUsableLoginId] = useState(true);
     const [usablePassword, setUsablePassword] = useState(false);
-    const [usableDispName, setCanUseDispName] = useState(true);
-    const [usableDispShortName, setCanUseDispShortName] = useState(true);
+    const [usableDispName, setUsableDispName] = useState(true);
+    const [usableDispShortName, setUsableDispShortName] = useState(true);
     // 入力欄参照
     const refLoginId = useRef<HTMLInputElement>(null!);
     const refPassword = useRef<HTMLInputElement>(null!);
@@ -46,11 +46,10 @@ const UserRegistBlock = ({setShowRegistForm}: ArgProps) => {
     /**
      * 既に登録されているログインID等と取得（検証に使用）
      */
-    const goToServer = useServerWithQuery();
-    useLayoutEffect(() => {
+    useEffect(() => {
         const fetchUsers = async () => {
-            const usersFromDb: UserDTO[] = await goToServer(`${URLS.REGIST_USER_INIT}`);
-            setUserList(usersFromDb);
+            const users = await api.GET<UserDTO[]>(URLS.REGIST_USER_INIT);
+            setUsers(users);
         };
         fetchUsers();
     }, []);
@@ -80,21 +79,26 @@ const UserRegistBlock = ({setShowRegistForm}: ArgProps) => {
     /**
      * 登録内容の送信
      */
-    const insertUser = useServerWithQuery();
-    const exeUserInsert = async () => {
-        try {
-            await insertUser(`${URLS.REGIST_USER}?LoginId=${inputLoginId}
-                                                &Password=${inputPassword}
-                                                &DispName=${inputDispName}
-                                                &DispShortName=${inputDispShortName}`);
-            localStorage.setItem(KEYS.USER_ID, inputLoginId);
-            setRegistResult("正常に登録されました。");
-            setCanRegist(true);
-        } catch (err) {
-            localStorage.removeItem(KEYS.USER_ID);
-            setRegistResult("登録に失敗しました。");
-        }
-    };
+    const exeUserInsert = useCallback(() => {
+        const insert = async () => {
+            try {
+                const formData = new FormData();
+                formData.append("loginId", inputLoginId);
+                formData.append("password", inputPassword);
+                formData.append("dispName", inputDispName);
+                formData.append("dispShortName", inputDispShortName);
+                await api.PUT(URLS.REGIST_USER, formData);
+
+                localStorage.setItem(KEYS.USER_ID, inputLoginId);
+                setRegistResult("正常に登録されました。");
+                setCanRegist(true);
+            } catch (err) {
+                localStorage.removeItem(KEYS.USER_ID);
+                setRegistResult("登録に失敗しました。");
+            }
+        };
+        insert();
+    }, [inputLoginId, inputPassword, inputDispName, inputDispShortName]);
     /**
      * ログインID用ハンドラ
      */
@@ -116,7 +120,7 @@ const UserRegistBlock = ({setShowRegistForm}: ArgProps) => {
      */
     const inputHandlerDispName = (e: React.ChangeEvent<HTMLInputElement>) => {
         const usable = usedDispNameList?.includes(e.target.value);
-        setCanUseDispName(!usable);
+        setUsableDispName(!usable);
         setInputDispName(e.target.value);
     };
     /**
@@ -124,7 +128,7 @@ const UserRegistBlock = ({setShowRegistForm}: ArgProps) => {
      */
     const inputHandlerDispShortName = (e: React.ChangeEvent<HTMLInputElement>) => {
         const usable = usedDispShortNameList?.includes(e.target.value);
-        setCanUseDispShortName(!usable);
+        setUsableDispShortName(!usable);
         setInputDispShortName(e.target.value);
     };
 

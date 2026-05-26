@@ -2,11 +2,11 @@ import styled from "styled-components";
 import Button from "./Button";
 import { useNavigate } from "react-router-dom";
 import { COLORS, KEYS, PREFIX, URLS, USER_ROLE } from "../../lib/Constants";
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { isEmpty } from "../../lib/CommonLogic";
-import { useServerWithQuery } from "../../hooks/useHooksOfCommon";
 import { useCheckLogin } from "../../hooks/useHooksOfIndex";
 import { UserDTO } from "../../types/UserManage";
+import { api } from "../../lib/apiClient";
 
 const Simg = styled.img`
     width: 40px;
@@ -60,19 +60,20 @@ const AppHeader = ({title}: ArgProps) => {
     const isRootPage2: boolean = currentUrl.endsWith("/IndexPage");
 
     // ユーザー情報
-    useLayoutEffect(() => {
+    useEffect(() => {
         const id: string | null = localStorage.getItem(KEYS.USER_ID);
         const role: string | null = localStorage.getItem(KEYS.USER_ROLE);
+
         setLoginId(id);
-        setIsAdmin(authorizedPerson.includes(parseInt(role!)));
+        setIsAdmin(authorizedPerson.includes(Number.parseInt(role!)));
     }, [loginId]);
 
     // 表示名取得
-    const goToServer = useServerWithQuery();
     useEffect(() => {
         const selectName = async () => {
-            const user: UserDTO | null = await goToServer(`${URLS.SELECT_LOGIN_USER}?loginId=${loginId}`);
+            const user = await api.POST<UserDTO>(URLS.SELECT_LOGIN_USER, loginId);
             setLoginUser(user);
+
             if (user) setUserImage(PREFIX.BASE64 + user.UserImage);
         }
         selectName();

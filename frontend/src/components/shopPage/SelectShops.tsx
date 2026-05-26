@@ -1,11 +1,11 @@
-import { useLayoutEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import OutSideFrame from "../common/OutSideFrame";
 import Select from "../common/Select";
 import { ShopDTO } from "../../types/Shop";
 import { KEYS, URLS } from "../../lib/Constants";
-import { useServerWithQuery } from "../../hooks/useHooksOfCommon";
 import { UserDTO } from "../../types/UserManage";
 import Accent from "../common/Accent";
+import { api } from "../../lib/apiClient";
 
 interface ArgProps {
     setSelectedShop: React.Dispatch<React.SetStateAction<string | undefined>>;
@@ -14,19 +14,16 @@ interface ArgProps {
 }
 
 const SelectShops = ({setSelectedShop, user, myCash}: ArgProps) => {
-    const [shopsOfSelectBox, setShopsOfSelectBox] = useState<ShopDTO[]>([]);
-        const goToServer = useServerWithQuery();
+    const [shopsOfSelectBox, setShopsOfSelectBox] = useState<ShopDTO[]>([])
 
     /**
      * 店舗の選択肢を取得
      */
-    useLayoutEffect(() => {
+    useEffect(() => {
         const selectShops = async () => {
             const loginId = localStorage.getItem(KEYS.USER_ID);
-            const shops: ShopDTO[] = await goToServer(
-                URLS.SHOP_INIT + `?loginId=${loginId}`
-            );
-            setShopsOfSelectBox(shops);
+            const shops = await api.POST<ShopDTO[]>(URLS.SHOP_INIT, loginId);
+            setShopsOfSelectBox(shops!);
         }
         selectShops();
     }, []);

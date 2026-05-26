@@ -1,11 +1,10 @@
-import { useLayoutEffect, useState } from "react";
-import { useServer } from "../../../hooks/useHooksOfCommon";
+import { useEffect, useState } from "react";
 import { URLS } from "../../../lib/Constants";
 import { AllSkillDTO, EditSkillsDTO } from "../../../types/Edit";
-
 import MonsterSkillBlock from "./MonsterSkillBlock";
 import MonsterStatusBlock from "./MonsterStatusBlock";
 import NowLoading from "../../common/NowLoading";
+import { api } from "../../../lib/apiClient";
 
 interface ArgProps {
     editMonsterSkills: EditSkillsDTO[];
@@ -17,11 +16,10 @@ const EditSkillBlock = ({editMonsterSkills, isNowLoading}: ArgProps) => {
     /**
      * スキルリストを取得
      */
-    const goToServer = useServer();
-    useLayoutEffect(() => {
+    useEffect(() => {
         const fetchAllSkills = async () => {
-            const allSkills: AllSkillDTO[] = await goToServer(URLS.FETCH_ALL_SKILLS);
-            setAllSkills(allSkills);
+            const allSkills = await api.GET<AllSkillDTO[]>(URLS.FETCH_ALL_SKILLS);
+            setAllSkills(allSkills!);
         }
         fetchAllSkills();
     }, []);

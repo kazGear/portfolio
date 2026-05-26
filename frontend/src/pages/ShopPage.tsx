@@ -1,12 +1,12 @@
 import styled from "styled-components";
 import { KEYS, URLS } from "../lib/Constants";
 import { useEffect, useState } from "react";
-import { useServerWithQuery } from "../hooks/useHooksOfCommon";
 import { ItemDTO } from "../types/Shop";
 import SelectShops from "../components/shopPage/SelectShops";
 import ShopItemTable from "../components/shopPage/ShopItemTable";
 import { UserDTO } from "../types/UserManage";
 import PurchaseDialog from "../components/shopPage/PurchaseDialog";
+import { api } from "../lib/apiClient";
 
 const SshopPageFrame = styled.div`
     display: flex;
@@ -37,19 +37,20 @@ const ShopPage = () => {
     /**
      * 店舗アイテム表示
      */
-    const select = useServerWithQuery();
     useEffect(() => {
         const fetchShopItems = async () => {
             const loginId: string | null = localStorage.getItem(KEYS.USER_ID);
 
-            const items: ItemDTO[] = await select(
-                URLS.SELECT_SHOP_ITEMS + `?loginId=${loginId}&shopId=${selectedShop}`);
-            const loginUser: UserDTO = await select(
-                URLS.USER_INFO + `?loginId=${loginId}`);
+            const formDataForItems = new FormData();
+            formDataForItems.append("loginId", `${loginId}`);
+            formDataForItems.append("selectedShop", `${selectedShop}`);
+            const items = await api.POST<ItemDTO[]>(URLS.SELECT_SHOP_ITEMS, formDataForItems);
 
-            setShopItems(items);
+            const loginUser = await api.POST<UserDTO>(URLS.USER_INFO, loginId);
+
+            setShopItems(items!);
             setUser(loginUser);
-            setMyCash(loginUser.Cash);
+            setMyCash(loginUser!.Cash);
         }
         fetchShopItems();
     }, [selectedShop]);

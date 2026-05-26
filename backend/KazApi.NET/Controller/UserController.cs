@@ -26,7 +26,7 @@ namespace KazApi.Controller
         /// <summary>
         /// 初期処理
         /// </summary>
-        [HttpPost("api/user/init")]
+        [HttpGet("api/user/init")]
         public ActionResult<string> Init()
         {
             // 検証用に登録済みユーザを取得
@@ -38,7 +38,7 @@ namespace KazApi.Controller
         /// ユーザ情報取得
         /// </summary>
         [HttpPost("api/user/userInfo")]
-        public ActionResult<string> SelectUserOne([FromQuery] string loginId)
+        public ActionResult<string> SelectUserOne([FromBody] string loginId)
         {
             UserDTO? user = _service.SelectUserOne(loginId);
             return JsonConvert.SerializeObject(user);
@@ -47,12 +47,11 @@ namespace KazApi.Controller
         /// <summary>
         /// ユーザー登録
         /// </summary>
-        [HttpPost("api/user/userRegist")]
-        public ActionResult UserRegist(
-            [FromQuery] string loginId,
-            [FromQuery] string password,
-            [FromQuery] string dispName,
-            [FromQuery] string dispShortName)
+        [HttpPut("api/user/userRegist")]
+        public ActionResult UserRegist([FromForm] string loginId,
+                                       [FromForm] string password,
+                                       [FromForm] string dispName,
+                                       [FromForm] string dispShortName)
         {
             using (TransactionScope transaction = new TransactionScope())
             {
@@ -93,7 +92,7 @@ namespace KazApi.Controller
         /// ログインユーザ情報を取得
         /// </summary>
         [HttpPost("api/user/loginUser")]
-        public ActionResult<string?> SelectUser([FromQuery] string? loginId)
+        public ActionResult<string?> SelectUser([FromBody] string? loginId)
         {
             var param = new { login_id = loginId };
             
@@ -128,7 +127,7 @@ namespace KazApi.Controller
         /// 使用可能なモンスター数を取得
         /// </summary>
         [HttpPost("api/user/getMonsterCount")]
-        public ActionResult<string> SelectMonsterCount([FromQuery] string loginId)
+        public ActionResult<string> SelectMonsterCount([FromBody] string loginId)
         {
             LittleDTO<int> result = _service.SelectMonsterCount(loginId);
             return JsonConvert.SerializeObject($"{result.Param1} / {result.Param2}");
@@ -140,11 +139,11 @@ namespace KazApi.Controller
         /// </summary>
         [HttpPost("api/user/recordUserResults")]
         public ActionResult<string> RecordUserResults(
-            [FromQuery] string betMonsterId,
-            [FromQuery] int betGil,
-            [FromQuery] decimal betRate,
-            [FromQuery] string winningMonsterId,
-            [FromQuery] string loginId)
+            [FromForm] string betMonsterId,
+            [FromForm] string betGil,
+            [FromForm] string betRate,
+            [FromForm] string winningMonsterId,
+            [FromForm] string loginId)
         {
             using (TransactionScope transaction = new TransactionScope())
             {
@@ -163,7 +162,7 @@ namespace KazApi.Controller
                     if (betMonsterId == winningMonsterId) hit = true;
 
                     // 各種登録
-                    _service.UpdateUserResults(hit, betGil, betRate, loginId);
+                    _service.UpdateUserResults(hit, int.Parse(betGil), decimal.Parse(betRate), loginId);
 
                     IEnumerable<ShopDTO> InsertUsableShop = _shopService.ExistsUsableShop(loginId);
                     if (InsertUsableShop.Count() > 0)

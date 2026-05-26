@@ -22,22 +22,6 @@ const SdivMessageArea = styled.div`
     height: 80%;
     z-index: 1000;
 `;
-const SimgL = styled.img`
-    width: 100px;
-    height: 100px;
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    z-index: 2000;
-`;
-const SimgR = styled.img`
-    width: 150px;
-    height: 170px;
-    position: absolute;
-    right: 0;
-    top: 0;
-    z-index: 2000;
-`;
 const SdivFilter = styled.div`
     width: 100%;
     height: 100%;
@@ -60,11 +44,9 @@ const DialogFrame = (
     return (
         <>
             <SdivDialogFrame style={{display: showDialog ? "block" : "none"}}>
-                {/* <SimgL src={imageL} alt="ツタ"></SimgL> */}
                 <SdivMessageArea>
                     {children}
                 </SdivMessageArea>
-                {/* <SimgR src={imageR} alt="ツタ"></SimgR> */}
             </SdivDialogFrame>
 
             <SdivFilter style={{display: showDialog ? "block" : "none"}}/>

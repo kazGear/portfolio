@@ -1,6 +1,6 @@
 import { KEYS } from "./Constants";
 
-interface fetchOptions {
+interface FetchOptions {
     method?: "GET" | "POST" | "PUT" | "DELETE";
     headers?: { [key: string]: string };
     body?: any;
@@ -9,10 +9,21 @@ interface fetchOptions {
 /** APIへのアクセス基盤 */
 export async function apiClient<T>(
     endpoint: string,
-    options: fetchOptions = {},
+    options: FetchOptions = {},
 ): Promise<T | null> {
-    const fetchOptions = structuredClone(options);
-    fetchOptions.headers ??= {};
+
+    // props破壊的変更の回避
+    let fetchOptions: FetchOptions = {};
+    if (options.body instanceof FormData) {
+        fetchOptions = {
+            method: options.method,
+            headers: structuredClone(options.headers),
+            body: options.body,
+        }
+    } else {
+        fetchOptions = structuredClone(options);
+    }
+    fetchOptions.headers ??= {}
 
     // オプション構築
     if (fetchOptions.body instanceof FormData) {
@@ -30,7 +41,7 @@ export async function apiClient<T>(
     // 認証トークンチェック
     const token = localStorage.getItem(KEYS.TOKEN);
     if (token && fetchOptions.headers !== undefined)
-        fetchOptions.headers!["Authorization"] = `${token}`;
+        fetchOptions.headers["Authorization"] = `${token}`;
 
     // apiアクセス
     const res = await fetch(endpoint, { ...fetchOptions, });
@@ -41,9 +52,8 @@ export async function apiClient<T>(
         try {
             const data = await res.json();
             if (data?.message) message += ` ${data.message}`;
-        } catch {
-            // JSON じゃない場合は無視
-        }
+        } catch { /* JSON じゃない場合は無視 */ }
+
         throw new Error(message);
     }
 

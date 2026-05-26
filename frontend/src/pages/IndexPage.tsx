@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { useLayoutEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { COLORS, KEYS, USER_ROLE } from "../lib/Constants";
 import { useCheckLogin } from "../hooks/useHooksOfIndex";
 import ToLoginPageBlock from "../components/indexPage/ToLoginPageBlock";
@@ -8,7 +8,6 @@ import ToBattlePageBlock from "../components/indexPage/ToBattlePageBlock";
 import ToBattleResultPageBlock from "../components/indexPage/ToBattleResultPageBlock";
 import ToShopPageBlock from "../components/indexPage/ToShopPageBlock";
 import ToEditPageBlock from "../components/indexPage/ToEditPageBlock";
-import { checkToken } from "../lib/CommonLogic";
 
 const SdivLinkFrame = styled.div`
     width: 90%;
@@ -37,10 +36,9 @@ const IndexPage = () => {
     /**
      * 設定メニューを使用できるか
      */
-    useLayoutEffect(() => {
+    useEffect(() => {
         const role = localStorage.getItem(KEYS.USER_ROLE);
-        setUsableSettings(authorizedPerson.includes(parseInt(role!)));
-        // checkToken();
+        setUsableSettings(authorizedPerson.includes(Number.parseInt(role!)));
     }, []);
 
     return (

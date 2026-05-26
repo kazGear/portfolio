@@ -21,7 +21,7 @@ namespace KazApi.Controller
         }
 
         [HttpPost("api/shop/itemInfo")]
-        public ActionResult<string> SelectItemInfo([FromQuery] string itemId)
+        public ActionResult<string> SelectItemInfo([FromForm] string itemId)
         {
             ItemDTO item = _service.SelectItemOne(itemId);
             return JsonConvert.SerializeObject(item);
@@ -31,7 +31,7 @@ namespace KazApi.Controller
         /// 初期処理
         /// </summary>
         [HttpPost("api/shop/init")]
-        public ActionResult<string> Init([FromQuery] string loginId)
+        public ActionResult<string> Init([FromBody] string loginId)
         {
             // ショップリストを取得
             IEnumerable<ShopDTO> shops = _service.SelectShops(loginId);
@@ -43,21 +43,19 @@ namespace KazApi.Controller
         /// 初期処理
         /// </summary>
         [HttpPost("api/shop/items")]
-        public ActionResult<string> SelectShopItem(
-            [FromQuery] string loginId,
-            [FromQuery] string? shopId)
+        public ActionResult<string> SelectShopItem([FromForm] string loginId,
+                                                   [FromForm] string? selectedShop)
         {
-            if (shopId == null) return JsonConvert.SerializeObject(new List<string>());
+            if (selectedShop == null) return JsonConvert.SerializeObject(new List<string>());
 
-            // ショップリストを取得
-            IEnumerable<ItemDTO> shops = _service.SelectShopItems(loginId, shopId);
+            // アイテムリストを取得
+            IEnumerable<ItemDTO> shops = _service.SelectShopItems(loginId, selectedShop);
             return JsonConvert.SerializeObject(shops);
         }
 
-        [HttpPost("api/shop/purchase")]
-        public ActionResult InsertMyItem(
-            [FromQuery] string loginId,
-            [FromQuery] string itemId)
+        [HttpPut("api/shop/purchase")]
+        public ActionResult InsertMyItem([FromForm] string loginId,
+                                         [FromForm] string itemId)
         {
             // クレンジング
             loginId = loginId.Trim();

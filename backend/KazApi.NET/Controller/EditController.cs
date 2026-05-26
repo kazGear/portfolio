@@ -20,7 +20,7 @@ namespace KazApi.Controller
         /// <summary>
         /// 初期処理
         /// </summary>
-        [HttpPost("api/edit/init")]
+        [HttpGet("api/edit/init")]
         public ActionResult<string> Init()
         {
             // ドロップダウンの選択肢を取得
@@ -29,7 +29,7 @@ namespace KazApi.Controller
         }
 
         [HttpPost("api/edit/fetchMonsters")]
-        public ActionResult<string> FetctEditMonsters([FromQuery] string loginId)
+        public ActionResult<string> FetctEditMonsters([FromBody] string loginId)
         {
             IEnumerable<EditMonsterDTO> monsters = _service.FetchEditMonsters(loginId);
             return JsonConvert.SerializeObject(monsters);
@@ -38,7 +38,7 @@ namespace KazApi.Controller
         /// <summary>
         /// モンスターのステータスを設定する
         /// </summary>
-        [HttpPost("api/edit/updateMonsterStatus")]
+        [HttpPut("api/edit/updateMonsterStatus")]
         public ActionResult UpdateMonsterStatus([FromBody] IEnumerable<EditMonsterDTO> monsters)
         {
             using (TransactionScope transaction = new TransactionScope())
@@ -72,7 +72,7 @@ namespace KazApi.Controller
         /// <summary>
         /// 全モンスターのステータスを初期化する
         /// </summary>
-        [HttpPost("api/edit/initAllMonsterStatus")]
+        [HttpPut("api/edit/initAllMonsterStatus")]
         public ActionResult InitAllMonsterStatus()
         {
             try
@@ -93,7 +93,7 @@ namespace KazApi.Controller
         /// <summary>
         /// 全モンスターのスキルを初期化する
         /// </summary>
-        [HttpGet("api/edit/initAllMonsterSkills")]
+        [HttpPut("api/edit/initAllMonsterSkills")]
         public ActionResult InitAllMonsterSkills()
         {
             try
@@ -111,12 +111,11 @@ namespace KazApi.Controller
             return Ok(200);
         }
 
-
         /// <summary>
         /// 編集用モンスターデータ（スキル付き）を取得
         /// </summary>
         [HttpPost("api/edit/fecthEditSkills")]
-        public ActionResult<string> FecthEditSkills([FromQuery] string loginId)
+        public ActionResult<string> FecthEditSkills([FromBody] string loginId)
         {
             try
             {
@@ -144,7 +143,7 @@ namespace KazApi.Controller
         /// <summary>
         /// モンスターのスキルを変更する
         /// </summary>
-        [HttpPost("api/edit/UpdateMonsterSkills")]
+        [HttpPut("api/edit/UpdateMonsterSkills")]
         public ActionResult UpdateMonsterSkills([FromBody] IEnumerable<EditSkillsDTO> skills)
         {
             try

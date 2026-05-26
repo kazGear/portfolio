@@ -30,7 +30,7 @@ namespace KazApi.Controller
         /// モンスター情報
         /// </summary>
         [HttpPost("api/battle/monstersInfo")]
-        public ActionResult<string> MonstersInfo(string loginId)
+        public ActionResult<string> MonstersInfo([FromBody]string loginId)
         {
             try
             {
@@ -47,7 +47,8 @@ namespace KazApi.Controller
         /// 初期処理
         /// </summary>
         [HttpPost("api/battle/init")]
-        public ActionResult<string> Init([FromQuery] int selectMonstersCount, [FromQuery] string loginId)
+        public ActionResult<string> Init([FromForm] string selectMonstersCount,
+                                         [FromForm] string loginId)
         {
             try
             {
@@ -62,7 +63,7 @@ namespace KazApi.Controller
 
                 // 参加モンスター（ランダム）
                 IEnumerable<MonsterDTO> battleMonsters =
-                    BattleSystem.MonsterSelector(monstersDTO, selectMonstersCount);
+                    BattleSystem.MonsterSelector(monstersDTO, int.Parse(selectMonstersCount));
 
                 // 賭けレート算出
                 BattleSystem.CalcBetRate(battleMonsters);
@@ -182,7 +183,7 @@ namespace KazApi.Controller
             DateTime endDate = DateTime.Now;
             TimeSpan endTime = new TimeSpan(endDate.Ticks);
 
-            return _service.InsertBattleResult(monsters, endDate, endTime);
+            return _service.InsertBattleResult(monsters!, endDate, endTime);
         }
     }
 }

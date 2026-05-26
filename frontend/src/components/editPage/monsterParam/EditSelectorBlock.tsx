@@ -1,9 +1,8 @@
-import { useLayoutEffect, useState } from "react";
-import { useServerWithQuery } from "../../../hooks/useHooksOfCommon";
-import OutSideFrame from "../../common/OutSideFrame";
+import { useEffect, useState } from "react";
 import Select from "../../common/Select";
 import { URLS } from "../../../lib/Constants";
 import { CodeDTO } from "../../../types/Common";
+import { api } from "../../../lib/apiClient";
 
 interface ArgProps {
     setSelectEditType: React.Dispatch<React.SetStateAction<number>>
@@ -15,11 +14,10 @@ const EditSelectorBlock = ({setSelectEditType}: ArgProps) => {
     /**
      * 設定種類
      */
-    const goToServer = useServerWithQuery();
-    useLayoutEffect(() => {
+    useEffect(() => {
         const fetchDropDown = async () => {
-            const dropDown: CodeDTO[] = await goToServer(URLS.EDIT_INIT);
-            setEditTypeDropDown(dropDown);
+            const dropDown = await api.GET<CodeDTO[]>(URLS.EDIT_INIT);
+            setEditTypeDropDown(dropDown!);
         }
         fetchDropDown();
     }, []);
@@ -28,7 +26,7 @@ const EditSelectorBlock = ({setSelectEditType}: ArgProps) => {
         <div>
             <Select title="設定種類"
                     onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-                        setSelectEditType(parseInt(e.target.value))
+                        setSelectEditType(Number.parseInt(e.target.value))
                     }}>
             {
                 editTypeDropDown.map((opt, index) => (

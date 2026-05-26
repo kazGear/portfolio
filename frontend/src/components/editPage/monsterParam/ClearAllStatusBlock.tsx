@@ -1,10 +1,10 @@
 import { useCallback, useState } from "react";
 import Button from "../../common/Button";
-import { useServerWithQuery } from "../../../hooks/useHooksOfCommon";
 import { URLS } from "../../../lib/Constants";
 import DialogFrame from "../../common/DialogFrame";
 import { useRefreshMonsterStatus } from "../../../hooks/useHooksOfEdit";
 import { EditMonsterDTO } from "../../../types/Edit";
+import { api } from "../../../lib/apiClient";
 
 interface ArgProps {
     setEditMonsters: React.Dispatch<React.SetStateAction<EditMonsterDTO[]>>;
@@ -17,9 +17,8 @@ const ClearAllStatusBlock = ({setEditMonsters, selectEditType}: ArgProps) => {
     /**
      * 全モンスターステータス初期化
      */
-    const goToServer = useServerWithQuery();
     const clearAllMonstersStatus = useCallback( async () => {
-        await goToServer(URLS.INIT_ALL_MONSTERS_STATUS);
+        await api.PUT(URLS.INIT_ALL_MONSTERS_STATUS);
     }, [])
     /**
      * 更新後のステータスを反映
@@ -42,7 +41,7 @@ const ClearAllStatusBlock = ({setEditMonsters, selectEditType}: ArgProps) => {
                     <Button text="いいえ" onClick={() => setShowInitConfirm(false)}/>
                     <Button text="はい" onClick={() => {
                         clearAllMonstersStatus();
-                        refreshMonsterStatus(goToServer, setEditMonsters);
+                        refreshMonsterStatus(setEditMonsters);
                         setShowInitComplete(true);
                         globalThis.location.href = "/EditPage"
                     }

@@ -1,9 +1,9 @@
 import { useCallback, useState } from "react";
-import { useServer, useServerWithQuery } from "../../../hooks/useHooksOfCommon";
 import Button from "../../common/Button";
-import { KEYS, URLS } from "../../../lib/Constants";
+import { URLS } from "../../../lib/Constants";
 import DialogFrame from "../../common/DialogFrame";
 import { EditSkillsDTO } from "../../../types/Edit";
+import { api } from "../../../lib/apiClient";
 
 interface ArgProps {
     selectEditType: number;
@@ -17,9 +17,8 @@ const ClearAllSkillsBlock = ({selectEditType, setEditMonsterSkills}: ArgProps) =
     /**
      * モンスタースキル初期化
      */
-    const goToServer = useServer();
     const initMonsterSkills = useCallback( async () => {
-        await goToServer(URLS.INIT_ALL_MONSTERS_SKILLS);
+        await api.PUT(URLS.INIT_ALL_MONSTERS_SKILLS);
     }, []);
 
     return (

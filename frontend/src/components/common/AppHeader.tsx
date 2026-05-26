@@ -77,7 +77,7 @@ const AppHeader = ({title}: ArgProps) => {
             if (user) setUserImage(PREFIX.BASE64 + user.UserImage);
         }
         selectName();
-    }, [loginId, loginUser]);
+    }, [loginId]);
 
     return (
         <Sheader>

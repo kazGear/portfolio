@@ -7,6 +7,7 @@ import ShopItemTable from "../components/shopPage/ShopItemTable";
 import { UserDTO } from "../types/UserManage";
 import PurchaseDialog from "../components/shopPage/PurchaseDialog";
 import { api } from "../lib/apiClient";
+import { useCheckToken } from "../hooks/useHooksOfCommon";
 
 const SshopPageFrame = styled.div`
     display: flex;
@@ -33,6 +34,8 @@ const ShopPage = () => {
     const [myCash, setMyCash] = useState<number | null>(null);
 
     const [showPurchaseDialog, setShowPurchaseDialog] = useState(false);
+
+    useCheckToken();
 
     /**
      * 店舗アイテム表示

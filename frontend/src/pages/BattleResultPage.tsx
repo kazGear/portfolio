@@ -6,6 +6,7 @@ import BattleReportControllerBlock from "../components/battleResultPage/BattleRe
 import BattleReportBlock from "../components/battleResultPage/BattleReportBlock";
 import MonsterReportControllerBlock from "../components/battleResultPage/MonsterReportControllerBlock";
 import OutSideFrame from "../components/common/OutSideFrame";
+import { useCheckToken } from "../hooks/useHooksOfCommon";
 
 const SdivOutsideFrame = styled.div`
     height: 100%;
@@ -28,6 +29,8 @@ const BattleResultPage = () => {
     const [isNowLoadingMonsterReport, setIsNowLoadingMonsterReport] = useState(false);
     const [isNowLoadingBattleReport, setIsNowLoadingBattleReport] = useState(false);
     const [sortType, setSortType] = useState("1");
+
+    useCheckToken();
 
     return (
         <SdivOutsideFrame>

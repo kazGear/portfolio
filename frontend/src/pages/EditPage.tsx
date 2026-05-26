@@ -7,6 +7,7 @@ import { EditMonsterDTO, EditSkillsDTO } from "../types/Edit";
 import ClearAllSkillsBlock from "../components/editPage/monsterSkills/ClearAllSkillsBlock";
 import ClearAllStatusBlock from "../components/editPage/monsterParam/ClearAllStatusBlock";
 import EditMonsterSkillsBlock from "../components/editPage/monsterSkills/EditMonsterSkillsBlock";
+import { useCheckToken } from "../hooks/useHooksOfCommon";
 
 const SdivEditFrame = styled.div`
     width: 100%;
@@ -27,6 +28,8 @@ const EditPage = () => {
     const [editMonsters, setEditMonsters] = useState<EditMonsterDTO[]>([]);
     const [editMonsterSkills, setEditMonsterSkills] = useState<EditSkillsDTO[]>([]);
     const [selectEditType, setSelectEditType] = useState(1);
+
+    useCheckToken();
 
     return (
         <SdivEditFrame>

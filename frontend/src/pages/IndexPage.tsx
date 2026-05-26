@@ -8,6 +8,7 @@ import ToBattlePageBlock from "../components/indexPage/ToBattlePageBlock";
 import ToBattleResultPageBlock from "../components/indexPage/ToBattleResultPageBlock";
 import ToShopPageBlock from "../components/indexPage/ToShopPageBlock";
 import ToEditPageBlock from "../components/indexPage/ToEditPageBlock";
+import { useCheckToken } from "../hooks/useHooksOfCommon";
 
 const SdivLinkFrame = styled.div`
     width: 90%;
@@ -40,6 +41,8 @@ const IndexPage = () => {
         const role = localStorage.getItem(KEYS.USER_ROLE);
         setUsableSettings(authorizedPerson.includes(Number.parseInt(role!)));
     }, []);
+
+    useCheckToken();
 
     return (
         <SdivLinkFrame>

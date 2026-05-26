@@ -12,6 +12,7 @@ import CommandButtonBlock from "../components/battlePage/CommandButtonBlock";
 import MonsterWindowBlock from "../components/battlePage/MonsterWindowBlock";
 import { ShopDTO } from "../types/Shop";
 import { api } from "../lib/apiClient";
+import { useCheckToken } from "../hooks/useHooksOfCommon";
 
 const SdivOutSideFrame = styled.div`
     position: relative;
@@ -69,6 +70,8 @@ const BattlePage = () => {
     useEffect(() => {
         setLoginId(localStorage.getItem(KEYS.USER_ID)!);
     }, []);
+
+    useCheckToken();
 
     /**
      * 戦闘モンスター数選択

@@ -7,6 +7,7 @@ import UserRegistBlock from "../components/loginPage/UserRegistBlock";
 import OutSideFrame from "../components/common/OutSideFrame";
 import InputBlock from "../components/loginPage/InputBlock";
 import ButtonBlock from "../components/loginPage/ButtonBlock";
+import { useCheckToken } from "../hooks/useHooksOfCommon";
 
 const LoginContainer = styled.div`
     text-align: center;
@@ -45,6 +46,9 @@ const LoginPage = () => {
         const token = localStorage.getItem(KEYS.TOKEN);
         if (token) setToken(token);
     }, []);
+
+    useCheckToken();
+
     /**
      * ログイン処理
      */

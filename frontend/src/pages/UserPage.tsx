@@ -8,10 +8,11 @@ import UserIconBlock from "../components/userPage/UserIconBlock";
 import WinsBlock from "../components/userPage/WinsBlock";
 import LossesBlock from "../components/userPage/LossesBlock";
 import MonstersBlock from "../components/userPage/MonstersBlock";
-import React, { useLayoutEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import OutSideFrame from "../components/common/OutSideFrame";
 import ImgUpload from "../components/common/ImgUpload";
 import { api } from "../lib/apiClient";
+import { useCheckToken } from "../hooks/useHooksOfCommon";
 
 const SdivPageFrame = styled.div`
     display: flex;
@@ -56,10 +57,12 @@ const UserPage = () => {
 
     const loginId = localStorage.getItem(KEYS.USER_ID);
 
+    useCheckToken();
+
     /**
      * ユーザ情報取得
      */
-    useLayoutEffect(() => {
+    useEffect(() => {
         const selectUser = async () => {
             const loginUser = await api.POST<UserDTO>(URLS.USER_INFO, loginId);
             const userMonsters = await api.POST<MonsterDTO[]>(URLS.MONSTERS_INFO, loginId);

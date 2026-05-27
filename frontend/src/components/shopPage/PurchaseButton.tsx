@@ -28,10 +28,10 @@ const PurchaseButton = ({
             const update = async (itemRow: ItemDTO) => {
                 const loginId: string | null = localStorage.getItem(KEYS.USER_ID);
 
-                const formData = new FormData();
-                formData.append("loginId", `${loginId}`);
-                formData.append("itemId", itemRow.ItemId);
-                await api.PUT(URLS.PURCHASE_ITEM, formData);
+                await api.PUT(URLS.PURCHASE_ITEM, {
+                    loginId: `${loginId}`,
+                    itemId:  itemRow.ItemId,
+                });
 
                 const user = await api.POST<UserDTO>(URLS.USER_INFO, loginId);
 
@@ -40,7 +40,7 @@ const PurchaseButton = ({
                 setShowPurchaseDialog(true);
             }
             update(itemRow);
-        }, []);
+        }, [item]);
 
     return (
         <BorderTd>

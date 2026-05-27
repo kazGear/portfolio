@@ -82,12 +82,12 @@ const UserRegistBlock = ({setShowRegistForm}: ArgProps) => {
     const exeUserInsert = useCallback(() => {
         const insert = async () => {
             try {
-                const formData = new FormData();
-                formData.append("loginId", inputLoginId);
-                formData.append("password", inputPassword);
-                formData.append("dispName", inputDispName);
-                formData.append("dispShortName", inputDispShortName);
-                await api.PUT(URLS.REGIST_USER, formData);
+                await api.PUT(URLS.REGIST_USER, {
+                    loginId:       inputLoginId,
+                    password:      inputPassword,
+                    dispName:      inputDispName,
+                    dispShortName: inputDispShortName,
+                });
 
                 localStorage.setItem(KEYS.USER_ID, inputLoginId);
                 setRegistResult("正常に登録されました。");

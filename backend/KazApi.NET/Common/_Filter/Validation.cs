@@ -64,6 +64,14 @@ namespace KazApi.Common._Filter
             return count;
         }
 
+        public static string DispName(string name)
+        {
+            if (name.Length <= 0)
+                throw new Exception($"表示名は１文字以上で設定してください。");
+
+            return name;
+        }
+
         public static int ElementType(int week)
         {
             if (week == -1) return week; // tmp

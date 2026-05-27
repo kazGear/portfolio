@@ -39,11 +39,11 @@ const MonsterReportControllerBlock = (
     const fetchBattleReportHandler = useCallback(async () => {
         setIsNowLoadingBattleReport(true);
 
-        const formData = new FormData();
-        formData.append("battleScale", battleScale);
-        formData.append("from", from);
-        formData.append("to", to);
-        const battleReport = await api.POST<BattleReportDTO[]>(URLS.BATTLE_REPORTS, formData);
+        const battleReport = await api.POST<BattleReportDTO[]>(URLS.BATTLE_REPORTS, {
+            battleScale: battleScale,
+            from:        from,
+            to:          to,
+        });
 
         setBattleReport(battleReport!);
         setIsNowLoadingBattleReport(false);

@@ -39,26 +39,21 @@ namespace KazApi.Controller
         /// モンスターのレポートを取得
         /// </summary>
         [HttpPost("api/battleReport/monsterReport")]
-        public IActionResult SelectMonsterReport([FromForm] int? monsterTypeId,
-                                                 [FromForm] int? sortType,
-                                                 [FromForm] bool isAscOrder = true)
+        public IActionResult SelectMonsterReport([FromBody] ReqMonsterReport req)
         {
-            if (   monsterTypeId == null
-                || sortType == null) return StatusCode(HttpStatus.BadRequest);
-
             try
             {
                 IEnumerable<MonsterReportDTO> report 
-                    = _service.SelectMonsterReport((int)monsterTypeId, (int)sortType, isAscOrder);
+                    = _service.SelectMonsterReport(req.monsterTypeId, req.sortType, req.isAscOrder);
 
                 // 勝率を算出
                 IEnumerable<MonsterReportDTO> editedReport = report.Select(e => new MonsterReportDTO
                 {
-                    MonsterId = e.MonsterId,
+                    MonsterId   = e.MonsterId,
                     MonsterName = e.MonsterName,
                     BattleCount = e.BattleCount,
-                    Wins = e.Wins,
-                    WinRate = (e.Wins / (double)e.BattleCount * 100).ToString("N2") + "%"
+                    Wins        = e.Wins,
+                    WinRate     = (e.Wins / (double)e.BattleCount * 100).ToString("N2") + "%"
                 });
 
                 return StatusCode(HttpStatus.OK, editedReport);
@@ -73,29 +68,25 @@ namespace KazApi.Controller
         /// 戦闘のレポートを取得
         /// </summary>
         [HttpPost("api/battleReport/battleReport")]
-        public IActionResult SelectBattleReport([FromForm] int? battleScale,
-                                                [FromForm] string? from,
-                                                [FromForm] string? to)
+        public IActionResult SelectBattleReport([FromBody] ReqBattleReport req)
         {
-            if (battleScale == null) return StatusCode(HttpStatus.BadRequest);
-
             try
             {
-                DateTime? dateFrom = from == null ? null : DateTime.Parse(from);
-                DateTime? dateTo = to == null ? null : DateTime.Parse(to);
+                DateTime? dateFrom = string.IsNullOrEmpty(req.from) ? null : DateTime.Parse(req.from);
+                DateTime? dateTo   = string.IsNullOrEmpty(req.to) ? null : DateTime.Parse(req.to);
 
                 IEnumerable<BattleReportDTO> battleReports
-                    = _service.SelectBattleReport((int)battleScale, dateFrom, dateTo);
+                    = _service.SelectBattleReport(req.battleScale, dateFrom, dateTo);
                 
                 IEnumerable<BattleReportDTO> editedReport = battleReports.Select(e => new BattleReportDTO
                 {
-                    BattleId = e.BattleId,
+                    BattleId         = e.BattleId,
                     BattleEndDateStr = e.BattleEndDate.ToString().Substring(0, 10),
                     BattleEndTimeStr = e.BattleEndTime.ToString().Substring(0, 8),
-                    Serial = e.Serial,
-                    MonsterId = e.MonsterId,
-                    MonsterName = e.MonsterName,
-                    IsWin = e.IsWin
+                    Serial           = e.Serial,
+                    MonsterId        = e.MonsterId,
+                    MonsterName      = e.MonsterName,
+                    IsWin            = e.IsWin
                 });
 
                 return StatusCode(HttpStatus.OK, editedReport);

@@ -44,10 +44,10 @@ const ShopPage = () => {
         const fetchShopItems = async () => {
             const loginId: string | null = localStorage.getItem(KEYS.USER_ID);
 
-            const formDataForItems = new FormData();
-            formDataForItems.append("loginId", `${loginId}`);
-            formDataForItems.append("selectedShop", `${selectedShop}`);
-            const items = await api.POST<ItemDTO[]>(URLS.SELECT_SHOP_ITEMS, formDataForItems);
+            const items = await api.POST<ItemDTO[]>(URLS.SELECT_SHOP_ITEMS, {
+                loginId:      `${loginId}`,
+                selectedShop: `${selectedShop}`,
+            });
 
             const loginUser = await api.POST<UserDTO>(URLS.USER_INFO, loginId);
 

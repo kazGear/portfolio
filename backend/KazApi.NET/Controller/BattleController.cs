@@ -33,7 +33,7 @@ namespace KazApi.Controller
         /// モンスター情報
         /// </summary>
         [HttpPost("api/battle/monstersInfo")]
-        public IActionResult MonstersInfo([FromBody]string? loginId)
+        public IActionResult MonstersInfo([FromBody] string? loginId)
         {
             if (string.IsNullOrEmpty(loginId)) return StatusCode(HttpStatus.BadRequest);
 
@@ -52,16 +52,12 @@ namespace KazApi.Controller
         /// 初期処理
         /// </summary>
         [HttpPost("api/battle/init")]
-        public IActionResult Init([FromForm] string? selectMonstersCount,
-                                  [FromForm] string? loginId)
+        public IActionResult Init([FromBody] ReqBattleInit req)
         {
-            if (   string.IsNullOrEmpty(selectMonstersCount)
-                || string.IsNullOrEmpty(loginId)) return StatusCode(HttpStatus.BadRequest);
-
             try
             {
                 // モンスターデータ等の読込み
-                IEnumerable<MonsterDTO> monstersFromDB = _service.SelectMonsters(loginId);
+                IEnumerable<MonsterDTO> monstersFromDB = _service.SelectMonsters(req.loginId);
                 IEnumerable<SkillDTO> skillsFromDB = _service.SelectSkills();
                 IEnumerable<MonsterSkillDTO> monsterSkillFromDB = _service.SelectMonsterSkills();
 
@@ -71,7 +67,7 @@ namespace KazApi.Controller
 
                 // 参加モンスター（ランダム）
                 IEnumerable<MonsterDTO> battleMonsters =
-                    BattleSystem.MonsterSelector(monstersDTO, int.Parse(selectMonstersCount));
+                    BattleSystem.MonsterSelector(monstersDTO, int.Parse(req.selectMonstersCount));
 
                 // 賭けレート算出
                 BattleSystem.CalcBetRate(battleMonsters);

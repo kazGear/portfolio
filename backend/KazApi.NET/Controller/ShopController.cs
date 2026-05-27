@@ -24,7 +24,7 @@ namespace KazApi.Controller
         }
 
         [HttpPost("api/shop/itemInfo")]
-        public IActionResult SelectItemInfo([FromForm] string? itemId)
+        public IActionResult SelectItemInfo([FromBody] string itemId)
         {
             if (string.IsNullOrEmpty(itemId)) return StatusCode(HttpStatus.BadRequest);
 
@@ -64,19 +64,15 @@ namespace KazApi.Controller
         /// 初期処理
         /// </summary>
         [HttpPost("api/shop/items")]
-        public IActionResult SelectShopItem([FromForm] string? loginId,
-                                                   [FromForm] string? selectedShop)
+        public IActionResult SelectShopItem([FromBody] ReqShopItem req)
         {
-            if (selectedShop == null)
+            if (req.selectedShop == null)
                 return StatusCode(HttpStatus.OK, new List<string>());
-
-            if (string.IsNullOrEmpty(loginId))
-                return StatusCode(HttpStatus.BadRequest);
 
             try
             {
                 // アイテムリストを取得
-                IEnumerable<ItemDTO> shops = _service.SelectShopItems(loginId, selectedShop);
+                IEnumerable<ItemDTO> shops = _service.SelectShopItems(req.loginId, req.selectedShop);
                 return StatusCode(HttpStatus.OK, shops);
             }
             catch (Exception e)
@@ -86,21 +82,15 @@ namespace KazApi.Controller
         }
 
         [HttpPut("api/shop/purchase")]
-        public IActionResult InsertMyItem([FromForm] string? loginId,
-                                          [FromForm] string? itemId)
+        public IActionResult InsertMyItem([FromBody] ReqMyItem req)
         {
-            if (string.IsNullOrEmpty(loginId) || string.IsNullOrEmpty(itemId))
-            {
-                return StatusCode(HttpStatus.BadRequest);
-            }
-
             using (TransactionScope transaction = new TransactionScope())
             {
                 try
                 {
                     // クレンジング
-                    loginId = loginId.Trim();
-                    itemId = itemId.Trim();
+                    string loginId = req.loginId.Trim();
+                    string itemId  = req.itemId.Trim();
 
                     // 残金取得
                     int cash = _userService.SelectUserOne(loginId).Cash;

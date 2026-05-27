@@ -84,10 +84,10 @@ const BattlePage = () => {
      * ゲーム開始、モンスター初期化
     */
    const gameStartHandler = useCallback(async (e: any) => {
-        const formData = new FormData();
-        formData.append("selectMonstersCount", selectMonstersCount.current.toString());
-        formData.append("loginId", loginId);
-        const initMonsters = await api.POST<MonsterDTO[]>(URLS.INIT_MONSTERS, formData);
+        const initMonsters = await api.POST<MonsterDTO[]>(URLS.INIT_MONSTERS, {
+            selectMonstersCount: selectMonstersCount.current.toString(),
+            loginId:             loginId,
+        });
 
         setMonsters([...initMonsters!]);
         setMonsterCount(initMonsters!.length);
@@ -101,8 +101,7 @@ const BattlePage = () => {
      */
     const battleHandler = useCallback( async () => {
         const moveResult = await api.POST<BattleResults>(URLS.BATTLE_NEXT_TURN, monsters);
-console.log("moveResult", moveResult);
-        console.log(moveResult!.Monsters); // tmp
+
         setMonsters([...moveResult!.Monsters]);
         setBattleLog([...moveResult!.BattleLog]);
         setBattleStarted(true);
@@ -127,16 +126,16 @@ console.log("moveResult", moveResult);
         insertBattleResult({
             monsters, lastLog, setResultLog, setShowResultDialog
         });
+
         // ユーザの成績を記録
         if (!isEmpty(lastLog) && !isEmpty(lastLog!.WinnerMonsterId)) {
-            const formData = new FormData();
-            formData.append("betMonsterId", betMonster!.MonsterId);
-            formData.append("betGil", betGil.toString());
-            formData.append("betRate", betMonster!.BetRate.toString());
-            formData.append("winningMonsterId", lastLog?.WinnerMonsterId!);
-            formData.append("loginId", loginId);
-
-            const newShops = await api.PUT<ShopDTO[]>(URLS.RECORD_USER_RESULT, formData);
+            const newShops = await api.PUT<ShopDTO[]>(URLS.RECORD_USER_RESULT, {
+                betMonsterId:     betMonster!.MonsterId,
+                betGil:           betGil,
+                betRate:          betMonster!.BetRate,
+                winningMonsterId: lastLog?.WinnerMonsterId!,
+                loginId:          loginId,
+            });
             setNewShops(newShops!);
         }
     }, [monsters, battleLog, monsterCount]);

@@ -17,12 +17,11 @@ export const useLogin = () => {
     const callback = useCallback( async ({
         inputLoginId, inputPassword, setToken, setShowAlert}: ArgPropsLogin
     ) => {
-
         try {
-            const formData = new FormData()
-            formData.append("loginId", inputLoginId);
-            formData.append("password", inputPassword);
-            const user = await api.POST<UserDTO>(URLS.LOGIN_USER, formData);
+            const user = await api.POST<UserDTO>(URLS.LOGIN_USER, {
+                loginId:  inputLoginId,
+                password: inputPassword,
+            });
 
             // トークン有 >>> ログイン成功
             if (user!.Token != null) {

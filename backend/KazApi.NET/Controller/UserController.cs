@@ -6,6 +6,7 @@ using System.Transactions;
 using KazApi.Service;
 using CSLib.Lib;
 using KazApi.Common;
+using KazApi.Common._Filter;
 
 namespace KazApi.Controller
 {
@@ -45,10 +46,8 @@ namespace KazApi.Controller
         /// ユーザ情報取得
         /// </summary>
         [HttpPost("api/user/userInfo")]
-        public IActionResult SelectUserOne([FromBody] string? loginId)
+        public IActionResult SelectUserOne([FromBody] string loginId)
         {
-            if (string.IsNullOrEmpty(loginId)) return StatusCode(HttpStatus.BadRequest);
-
             try
             {
                 UserDTO? user = _service.SelectUserOne(loginId);
@@ -64,29 +63,29 @@ namespace KazApi.Controller
         /// ユーザー登録
         /// </summary>
         [HttpPut("api/user/userRegist")]
-        public IActionResult UserRegist([FromForm] string? loginId,
-                                        [FromForm] string? password,
-                                        [FromForm] string? dispName,
-                                        [FromForm] string? dispShortName)
+        public IActionResult UserRegist([FromBody] ReqUserRegist req)
         {
             using (TransactionScope transaction = new TransactionScope())
             {
-                if (   string.IsNullOrEmpty(loginId)
-                    || string.IsNullOrEmpty(password)
-                    || string.IsNullOrEmpty(dispName)
-                    || string.IsNullOrEmpty(dispShortName))
+                try
                 {
-                    return StatusCode(HttpStatus.BadRequest);
+                    Validation.LoginId(req.loginId);
+                    Validation.LoginPass(req.password);
+                    Validation.DispName(req.dispName);
+                    Validation.DispName(req.dispShortName);
                 }
+                catch (Exception e)
+                {
+                    return StatusCode(HttpStatus.BadRequest, Message.Create(e));
+                }
+
+                string loginId       = req.loginId.Trim();
+                string password      = req.password.Trim();
+                string dispName      = req.dispName.Trim();
+                string dispShortName = req.dispShortName.Trim();
 
                 try
                 {
-                    // 空白除去
-                    loginId = loginId.Trim();
-                    password = password.Trim();
-                    dispName = dispName.Trim();
-                    dispShortName = dispShortName.Trim();
- 
                     // 初期登録
                     _service.InsertUser(loginId, password, dispName, dispShortName);
                     _service.InsertStartUpMonsters(loginId);
@@ -132,7 +131,7 @@ namespace KazApi.Controller
         /// 自己破産（所持金初期化）
         /// </summary>
         [HttpPut("api/user/restartAsPlayer")]
-        public IActionResult RestartAsPlayer([FromBody] string? loginId)
+        public IActionResult RestartAsPlayer([FromBody] string loginId)
         {
             if (string.IsNullOrEmpty(loginId)) return StatusCode(HttpStatus.BadRequest);
 
@@ -173,36 +172,23 @@ namespace KazApi.Controller
         /// ショップ開放の確認
         /// </summary>
         [HttpPut("api/user/recordUserResults")]
-        public IActionResult RecordUserResults([FromForm] string? betMonsterId,
-                                               [FromForm] string? betGil,
-                                               [FromForm] string? betRate,
-                                               [FromForm] string? winningMonsterId,
-                                               [FromForm] string? loginId)
+        public IActionResult RecordUserResults([FromBody] ReqUserResults req)
         {
             using (TransactionScope transaction = new TransactionScope())
             {
-                if (   string.IsNullOrEmpty(betMonsterId)
-                    || string.IsNullOrEmpty(betGil)
-                    || string.IsNullOrEmpty(betRate)
-                    || string.IsNullOrEmpty(winningMonsterId)
-                    || string.IsNullOrEmpty(loginId))
-                {
-                    return StatusCode(HttpStatus.BadRequest);
-                }
-
                 try
                 {
                     // クレンジング
-                    loginId = loginId.Trim();
-                    betMonsterId = betMonsterId.Trim();
-                    winningMonsterId = winningMonsterId.Trim();
+                    string loginId          = req.loginId.Trim();
+                    string betMonsterId     = req.betMonsterId.Trim();
+                    string winningMonsterId = req.winningMonsterId.Trim();
 
                     // 予想的中か
                     bool hit = false;
                     if (betMonsterId == winningMonsterId) hit = true;
 
                     // 各種登録
-                    _service.UpdateUserResults(hit, int.Parse(betGil), decimal.Parse(betRate), loginId);
+                    _service.UpdateUserResults(hit, req.betGil, req.betRate, loginId);
 
                     IEnumerable<ShopDTO> InsertUsableShop = _shopService.ExistsUsableShop(loginId);
                     if (InsertUsableShop.Count() > 0)

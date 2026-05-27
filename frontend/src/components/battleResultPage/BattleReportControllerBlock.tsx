@@ -44,11 +44,11 @@ const BattleReportControllerBlock = (
     const fetchMonsterReportHandler = useCallback(async () => {
         setIsNowLoadingMonsterReport(true);
 
-        const formData = new FormData();
-        formData.append("monsterTypeId", monsterTypeId);
-        formData.append("sortType", sortType);
-        formData.append("isAscOrder", `${isAscOrder}`);
-        const monsterReport = await api.POST<MonsterReportDTO[]>(URLS.MONSTER_REPORTS, formData);
+        const monsterReport = await api.POST<MonsterReportDTO[]>(URLS.MONSTER_REPORTS, {
+            monsterTypeId: monsterTypeId,
+            sortType:      sortType,
+            isAscOrder:    isAscOrder,
+        });
 
         setMonsterReport(monsterReport!);
         setIsNowLoadingMonsterReport(false);

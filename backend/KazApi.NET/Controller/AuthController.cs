@@ -24,18 +24,15 @@ namespace KazApi.Controller
         /// ログイン実行
         /// </summary>
         [HttpPost("api/auth/login")]
-        public IActionResult Login([FromForm] string? loginId,
-                                   [FromForm] string? password)
+        public IActionResult Login([FromBody] ReqLogin req)
         {
-            if (string.IsNullOrEmpty(loginId) || string.IsNullOrEmpty(password))
-                return StatusCode(HttpStatus.Unauthorized);
-
             try
             {
-                loginId = loginId != null ? loginId.Trim() : null;
+                string loginId  = req.loginId.Trim();
+                string password = req.password.Trim();
 
                 // ユーザの認証
-                UserDTO? user = _service.AuthenticateUser(loginId!, password);
+                UserDTO? user = _service.AuthenticateUser(loginId, password);
 
                 // 認証失敗
                 if (user == null) return StatusCode(HttpStatus.Unauthorized);

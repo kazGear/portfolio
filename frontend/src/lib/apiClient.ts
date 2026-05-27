@@ -9,16 +9,16 @@ interface FetchOptions {
 /** APIへのアクセス基盤 */
 export async function apiClient<T>(
     endpoint: string,
-    options: FetchOptions = {},
+    options:  FetchOptions = {},
 ): Promise<T | null> {
 
     // props破壊的変更の回避
     let fetchOptions: FetchOptions = {};
     if (options.body instanceof FormData) {
         fetchOptions = {
-            method: options.method,
+            method:  options.method,
             headers: structuredClone(options.headers),
-            body: options.body,
+            body:    options.body,
         }
     } else {
         fetchOptions = structuredClone(options);
@@ -31,7 +31,7 @@ export async function apiClient<T>(
             ...fetchOptions.headers
         };
     } else {
-        fetchOptions.body = JSON.stringify(fetchOptions.body)
+        fetchOptions.body = JSON.stringify(fetchOptions.body);
         fetchOptions.headers = {
             "Content-Type": "application/json",
             ...fetchOptions.headers
@@ -69,17 +69,9 @@ export async function apiClient<T>(
 export const api = {
     GET: <T>(url: string) => apiClient<T>(url, { method: "GET" }),
 
-    POST: <T>(url: string, body?: any) =>
-        apiClient<T>(url, {
-            method: "POST",
-            body: body,
-        }),
+    POST: <T>(url: string, body?: any) => apiClient<T>(url, { method: "POST", body: body, }),
 
-    PUT: <T>(url: string, body?: any) =>
-        apiClient<T>(url, {
-            method: "PUT",
-            body: body,
-        }),
+    PUT: <T>(url: string, body?: any) => apiClient<T>(url, { method: "PUT", body: body, }),
 
-    DELETE: <T>(url: string) => apiClient<T>(url, { method: "DELETE" }),
+    DELETE: <T>(url: string, body?: any) => apiClient<T>(url, { method: "DELETE", body: body, }),
 };

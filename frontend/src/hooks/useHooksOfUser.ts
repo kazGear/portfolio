@@ -17,6 +17,7 @@ export const useLogin = () => {
     const callback = useCallback( async ({
         inputLoginId, inputPassword, setToken, setShowAlert}: ArgPropsLogin
     ) => {
+
         try {
             const formData = new FormData()
             formData.append("loginId", inputLoginId);
@@ -30,12 +31,14 @@ export const useLogin = () => {
                 localStorage.setItem(KEYS.USER_ROLE, user!.Role.toString());
                 setToken(user!.Token);
                 setShowAlert(false);
+
                 globalThis.location.href = "/IndexPage";
             } else if (isEmpty(user!.Token)) {
                 localStorage.removeItem(KEYS.TOKEN);
                 localStorage.removeItem(KEYS.USER_ID);
                 localStorage.removeItem(KEYS.USER_ROLE);
                 setShowAlert(true);
+
                 setTimeout(() => globalThis.location.href = "/LoginPage", 1000);
             }
         } catch (err) {
@@ -43,6 +46,7 @@ export const useLogin = () => {
             localStorage.removeItem(KEYS.USER_ID);
             localStorage.removeItem(KEYS.USER_ROLE);
             setShowAlert(true);
+
             setTimeout(() => globalThis.location.href = "/LoginPage", 1000);
         }
     }, []);

@@ -1,9 +1,8 @@
 ﻿using CSLib.Lib;
+using KazApi.Common;
 using KazApi.Domain.DTO;
 using KazApi.Service;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-
 
 namespace KazApi.Controller
 {
@@ -23,11 +22,14 @@ namespace KazApi.Controller
         /// 画像ファイルアップロード
         /// </summary>
         [HttpPut("api/common/imgUpload")]
-        public async Task<IActionResult> UploadImage([FromForm] IFormFile image,
-                                                     [FromForm] string loginId
+        public async Task<IActionResult> UploadImage([FromForm] IFormFile? image,
+                                                     [FromForm] string? loginId
         ) {
             if (image == null || image.Length == 0)
-                return StatusCode(HttpStatus.BadRequest, new { Message = "No file uploaded." });
+                return StatusCode(HttpStatus.BadRequest, Message.Create("No file uploaded."));
+
+            if (string.IsNullOrEmpty(loginId))
+                return StatusCode(HttpStatus.BadRequest);
 
             try
             {
@@ -40,20 +42,26 @@ namespace KazApi.Controller
 
                     _serviceCommon.UpdateImage(loginId, imageBASE64);
                 }
+                return StatusCode(HttpStatus.OK, Message.Create("Image upload success."));
             }
             catch (Exception e)
             {
-                return StatusCode(HttpStatus.InternalServerError, new { Message = e });
+                return StatusCode(HttpStatus.InternalServerError, Message.Create(e, "Image upload failed."));
             }
-            return StatusCode(HttpStatus.OK, new { message = "Image uploaded successfully" });
         }
 
         [HttpGet("api/common/FetchElementCode")]
-        public ActionResult<string> FetchElementCode()
+        public IActionResult FetchElementCode()
         {
-            IEnumerable<CodeDTO> result = _serviceCommon.FetchElementCode();
-            return JsonConvert.SerializeObject(result);
+            try
+            {
+                IEnumerable<CodeDTO> result = _serviceCommon.FetchElementCode();
+                return StatusCode(HttpStatus.OK, result);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(HttpStatus.InternalServerError, Message.Create(e));
+            }
         }
-        
     }
 }

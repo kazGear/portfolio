@@ -9,6 +9,9 @@ using KazApi.Domain._Const;
 using KazApi.Domain.DTO;
 using Microsoft.CodeAnalysis;
 using KazApi.Service;
+using CSLib.Lib;
+using KazApi.Common;
+using System.Transactions;
 
 namespace KazApi.Controller
 {
@@ -30,16 +33,18 @@ namespace KazApi.Controller
         /// モンスター情報
         /// </summary>
         [HttpPost("api/battle/monstersInfo")]
-        public ActionResult<string> MonstersInfo([FromBody]string loginId)
+        public IActionResult MonstersInfo([FromBody]string? loginId)
         {
+            if (string.IsNullOrEmpty(loginId)) return StatusCode(HttpStatus.BadRequest);
+
             try
             {
                 IEnumerable<MonsterDTO> monsters = _service.SelectMonsters(loginId);
-                return JsonConvert.SerializeObject(monsters);
+                return StatusCode(HttpStatus.OK, monsters);
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return StatusCode(500, "Error monsters info.");
+                return StatusCode(HttpStatus.InternalServerError, Message.Create(e));
             }
         }
 
@@ -47,9 +52,12 @@ namespace KazApi.Controller
         /// 初期処理
         /// </summary>
         [HttpPost("api/battle/init")]
-        public ActionResult<string> Init([FromForm] string selectMonstersCount,
-                                         [FromForm] string loginId)
+        public IActionResult Init([FromForm] string? selectMonstersCount,
+                                  [FromForm] string? loginId)
         {
+            if (   string.IsNullOrEmpty(selectMonstersCount)
+                || string.IsNullOrEmpty(loginId)) return StatusCode(HttpStatus.BadRequest);
+
             try
             {
                 // モンスターデータ等の読込み
@@ -71,11 +79,11 @@ namespace KazApi.Controller
                 // テスト用モンスターで対戦
                 //battleMonsters = UseTestMonsters(monstersDTO);
 
-                return JsonConvert.SerializeObject(battleMonsters); ;
+                return StatusCode(HttpStatus.OK, battleMonsters);
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return StatusCode(500, "Error init battle.");
+                return StatusCode(HttpStatus.InternalServerError, Message.Create(e));
             }
         }
 
@@ -117,8 +125,10 @@ namespace KazApi.Controller
         /// モンスターたちの行動
         /// </summary>
         [HttpPost("api/battle/nextTurn")]
-        public ActionResult<string> NextTurn([FromBody] IEnumerable<MonsterDTO> monsters)
+        public IActionResult NextTurn([FromBody] IEnumerable<MonsterDTO>? monsters)
         {
+            if (monsters == null || monsters.Count() == 0) return StatusCode(HttpStatus.BadRequest); 
+
             try
             {
                 // 戦闘用モンスターを構築
@@ -166,11 +176,11 @@ namespace KazApi.Controller
                 model.Monsters = monstersDTO;
                 model.BattleLog = _logger.DumpMemory();
 
-                return JsonConvert.SerializeObject(model);
+                return StatusCode(HttpStatus.OK, model);
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return StatusCode(500, "Error monsters move.");
+                return StatusCode(HttpStatus.InternalServerError, Message.Create(e));
             }
         }
 
@@ -178,12 +188,27 @@ namespace KazApi.Controller
         /// 勝敗結果を記録（モンスター）
         /// </summary>
         [HttpPost("api/battle/recordResults")]
-        public ActionResult<bool> RecordResults([FromBody] IEnumerable<MonsterDTO> monsters)
+        public IActionResult RecordResults([FromBody] IEnumerable<MonsterDTO>? monsters)
         {
-            DateTime endDate = DateTime.Now;
-            TimeSpan endTime = new TimeSpan(endDate.Ticks);
+            if (monsters == null || monsters.Count() == 0) return StatusCode(HttpStatus.BadRequest);
 
-            return _service.InsertBattleResult(monsters!, endDate, endTime);
+            using (TransactionScope transaction = new TransactionScope())
+            { 
+                try
+                {
+                    DateTime endDate = DateTime.Now;
+                    TimeSpan endTime = new TimeSpan(endDate.Ticks);
+
+                    bool result = _service.InsertBattleResult(monsters!, endDate, endTime);
+                    transaction.Complete();
+
+                    return StatusCode(HttpStatus.OK, result);
+                }
+                catch (Exception e)
+                {
+                    return StatusCode(HttpStatus.InternalServerError, Message.Create(e));
+                }
+            }
         }
     }
 }

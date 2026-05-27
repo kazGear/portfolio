@@ -6,18 +6,18 @@ export const useCheckLogin = () => {
     const [validToken, setValidToken] = useState(false);
 
     useEffect(() => {
-            const checkToken = async () => {
-            try {
-                await api.POST(URLS.CHECK_LOGIN_TOKEN);
-                setValidToken(true);
-            } catch (err) {
-                localStorage.removeItem(KEYS.TOKEN);
-                localStorage.removeItem(KEYS.USER_ID);
-                localStorage.removeItem(KEYS.USER_ROLE);
-                setValidToken(false);
-            }
+        const checkToken = async () => {
+        try {
+            await api.POST(URLS.CHECK_LOGIN_TOKEN);
+            setValidToken(true);
+        } catch (err) {
+            localStorage.removeItem(KEYS.TOKEN);
+            localStorage.removeItem(KEYS.USER_ID);
+            localStorage.removeItem(KEYS.USER_ROLE);
+            setValidToken(false);
         }
-        checkToken();
+    }
+    checkToken();
     }, []);
     return validToken;
 }

@@ -11,49 +11,49 @@ namespace KazApi.Common._Log
         private static readonly int NONE = 0;
 
         [JsonPropertyName("TargetMonsterId")]
-        public readonly string TargetMonsterId = string.Empty;
+        public string TargetMonsterId { get; private set; } = string.Empty;
         
         [JsonPropertyName("BeforeHp")]
-        public readonly int BeforeHp = NONE;
+        public int BeforeHp { get; private set; } = NONE;
         
         [JsonPropertyName("ImpactPoint")]
-        public readonly int ImpactPoint = NONE;
+        public int ImpactPoint { get; private set; } = NONE;
         
         [JsonPropertyName("StateName")]
-        public readonly string StateName = string.Empty;
+        public string StateName { get; private set; } = string.Empty;
         
         [JsonPropertyName("EnableState")]
-        public readonly bool EnableState = false;
+        public bool EnableState { get; private set; } = false;
         
         [JsonPropertyName("DisableState")]
-        public readonly bool DisableState = false;
+        public bool DisableState { get; private set; } = false;
         
         [JsonPropertyName("SkillId")]
-        public readonly string SkillId = string.Empty;
+        public string SkillId { get; private set; } = string.Empty;
 
         [JsonPropertyName("EffectTime")]
-        public readonly int EffectTime; // millSecond
+        public int EffectTime { get; private set; } // millSecond
 
         [JsonPropertyName("Message")]
-        public readonly string Message = string.Empty;
+        public string Message { get; private set; } = string.Empty;
         
         [JsonPropertyName("IsStop")]
-        public readonly bool IsStop = false;
+        public bool IsStop { get; private set; } = false;
 
         [JsonPropertyName("IsDodge")]
-        public readonly bool IsDodge = false;
+        public bool IsDodge { get; private set; } = false;
 
         [JsonPropertyName("AllLoser")]
-        public readonly bool AllLoser = false;
+        public bool AllLoser { get; private set; } = false;
         
         [JsonPropertyName("ExistWinner")]
-        public readonly bool ExistWinner = false;
+        public bool ExistWinner { get; private set; } = false;
         
         [JsonPropertyName("WinnerMonsterId")]
-        public readonly string WinnerMonsterId = string.Empty;
+        public string WinnerMonsterId { get; private set; } = string.Empty;
         
         [JsonPropertyName("WinnerMonsterName")]
-        public readonly string WinnerMonsterName = string.Empty;
+        public string WinnerMonsterName { get; private set; } = string.Empty;
 
         /// <summary>
         /// コンストラクタ1（ログ区切りのマーカー）

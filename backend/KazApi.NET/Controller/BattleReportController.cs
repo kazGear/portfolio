@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using KazApi.Common._Filter;
 using KazApi.Domain.DTO;
 using KazApi.Service;
+using CSLib.Lib;
+using KazApi.Common;
 
 namespace KazApi.Controller
 {
@@ -21,16 +22,16 @@ namespace KazApi.Controller
         /// 初期処理
         /// </summary>
         [HttpGet("api/battleReport/init")]
-        public ActionResult<string> Init()
+        public IActionResult Init()
         {
             try
             {
                 IEnumerable<MonsterTypeDTO> monsterTypes = _service.SelectMonsterTypes();
-                return JsonConvert.SerializeObject(monsterTypes);
+                return StatusCode(HttpStatus.OK, monsterTypes);
             }
             catch (Exception e)
             {
-                return e.Message;
+                return StatusCode(HttpStatus.InternalServerError, Message.Create(e));
             }
         }
 
@@ -38,14 +39,17 @@ namespace KazApi.Controller
         /// モンスターのレポートを取得
         /// </summary>
         [HttpPost("api/battleReport/monsterReport")]
-        public ActionResult<string> SelectMonsterReport([FromForm] int monsterTypeId,
-                                                        [FromForm] int sortType,
-                                                        [FromForm] bool isAscOrder)
+        public IActionResult SelectMonsterReport([FromForm] int? monsterTypeId,
+                                                 [FromForm] int? sortType,
+                                                 [FromForm] bool isAscOrder = true)
         {
+            if (   monsterTypeId == null
+                || sortType == null) return StatusCode(HttpStatus.BadRequest);
+
             try
             {
                 IEnumerable<MonsterReportDTO> report 
-                    = _service.SelectMonsterReport(monsterTypeId, sortType, isAscOrder);
+                    = _service.SelectMonsterReport((int)monsterTypeId, (int)sortType, isAscOrder);
 
                 // 勝率を算出
                 IEnumerable<MonsterReportDTO> editedReport = report.Select(e => new MonsterReportDTO
@@ -57,11 +61,11 @@ namespace KazApi.Controller
                     WinRate = (e.Wins / (double)e.BattleCount * 100).ToString("N2") + "%"
                 });
 
-                return JsonConvert.SerializeObject(editedReport);
+                return StatusCode(HttpStatus.OK, editedReport);
             }
             catch (Exception e)
             {
-                return e.Message;
+                return StatusCode(HttpStatus.InternalServerError, Message.Create(e.Message));
             }
         }
 
@@ -69,17 +73,19 @@ namespace KazApi.Controller
         /// 戦闘のレポートを取得
         /// </summary>
         [HttpPost("api/battleReport/battleReport")]
-        public ActionResult<string> SelectBattleReport([FromForm] int battleScale,
-                                                       [FromForm] string? from,
-                                                       [FromForm] string? to)
+        public IActionResult SelectBattleReport([FromForm] int? battleScale,
+                                                [FromForm] string? from,
+                                                [FromForm] string? to)
         {
+            if (battleScale == null) return StatusCode(HttpStatus.BadRequest);
+
             try
             {
                 DateTime? dateFrom = from == null ? null : DateTime.Parse(from);
                 DateTime? dateTo = to == null ? null : DateTime.Parse(to);
 
                 IEnumerable<BattleReportDTO> battleReports
-                    = _service.SelectBattleReport(battleScale, dateFrom, dateTo);
+                    = _service.SelectBattleReport((int)battleScale, dateFrom, dateTo);
                 
                 IEnumerable<BattleReportDTO> editedReport = battleReports.Select(e => new BattleReportDTO
                 {
@@ -92,11 +98,11 @@ namespace KazApi.Controller
                     IsWin = e.IsWin
                 });
 
-                return JsonConvert.SerializeObject(editedReport);
+                return StatusCode(HttpStatus.OK, editedReport);
             }
             catch (Exception e)
             {
-                return e.Message;
+                return StatusCode(HttpStatus.InternalServerError, Message.Create(e));
             }
         }
     }

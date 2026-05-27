@@ -101,7 +101,7 @@ const BattlePage = () => {
      */
     const battleHandler = useCallback( async () => {
         const moveResult = await api.POST<BattleResults>(URLS.BATTLE_NEXT_TURN, monsters);
-
+console.log("moveResult", moveResult);
         console.log(moveResult!.Monsters); // tmp
         setMonsters([...moveResult!.Monsters]);
         setBattleLog([...moveResult!.BattleLog]);
@@ -136,7 +136,7 @@ const BattlePage = () => {
             formData.append("winningMonsterId", lastLog?.WinnerMonsterId!);
             formData.append("loginId", loginId);
 
-            const newShops = await api.POST<ShopDTO[]>(URLS.RECORD_USER_RESULT, formData);
+            const newShops = await api.PUT<ShopDTO[]>(URLS.RECORD_USER_RESULT, formData);
             setNewShops(newShops!);
         }
     }, [monsters, battleLog, monsterCount]);

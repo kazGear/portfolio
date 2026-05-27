@@ -3,6 +3,9 @@ using Newtonsoft.Json;
 using KazApi.Repository;
 using KazApi.Domain.DTO;
 using KazApi.Service;
+using CSLib.Lib;
+using KazApi.Common;
+using System.Transactions;
 
 namespace KazApi.Controller
 {
@@ -21,21 +24,39 @@ namespace KazApi.Controller
         }
 
         [HttpPost("api/shop/itemInfo")]
-        public ActionResult<string> SelectItemInfo([FromForm] string itemId)
+        public IActionResult SelectItemInfo([FromForm] string? itemId)
         {
-            ItemDTO item = _service.SelectItemOne(itemId);
-            return JsonConvert.SerializeObject(item);
+            if (string.IsNullOrEmpty(itemId)) return StatusCode(HttpStatus.BadRequest);
+
+            try
+            {
+                ItemDTO item = _service.SelectItemOne(itemId);
+                return StatusCode(HttpStatus.OK, item);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(HttpStatus.InternalServerError, Message.Create(e));
+            }
         }
 
         /// <summary>
         /// 初期処理
         /// </summary>
         [HttpPost("api/shop/init")]
-        public ActionResult<string> Init([FromBody] string loginId)
+        public IActionResult Init([FromBody] string? loginId)
         {
-            // ショップリストを取得
-            IEnumerable<ShopDTO> shops = _service.SelectShops(loginId);
-            return JsonConvert.SerializeObject(shops);
+            if (string.IsNullOrEmpty(loginId)) return StatusCode(HttpStatus.BadRequest);
+
+            try
+            {
+                // ショップリストを取得
+                IEnumerable<ShopDTO> shops = _service.SelectShops(loginId);
+                return StatusCode(HttpStatus.OK, shops);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(HttpStatus.InternalServerError, Message.Create(e));
+            }
         }
 
         //
@@ -43,36 +64,66 @@ namespace KazApi.Controller
         /// 初期処理
         /// </summary>
         [HttpPost("api/shop/items")]
-        public ActionResult<string> SelectShopItem([FromForm] string loginId,
+        public IActionResult SelectShopItem([FromForm] string? loginId,
                                                    [FromForm] string? selectedShop)
         {
-            if (selectedShop == null) return JsonConvert.SerializeObject(new List<string>());
+            if (selectedShop == null)
+                return StatusCode(HttpStatus.OK, new List<string>());
 
-            // アイテムリストを取得
-            IEnumerable<ItemDTO> shops = _service.SelectShopItems(loginId, selectedShop);
-            return JsonConvert.SerializeObject(shops);
+            if (string.IsNullOrEmpty(loginId))
+                return StatusCode(HttpStatus.BadRequest);
+
+            try
+            {
+                // アイテムリストを取得
+                IEnumerable<ItemDTO> shops = _service.SelectShopItems(loginId, selectedShop);
+                return StatusCode(HttpStatus.OK, shops);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(HttpStatus.InternalServerError, Message.Create(e));
+            }
         }
 
         [HttpPut("api/shop/purchase")]
-        public ActionResult InsertMyItem([FromForm] string loginId,
-                                         [FromForm] string itemId)
+        public IActionResult InsertMyItem([FromForm] string? loginId,
+                                          [FromForm] string? itemId)
         {
-            // クレンジング
-            loginId = loginId.Trim();
-            itemId = itemId.Trim();
+            if (string.IsNullOrEmpty(loginId) || string.IsNullOrEmpty(itemId))
+            {
+                return StatusCode(HttpStatus.BadRequest);
+            }
 
-            // 残金取得
-            int cash = _userService.SelectUserOne(loginId).Cash;
-            // 購入品取得
-            ItemDTO item = _service.SelectItemOne(itemId);
+            using (TransactionScope transaction = new TransactionScope())
+            {
+                try
+                {
+                    // クレンジング
+                    loginId = loginId.Trim();
+                    itemId = itemId.Trim();
 
-            if (cash < item.ItemPrice) throw new Exception("資金が不足しています。");
+                    // 残金取得
+                    int cash = _userService.SelectUserOne(loginId).Cash;
+                    // 購入品取得
+                    ItemDTO item = _service.SelectItemOne(itemId);
 
-            // 各種登録
-            _service.Purchase(loginId, itemId);
-            _userService.Purchase(loginId, (cash - item.ItemPrice));
-                        
-            return Ok(200);
+                    if (cash < item.ItemPrice)
+                    {
+                        return StatusCode(HttpStatus.InternalServerError, Message.Create("資金が不足しています。"));
+                    }
+
+                    // 各種登録
+                    _service.Purchase(loginId, itemId);
+                    _userService.Purchase(loginId, (cash - item.ItemPrice));
+
+                    transaction.Complete();
+                    return StatusCode(HttpStatus.OK);
+                }
+                catch (Exception e)
+                {
+                    return StatusCode(HttpStatus.InternalServerError, Message.Create(e));
+                }
+            }
         }
     }
 }

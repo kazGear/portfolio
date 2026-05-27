@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using KazApi.Repository;
 using KazApi.Repository.sql;
 using KazApi.Domain.DTO;
 using System.Transactions;
 using KazApi.Service;
 using CSLib.Lib;
+using KazApi.Common;
 
 namespace KazApi.Controller
 {
@@ -27,34 +27,58 @@ namespace KazApi.Controller
         /// 初期処理
         /// </summary>
         [HttpGet("api/user/init")]
-        public ActionResult<string> Init()
+        public IActionResult Init()
         {
             // 検証用に登録済みユーザを取得
-            IEnumerable<UserDTO> users = _service.RegistedSelectUsers();
-            return JsonConvert.SerializeObject(users);
+            try
+            {
+                IEnumerable<UserDTO> users = _service.RegistedSelectUsers();
+                return StatusCode(HttpStatus.OK, users);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(HttpStatus.InternalServerError, Message.Create(e));
+            }
         }
 
         /// <summary>
         /// ユーザ情報取得
         /// </summary>
         [HttpPost("api/user/userInfo")]
-        public ActionResult<string> SelectUserOne([FromBody] string loginId)
+        public IActionResult SelectUserOne([FromBody] string? loginId)
         {
-            UserDTO? user = _service.SelectUserOne(loginId);
-            return JsonConvert.SerializeObject(user);
+            if (string.IsNullOrEmpty(loginId)) return StatusCode(HttpStatus.BadRequest);
+
+            try
+            {
+                UserDTO? user = _service.SelectUserOne(loginId);
+                return StatusCode(HttpStatus.OK, user);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(HttpStatus.InternalServerError, Message.Create(e));
+            }
         }
 
         /// <summary>
         /// ユーザー登録
         /// </summary>
         [HttpPut("api/user/userRegist")]
-        public ActionResult UserRegist([FromForm] string loginId,
-                                       [FromForm] string password,
-                                       [FromForm] string dispName,
-                                       [FromForm] string dispShortName)
+        public IActionResult UserRegist([FromForm] string? loginId,
+                                        [FromForm] string? password,
+                                        [FromForm] string? dispName,
+                                        [FromForm] string? dispShortName)
         {
             using (TransactionScope transaction = new TransactionScope())
             {
+                if (   string.IsNullOrEmpty(loginId)
+                    || string.IsNullOrEmpty(password)
+                    || string.IsNullOrEmpty(dispName)
+                    || string.IsNullOrEmpty(dispShortName))
+                {
+                    return StatusCode(HttpStatus.BadRequest);
+                }
+
                 try
                 {
                     // 空白除去
@@ -62,10 +86,7 @@ namespace KazApi.Controller
                     password = password.Trim();
                     dispName = dispName.Trim();
                     dispShortName = dispShortName.Trim();
-                    /*
-                    TODO 引数検証
-                    error >>> エラーページへ
-                     */
+ 
                     // 初期登録
                     _service.InsertUser(loginId, password, dispName, dispShortName);
                     _service.InsertStartUpMonsters(loginId);
@@ -73,18 +94,14 @@ namespace KazApi.Controller
 
                     // 処理完了
                     transaction.Complete();
-
                     string message = $"Regist user complete. LoginId: {loginId}, DispNaem: {dispName}";
-                    Console.WriteLine(message);
-                    return Ok(new { message = message });
+                    return StatusCode(HttpStatus.Created, Message.Create(message));
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
                     string message = $"Error regist user. LoginId: {loginId}, DispNaem: {dispName}";
-                    Console.WriteLine(message);
-                    return StatusCode(500, message);
+                    return StatusCode(HttpStatus.InternalServerError, Message.Create(e, message));
                 }
-
             }
         }
 
@@ -92,21 +109,30 @@ namespace KazApi.Controller
         /// ログインユーザ情報を取得
         /// </summary>
         [HttpPost("api/user/loginUser")]
-        public ActionResult<string?> SelectUser([FromBody] string? loginId)
+        public IActionResult SelectUser([FromBody] string? loginId)
         {
-            var param = new { login_id = loginId };
             
-            UserDTO? user = _posgre.Select<UserDTO>(UserSQL.SelectLoginUser(), param)
-                                   .SingleOrDefault();
+            if (string.IsNullOrEmpty(loginId)) return StatusCode(HttpStatus.BadRequest);
 
-            return JsonConvert.SerializeObject(user);
+            try
+            {
+                var param = new { login_id = loginId };
+            
+                UserDTO? user = _posgre.Select<UserDTO>(UserSQL.SelectLoginUser(), param)
+                                       .SingleOrDefault();
+                return StatusCode(HttpStatus.OK, user);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(HttpStatus.InternalServerError, Message.Create(e));
+            }
         }
 
         /// <summary>
         /// 自己破産（所持金初期化）
         /// </summary>
-        [HttpPost("api/user/restartAsPlayer")]
-        public ActionResult<string> RestartAsPlayer([FromBody] string? loginId)
+        [HttpPut("api/user/restartAsPlayer")]
+        public IActionResult RestartAsPlayer([FromBody] string? loginId)
         {
             if (string.IsNullOrEmpty(loginId)) return StatusCode(HttpStatus.BadRequest);
 
@@ -119,7 +145,7 @@ namespace KazApi.Controller
             }
             catch (Exception e)
             {
-                return StatusCode(HttpStatus.InternalServerError, new { Message = e.Message });
+                return StatusCode(HttpStatus.InternalServerError, Message.Create(e));
             }
         }
 
@@ -127,31 +153,45 @@ namespace KazApi.Controller
         /// 使用可能なモンスター数を取得
         /// </summary>
         [HttpPost("api/user/getMonsterCount")]
-        public ActionResult<string> SelectMonsterCount([FromBody] string loginId)
+        public ActionResult<string> SelectMonsterCount([FromBody] string? loginId)
         {
-            LittleDTO<int> result = _service.SelectMonsterCount(loginId);
-            return JsonConvert.SerializeObject($"{result.Param1} / {result.Param2}");
+            if (string.IsNullOrEmpty(loginId)) return StatusCode(HttpStatus.BadRequest);
+
+            try
+            {
+                LittleDTO<int> result = _service.SelectMonsterCount(loginId);
+                return StatusCode(HttpStatus.OK, $"{result.Param1} / {result.Param2}");
+            }
+            catch (Exception e)
+            {
+                return StatusCode(HttpStatus.InternalServerError, Message.Create(e));
+            }
         }
 
         /// <summary>
         /// 勝敗結果を記録（ユーザー）
         /// ショップ開放の確認
         /// </summary>
-        [HttpPost("api/user/recordUserResults")]
-        public ActionResult<string> RecordUserResults(
-            [FromForm] string betMonsterId,
-            [FromForm] string betGil,
-            [FromForm] string betRate,
-            [FromForm] string winningMonsterId,
-            [FromForm] string loginId)
+        [HttpPut("api/user/recordUserResults")]
+        public IActionResult RecordUserResults([FromForm] string? betMonsterId,
+                                               [FromForm] string? betGil,
+                                               [FromForm] string? betRate,
+                                               [FromForm] string? winningMonsterId,
+                                               [FromForm] string? loginId)
         {
             using (TransactionScope transaction = new TransactionScope())
             {
+                if (   string.IsNullOrEmpty(betMonsterId)
+                    || string.IsNullOrEmpty(betGil)
+                    || string.IsNullOrEmpty(betRate)
+                    || string.IsNullOrEmpty(winningMonsterId)
+                    || string.IsNullOrEmpty(loginId))
+                {
+                    return StatusCode(HttpStatus.BadRequest);
+                }
+
                 try
                 {
-                    if (string.IsNullOrEmpty(winningMonsterId))
-                        return Ok(new { message = "No action required." });
-
                     // クレンジング
                     loginId = loginId.Trim();
                     betMonsterId = betMonsterId.Trim();
@@ -172,11 +212,11 @@ namespace KazApi.Controller
 
                     // 処理完了
                     transaction.Complete();
-                    return JsonConvert.SerializeObject(InsertUsableShop);
+                    return StatusCode(HttpStatus.OK, InsertUsableShop);
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
-                    return StatusCode(500, $"Error resist user result.");
+                    return StatusCode(HttpStatus.InternalServerError, Message.Create(e));
                 }
             }
         }

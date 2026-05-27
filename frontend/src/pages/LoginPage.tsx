@@ -47,8 +47,6 @@ const LoginPage = () => {
         if (token) setToken(token);
     }, []);
 
-    useCheckToken();
-
     /**
      * ログイン処理
      */

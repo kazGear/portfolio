@@ -42,8 +42,6 @@ const IndexPage = () => {
         setUsableSettings(authorizedPerson.includes(Number.parseInt(role!)));
     }, []);
 
-    useCheckToken();
-
     return (
         <SdivLinkFrame>
             <div style={{display: "flex"}}>

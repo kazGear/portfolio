@@ -66,10 +66,12 @@ const AppHeader = ({title}: ArgProps) => {
 
         setLoginId(id);
         setIsAdmin(authorizedPerson.includes(Number.parseInt(role!)));
-    }, [loginId]);
+    }, [validToken]);
 
     // 表示名取得
     useEffect(() => {
+        if (!loginId) return;
+
         const selectName = async () => {
             const user = await api.POST<UserDTO>(URLS.SELECT_LOGIN_USER, loginId);
             setLoginUser(user);
@@ -113,7 +115,7 @@ const AppHeader = ({title}: ArgProps) => {
 
             <div style={{display: "flex", alignItems: "center"}}>
                 {
-                    !isEmpty(loginUser) && loginUser!.UserImage!.length > 50 ? <Simg src={userImage} alt="" /> : ""
+                    !isEmpty(loginUser) && loginUser!.UserImage.length > 50 ? <Simg src={userImage} alt="" /> : ""
                 }
                 {
                     !isEmpty(loginUser) ? <Sspan>ようこそ{loginUser?.DispName}さん</Sspan> : ""

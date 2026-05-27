@@ -1,6 +1,5 @@
 using KazApi.Common._Filter;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.Net;
 using System.Text;
@@ -134,6 +133,8 @@ public class Startup
 
         app.UseEndpoints(endpoints =>
         {
+            // ブラウザのOPTIONS を必ず返す
+            endpoints.MapMethods("{*path}", new[] { "OPTIONS" }, () => Results.Ok());
             // swagger
             endpoints.MapControllers();
             // mvc

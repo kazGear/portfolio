@@ -36,7 +36,7 @@ const CashBlock = ({user}: ArgProps) => {
      */
     const restartAsPlayer = useCallback(() => {
         const restart = async () => {
-            const user: UserDTO | null = await api.POST<UserDTO>(`${URLS.RESTART_AS_PLAYER}`, loginId);
+            const user: UserDTO | null = await api.PUT<UserDTO>(`${URLS.RESTART_AS_PLAYER}`, loginId);
             setCash(user?.Cash ?? null);
             setBankruptcyCnt(user?.BankruptcyCnt ?? null);
         }

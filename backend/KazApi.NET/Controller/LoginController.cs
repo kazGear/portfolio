@@ -1,8 +1,8 @@
 ﻿using CSLib.Lib;
+using KazApi.Common;
 using KazApi.Domain._User;
 using KazApi.Service;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 
 namespace KazApi.Controller
 {
@@ -19,20 +19,29 @@ namespace KazApi.Controller
 
         // ユーザ一覧を取得する
         [HttpPost("FetchLoginUsers")]
-        public ActionResult<string> FetchLoginUsers([FromBody] User? request)
+        public IActionResult FetchLoginUsers([FromBody] User? request)
         {
-            // パスワード暗号化
-            request.Password = Aes.AesEncrypt(request.Password);
+            if (request == null) return StatusCode(HttpStatus.BadRequest);
 
-            IEnumerable<IUser> users = _service.SelectLoginUsers(request.UserName, request.Password);
+            try
+            {
+                // パスワード暗号化
+                request.Password = Aes.AesEncrypt(request.Password);
 
-            IList<string> userNames = new List<string>();
+                IEnumerable<IUser> users = _service.SelectLoginUsers(request.UserName, request.Password);
 
-            // ユーザー名一覧作成
-            foreach (IUser user in users) 
-                userNames.Add(user.UserName);
+                IList<string> userNames = new List<string>();
 
-            return JsonConvert.SerializeObject(userNames);
+                // ユーザー名一覧作成
+                foreach (IUser user in users)
+                    userNames.Add(user.UserName);
+
+                return StatusCode(HttpStatus.OK, userNames);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(HttpStatus.InternalServerError, Message.Create(e));
+            }
         }
     }
 }

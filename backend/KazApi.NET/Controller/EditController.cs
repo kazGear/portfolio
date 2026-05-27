@@ -1,9 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using KazApi.Domain.DTO;
-using System.Transactions;
+﻿using CSLib.Lib;
+using KazApi.Common;
 using KazApi.Domain._Factory;
+using KazApi.Domain.DTO;
 using KazApi.Service;
+using Microsoft.AspNetCore.Mvc;
+using System.Transactions;
 
 namespace KazApi.Controller
 {
@@ -21,26 +22,44 @@ namespace KazApi.Controller
         /// 初期処理
         /// </summary>
         [HttpGet("api/edit/init")]
-        public ActionResult<string> Init()
+        public IActionResult Init()
         {
-            // ドロップダウンの選択肢を取得
-            IEnumerable<CodeDTO> dropDown = _service.FetchDropDown();
-            return JsonConvert.SerializeObject(dropDown);
+            try
+            {
+                // ドロップダウンの選択肢を取得
+                IEnumerable<CodeDTO> dropDown = _service.FetchDropDown();
+                return StatusCode(HttpStatus.OK, dropDown);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(HttpStatus.InternalServerError, Message.Create(e));
+            }
         }
 
         [HttpPost("api/edit/fetchMonsters")]
-        public ActionResult<string> FetctEditMonsters([FromBody] string loginId)
+        public IActionResult FetctEditMonsters([FromBody] string? loginId)
         {
-            IEnumerable<EditMonsterDTO> monsters = _service.FetchEditMonsters(loginId);
-            return JsonConvert.SerializeObject(monsters);
+            if (string.IsNullOrEmpty(loginId)) return StatusCode(HttpStatus.BadRequest);
+
+            try
+            {
+                IEnumerable<EditMonsterDTO> monsters = _service.FetchEditMonsters(loginId);
+                return StatusCode(HttpStatus.OK, monsters);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(HttpStatus.InternalServerError, Message.Create(e));
+            }
         }
 
         /// <summary>
         /// モンスターのステータスを設定する
         /// </summary>
         [HttpPut("api/edit/updateMonsterStatus")]
-        public ActionResult UpdateMonsterStatus([FromBody] IEnumerable<EditMonsterDTO> monsters)
+        public IActionResult UpdateMonsterStatus([FromBody] IEnumerable<EditMonsterDTO>? monsters)
         {
+            if (monsters == null || monsters.Count() == 0) return StatusCode(HttpStatus.BadRequest);
+
             using (TransactionScope transaction = new TransactionScope())
             {
                 try
@@ -60,20 +79,21 @@ namespace KazApi.Controller
                     _service.UpdateMonsterStatus(changeMonsters);
 
                     transaction.Complete();
+                    return StatusCode(HttpStatus.OK);
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
-                    return StatusCode(500, "モンスターステータスの更新に失敗しました。");
+                    string message = "モンスターステータスの更新に失敗しました。";
+                    return StatusCode(HttpStatus.InternalServerError, Message.Create(e, message));
                 }
             }
-            return Ok(200);
         }
 
         /// <summary>
         /// 全モンスターのステータスを初期化する
         /// </summary>
         [HttpPut("api/edit/initAllMonsterStatus")]
-        public ActionResult InitAllMonsterStatus()
+        public IActionResult InitAllMonsterStatus()
         {
             try
             {
@@ -82,19 +102,19 @@ namespace KazApi.Controller
                     _service.InitAllMonsterStatus();
                     transaction.Complete();
                 }
+                return StatusCode(HttpStatus.OK);
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return StatusCode(500);
+                return StatusCode(HttpStatus.InternalServerError, Message.Create(e));
             }
-            return Ok(200);
         }
 
         /// <summary>
         /// 全モンスターのスキルを初期化する
         /// </summary>
         [HttpPut("api/edit/initAllMonsterSkills")]
-        public ActionResult InitAllMonsterSkills()
+        public IActionResult InitAllMonsterSkills()
         {
             try
             {
@@ -103,30 +123,33 @@ namespace KazApi.Controller
                     _service.InitAllMonsterSkills();
                     transaction.Complete();
                 }
+                return StatusCode(HttpStatus.OK);
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return StatusCode(500);
+                return StatusCode(HttpStatus.InternalServerError, Message.Create(e));
             }
-            return Ok(200);
         }
 
         /// <summary>
         /// 編集用モンスターデータ（スキル付き）を取得
         /// </summary>
         [HttpPost("api/edit/fecthEditSkills")]
-        public ActionResult<string> FecthEditSkills([FromBody] string loginId)
+        public IActionResult FecthEditSkills([FromBody] string? loginId)
         {
+            if (string.IsNullOrEmpty(loginId)) return StatusCode(HttpStatus.BadRequest);
+
             try
             {
                 IEnumerable<EditSkillsDTO> result = _service.FecthEditSkills(loginId);
                 result = new EditFactory().CreateMonstersWithSkills(result);
 
-                return JsonConvert.SerializeObject(result);
+                return StatusCode(HttpStatus.OK, result);
+
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return StatusCode(500);
+                return StatusCode(HttpStatus.InternalServerError, Message.Create(e));
             }
         }
 
@@ -134,28 +157,39 @@ namespace KazApi.Controller
         /// 全スキルを取得
         /// </summary>
         [HttpGet("api/edit/fecthAllSkills")]
-        public ActionResult<string> FecthAllSkills()
+        public IActionResult FecthAllSkills()
         {
-            IEnumerable<AllSkillDTO> result = _service.FetchAllSkills();
-            return JsonConvert.SerializeObject(result);
+            try
+            {
+                IEnumerable<AllSkillDTO> result = _service.FetchAllSkills();
+                return StatusCode(HttpStatus.OK, result);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(HttpStatus.InternalServerError, Message.Create(e));
+            }
         }
 
         /// <summary>
         /// モンスターのスキルを変更する
         /// </summary>
         [HttpPut("api/edit/UpdateMonsterSkills")]
-        public ActionResult UpdateMonsterSkills([FromBody] IEnumerable<EditSkillsDTO> skills)
+        public IActionResult UpdateMonsterSkills([FromBody] IEnumerable<EditSkillsDTO>? skills)
         {
+            if (skills == null || skills.Count() == 0) return StatusCode(HttpStatus.BadRequest);
+
             try
             {
                 skills = skills.Where(e => e.IsChanged == true);
                 _service.UpdateMonsterSkills(skills);
+                
+                return StatusCode(HttpStatus.OK);
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return StatusCode(500, "スキルの更新に失敗しました。");
+                string message = "スキルの更新に失敗しました。";
+                return StatusCode(HttpStatus.InternalServerError, Message.Create(e, message));
             }
-            return Ok(200);
         }
     }
 }

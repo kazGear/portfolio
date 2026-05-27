@@ -1,9 +1,8 @@
 ﻿using CSLib.Lib;
+using KazApi.Common;
 using KazApi.Domain.DTO;
 using KazApi.Service;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 
 namespace KazApi.Controller
 {
@@ -28,20 +27,29 @@ namespace KazApi.Controller
         public IActionResult Login([FromForm] string? loginId,
                                    [FromForm] string? password)
         {
-            loginId = loginId != null ? loginId.Trim() : null;
-            if (loginId == null || password == null) return Unauthorized();
+            if (string.IsNullOrEmpty(loginId) || string.IsNullOrEmpty(password))
+                return StatusCode(HttpStatus.Unauthorized);
 
-            // ユーザの認証
-            UserDTO? user = _service.AuthenticateUser(loginId, password);
+            try
+            {
+                loginId = loginId != null ? loginId.Trim() : null;
 
-            // 認証失敗
-            if (user == null) return Unauthorized();
+                // ユーザの認証
+                UserDTO? user = _service.AuthenticateUser(loginId!, password);
 
-            // トークン発行
-            string token = Jwt.GenerateJwtToken(user.LoginId, _configuration);
-            user.Token = token;
+                // 認証失敗
+                if (user == null) return StatusCode(HttpStatus.Unauthorized);
 
-            return Ok(JsonConvert.SerializeObject(user));
+                // トークン発行
+                string token = Jwt.GenerateJwtToken(user.LoginId, _configuration);
+                user.Token = token;
+
+                return StatusCode(HttpStatus.OK, user);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(HttpStatus.InternalServerError, Message.Create(e));
+            }
         }
 
         /// <summary>
@@ -54,7 +62,7 @@ namespace KazApi.Controller
 
             if (string.IsNullOrEmpty(token))
             {
-                return StatusCode(HttpStatus.Unauthorized, new { });
+                return StatusCode(HttpStatus.Unauthorized);
             }
             bool isValid = Jwt.IsValidToken(token);
 

@@ -1,5 +1,7 @@
 package model
 
+import "fmt"
+
 type Guitar struct {
 	Maker         int     `json:"maker"`
 	Name          string  `json:"name"`
@@ -20,4 +22,8 @@ type Guitar struct {
 	ScaleLengthMM int     `json:"scale_length_mm"`
 	Series        string  `json:"series"`
 	Weight        float64 `json:"weight"`
+}
+
+func (g *Guitar) String() string {
+	return fmt.Sprintf("maker: %v, name: %v, price: %d", g.Maker, g.Name, g.Price)
 }

@@ -63,14 +63,14 @@ func buildGuitar(spec map[string]string) (*model.Guitar) {
 	guitar.Price, errPrice = utils.ParsePrice(spec["Price"])
 
     if errPrice != nil {
-        log.Print(errPrice)
+        log.Println(errPrice)
     }
 
     var errScaleLengthMM error
     guitar.ScaleLengthMM, errScaleLengthMM = utils.TrimScaleUnit(spec["ScaleLengthMM"])
 
     if errScaleLengthMM != nil {
-        log.Print(errScaleLengthMM)
+        log.Println(errScaleLengthMM)
     }
 
 	guitar.Series = spec["Series"]
@@ -79,7 +79,7 @@ func buildGuitar(spec map[string]string) (*model.Guitar) {
     weight, errWeight := strconv.Atoi(spec["Weight"])
 
     if errWeight != nil {
-        log.Print(errWeight)
+        log.Println(errWeight)
     }
 	guitar.Weight = float64(weight)
 

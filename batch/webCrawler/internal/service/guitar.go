@@ -5,26 +5,36 @@ import (
 
 	"github.com/kazGear/portfolio/webCrawler/internal/repository"
 	"github.com/kazGear/portfolio/webCrawler/internal/scraper"
-	"github.com/kazGear/portfolio/webCrawler/pkg/db"
+	"github.com/kazGear/portfolio/webCrawler/pkg/utils"
 )
 
-func RunGuitarCrawler() {
-    log.Println("ギタークローラー開始")
+type CrawlerService interface {
+    RunCrawler()
+}
 
-    guitars, err := scraper.ScrapeGuitars()
-    if err != nil {
-        log.Println("スクレイピング失敗:", err)
-        return
+type guitarCrawlerService struct {
+    repository repository.Repository
+}
+
+func NewGuitarCrawlerService(repository repository.Repository) CrawlerService {
+    return &guitarCrawlerService{ repository: repository }
+}
+
+func (s *guitarCrawlerService) RunCrawler() {
+    utils.LoggerInit("esp")
+
+    // メーカーが増えたら追加
+    scrapers := []scraper.Scraper{
+        scraper.NewESPGuitarScraper(),
     }
+    // スクレイピング + DB保存
+    for _, scraper := range scrapers {
+        guitars, err := scraper.Scrape()
 
-    database := db.Connect()
-    defer database.Close()
+        if err != nil {
+            log.Println(err)
+        }
 
-    err = repository.SaveGuitars(database, guitars)
-    if err != nil {
-        log.Println("DB保存失敗:", err)
-        return
+        _ = s.repository.UpsertAll(guitars) // エラー処理はupsert内で。
     }
-
-    log.Println("ギタークローラー完了")
 }

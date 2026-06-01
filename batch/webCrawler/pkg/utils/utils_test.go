@@ -6,6 +6,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+var errMessage = "Failed >>> want: %v, actual: %v"
+
 func TestParsePrice(t *testing.T) {
 	prices := []string{
 		"10000",
@@ -23,17 +25,100 @@ func TestParsePrice(t *testing.T) {
 	}
 }
 
-func TestToHankakuNumber(t *testing.T) {
-	prices := []string{
-		"10000",
-		"10,000",
-		"￥10,000",
-		"１００００",
-		"１０，０００円",
+func TestSearchWoodCode(t *testing.T) {
+	var maple int = 6
+	var hardMaple int = 1
+
+	woods := []string{
+		"hardMaple Paduak 7P",
+		"HardMaple, Walnut, Paduak 7P",
+		"Maple, Paduak 7P HardMaple", // 具体名が拾われる（マスタ順サーチ）
+		"HardMaple Maple",
+		"Hard Maple Maple",
 	}
 
-	for _, v := range prices {
-		price := ToHankakuNumber(v)
-		assert.Contains(t, price, "000")
+	assert.Equal(t, hardMaple, SearchWoodCode(woods[0]))
+	assert.Equal(t, hardMaple, SearchWoodCode(woods[1]))
+	assert.Equal(t, hardMaple, SearchWoodCode(woods[2]))
+	assert.Equal(t, hardMaple, SearchWoodCode(woods[3]))
+	assert.Equal(t, maple, SearchWoodCode(woods[4]))
+}
+
+func TestGetFretCount(t *testing.T) {
+	frets := []struct {
+		input string
+		want  int
+	}{
+		{
+			input: "JESCAR FW57110-NS, 24frets",
+			want:  24,
+		},
+		{
+			input: "JESCAR FW57110-NS, 14frets",
+			want:  -1,
+		},
+		{
+			input: "JESCAR FW57110-NS15frets",
+			want:  15,
+		},
+		{
+			input: "JESCAR FW57110-NS39frets",
+			want:  39,
+		},
+		{
+			input: "JESCAR FW57110-NS40frets",
+			want:  -1,
+		},
+	}
+
+	for _, fret := range frets {
+		fret := fret
+
+		actual, err := GetFretCount(fret.input)
+
+		if err != nil || actual == -1 {
+			assert.Error(t, err)
+		} else {
+			if fret.want != actual {
+				t.Fatalf(errMessage, fret.want, actual)
+			}
+		}
+	}
+}
+
+func TestTrimScaleUnit(t *testing.T) {
+	scales := []struct {
+		scale string
+		want  int
+	}{
+		{
+			scale: "648mm",
+			want:  648,
+		},
+		{
+			scale: "648 mm",
+			want:  648,
+		},
+		{
+			scale: "648  mm",
+			want:  648,
+		},
+		{
+			scale: "６４８ｍｍ",
+			want:  648,
+		},
+		{
+			scale: "６４８　ｍｍ",
+			want:  648,
+		},
+	}
+
+	for _, s := range scales {
+		actual, err := TrimScaleUnit(s.scale)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, s.want, actual)
 	}
 }

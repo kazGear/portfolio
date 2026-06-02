@@ -16,12 +16,13 @@ func TestParsePrice(t *testing.T) {
 		"１００００",
 		"１０，０００円",
 		"250,000円（税別） ／ 275,000円（税込）",
+		"BK, SW 726,000 yen (without tax: 660,000 yen) DCAR 748,000 yen (without tax: 680,000 yen)",
 	}
 
 	for _, price := range prices {
-		price := price // ← これ重要（並列テスト時の罠回避）
+		price := price // 並列テスト時の罠回避
 		result, _ := ParsePrice(price)
-		assert.True(t, 0 <= result && result <= 100000000)
+		assert.True(t, 1 <= result && result <= 100000000)
 	}
 }
 
@@ -114,11 +115,8 @@ func TestTrimScaleUnit(t *testing.T) {
 	}
 
 	for _, s := range scales {
-		actual, err := TrimScaleUnit(s.scale)
-
-		if err != nil {
-			t.Fatal(err)
-		}
+		s := s
+		actual := TrimScaleUnit(s.scale)
 		assert.Equal(t, s.want, actual)
 	}
 }

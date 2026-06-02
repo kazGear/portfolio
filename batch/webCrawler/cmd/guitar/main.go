@@ -1,8 +1,6 @@
 package main
 
 import (
-	"log"
-
 	"github.com/joho/godotenv"
 	"github.com/kazGear/portfolio/webCrawler/internal/repository"
 	"github.com/kazGear/portfolio/webCrawler/internal/service"
@@ -10,17 +8,15 @@ import (
 )
 
 func init() {
-    godotenv.Load()
+	godotenv.Load()
 }
 
 func main() {
 	// DBセットアップ
-    database := db.Connect()
-    defer database.Close()
+	database := db.Connect()
+	defer database.Close()
 	repository := repository.NewGuitarRepository(database)
-	// クローラー起動
+	// // クローラー起動
 	service := service.NewGuitarCrawlerService(repository)
-	log.Println("Starting GuitarCrawler...")
 	service.RunCrawler()
-	log.Println("Finished GuitarCrawler.")
 }

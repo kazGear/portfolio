@@ -22,9 +22,19 @@ func NewGuitarRepository(db *sqlx.DB) Repository {
 }
 
 func (r *guitarRepository) Upsert(guitar model.Guitar) error {
+    log.Printf("Try upsert >>> %v", guitar.String())
+
     // pkチェック
-    if guitar.Maker <= 0 || len(guitar.Name) <= 0 {
-        return fmt.Errorf("invalid primary key: maker=%d, name=%s", guitar.Maker, guitar.Name)
+    if guitar.Maker <= 0 || len(guitar.Name) <= 0 || len(guitar.Color) <= 0 {
+        return fmt.Errorf("invalid primary key: maker=%v, name=%v, color=%v\n",
+            guitar.Maker,
+            guitar.Name,
+            guitar.Color,
+        )
+    }
+    // 画像確認
+    if len(guitar.Src) <= 0 {
+        return fmt.Errorf("画像URLは必須項目です。")
     }
     // 1. UPDATE（存在すれば更新）
     res, err := r.db.NamedExec(`
@@ -60,7 +70,7 @@ func (r *guitarRepository) Upsert(guitar model.Guitar) error {
     if err != nil {
         return err
     }
-    // 3. 行がなければ INSERT
+    // 3. UPDATE されてないなら INSERT
     if rows == 0 {
         _, err := r.db.NamedExec(`
             INSERT INTO t_guitars
@@ -119,8 +129,10 @@ func (r *guitarRepository) Upsert(guitar model.Guitar) error {
 
 func (r *guitarRepository) UpsertAll(guitars []model.Guitar) error {
     for _, guitar := range guitars {
-        if err := r.Upsert(guitar); err != nil {
-            log.Printf("DB保存失敗: maker: %v, name: %v (%v)", guitar.Maker, guitar.Name, err)
+        err := r.Upsert(guitar)
+
+        if err != nil {
+            log.Print(err)
         }
     }
     return nil

@@ -9,7 +9,10 @@ const (
 	SCHECTER
 )
 
-const InvalidNumber int = -1
+const (
+	InvalidNumber int = -1
+	DecoLabel = "◆◇◆◇ %v ◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇\n"
+)
 
 type wood struct {
 	Name string

@@ -1,26 +1,22 @@
 package scraper
 
 import (
+	"context"
 	"log"
 	"strconv"
+	"sync"
+	"time"
 
+	"github.com/chromedp/chromedp"
 	"github.com/gocolly/colly/v2"
 	"github.com/kazGear/portfolio/webCrawler/internal/model"
 	"github.com/kazGear/portfolio/webCrawler/pkg/utils"
 )
 
 type Scraper interface {
-	Scrape() ([]model.Guitar, error)
-}
-
-// htmlページのリンクを次々に辿っていく
-func navigateLinks(cssSelector string) func(*colly.HTMLElement) {
-    return func(html *colly.HTMLElement) {
-        html.ForEach(cssSelector, func(idx int, elem *colly.HTMLElement) {
-            link := elem.Request.AbsoluteURL(elem.ChildAttr("a", "href"))
-            elem.Request.Visit(link)
-        })
-    }
+	Scrape()      ([]model.Guitar, error)
+	CollectURLs()
+    Cancel()
 }
 
 // ギター構造体の構築
@@ -32,9 +28,8 @@ func buildGuitar(spec map[string]string) (*model.Guitar) {
 	guitar.Maker, errMaker = strconv.Atoi(spec["Maker"])
 	guitar.Name            = spec["Name"]
 
-    if guitar.Maker <= 0 || len(guitar.Name) == 0 || errMaker != nil {
-		log.Printf("メーカー,名称は必須項目です。maker: %v, name: %v\n", guitar.Maker, guitar.Name)
-		return &model.Guitar{}
+    if errMaker != nil {
+        return &model.Guitar{}
 	}
 
 	guitar.BodyFinish        = spec["BodyFinish"]
@@ -66,22 +61,79 @@ func buildGuitar(spec map[string]string) (*model.Guitar) {
         log.Println(errPrice)
     }
 
-    var errScaleLengthMM error
-    guitar.ScaleLengthMM, errScaleLengthMM = utils.TrimScaleUnit(spec["ScaleLengthMM"])
+    guitar.ScaleLengthMM = utils.TrimScaleUnit(spec["ScaleLengthMM"])
+	guitar.Series        = spec["Series"]
+	guitar.Src           = spec["Src"]
 
-    if errScaleLengthMM != nil {
-        log.Println(errScaleLengthMM)
+    if len(guitar.Src) <= 0 {
+        return &model.Guitar{}
     }
-
-	guitar.Series = spec["Series"]
-	guitar.Src    = spec["Src"]
-
-    weight, errWeight := strconv.Atoi(spec["Weight"])
-
-    if errWeight != nil {
-        log.Println(errWeight)
-    }
+    weight, _    := strconv.Atoi(spec["Weight"])
 	guitar.Weight = float64(weight)
 
 	return &guitar
+}
+
+// 動的、静的ページを取得（動的が優先）。funcは個々で実装の必要あり。
+func fetchPage(url string,
+			   isStaticPage func(string)bool,
+			   fetchDynamicPage func(string)string) string {
+
+    html := fetchStaticPage(url)
+
+    if !isStaticPage(html) {
+        html = fetchDynamicPage(url)
+    }
+    return html
+}
+
+// HTMLを取得
+func fetchStaticPage(url string) string {
+    var html string
+    c := colly.NewCollector()
+
+    c.OnHTML("html", func(e *colly.HTMLElement) {
+        html, _ = e.DOM.Html()
+    })
+    c.Visit(url)
+    return html
+}
+
+// WaitReady を実行し、失敗しても無視するフォールバック
+func TryWaitReady(elem string) chromedp.ActionFunc {
+    return func(ctx context.Context) error {
+        _ = chromedp.Run(ctx,
+			chromedp.Sleep(200 * time.Millisecond),
+            chromedp.WaitReady(elem, chromedp.ByQuery),
+        )
+        return nil
+    }
+}
+
+// URLセットに追加（重複なし）
+// true: 初visit, false: visit済
+func isFirstVisit(mutex *sync.Mutex, url string, visited map[string]struct{}) bool {
+    mutex.Lock()
+    defer mutex.Unlock()
+
+    _, exists := visited[url]
+
+    if exists {
+        return false
+    }
+    visited[url] = struct{}{} // struct{} = use memory 0
+    log.Printf("visited: %v", url)
+
+    return true
+}
+
+// 重複なしのURL配列を取得
+func getDistinctUrls(visited map[string]struct{}) []string {
+    urls  := make([]string, 0, 500)
+    mutex := &sync.Mutex{}
+
+    for k, _ := range visited {
+        urls = utils.LockedAppend(mutex, urls, k)
+    }
+    return urls
 }

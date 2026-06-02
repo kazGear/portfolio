@@ -60,6 +60,7 @@ func (r *guitarRepository) Upsert(guitar model.Guitar) error {
                weight              = :weight
          WHERE maker = :maker
            AND name  = :name
+           AND color = :color
     `, guitar)
 
     if err != nil {

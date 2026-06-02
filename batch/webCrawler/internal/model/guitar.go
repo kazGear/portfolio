@@ -29,7 +29,7 @@ type Guitar struct {
 }
 
 func (g *Guitar) String() string {
-	return fmt.Sprintf("this guitar >>> maker: %v, name: %v, color: %v\n",
+	return fmt.Sprintf("this guitar >>> [maker] : %v, [name] : %v, [color] : %v\n",
 		g.Maker,
 		g.Name,
 		g.Color,

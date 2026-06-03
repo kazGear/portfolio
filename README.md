@@ -32,3 +32,12 @@ VSで、デバッグ → プロセスにアタッチ
 これが Docker の中で動いている ASP.NET API。
 これを選んで「アタッチ」
 エンジン選択は、マネージド（Unix 用 .NET Core）
+
+# webCrawler
+
+処理の流れは基本的に抽象化してあるため、具体的な処理を追加したい場合、具体的な処理をするファイルを追加すること。フレーム部分は基本的に修正する必要はない。
+例：
+fenderのギターをスクレイプしたい >>> scraper_guitar_fender.go を追加する。
+gibsonのギターをスクレイプしたい >>> scraper_guitar_gibson.go を追加する。
+
+scraper_guitar.go, scraper.goなど抽象的なファイル名には、抽象化処理、基盤的な処理といった。フレーム部分になる。

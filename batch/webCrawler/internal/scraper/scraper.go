@@ -102,7 +102,7 @@ func fetchStaticPage(url string) string {
 }
 
 // WaitReady を実行し、失敗しても無視するフォールバック
-func TryWaitReady(elem string) chromedp.ActionFunc {
+func tryWaitReady(elem string) chromedp.ActionFunc {
     return func(ctx context.Context) error {
         _ = chromedp.Run(ctx,
 			chromedp.Sleep(200 * time.Millisecond),

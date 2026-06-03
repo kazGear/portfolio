@@ -124,9 +124,9 @@ func (e *espGuitarScraper) fetchDynamicPage(url string) string {
     }
     // 必要な要素が生成されるのを待つ
     _ = chromedp.Run(e.ctx,
-        TryWaitReady("h1.header_title"),
-        TryWaitReady(".tbl_spec"),
-        TryWaitReady("p.detail_price"),
+        tryWaitReady("h1.header_title"),
+        tryWaitReady(".tbl_spec"),
+        tryWaitReady("p.detail_price"),
     )
     // 最終的なHTML出力
     var html string

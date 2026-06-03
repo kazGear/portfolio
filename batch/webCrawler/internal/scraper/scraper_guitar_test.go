@@ -1,15 +1,19 @@
 package scraper
 
 import (
+	"context"
 	"fmt"
 	"sync"
 	"testing"
 
+	"github.com/chromedp/chromedp"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestCollectURLsESP(t *testing.T) {
-	guitar := NewESPGuitarScraper()
+    _, cancel := chromedp.NewContext(context.Background())
+
+	guitar := NewEspScraper(cancel)
 	urls   := guitar.CollectLinks()
 	fmt.Printf("urlsCount: %v", len(urls))
 

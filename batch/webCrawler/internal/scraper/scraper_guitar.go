@@ -2,11 +2,14 @@ package scraper
 
 import (
 	"context"
+	"errors"
 	"log"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
 
+	"github.com/PuerkitoBio/goquery"
 	"github.com/chromedp/chromedp"
 	"github.com/gocolly/colly/v2"
 	"github.com/kazGear/portfolio/webCrawler/internal/model"
@@ -15,13 +18,64 @@ import (
 )
 
 type Scraper interface {
-	Scrape()       ([]model.Guitar, error)
-	CollectLinks() []string
+	Scrape(GuitarCallbacks) ([]model.Guitar, error)
+	CollectLinks()                []string
     Cancel()
 }
 
+type GuitarCallbacks interface {
+    FetchDynamicPage() func(url string) string
+    CollectSpec()      func(doc *goquery.Document) map[string]string
+    BuildGuitar()      func(spec map[string]string) *model.Guitar
+}
+
+type guitarScraper struct {
+    urls      []string
+	collector *colly.Collector
+    mutex     *sync.Mutex
+    cancel    context.CancelFunc
+}
+
+type callBacks struct {
+    ctx context.Context
+}
+
+func NewCallBacks(ctx context.Context) GuitarCallbacks {
+    return &callBacks{
+        ctx: ctx,
+    }
+}
+
+// スクレイピング実行
+func (e *guitarScraper) scrapeFrame(funcs GuitarCallbacks) ([]model.Guitar, error) {
+    var guitars []model.Guitar
+
+    if len(e.urls) <= 0 {
+        return []model.Guitar{}, errors.New("巡回用URLがありません。")
+    }
+    for _, url := range e.urls {
+        // 静的/動的を判定して HTML を取得
+        html := fetchPage(url, isStaticPage, funcs.FetchDynamicPage())
+        // goquery >>> DOM化
+        doc, err := goquery.NewDocumentFromReader(strings.NewReader(html))
+        if err != nil {
+            log.Println("goquery error:", err)
+            continue
+        }
+        collectSpec := funcs.CollectSpec()
+        buildGuitar := funcs.BuildGuitar()
+        spec        := collectSpec(doc)
+        guitar      := buildGuitar(spec)
+
+        if len(guitar.Name) <= 0 || len(guitar.Color) <= 0 { continue  }
+        guitars = utils.LockedAppend(e.mutex, guitars, *guitar)
+    }
+    return guitars, nil
+}
+
+
 // ギター構造体の構築
-func buildGuitar(spec map[string]string) (*model.Guitar) {
+func buildGuitarFrame(spec map[string]string) (*model.Guitar) {
 
 	guitar := model.Guitar{}
 
@@ -77,9 +131,11 @@ func buildGuitar(spec map[string]string) (*model.Guitar) {
 }
 
 // 動的、静的ページを取得（動的が優先）。funcは個々で実装の必要あり。
-func fetchPage(url string,
-			   isStaticPage func(string)bool,
-			   fetchDynamicPage func(string)string) string {
+func fetchPage(
+    url string,
+    isStaticPage func(string)bool,
+    fetchDynamicPage func(string)string,
+) string {
 
     html := fetchStaticPage(url)
 

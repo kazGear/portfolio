@@ -1,9 +1,11 @@
 package service
 
 import (
+	"context"
 	"log"
 	"time"
 
+	"github.com/chromedp/chromedp"
 	"github.com/kazGear/portfolio/webCrawler/internal/repository"
 	"github.com/kazGear/portfolio/webCrawler/internal/scraper"
 	"github.com/kazGear/portfolio/webCrawler/pkg/constants"
@@ -26,26 +28,29 @@ func (s *guitarCrawlerService) RunCrawler() {
     utils.LoggerInit("esp")
     log.Printf(constants.DecoLabel, "Started crawler.")
 
+    ctx, cancel := chromedp.NewContext(context.Background())
+
     // 処理時間計測
     startTime := time.Now()
     defer func() { log.Printf("Crawler processing time: %v\n", time.Since(startTime)) }()
     // メーカーが増えたら追加
     scrapers := []scraper.Scraper{
-        scraper.NewESPGuitarScraper(),
+        scraper.NewEspScraper(cancel),
     }
     // chrome ターミネート
     for i := len(scrapers)-1; i >= 0; i-- {
         defer scrapers[i].Cancel()
     }
+    funcs := scraper.NewCallBacks(ctx)
+
     // スクレイピング + DB保存
     for _, scraper := range scrapers {
         scraper.CollectLinks()
-        guitars, err := scraper.Scrape()
+        guitars, err := scraper.Scrape(funcs)
 
         if err != nil {
             log.Println(err)
         }
-
         _ = s.repository.UpsertAll(guitars) // エラー処理はupsert内で。
     }
     log.Printf(constants.DecoLabel, "Finished crawler.")

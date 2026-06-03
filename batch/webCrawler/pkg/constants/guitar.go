@@ -7,6 +7,7 @@ const (
 	Gibson
 	Strandberg
 	SCHECTER
+	ESPsignature
 )
 
 const (

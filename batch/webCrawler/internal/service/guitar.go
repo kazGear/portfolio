@@ -39,7 +39,7 @@ func (s *guitarCrawlerService) RunCrawler() {
     }
     // スクレイピング + DB保存
     for _, scraper := range scrapers {
-        scraper.CollectURLs()
+        scraper.CollectLinks()
         guitars, err := scraper.Scrape()
 
         if err != nil {

@@ -50,7 +50,7 @@ func (e *espGuitarScraper) Cancel() {
 }
 
 // スクレイプ対象のURLを収集
-func (e *espGuitarScraper) CollectURLs() /*[]string*/ {
+func (e *espGuitarScraper) CollectLinks() []string {
     c       := e.collector
     visited := make(map[string]struct{}, 500)
     mutex   := &sync.Mutex{}
@@ -78,6 +78,7 @@ func (e *espGuitarScraper) CollectURLs() /*[]string*/ {
     c.Wait()
 
     e.urls = getDistinctUrls(visited)
+    return e.urls
 }
 
 // スクレイピング実行

@@ -1,18 +1,20 @@
 package scraper
 
 import (
+	"fmt"
 	"sync"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
-// func TestCollectURLsESP(t *testing.T) {
-// 	guitar := NewESPGuitarScraper()
-// 	guitar.CollectURLs()
-// 	urls :=
-// 	assert.GreaterOrEqual(t, len(urls), 400)
-// }
+func TestCollectURLsESP(t *testing.T) {
+	guitar := NewESPGuitarScraper()
+	urls   := guitar.CollectLinks()
+	fmt.Printf("urlsCount: %v", len(urls))
+
+	assert.GreaterOrEqual(t, len(urls), 350)
+}
 
 func TestConvertLabel(t *testing.T) {
 	items := []struct{

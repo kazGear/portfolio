@@ -24,6 +24,16 @@ func NewGuitarCrawlerService(repository repository.Repository) CrawlerService {
     return &guitarCrawlerService{ repository: repository }
 }
 
+type maker struct {
+    name    string
+    scraper scraper.Scraper
+    funcs   scraper.GuitarCallbacks
+}
+
+func NewMaker(name string, scraper scraper.Scraper, funcs scraper.GuitarCallbacks) *maker {
+    return &maker{ name, scraper, funcs}
+}
+
 func (s *guitarCrawlerService) RunCrawler() {
     utils.LoggerInit("esp")
     log.Printf(constants.DecoLabel, "Started crawler.")
@@ -34,23 +44,18 @@ func (s *guitarCrawlerService) RunCrawler() {
     startTime := time.Now()
     defer func() { log.Printf("Crawler processing time: %v\n", time.Since(startTime)) }()
     // メーカーが増えたら追加
-    scrapers := []scraper.Scraper{
-        scraper.NewEspScraper(cancel),
-        scraper.NewEspSigScraper(cancel),
+    makers := []*maker {
+        NewMaker("ESP", scraper.NewEspScraper(cancel), scraper.NewCallBacksEsp(ctx)),
+        NewMaker("ESP_sig", scraper.NewEspSigScraper(cancel), scraper.NewCallBacksEspSig(ctx)),
     }
     // chrome ターミネート
-    for i := len(scrapers)-1; i >= 0; i-- {
-        defer scrapers[i].CancelChrome()
-    }
-    // メーカーが増えたら追加
-    funcsArr := []scraper.GuitarCallbacks {
-        scraper.NewCallBacksEsp(ctx),
-        scraper.NewCallBacksEspSig(ctx),
+    for i := len(makers)-1; i >= 0; i-- {
+        defer makers[i].scraper.CancelChrome()
     }
     // スクレイピング + DB保存
-    for idx, scraper := range scrapers {
-        scraper.CollectLinks()
-        guitars, err := scraper.Scrape(funcsArr[idx])
+    for _, maker := range makers {
+        maker.scraper.CollectLinks()
+        guitars, err := maker.scraper.Scrape(maker.funcs)
 
         if err != nil {
             log.Println(err)

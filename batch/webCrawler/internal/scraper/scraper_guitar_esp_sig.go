@@ -16,15 +16,15 @@ import (
 	"github.com/kazGear/portfolio/webCrawler/pkg/constants"
 )
 
-type guitarScraperEsp struct {
+type guitarScraperEspSig struct {
     gScraper guitarScraper
 }
 
-type callBacksEsp struct {
+type callBacksEspSig struct {
     funcs callBacks
 }
 
-func NewEspScraper(cancel context.CancelFunc) Scraper {
+func NewEspSigScraper(cancel context.CancelFunc) Scraper {
 	collector := colly.NewCollector(
 		colly.Async(true),
 		colly.MaxDepth(4),
@@ -42,7 +42,7 @@ func NewEspScraper(cancel context.CancelFunc) Scraper {
     }
 }
 
-func NewCallBacksEsp(ctx context.Context) GuitarCallbacks {
+func NewCallBacksEspSig(ctx context.Context) GuitarCallbacks {
     return &callBacksEsp{
         callBacks{
             ctx: ctx,
@@ -50,11 +50,11 @@ func NewCallBacksEsp(ctx context.Context) GuitarCallbacks {
     }
 }
 
-func (e *guitarScraperEsp) CancelChrome() {
+func (e *guitarScraperEspSig) CancelChrome() {
     e.gScraper.cancel()
 }
 
-func (e *guitarScraperEsp) CollectLinks() []string {
+func (e *guitarScraperEspSig) CollectLinks() []string {
     c       := e.gScraper.collector
     visited := make(map[string]struct{}, 500)
     mutex   := &sync.Mutex{}
@@ -85,13 +85,12 @@ func (e *guitarScraperEsp) CollectLinks() []string {
     return e.gScraper.urls
 }
 
-func (e *guitarScraperEsp) Scrape(funcs GuitarCallbacks) ([]model.Guitar, error) {
+func (e *guitarScraperEspSig) Scrape(funcs GuitarCallbacks) ([]model.Guitar, error) {
     guitars, _ := e.gScraper.scrapeFrame(funcs)
     return guitars, nil
 }
 
-// 必要に応じて、基盤のTryWaitReadyを組み込む
-func (e *callBacksEsp) FetchDynamicPage() func(url string) string {
+func (e *callBacksEspSig) FetchDynamicPage() func(url string) string {
     return func(url string) string {
         // タイムアウト（JS が遅いページ対策）
         e.funcs.ctx, _ = context.WithTimeout(e.funcs.ctx, 30*time.Second)
@@ -121,11 +120,11 @@ func (e *callBacksEsp) FetchDynamicPage() func(url string) string {
     }
 }
 
-func (e *callBacksEsp) CollectSpec() func(doc *goquery.Document) map[string]string {
+func (e *callBacksEspSig) CollectSpec() func(doc *goquery.Document) map[string]string {
     return func(doc *goquery.Document) map[string]string {
         spec := map[string]string{}
 
-        spec["Maker"]   = strconv.Itoa(constants.Esp)
+        spec["Maker"]   = strconv.Itoa(constants.EspSignature)
         spec["Name"]    = strings.TrimSpace(doc.Find("h1.header_title").Text())
         src, _         := doc.Find("#main .header_content img.transform-5").Attr("src")
         spec["Src"]     = strings.TrimSpace(src)
@@ -136,27 +135,27 @@ func (e *callBacksEsp) CollectSpec() func(doc *goquery.Document) map[string]stri
         doc.Find("#specifications table.tbl_spec tr").Each(func(i int, s *goquery.Selection) {
             th      := strings.TrimSpace(s.Find("th").Text())
             td      := strings.TrimSpace(s.Find("td").Text())
-            th       = convertLabelEsp(th)
+            th       = convertLabel(th)
             spec[th] = td
         })
         return spec
     }
 }
 
-func (e *callBacksEsp) BuildGuitar() func(spec map[string]string) *model.Guitar {
+func (e *callBacksEspSig) BuildGuitar() func(spec map[string]string) *model.Guitar {
     return func(spec map[string]string) *model.Guitar {
         return buildGuitarFrame(spec)
     }
 }
 
-func (e *callBacksEsp) IsStaticPage() func(html string) bool {
+func (e *callBacksEspSig) IsStaticPage() func(html string) bool {
     return func(html string) bool {
         return strings.Contains(html, "tbl_spec")
     }
 }
 
 // key: ESPの項目名, value: 構造体フィールド名
-var espFieldMap = map[string]string{
+var espSigFieldMap = map[string]string{
 	"BODY":         "BodyMaterial",
 	"NECK":         "NeckMaterial",
 	"FINGERBOARD":  "Fingerboard",
@@ -171,6 +170,6 @@ var espFieldMap = map[string]string{
 }
 
 // サイトの項目名をフィールド名に変換
-func convertLabelEsp(label string) string {
-    return espFieldMap[label]
+func convertLabel(label string) string {
+    return espSigFieldMap[label]
 }

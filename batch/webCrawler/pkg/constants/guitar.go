@@ -2,12 +2,12 @@ package constants
 
 // ギターメーカー
 const (
-	ESP int = iota + 1
+	Esp int = iota + 1
 	Fender
 	Gibson
 	Strandberg
 	SCHECTER
-	ESPsignature
+	EspSignature
 )
 
 const (

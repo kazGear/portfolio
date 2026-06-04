@@ -36,17 +36,21 @@ func (s *guitarCrawlerService) RunCrawler() {
     // メーカーが増えたら追加
     scrapers := []scraper.Scraper{
         scraper.NewEspScraper(cancel),
+        scraper.NewEspSigScraper(cancel),
     }
     // chrome ターミネート
     for i := len(scrapers)-1; i >= 0; i-- {
-        defer scrapers[i].Cancel()
+        defer scrapers[i].CancelChrome()
     }
-    funcs := scraper.NewCallBacks(ctx)
-
+    // メーカーが増えたら追加
+    funcsArr := []scraper.GuitarCallbacks {
+        scraper.NewCallBacksEsp(ctx),
+        scraper.NewCallBacksEspSig(ctx),
+    }
     // スクレイピング + DB保存
-    for _, scraper := range scrapers {
+    for idx, scraper := range scrapers {
         scraper.CollectLinks()
-        guitars, err := scraper.Scrape(funcs)
+        guitars, err := scraper.Scrape(funcsArr[idx])
 
         if err != nil {
             log.Println(err)

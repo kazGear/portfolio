@@ -19,11 +19,12 @@ import (
 
 type Scraper interface {
 	Scrape(GuitarCallbacks) ([]model.Guitar, error)
-	CollectLinks()                []string
-    Cancel()
+	CollectLinks()          []string
+    CancelChrome()
 }
 
 type GuitarCallbacks interface {
+    IsStaticPage()     func(html string) bool
     FetchDynamicPage() func(url string) string
     CollectSpec()      func(doc *goquery.Document) map[string]string
     BuildGuitar()      func(spec map[string]string) *model.Guitar
@@ -40,13 +41,7 @@ type callBacks struct {
     ctx context.Context
 }
 
-func NewCallBacks(ctx context.Context) GuitarCallbacks {
-    return &callBacks{
-        ctx: ctx,
-    }
-}
-
-// スクレイピング実行
+// スクレイピング実行のフレームワーク
 func (e *guitarScraper) scrapeFrame(funcs GuitarCallbacks) ([]model.Guitar, error) {
     var guitars []model.Guitar
 
@@ -55,7 +50,7 @@ func (e *guitarScraper) scrapeFrame(funcs GuitarCallbacks) ([]model.Guitar, erro
     }
     for _, url := range e.urls {
         // 静的/動的を判定して HTML を取得
-        html := fetchPage(url, isStaticPage, funcs.FetchDynamicPage())
+        html := fetchPage(url, funcs.IsStaticPage(), funcs.FetchDynamicPage())
         // goquery >>> DOM化
         doc, err := goquery.NewDocumentFromReader(strings.NewReader(html))
         if err != nil {
@@ -73,8 +68,7 @@ func (e *guitarScraper) scrapeFrame(funcs GuitarCallbacks) ([]model.Guitar, erro
     return guitars, nil
 }
 
-
-// ギター構造体の構築
+// ギター構造体の構築フレームワーク
 func buildGuitarFrame(spec map[string]string) (*model.Guitar) {
 
 	guitar := model.Guitar{}
@@ -145,7 +139,7 @@ func fetchPage(
     return html
 }
 
-// HTMLを取得
+// 静的HTMLを取得
 func fetchStaticPage(url string) string {
     var html string
     c := colly.NewCollector()
@@ -157,6 +151,7 @@ func fetchStaticPage(url string) string {
     return html
 }
 
+// 動的ページ取得用ヘルパー
 // WaitReady を実行し、失敗しても無視するフォールバック
 func tryWaitReady(elem string) chromedp.ActionFunc {
     return func(ctx context.Context) error {

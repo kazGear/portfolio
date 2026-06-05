@@ -120,7 +120,10 @@ func (e *callBacksEspSig) CollectSpec() func(doc *goquery.Document) *[]map[strin
 			src, _         := selector1.Find("img.main_image").Attr("src")
 			spec["Src"]     = strings.TrimSpace(src)
 			spec["Comment"] = strings.TrimSpace(selector1.Find(".content_spec-detail em strong").Text())
-			spec["Price"]   = strings.TrimSpace(selector1.Find(".content_borderline.text-center p").Text())
+			spec["Price"]   = strings.TrimSpace(selector1.Find(
+				".content_borderline.text-center p, .content_spec-detail div p.text-center",
+				).Text())
+			spec["Series"] 	= strings.TrimSpace(doc.Find("div.pd30 h1.text-center span").Text())
 
 			selector1.Find(".tbl_spec tr").Each(func(idx int, selector2 *goquery.Selection) {
 				th      := strings.TrimSpace(selector2.Find("th").Text())
@@ -157,6 +160,7 @@ var espSigFieldMap = map[string]string{
 	"Price":        "Price",
 	"SCALE":        "ScaleLengthMM",
 	"FRET":         "FretCount",
+	"FRETS":        "FretCount",
 	"INLAY":        "Inlays",
 	"CONSTRUCTION": "Joint",
 	"COLOR":		"Color",

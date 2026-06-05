@@ -82,7 +82,7 @@ func (e *espSigCallBacks) FetchDynamicPage(parentCtx context.Context) func(url s
         tabCtx, tabCancel := chromedp.NewContext(parentCtx)
         defer tabCancel()
         // タブにだけ timeout を付ける
-        ctx, cancel := context.WithTimeout(tabCtx, 6*time.Second)
+        ctx, cancel := context.WithTimeout(tabCtx, 8*time.Second)
         defer cancel()
 
         var html string

@@ -20,14 +20,14 @@ import (
 
 type Scraper interface {
 	Scrape(funcs GuitarCallbacks, ctx context.Context) (*[]model.Guitar, error)
-	CollectLinks()          *[]string
+	CollectLinks()                                     *[]string
 }
 
 type GuitarCallbacks interface {
-    IsStaticPage()     func(html string) bool
+    IsStaticPage() func(html string) bool
     FetchDynamicPage(ctx context.Context) func(url string) string
-    CollectSpec()      func(doc *goquery.Document)  *[]map[string]string
-    BuildGuitar()      func(spec map[string]string) *model.Guitar
+    CollectSpec()  func(doc *goquery.Document)  *[]map[string]string
+    BuildGuitar()  func(spec map[string]string) *model.Guitar
 }
 
 type guitarScraper struct {
@@ -40,15 +40,14 @@ type callBacks struct {}
 
 // スクレイピング実行のフレームワーク
 func (e *guitarScraper) scrapeFrame(funcs GuitarCallbacks, ctx context.Context) (*[]model.Guitar, error) {
-    var guitars []model.Guitar
+    var guitars = make([]model.Guitar, 0, 400)
 
     if len(e.urls) <= 0 {
         return &[]model.Guitar{}, errors.New("巡回用URLがありません。")
     }
     for _, url := range e.urls {
-        // 静的/動的を判定して HTML を取得
+        // 静的/動的を判定して HTML を取得、DOM化
         html := fetchPage(url, funcs.IsStaticPage(), funcs.FetchDynamicPage(ctx))
-        // goquery >>> DOM化
         doc, err := goquery.NewDocumentFromReader(strings.NewReader(html))
 
         if err != nil {
@@ -64,9 +63,7 @@ func (e *guitarScraper) scrapeFrame(funcs GuitarCallbacks, ctx context.Context) 
         for _, spec := range *specs {
             guitar := buildGuitar(spec)
 
-            if len(guitar.Name) <= 0 || len(guitar.Color) <= 0 {
-                continue
-            }
+            if len(guitar.Name) <= 0 || len(guitar.Color) <= 0 { continue }
             guitars = utils.LockedAppend(e.mutex, guitars, *guitar)
         }
     }

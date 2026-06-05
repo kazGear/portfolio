@@ -54,19 +54,7 @@ func (e *guitarScraperEsp) CollectLinks() *[]string {
     mutex   := &sync.Mutex{}
 
     // URL収集、クロール
-    c.OnHTML("#item .figcap a", func(html *colly.HTMLElement) {
-        link := html.Request.AbsoluteURL(html.Attr("href"))
-        if isFirstVisit(mutex, link, visited) {
-            c.Visit(link)
-        }
-    })
-    c.OnHTML("#inner_content .figcap a", func(html *colly.HTMLElement) {
-        link := html.Request.AbsoluteURL(html.Attr("href"))
-        if isFirstVisit(mutex, link, visited) {
-            c.Visit(link)
-        }
-    })
-    c.OnHTML("section.color_variation a", func(html *colly.HTMLElement) {
+    c.OnHTML(`.searchResultBlock.gallery_item .searchResultBlock_item a[href*="/artists/"]`, func(html *colly.HTMLElement) {
         link := html.Request.AbsoluteURL(html.Attr("href"))
         if isFirstVisit(mutex, link, visited) {
             c.Visit(link)
@@ -94,12 +82,11 @@ func (e *callBacksEsp) FetchDynamicPage(parentCtx context.Context) func(url stri
         tabCtx, tabCancel := chromedp.NewContext(parentCtx)
         defer tabCancel()
         // タブにだけ timeout を付ける
-        ctx, cancel := context.WithTimeout(tabCtx, 15*time.Second)
+        ctx, cancel := context.WithTimeout(tabCtx, 4*time.Second)
         defer cancel()
 
         var html string
 
-        // 大本となるHTMLを取得
         err := chromedp.Run(ctx,
                chromedp.Navigate(url),
                chromedp.WaitVisible("#main", chromedp.ByQuery), // 求める要素が出るまで待つ
@@ -119,7 +106,7 @@ func (e *callBacksEsp) FetchDynamicPage(parentCtx context.Context) func(url stri
 
 func (e *callBacksEsp) CollectSpec() func(doc *goquery.Document) *[]map[string]string {
     return func(doc *goquery.Document) *[]map[string]string {
-        specs := make([]map[string]string, 1)
+        specs := make([]map[string]string, 0, 1)
         mutex := &sync.Mutex{}
 
         spec := map[string]string{}
@@ -132,7 +119,7 @@ func (e *callBacksEsp) CollectSpec() func(doc *goquery.Document) *[]map[string]s
         spec["Comment"] = strings.TrimSpace(doc.Find("#specialfeatures .container_small p").Text())
         spec["Price"]   = strings.TrimSpace(doc.Find("p.detail_price").Text())
 
-        doc.Find("#specifications table.tbl_spec tr").Each(func(i int, selector *goquery.Selection) {
+        doc.Find("#specifications table.tbl_spec tr").Each(func(idx int, selector *goquery.Selection) {
             th      := strings.TrimSpace(selector.Find("th").Text())
             td      := strings.TrimSpace(selector.Find("td").Text())
             th       = convertLabelEsp(th)

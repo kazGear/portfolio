@@ -23,11 +23,11 @@ func TestCollectURLsEsp(t *testing.T) {
 }
 
 func TestCollectURLsEspSig(t *testing.T) {
-	// guitar := NewEspSigScraper()
-	// urls   := guitar.CollectLinks()
-	// fmt.Printf("urlsCount: %v", len(*urls))
+	guitar := NewEspSigScraper()
+	urls   := guitar.CollectLinks()
+	fmt.Printf("urlsCount: %v", len(*urls))
 
-	// assert.LessOrEqual(t, len(*urls), 100)
+	assert.LessOrEqual(t, len(*urls), 100)
 }
 
 func TestConvertLabelEsp(t *testing.T) {

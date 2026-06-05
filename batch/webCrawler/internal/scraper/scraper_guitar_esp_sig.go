@@ -43,7 +43,7 @@ func NewEspSigScraper() Scraper {
 }
 
 func NewCallBacksEspSig() GuitarCallbacks {
-    return &callBacksEsp{
+    return &callBacksEspSig{
         callBacks{},
     }
 }
@@ -68,33 +68,35 @@ func (e *guitarScraperEspSig) CollectLinks() *[]string {
 }
 
 func (e *guitarScraperEspSig) Scrape(funcs GuitarCallbacks, ctx context.Context) (*[]model.Guitar, error) {
-    guitars, _ := e.gScraper.scrapeFrame(funcs, ctx)
+	guitars, _ := e.gScraper.scrapeFrame(funcs, ctx)
     return guitars, nil
 }
 
 // 必要に応じて、基盤のTryWaitReadyを組み込む
-func (e *guitarScraperEspSig) FetchDynamicPage(parentCtx context.Context) func(url string) string {
+func (e *callBacksEspSig) FetchDynamicPage(parentCtx context.Context) func(url string) string {
     return func(url string) string {
-        if !isDetailPage(`^https://espguitars\.co\.jp/product/\d{4,}/?$`, url) {
+        if !isDetailPage(`^https://espguitars\.co\.jp/artists/\d{4,}/?$`, url) {
             return ""
         }
-        // タブごとに独立した context を作る
+		// タブごとに独立した context を作る
         tabCtx, tabCancel := chromedp.NewContext(parentCtx)
         defer tabCancel()
         // タブにだけ timeout を付ける
-        ctx, cancel := context.WithTimeout(tabCtx, 15*time.Second)
+        ctx, cancel := context.WithTimeout(tabCtx, 6*time.Second)
         defer cancel()
 
         var html string
 
-        // 大本となるHTMLを取得
         err := chromedp.Run(ctx,
                chromedp.Navigate(url),
                chromedp.WaitVisible("#main", chromedp.ByQuery), // 求める要素が出るまで待つ
-               chromedp.Sleep(300 * time.Millisecond), // JSが動く猶予を与える
-               tryWaitReady("h1.header_title"), // 必要な要素が生成されるのを待つ
-               tryWaitReady(".tbl_spec"),
-               tryWaitReady("p.detail_price"),
+               chromedp.Sleep(200 * time.Millisecond), // JSが動く猶予を与える
+			   chromedp.Poll(`() => document.querySelectorAll("section.tab_detail").length >= 7`,
+			   				 nil, chromedp.WithPollingInterval(500*time.Millisecond)), // 必要な要素が生成されるのを待つ
+			   chromedp.Poll(`() => document.querySelectorAll("section.tab_detail .signatures_brand_logo").length >= 7`,
+							 nil, chromedp.WithPollingInterval(500*time.Millisecond)),
+			   chromedp.Poll(`() => document.querySelectorAll("section.tab_detail .content_spec-detail").length >= 7`,
+							 nil, chromedp.WithPollingInterval(500*time.Millisecond)),
                chromedp.OuterHTML("html", &html, chromedp.ByQuery), // 最終的なHTML出力
         )
         if err != nil {
@@ -106,34 +108,35 @@ func (e *guitarScraperEspSig) FetchDynamicPage(parentCtx context.Context) func(u
 }
 
 func (e *callBacksEspSig) CollectSpec() func(doc *goquery.Document) *[]map[string]string {
-    return func(doc *goquery.Document) *[]map[string]string {
-        specs := make([]map[string]string, 1)
+	return func(doc *goquery.Document) *[]map[string]string {
+        specs := make([]map[string]string, 0, 10)
         mutex := &sync.Mutex{}
 
-        spec := map[string]string{}
+		doc.Find("#main section.tab_detail").Each(func(idx int, selector1 *goquery.Selection) {
+			spec := map[string]string{}
 
-        spec["Maker"]   = strconv.Itoa(constants.Esp)
-        spec["Name"]    = strings.TrimSpace(doc.Find("h1.header_title").Text())
-        src, _         := doc.Find("#main .header_content img.transform-5").Attr("src")
-        spec["Src"]     = strings.TrimSpace(src)
-        spec["Color"]   = strings.TrimSpace(doc.Find(".header_content h3.clr_name").Text())
-        spec["Comment"] = strings.TrimSpace(doc.Find("#specialfeatures .container_small p").Text())
-        spec["Price"]   = strings.TrimSpace(doc.Find("p.detail_price").Text())
+			spec["Maker"]   = strconv.Itoa(constants.EspSignature)
+			spec["Name"]    = strings.TrimSpace(selector1.Find(".product_series_logo_name").Text())
+			src, _         := selector1.Find("img.main_image").Attr("src")
+			spec["Src"]     = strings.TrimSpace(src)
+			spec["Comment"] = strings.TrimSpace(selector1.Find(".content_spec-detail em strong").Text())
+			spec["Price"]   = strings.TrimSpace(selector1.Find(".content_borderline.text-center p").Text())
 
-        doc.Find("#specifications table.tbl_spec tr").Each(func(i int, selector *goquery.Selection) {
-            th      := strings.TrimSpace(selector.Find("th").Text())
-            td      := strings.TrimSpace(selector.Find("td").Text())
-            th       = convertLabelEspSig(th)
-            spec[th] = td
-        })
-        specs = utils.LockedAppend(mutex, specs, spec)
+			selector1.Find(".tbl_spec tr").Each(func(idx int, selector2 *goquery.Selection) {
+				th      := strings.TrimSpace(selector2.Find("th").Text())
+				td      := strings.TrimSpace(selector2.Find("td").Text())
+				th       = convertLabelEspSig(th)
+				spec[th] = td
+			})
+			specs = utils.LockedAppend(mutex, specs, spec)
+		})
         return &specs
     }
 }
 
 func (e *callBacksEspSig) BuildGuitar() func(spec map[string]string) *model.Guitar {
-    return func(spec map[string]string) *model.Guitar {
-        return buildGuitarFrame(spec)
+	return func(spec map[string]string) *model.Guitar {
+		return buildGuitarFrame(spec)
     }
 }
 
@@ -156,9 +159,10 @@ var espSigFieldMap = map[string]string{
 	"FRET":         "FretCount",
 	"INLAY":        "Inlays",
 	"CONSTRUCTION": "Joint",
+	"COLOR":		"Color",
 }
 
 // サイトの項目名をフィールド名に変換
 func convertLabelEspSig(label string) string {
-    return espFieldMap[label]
+    return espSigFieldMap[label]
 }

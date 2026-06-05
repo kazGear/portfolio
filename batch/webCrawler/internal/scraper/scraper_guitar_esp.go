@@ -14,6 +14,7 @@ import (
 	"github.com/gocolly/colly/v2"
 	"github.com/kazGear/portfolio/webCrawler/internal/model"
 	"github.com/kazGear/portfolio/webCrawler/pkg/constants"
+	"github.com/kazGear/portfolio/webCrawler/pkg/utils"
 )
 
 type guitarScraperEsp struct {
@@ -24,37 +25,30 @@ type callBacksEsp struct {
     funcs callBacks
 }
 
-func NewEspScraper(cancel context.CancelFunc) Scraper {
+func NewEspScraper() Scraper {
 	collector := colly.NewCollector(
 		colly.Async(true),
 		colly.MaxDepth(4),
 	)
 	collector.Limit(&colly.LimitRule{
 		DomainGlob:  "*",
-		Parallelism: 10,
+		Parallelism: 20,
 	})
     return &guitarScraperEsp{
         guitarScraper{
             collector: collector,
             mutex:     &sync.Mutex{},
-            cancel:    cancel,
         },
     }
 }
 
-func NewCallBacksEsp(ctx context.Context) GuitarCallbacks {
+func NewCallBacksEsp() GuitarCallbacks {
     return &callBacksEsp{
-        callBacks{
-            ctx: ctx,
-        },
+        callBacks{},
     }
 }
 
-func (e *guitarScraperEsp) CancelChrome() {
-    e.gScraper.cancel()
-}
-
-func (e *guitarScraperEsp) CollectLinks() []string {
+func (e *guitarScraperEsp) CollectLinks() *[]string {
     c       := e.gScraper.collector
     visited := make(map[string]struct{}, 500)
     mutex   := &sync.Mutex{}
@@ -82,47 +76,52 @@ func (e *guitarScraperEsp) CollectLinks() []string {
     c.Wait()
 
     e.gScraper.urls = getDistinctUrls(visited)
-    return e.gScraper.urls
+    return &e.gScraper.urls
 }
 
-func (e *guitarScraperEsp) Scrape(funcs GuitarCallbacks) ([]model.Guitar, error) {
-    guitars, _ := e.gScraper.scrapeFrame(funcs)
+func (e *guitarScraperEsp) Scrape(funcs GuitarCallbacks, ctx context.Context) (*[]model.Guitar, error) {
+    guitars, _ := e.gScraper.scrapeFrame(funcs, ctx)
     return guitars, nil
 }
 
 // 必要に応じて、基盤のTryWaitReadyを組み込む
-func (e *callBacksEsp) FetchDynamicPage() func(url string) string {
+func (e *callBacksEsp) FetchDynamicPage(parentCtx context.Context) func(url string) string {
     return func(url string) string {
-        // タイムアウト（JS が遅いページ対策）
-        e.funcs.ctx, _ = context.WithTimeout(e.funcs.ctx, 30*time.Second)
-
-        // 大本となるHTMLを取得
-        err := chromedp.Run(e.funcs.ctx,
-               chromedp.Navigate(url),
-               chromedp.WaitVisible("#main", chromedp.ByQuery), // 求める要素が出るまで待つ
-               chromedp.Sleep(250 * time.Millisecond), // JSが動く猶予を与える
-        )
-        if err != nil {
-            log.Println("chromedp error:", err)
+        if !isDetailPage(`^https://espguitars\.co\.jp/product/\d{4,}/?$`, url) {
             return ""
         }
-        // 必要な要素が生成されるのを待つ
-        _ = chromedp.Run(e.funcs.ctx,
-            tryWaitReady("h1.header_title"),
-            tryWaitReady(".tbl_spec"),
-            tryWaitReady("p.detail_price"),
-        )
-        // 最終的なHTML出力
+        // タブごとに独立した context を作る
+        tabCtx, tabCancel := chromedp.NewContext(parentCtx)
+        defer tabCancel()
+        // タブにだけ timeout を付ける
+        ctx, cancel := context.WithTimeout(tabCtx, 15*time.Second)
+        defer cancel()
+
         var html string
-        err = chromedp.Run(e.funcs.ctx,
-              chromedp.OuterHTML("html", &html, chromedp.ByQuery),
+
+        // 大本となるHTMLを取得
+        err := chromedp.Run(ctx,
+               chromedp.Navigate(url),
+               chromedp.WaitVisible("#main", chromedp.ByQuery), // 求める要素が出るまで待つ
+               chromedp.Sleep(300 * time.Millisecond), // JSが動く猶予を与える
+               tryWaitReady("h1.header_title"), // 必要な要素が生成されるのを待つ
+               tryWaitReady(".tbl_spec"),
+               tryWaitReady("p.detail_price"),
+               chromedp.OuterHTML("html", &html, chromedp.ByQuery), // 最終的なHTML出力
         )
+        if err != nil {
+            log.Printf("[chromedp error]: %v [url]: %v\n", err, url)
+            return ""
+        }
         return html
     }
 }
 
-func (e *callBacksEsp) CollectSpec() func(doc *goquery.Document) map[string]string {
-    return func(doc *goquery.Document) map[string]string {
+func (e *callBacksEsp) CollectSpec() func(doc *goquery.Document) *[]map[string]string {
+    return func(doc *goquery.Document) *[]map[string]string {
+        specs := make([]map[string]string, 1)
+        mutex := &sync.Mutex{}
+
         spec := map[string]string{}
 
         spec["Maker"]   = strconv.Itoa(constants.Esp)
@@ -133,13 +132,14 @@ func (e *callBacksEsp) CollectSpec() func(doc *goquery.Document) map[string]stri
         spec["Comment"] = strings.TrimSpace(doc.Find("#specialfeatures .container_small p").Text())
         spec["Price"]   = strings.TrimSpace(doc.Find("p.detail_price").Text())
 
-        doc.Find("#specifications table.tbl_spec tr").Each(func(i int, s *goquery.Selection) {
-            th      := strings.TrimSpace(s.Find("th").Text())
-            td      := strings.TrimSpace(s.Find("td").Text())
+        doc.Find("#specifications table.tbl_spec tr").Each(func(i int, selector *goquery.Selection) {
+            th      := strings.TrimSpace(selector.Find("th").Text())
+            td      := strings.TrimSpace(selector.Find("td").Text())
             th       = convertLabelEsp(th)
             spec[th] = td
         })
-        return spec
+        specs = utils.LockedAppend(mutex, specs, spec)
+        return &specs
     }
 }
 

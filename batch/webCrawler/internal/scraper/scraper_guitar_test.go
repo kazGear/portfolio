@@ -10,17 +10,27 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestCollectURLsESP(t *testing.T) {
-    _, cancel := chromedp.NewContext(context.Background())
+var (
+	ctx, _cancel = chromedp.NewContext(context.Background())
+)
 
-	guitar := NewEspScraper(cancel)
+func TestCollectURLsEsp(t *testing.T) {
+	guitar := NewEspScraper()
 	urls   := guitar.CollectLinks()
-	fmt.Printf("urlsCount: %v", len(urls))
+	fmt.Printf("urlsCount: %v", len(*urls))
 
-	assert.GreaterOrEqual(t, len(urls), 350)
+	assert.GreaterOrEqual(t, len(*urls), 350)
 }
 
-func TestConvertLabel(t *testing.T) {
+func TestCollectURLsEspSig(t *testing.T) {
+	// guitar := NewEspSigScraper()
+	// urls   := guitar.CollectLinks()
+	// fmt.Printf("urlsCount: %v", len(*urls))
+
+	// assert.LessOrEqual(t, len(*urls), 100)
+}
+
+func TestConvertLabelEsp(t *testing.T) {
 	items := []struct{
 		label  string
 		want   string
@@ -37,7 +47,7 @@ func TestConvertLabel(t *testing.T) {
 	}
 
 	for _, item := range items {
-		actual := convertLabel(item.label)
+		actual := convertLabelEsp(item.label)
 		assert.Equal(t, item.want, actual)
 	}
 }

@@ -3,11 +3,12 @@ package scraper
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log"
+	"regexp"
 	"strconv"
 	"strings"
 	"sync"
-	"time"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/chromedp/chromedp"
@@ -18,15 +19,14 @@ import (
 )
 
 type Scraper interface {
-	Scrape(GuitarCallbacks) ([]model.Guitar, error)
-	CollectLinks()          []string
-    CancelChrome()
+	Scrape(funcs GuitarCallbacks, ctx context.Context) (*[]model.Guitar, error)
+	CollectLinks()          *[]string
 }
 
 type GuitarCallbacks interface {
     IsStaticPage()     func(html string) bool
-    FetchDynamicPage() func(url string) string
-    CollectSpec()      func(doc *goquery.Document) map[string]string
+    FetchDynamicPage(ctx context.Context) func(url string) string
+    CollectSpec()      func(doc *goquery.Document)  *[]map[string]string
     BuildGuitar()      func(spec map[string]string) *model.Guitar
 }
 
@@ -34,38 +34,43 @@ type guitarScraper struct {
     urls      []string
 	collector *colly.Collector
     mutex     *sync.Mutex
-    cancel    context.CancelFunc
 }
 
-type callBacks struct {
-    ctx context.Context
-}
+type callBacks struct {}
 
 // スクレイピング実行のフレームワーク
-func (e *guitarScraper) scrapeFrame(funcs GuitarCallbacks) ([]model.Guitar, error) {
+func (e *guitarScraper) scrapeFrame(funcs GuitarCallbacks, ctx context.Context) (*[]model.Guitar, error) {
     var guitars []model.Guitar
 
     if len(e.urls) <= 0 {
-        return []model.Guitar{}, errors.New("巡回用URLがありません。")
+        return &[]model.Guitar{}, errors.New("巡回用URLがありません。")
     }
     for _, url := range e.urls {
         // 静的/動的を判定して HTML を取得
-        html := fetchPage(url, funcs.IsStaticPage(), funcs.FetchDynamicPage())
+        html := fetchPage(url, funcs.IsStaticPage(), funcs.FetchDynamicPage(ctx))
         // goquery >>> DOM化
         doc, err := goquery.NewDocumentFromReader(strings.NewReader(html))
+
         if err != nil {
             log.Println("goquery error:", err)
             continue
         }
+        if len(html) <= 0 { continue }
+
         collectSpec := funcs.CollectSpec()
         buildGuitar := funcs.BuildGuitar()
-        spec        := collectSpec(doc)
-        guitar      := buildGuitar(spec)
+        specs       := collectSpec(doc) // 1ページ：N詳細ページでもOK
 
-        if len(guitar.Name) <= 0 || len(guitar.Color) <= 0 { continue  }
-        guitars = utils.LockedAppend(e.mutex, guitars, *guitar)
+        for _, spec := range *specs {
+            guitar := buildGuitar(spec)
+
+            if len(guitar.Name) <= 0 || len(guitar.Color) <= 0 {
+                continue
+            }
+            guitars = utils.LockedAppend(e.mutex, guitars, *guitar)
+        }
     }
-    return guitars, nil
+    return &guitars, nil
 }
 
 // ギター構造体の構築フレームワーク
@@ -155,11 +160,21 @@ func fetchStaticPage(url string) string {
 // WaitReady を実行し、失敗しても無視するフォールバック
 func tryWaitReady(elem string) chromedp.ActionFunc {
     return func(ctx context.Context) error {
-        _ = chromedp.Run(ctx,
-			chromedp.Sleep(200 * time.Millisecond),
+        // 要素が存在するかだけ先にチェック
+        var exists bool
+        err := chromedp.Run(ctx,
+            chromedp.EvaluateAsDevTools(
+                fmt.Sprintf(`document.querySelector("%s") !== null`, elem),
+                &exists,
+            ),
+        )
+        if err != nil || !exists {
+            return nil // 存在しないなら待たない
+        }
+        // 存在する場合だけ WaitReady
+        return chromedp.Run(ctx,
             chromedp.WaitReady(elem, chromedp.ByQuery),
         )
-        return nil
     }
 }
 
@@ -189,4 +204,10 @@ func getDistinctUrls(visited map[string]struct{}) []string {
         urls = utils.LockedAppend(mutex, urls, k)
     }
     return urls
+}
+
+// 詳細データが載っているページであるか判定
+func isDetailPage(pattern string, url string) bool {
+    matched, _ := regexp.MatchString(pattern, url)
+    return matched
 }

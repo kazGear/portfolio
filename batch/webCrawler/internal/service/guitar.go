@@ -52,8 +52,8 @@ func (s *guitarCrawlerService) RunCrawler() {
     defer func() { log.Printf("Crawler processing time: %v\n", time.Since(startTime)) }()
     // メーカーが増えたら追加
     makers := []maker {
-        NewMaker("ESP", scraper.NewEspScraper(), scraper.NewCallBacksEsp()),
-        // NewMaker("ESP_sig", scraper.NewEspSigScraper(parentCtx), scraper.NewCallBacksEspSig(parentCtx)),
+        // NewMaker("ESP", scraper.NewEspScraper(), scraper.NewCallBacksEsp()),
+        NewMaker("ESP_sig", scraper.NewEspSigScraper(), scraper.NewCallBacksEspSig()),
     }
     // スクレイピング + DB保存
     for _, maker := range makers {

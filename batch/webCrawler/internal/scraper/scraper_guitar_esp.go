@@ -54,7 +54,19 @@ func (e *guitarScraperEsp) CollectLinks() *[]string {
     mutex   := &sync.Mutex{}
 
     // URL収集、クロール
-    c.OnHTML(`.searchResultBlock.gallery_item .searchResultBlock_item a[href*="/artists/"]`, func(html *colly.HTMLElement) {
+    c.OnHTML("#item .figcap a", func(html *colly.HTMLElement) {
+        link := html.Request.AbsoluteURL(html.Attr("href"))
+        if isFirstVisit(mutex, link, visited) {
+            c.Visit(link)
+        }
+    })
+    c.OnHTML("#inner_content .figcap a", func(html *colly.HTMLElement) {
+        link := html.Request.AbsoluteURL(html.Attr("href"))
+        if isFirstVisit(mutex, link, visited) {
+            c.Visit(link)
+        }
+    })
+    c.OnHTML("section.color_variation a", func(html *colly.HTMLElement) {
         link := html.Request.AbsoluteURL(html.Attr("href"))
         if isFirstVisit(mutex, link, visited) {
             c.Visit(link)

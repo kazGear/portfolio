@@ -27,7 +27,7 @@ const (
     Brown
     Gold
     Silver
-    Others int = 99
+    OthersColor int = 99
 )
 
 

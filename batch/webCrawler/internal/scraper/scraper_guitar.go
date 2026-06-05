@@ -14,7 +14,6 @@ import (
 	"github.com/chromedp/chromedp"
 	"github.com/gocolly/colly/v2"
 	"github.com/kazGear/portfolio/webCrawler/internal/model"
-	"github.com/kazGear/portfolio/webCrawler/pkg/constants"
 	"github.com/kazGear/portfolio/webCrawler/pkg/utils"
 )
 
@@ -89,7 +88,7 @@ func buildGuitarFrame(spec map[string]string) (*model.Guitar) {
 	guitar.BodyMaterialFront = utils.SearchWoodCode(spec["BodyMaterialFront"])
     guitar.Bridge            = spec["Bridge"]
 	guitar.Color             = spec["Color"]
-    guitar.ColorCd           = constants.InvalidNumber //strconv.Atoi(spec["ColorCd"])
+    guitar.ColorCd           = utils.ConvertColorCd(guitar.Color)
 	guitar.Comment           = spec["Comment"]
 	guitar.Controls          = spec["Controls"]
     guitar.Fingerboard       = utils.SearchWoodCode(spec["Fingerboard"])

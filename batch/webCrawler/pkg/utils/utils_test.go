@@ -180,3 +180,83 @@ func TestTrimScaleUnit(t *testing.T) {
 		assert.Equal(t, s.want, actual)
 	}
 }
+
+func TestConvertColorCd(t *testing.T) {
+	colors := []struct {
+		color string
+		want  int
+	}{
+		{
+			color: "190 Red",
+			want: 1,
+		},
+		{
+			color: "Pearl Pink / SAKURA Pink",
+			want: 2,
+		},
+		{
+			color: "ORANGE DEEP",
+			want: 3,
+		},
+		{
+			color: "Mustard Yellow",
+			want: 4,
+		},
+		{
+			color: "Neon Green w/Kamikaze Graphic",
+			want: 5,
+		},
+		{
+			color: "skyBlue",
+			want: 6,
+		},
+		{
+			color: "Driftwood Blue w/Bla Filler",
+			want: 7,
+		},
+		{
+			color: "Indigo Purple w/Purple Pearl Dark",
+			want: 8,
+		},
+		{
+			color: "gray",
+			want: 9,
+		},
+		{
+			color: "See Thru Black Sunburst",
+			want: 10,
+		},
+		{
+			color: "Snow White",
+			want: 11,
+		},
+		{
+			color: "Driftwood Natural w/Dark Filler",
+			want: 12,
+		},
+		{
+			color: "Brown Burst",
+			want: 13,
+		},
+		{
+			color: "Metallic Gold",
+			want: 14,
+		},
+		{
+			color: "Royal Silver",
+			want: 15,
+		},
+		{
+			color: "whiteGold",
+			want: 99,
+		},
+		{
+			color: "Obsidian Metallic",
+			want: 99,
+		},
+	}
+	for _, c := range colors {
+		actual := ConvertColorCd(c.color)
+		assert.Equal(t, c.want, actual)
+	}
+}

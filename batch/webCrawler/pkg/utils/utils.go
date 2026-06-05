@@ -145,3 +145,31 @@ func LockedAppend[T any](mutex *sync.Mutex, slice []T, elem ...T) []T {
 
 	return slice
 }
+
+// color > colorCd 変換用
+var colorRegexMap = map[int]*regexp.Regexp{
+    constants.Red:     regexp.MustCompile(`(?i)\bRed\b`),
+    constants.Pink:    regexp.MustCompile(`(?i)\bPink\b`),
+    constants.Orange:  regexp.MustCompile(`(?i)\bOrange\b`),
+    constants.Yellow:  regexp.MustCompile(`(?i)\bYellow\b`),
+    constants.Green:   regexp.MustCompile(`(?i)\bGreen\b`),
+    constants.SkyBlue: regexp.MustCompile(`(?i)\bSkyBlue\b`),
+    constants.Blue:    regexp.MustCompile(`(?i)\bBlue\b`),
+    constants.Purple:  regexp.MustCompile(`(?i)\bPurple\b`),
+    constants.Gray:    regexp.MustCompile(`(?i)\bGray\b`),
+    constants.Black:   regexp.MustCompile(`(?i)\bBlack\b`),
+    constants.White:   regexp.MustCompile(`(?i)\bWhite\b`),
+    constants.Natural: regexp.MustCompile(`(?i)\bNatural\b`),
+    constants.Brown:   regexp.MustCompile(`(?i)\bBrown\b`),
+    constants.Gold:    regexp.MustCompile(`(?i)\bGold\b`),
+    constants.Silver:  regexp.MustCompile(`(?i)\bSilver\b`),
+}
+// カラー名を抽象化してカラーコードに変換する
+func ConvertColorCd(colorName string) int {
+	for cd, regex := range colorRegexMap {
+		if regex.MatchString(colorName) {
+			return cd
+		}
+	}
+	return constants.OthersColor
+}

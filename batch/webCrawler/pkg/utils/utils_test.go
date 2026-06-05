@@ -9,20 +9,48 @@ import (
 var errMessage = "Failed >>> want: %v, actual: %v"
 
 func TestParsePrice(t *testing.T) {
-	prices := []string{
-		"10000",
-		"10,000",
-		"￥10,000",
-		"１００００",
-		"１０，０００円",
-		"250,000円（税別） ／ 275,000円（税込）",
-		"BK, SW 726,000 yen (without tax: 660,000 yen) DCAR 748,000 yen (without tax: 680,000 yen)",
+	prices := []struct {
+		price string
+		want  int
+	}{
+		{
+			price: "10000", want: 10000,
+		},
+		{
+			price: "10,000", want: 10000,
+		},
+		{
+			price: "￥10,000", want: 10000,
+		},
+		{
+			price: "１０，０００", want: 10000,
+		},
+		{
+			price: "１０，０００円", want: 10000,
+		},
+		{
+			price: "250,000円（税別） ／ 275,000円（税込）",
+			want: 250000,
+		},
+		{
+			price: "BK, SW 726,000 yen (without tax: 660,000 yen) DCAR 748,000 yen (without tax: 680,000 yen)",
+			want: 660000,
+		},
+		{
+			price: "ASK", want: -1,
+		},
+		{
+			price: "open", want: -1,
+		},
+		{
+			price: "999999999", want: -1,
+		},
 	}
 
-	for _, price := range prices {
-		price := price // 並列テスト時の罠回避
-		result, _ := ParsePrice(price)
-		assert.True(t, 1 <= result && result <= 100000000)
+	for _, p := range prices {
+		p := p // 並列テスト時の罠回避
+		actual, _ := ParsePrice(p.price)
+		assert.Equal(t, p.want, actual)
 	}
 }
 
@@ -70,6 +98,34 @@ func TestGetFretCount(t *testing.T) {
 			input: "JESCAR FW57110-NS40frets",
 			want:  -1,
 		},
+		{
+			input: "JESCAR FW58118-NS, 22frets",
+			want:  22,
+		},
+		{
+			input: "JESCAR FW58118-NS, 22frets",
+			want:  22,
+		},
+		{
+			input: "Jescar FW57110, 24FRET",
+			want:  24,
+		},
+		{
+			input: "Jescar FW57110, 24F",
+			want:  24,
+		},
+		{
+			input: "22FRET Stainless",
+			want:  22,
+		},
+		{
+			input: "22 frets (Stainless)",
+			want:  22,
+		},
+		{
+			input: "22FRET/24FRET（比較表記）",
+			want:  22,
+		},
 	}
 
 	for _, fret := range frets {
@@ -111,6 +167,10 @@ func TestTrimScaleUnit(t *testing.T) {
 		{
 			scale: "６４８　ｍｍ",
 			want:  648,
+		},
+		{
+			scale: "",
+			want:  -1,
 		},
 	}
 

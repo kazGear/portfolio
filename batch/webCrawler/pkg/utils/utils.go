@@ -15,29 +15,34 @@ import (
 	"gopkg.in/natefinch/lumberjack.v2"
 )
 
-const splitPattern = `[\s(（/／:、]`
 
+var _regPriceSpliter   = regexp.MustCompile(`[\s(（/／:、]`)
+var _regUndefinedPrice = regexp.MustCompile(`(?i)(ask|open)`)
+const _initPrice int   = 999999999
 // 金額表記を数値に変換 "¥128,000" → 128000
 func ParsePrice(price string) (int, error) {
+	if _regUndefinedPrice.MatchString(price) {
+		return -1, nil
+	}
 	var result int = 0
 	var err error
 
-	if regexp.MustCompile(splitPattern).MatchString(price) {
+	if _regPriceSpliter.MatchString(price) {
 		result, err = parseMultiPrice(price)
 	} else {
 		result, err = parseSinglePrice(price)
 	}
-
-	if (err != nil) { return -1, err }
+	if err != nil { return -1, err }
+	if result == _initPrice { result = -1 }
 	return result, nil
 }
 
+var _regNotNumber = regexp.MustCompile(`\D`)
 // 金額（数値）へ変換
 func parseSinglePrice(s string) (int, error) {
 	price := width.Narrow.String(s)
 
-	re := regexp.MustCompile(`\D`)
-	cleaned := re.ReplaceAllString(price, "")
+	cleaned := _regNotNumber.ReplaceAllString(price, "")
 
 	if cleaned == "" {
 		return -1, fmt.Errorf("parseSinglePrice: 金額のパースに失敗しました。>>> %v\n", s)
@@ -50,7 +55,7 @@ func parseSinglePrice(s string) (int, error) {
 // 250,000円（税別） ／ 275,000円（税込）＞＞ 275000
 func parseMultiPrice(s string) (int, error) {
 	// 全分割
-	prices := regexp.MustCompile(splitPattern).Split(s, -1)
+	prices := _regPriceSpliter.Split(s, -1)
 
 	var errMessage string =
 		"parseMultiPrice: 金額のパースに失敗しました。>>> %v\n"
@@ -58,11 +63,11 @@ func parseMultiPrice(s string) (int, error) {
 		return -1, fmt.Errorf(errMessage, s)
 	}
 
-	var minPrice int = 999999999 // 約10億
+	var minPrice int = _initPrice
+
 	for _, price := range prices {
 		p 		   := width.Narrow.String(price)
-		reg		   := regexp.MustCompile(`\D`)
-		trimed     := reg.ReplaceAllString(p, "")
+		trimed     := _regNotNumber.ReplaceAllString(p, "")
 
 		if trimed == "" {
 			continue
@@ -86,11 +91,13 @@ func SearchWoodCode(s string) int {
 	return 0 // 該当なし
 }
 
+// フレット数は１５～３０であると思われる
+var _regFretStr   = regexp.MustCompile(`(1[5-9]|[2-3][0-9])\s*[Ff]+`)
+var _refNotNumber = regexp.MustCompile(`\D`)
 // ギターのフレット数を取得
 func GetFretCount(s string) (int, error) {
-	// フレット数は１５～３０であると思われる
-	reg  := regexp.MustCompile(`(1[5-9]|[2-3][0-9])`)
-	fret := reg.FindString(s)
+	fretStr := _regFretStr.FindString(s)
+	fret    := _refNotNumber.ReplaceAllString(fretStr, "")
 
 	if len(fret) <= 0 {
 		log.Println(s)
@@ -100,13 +107,15 @@ func GetFretCount(s string) (int, error) {
 	return result, nil
 }
 
+var regScale = regexp.MustCompile(`\s*mm`)
 // ギタースケールの単位を除去
 func TrimScaleUnit(s string) int {
 	halfed := width.Narrow.String(s)
 
-	reg   	  := regexp.MustCompile(`\s*mm`)
-	scale 	  := reg.ReplaceAllString(halfed, "")
+	scale 	  := regScale.ReplaceAllString(halfed, "")
 	result, _ := strconv.Atoi(scale)
+
+	if result == 0 { return -1 }
 
 	return result
 }

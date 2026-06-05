@@ -10,6 +10,27 @@ const (
 	EspSignature
 )
 
+// カラーコード
+const (
+    Red int = iota + 1
+    Pink
+    Orange
+    Yellow
+    Green
+    SkyBlue
+    Blue
+    Purple
+    Gray
+    Black
+    White
+    Natural
+    Brown
+    Gold
+    Silver
+    Others int = 99
+)
+
+
 const (
 	InvalidNumber int = -1
 	DecoLabel = "◆◇◆◇ %v ◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇\n"

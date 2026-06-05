@@ -21,7 +21,7 @@ type guitarScraperEspSig struct {
     gScraper guitarScraper
 }
 
-type callBacksEspSig struct {
+type espSigCallBacks struct {
     funcs callBacks
 }
 
@@ -42,8 +42,8 @@ func NewEspSigScraper() Scraper {
     }
 }
 
-func NewCallBacksEspSig() GuitarCallbacks {
-    return &callBacksEspSig{
+func NewEspSigCallBacks() GuitarCallbacks {
+    return &espSigCallBacks{
         callBacks{},
     }
 }
@@ -73,7 +73,7 @@ func (e *guitarScraperEspSig) Scrape(funcs GuitarCallbacks, ctx context.Context)
 }
 
 // 必要に応じて、基盤のTryWaitReadyを組み込む
-func (e *callBacksEspSig) FetchDynamicPage(parentCtx context.Context) func(url string) string {
+func (e *espSigCallBacks) FetchDynamicPage(parentCtx context.Context) func(url string) string {
     return func(url string) string {
         if !isDetailPage(`^https://espguitars\.co\.jp/artists/\d{4,}/?$`, url) {
             return ""
@@ -107,7 +107,7 @@ func (e *callBacksEspSig) FetchDynamicPage(parentCtx context.Context) func(url s
     }
 }
 
-func (e *callBacksEspSig) CollectSpec() func(doc *goquery.Document) *[]map[string]string {
+func (e *espSigCallBacks) CollectSpec() func(doc *goquery.Document) *[]map[string]string {
 	return func(doc *goquery.Document) *[]map[string]string {
         specs := make([]map[string]string, 0, 10)
         mutex := &sync.Mutex{}
@@ -122,7 +122,8 @@ func (e *callBacksEspSig) CollectSpec() func(doc *goquery.Document) *[]map[strin
 			spec["Comment"] = strings.TrimSpace(selector1.Find(".content_spec-detail em strong").Text())
 			spec["Price"]   = strings.TrimSpace(selector1.Find(
 				".content_borderline.text-center p, .content_spec-detail div p.text-center",
-				).Text())
+			).Text())
+
 			spec["Series"] 	= strings.TrimSpace(doc.Find("div.pd30 h1.text-center span").Text())
 
 			selector1.Find(".tbl_spec tr").Each(func(idx int, selector2 *goquery.Selection) {
@@ -137,13 +138,13 @@ func (e *callBacksEspSig) CollectSpec() func(doc *goquery.Document) *[]map[strin
     }
 }
 
-func (e *callBacksEspSig) BuildGuitar() func(spec map[string]string) *model.Guitar {
+func (e *espSigCallBacks) BuildGuitar() func(spec map[string]string) *model.Guitar {
 	return func(spec map[string]string) *model.Guitar {
 		return buildGuitarFrame(spec)
     }
 }
 
-func (e *callBacksEspSig) IsStaticPage() func(html string) bool {
+func (e *espSigCallBacks) IsStaticPage() func(html string) bool {
     return func(html string) bool {
         return strings.Contains(html, "tbl_spec")
     }

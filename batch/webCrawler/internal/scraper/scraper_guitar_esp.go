@@ -21,7 +21,7 @@ type guitarScraperEsp struct {
     gScraper guitarScraper
 }
 
-type callBacksEsp struct {
+type espCallBacks struct {
     funcs callBacks
 }
 
@@ -42,8 +42,8 @@ func NewEspScraper() Scraper {
     }
 }
 
-func NewCallBacksEsp() GuitarCallbacks {
-    return &callBacksEsp{
+func NewEspCallBacks() GuitarCallbacks {
+    return &espCallBacks{
         callBacks{},
     }
 }
@@ -85,7 +85,7 @@ func (e *guitarScraperEsp) Scrape(funcs GuitarCallbacks, ctx context.Context) (*
 }
 
 // 必要に応じて、基盤のTryWaitReadyを組み込む
-func (e *callBacksEsp) FetchDynamicPage(parentCtx context.Context) func(url string) string {
+func (e *espCallBacks) FetchDynamicPage(parentCtx context.Context) func(url string) string {
     return func(url string) string {
         if !isDetailPage(`^https://espguitars\.co\.jp/product/\d{4,}/?$`, url) {
             return ""
@@ -116,7 +116,7 @@ func (e *callBacksEsp) FetchDynamicPage(parentCtx context.Context) func(url stri
     }
 }
 
-func (e *callBacksEsp) CollectSpec() func(doc *goquery.Document) *[]map[string]string {
+func (e *espCallBacks) CollectSpec() func(doc *goquery.Document) *[]map[string]string {
     return func(doc *goquery.Document) *[]map[string]string {
         specs := make([]map[string]string, 0, 1)
         mutex := &sync.Mutex{}
@@ -142,13 +142,13 @@ func (e *callBacksEsp) CollectSpec() func(doc *goquery.Document) *[]map[string]s
     }
 }
 
-func (e *callBacksEsp) BuildGuitar() func(spec map[string]string) *model.Guitar {
+func (e *espCallBacks) BuildGuitar() func(spec map[string]string) *model.Guitar {
     return func(spec map[string]string) *model.Guitar {
         return buildGuitarFrame(spec)
     }
 }
 
-func (e *callBacksEsp) IsStaticPage() func(html string) bool {
+func (e *espCallBacks) IsStaticPage() func(html string) bool {
     return func(html string) bool {
         return strings.Contains(html, "tbl_spec")
     }

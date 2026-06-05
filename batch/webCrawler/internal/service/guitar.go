@@ -44,14 +44,10 @@ func (s *guitarCrawlerService) RunCrawler() {
     parentCtx, parentCancel := chromedp.NewContext(allocCtx)
     defer parentCancel()
 
-    // 処理時間計測
-    startTime := time.Now()
-    defer func() { log.Printf("Crawler processing time: %v\n", time.Since(startTime)) }()
-
     // メーカーが増えたら追加
     makers := []maker {
-        // NewMaker("ESP", scraper.NewEspScraper(), scraper.NewCallBacksEsp()),
-        NewMaker("ESP_sig", scraper.NewEspSigScraper(), scraper.NewCallBacksEspSig()),
+        NewMaker("ESP", scraper.NewEspScraper(), scraper.NewEspCallBacks()),
+        NewMaker("ESP_sig", scraper.NewEspSigScraper(), scraper.NewEspSigCallBacks()),
     }
 
     // スクレイピング + DB保存
@@ -59,7 +55,8 @@ func (s *guitarCrawlerService) RunCrawler() {
         // ログ設定
         utils.LoggerInit(maker.name)
         log.Printf(constants.DecoLabel, "Started crawler " + maker.name)
-        defer log.Printf(constants.DecoLabel, "Finished crawler " + maker.name)
+        // 処理時間計測
+        startTime := time.Now()
 
         maker.scraper.CollectLinks()
         guitars, err := maker.scraper.Scrape(maker.funcs, parentCtx)
@@ -67,5 +64,8 @@ func (s *guitarCrawlerService) RunCrawler() {
         if err != nil { log.Println(err) }
 
         _ = s.repository.UpsertAll(*guitars)
+
+        log.Printf(constants.DecoLabel, "Finished crawler " + maker.name)
+        log.Printf("Crawler processing time: %v\n", time.Since(startTime))
     }
 }

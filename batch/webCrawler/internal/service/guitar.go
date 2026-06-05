@@ -35,9 +35,6 @@ func NewMaker(name string, scraper scraper.Scraper, funcs scraper.GuitarCallback
 }
 
 func (s *guitarCrawlerService) RunCrawler() {
-    utils.LoggerInit("esp")
-    log.Printf(constants.DecoLabel, "Started crawler.")
-
     // chromedpコンテキスト構築
     allocCtx, allocCancel := chromedp.NewExecAllocator(
         context.Background(),
@@ -57,6 +54,9 @@ func (s *guitarCrawlerService) RunCrawler() {
     }
     // スクレイピング + DB保存
     for _, maker := range makers {
+        utils.LoggerInit(maker.name)
+        log.Printf(constants.DecoLabel, "Started crawler.")
+
         maker.scraper.CollectLinks()
         guitars, err := maker.scraper.Scrape(maker.funcs, parentCtx)
 

@@ -47,22 +47,25 @@ func (s *guitarCrawlerService) RunCrawler() {
     // 処理時間計測
     startTime := time.Now()
     defer func() { log.Printf("Crawler processing time: %v\n", time.Since(startTime)) }()
+
     // メーカーが増えたら追加
     makers := []maker {
         // NewMaker("ESP", scraper.NewEspScraper(), scraper.NewCallBacksEsp()),
         NewMaker("ESP_sig", scraper.NewEspSigScraper(), scraper.NewCallBacksEspSig()),
     }
+
     // スクレイピング + DB保存
     for _, maker := range makers {
+        // ログ設定
         utils.LoggerInit(maker.name)
-        log.Printf(constants.DecoLabel, "Started crawler.")
+        log.Printf(constants.DecoLabel, "Started crawler " + maker.name)
+        defer log.Printf(constants.DecoLabel, "Finished crawler " + maker.name)
 
         maker.scraper.CollectLinks()
         guitars, err := maker.scraper.Scrape(maker.funcs, parentCtx)
 
         if err != nil { log.Println(err) }
 
-        _ = s.repository.UpsertAll(*guitars) // エラー処理はupsert内で。
+        _ = s.repository.UpsertAll(*guitars)
     }
-    log.Printf(constants.DecoLabel, "Finished crawler.")
 }

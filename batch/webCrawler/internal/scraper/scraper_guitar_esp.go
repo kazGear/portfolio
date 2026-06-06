@@ -17,13 +17,14 @@ import (
 	"github.com/kazGear/portfolio/webCrawler/pkg/utils"
 )
 
-type guitarScraperEsp struct {
+type espGuitarScraper struct {
     gScraper guitarScraper
 }
 
 type espCallBacks struct {
     funcs callBacks
 }
+
 
 func NewEspScraper() Scraper {
 	collector := colly.NewCollector(
@@ -34,7 +35,7 @@ func NewEspScraper() Scraper {
 		DomainGlob:  "*",
 		Parallelism: 20,
 	})
-    return &guitarScraperEsp{
+    return &espGuitarScraper{
         guitarScraper{
             collector: collector,
             mutex:     &sync.Mutex{},
@@ -48,7 +49,7 @@ func NewEspCallBacks() GuitarCallbacks {
     }
 }
 
-func (e *guitarScraperEsp) CollectLinks() *[]string {
+func (e *espGuitarScraper) CollectLinks() *[]string {
     c       := e.gScraper.collector
     visited := make(map[string]struct{}, 500)
     mutex   := &sync.Mutex{}
@@ -79,7 +80,7 @@ func (e *guitarScraperEsp) CollectLinks() *[]string {
     return &e.gScraper.urls
 }
 
-func (e *guitarScraperEsp) Scrape(funcs GuitarCallbacks, ctx context.Context) (*[]model.Guitar, error) {
+func (e *espGuitarScraper) Scrape(funcs GuitarCallbacks, ctx context.Context) (*[]model.Guitar, error) {
     guitars, _ := e.gScraper.scrapeFrame(funcs, ctx)
     return guitars, nil
 }

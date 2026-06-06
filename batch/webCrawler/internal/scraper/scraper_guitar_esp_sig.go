@@ -17,15 +17,15 @@ import (
 	"github.com/kazGear/portfolio/webCrawler/pkg/utils"
 )
 
-type espSigGuitarScraper struct {
+type guitarScraperEspSig struct {
     gScraper guitarScraper
 }
 
-type espSigCallBacks struct {
+type callBacksEspSig struct {
     funcs callBacks
 }
 
-func NewEspSigScraper() Scraper {
+func NewScraperEspSig() Scraper {
 	collector := colly.NewCollector(
 		colly.Async(true),
 		colly.MaxDepth(1),
@@ -34,7 +34,7 @@ func NewEspSigScraper() Scraper {
 		DomainGlob:  "*",
 		Parallelism: 5,
 	})
-    return &espSigGuitarScraper{
+    return &guitarScraperEspSig{
         guitarScraper{
             collector: collector,
             mutex:     &sync.Mutex{},
@@ -42,13 +42,13 @@ func NewEspSigScraper() Scraper {
     }
 }
 
-func NewEspSigCallBacks() GuitarCallbacks {
-    return &espSigCallBacks{
+func NewCallBacksEspSig() GuitarCallbacks {
+    return &callBacksEspSig{
         callBacks{},
     }
 }
 
-func (e *espSigGuitarScraper) CollectLinks() *[]string {
+func (e *guitarScraperEspSig) CollectLinks() *[]string {
     c       := e.gScraper.collector
     mutex   := &sync.Mutex{}
     visited := make(map[string]struct{}, 100)
@@ -69,13 +69,13 @@ func (e *espSigGuitarScraper) CollectLinks() *[]string {
     return &e.gScraper.urls
 }
 
-func (e *espSigGuitarScraper) Scrape(funcs GuitarCallbacks, ctx context.Context) (*[]model.Guitar, error) {
+func (e *guitarScraperEspSig) Scrape(funcs GuitarCallbacks, ctx context.Context) (*[]model.Guitar, error) {
 	guitars, _ := e.gScraper.scrapeFrame(funcs, ctx)
     return guitars, nil
 }
 
 // 必要に応じて、基盤のTryWaitReadyを組み込む
-func (e *espSigCallBacks) FetchDynamicPage(parentCtx context.Context) func(url string) string {
+func (e *callBacksEspSig) FetchDynamicPage(parentCtx context.Context) func(url string) string {
     return func(url string) string {
         if !isDetailPage(`^https://espguitars\.co\.jp/artists/\d{4,}/?$`, url) {
             return ""
@@ -109,7 +109,7 @@ func (e *espSigCallBacks) FetchDynamicPage(parentCtx context.Context) func(url s
     }
 }
 
-func (e *espSigCallBacks) CollectSpec() func(doc *goquery.Document) *[]map[string]string {
+func (e *callBacksEspSig) CollectSpec() func(doc *goquery.Document) *[]map[string]string {
 	return func(doc *goquery.Document) *[]map[string]string {
         specs := make([]map[string]string, 0, 10)
         mutex := &sync.Mutex{}
@@ -140,13 +140,13 @@ func (e *espSigCallBacks) CollectSpec() func(doc *goquery.Document) *[]map[strin
     }
 }
 
-func (e *espSigCallBacks) BuildGuitar() func(spec map[string]string) *model.Guitar {
+func (e *callBacksEspSig) BuildGuitar() func(spec map[string]string) *model.Guitar {
 	return func(spec map[string]string) *model.Guitar {
 		return buildGuitarFrame(spec)
     }
 }
 
-func (e *espSigCallBacks) IsStaticPage() func(html string) bool {
+func (e *callBacksEspSig) IsStaticPage() func(html string) bool {
     return func(html string) bool {
         return strings.Contains(html, "tbl_spec")
     }

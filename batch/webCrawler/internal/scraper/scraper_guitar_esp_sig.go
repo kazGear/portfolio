@@ -54,7 +54,9 @@ func (e *guitarScraperEspSig) CollectLinks() *[]string {
     visited := make(map[string]struct{}, 100)
 
     // URL収集、クロール
-    c.OnHTML(`.searchResultBlock.gallery_item .searchResultBlock_item a[href*="/artists/"]`, func(html *colly.HTMLElement) {
+    c.OnHTML(`.searchResultBlock.gallery_item .searchResultBlock_item a[href*="/artists/"]`,
+			 func(html *colly.HTMLElement,
+	) {
         link := html.Request.AbsoluteURL(html.Attr("href"))
         if isFirstVisit(mutex, link, visited) {
             c.Visit(link)

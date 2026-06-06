@@ -46,8 +46,9 @@ func (s *guitarCrawlerService) RunCrawler() {
 
     // メーカーが増えたら追加
     makers := []maker {
-        NewMaker("ESP", scraper.NewScraperEsp(), scraper.NewCallBacksEsp()),
-        NewMaker("ESP_sig", scraper.NewScraperEspSig(), scraper.NewCallBacksEspSig()),
+        // NewMaker("ESP", scraper.NewScraperEsp(), scraper.NewCallBacksEsp()),
+        // NewMaker("ESP_sig", scraper.NewScraperEspSig(), scraper.NewCallBacksEspSig()),
+        NewMaker(".strandberg", scraper.NewScraperStrandberg(), scraper.NewCallBacksStrandberg()),
     }
 
     // スクレイピング + DB保存

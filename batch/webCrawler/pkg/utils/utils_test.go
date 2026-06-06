@@ -45,6 +45,9 @@ func TestParsePrice(t *testing.T) {
 		{
 			price: "999999999", want: -1,
 		},
+		{
+			price: "$ 1 149", want: 1149,
+		},
 	}
 
 	for _, p := range prices {

@@ -30,6 +30,14 @@ func TestCollectURLsEspSig(t *testing.T) {
 	assert.LessOrEqual(t, len(*urls), 100)
 }
 
+func TestCollectURLsStrandberg(t *testing.T) {
+	guitar := NewScraperStrandberg()
+	urls   := guitar.CollectLinks()
+	fmt.Printf("urlsCount: %v", len(*urls))
+
+	assert.GreaterOrEqual(t, len(*urls), 30)
+}
+
 func TestConvertLabelEsp(t *testing.T) {
 	items := []struct{
 		label  string

@@ -2,7 +2,9 @@ package utils
 
 import (
 	"fmt"
+	"io"
 	"log"
+	"net/http"
 	"os"
 	"regexp"
 	"strconv"
@@ -173,3 +175,27 @@ func ConvertColorCd(colorName string) int {
 	}
 	return constants.OthersColor
 }
+
+// 画像取得
+func DownloadImage(url, filepath string) error {
+    resp, err := http.Get(url)
+    if err != nil {
+        return err
+    }
+    defer resp.Body.Close()
+
+    out, err := os.Create(filepath)
+    if err != nil {
+        return err
+    }
+    defer out.Close()
+
+    _, err = io.Copy(out, resp.Body)
+    return err
+}
+/*
+URL抽出	正規表現より url.Parse + Query() が最強
+デコード	url.QueryUnescape
+ファイルパス	images/{メーカー}/{モデル}/{画像種別}.jpg
+画像種別の決め方	alt / 順番 / サムネイル構造から決める
+*/

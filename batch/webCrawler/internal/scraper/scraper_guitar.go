@@ -14,6 +14,7 @@ import (
 	"github.com/chromedp/chromedp"
 	"github.com/gocolly/colly/v2"
 	"github.com/kazGear/portfolio/webCrawler/internal/model"
+	"github.com/kazGear/portfolio/webCrawler/pkg/constants"
 	"github.com/kazGear/portfolio/webCrawler/pkg/utils"
 )
 
@@ -119,7 +120,7 @@ func buildGuitarFrame(spec map[string]string) (*model.Guitar) {
     if len(guitar.Src) <= 0 {
         return &model.Guitar{}
     }
-    weight, _    := strconv.Atoi(spec["Weight"])
+    weight       := constants.InvalidNumber//strconv.Atoi(spec["Weight"])
 	guitar.Weight = float64(weight)
 
 	return &guitar

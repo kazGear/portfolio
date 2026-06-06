@@ -2,6 +2,7 @@ package scraper
 
 import (
 	"context"
+	"fmt"
 	"strconv"
 	"strings"
 	"sync"
@@ -29,11 +30,11 @@ type callBacksStrandberg struct {
 func NewScraperStrandberg() Scraper {
 	collector := colly.NewCollector(
 		colly.Async(true),
-		colly.MaxDepth(4),
+		colly.MaxDepth(3),
 	)
 	collector.Limit(&colly.LimitRule{
 		DomainGlob:  "*",
-		Parallelism: 20,
+		Parallelism: 10,
 	})
     return &guitarScraperStrandberg{
         guitarScraper{
@@ -51,29 +52,23 @@ func NewCallBacksStrandberg() GuitarCallbacks {
 
 func (e *guitarScraperStrandberg) CollectLinks() *[]string {
     c       := e.gScraper.collector
-    visited := make(map[string]struct{}, 500)
+    visited := make(map[string]struct{}, 50)
     mutex   := &sync.Mutex{}
 
-    // URL収集、クロール
-    c.OnHTML("#item .figcap a", func(html *colly.HTMLElement) {
+    // ページネーション用
+    c.OnHTML("nav ul li a", func(html *colly.HTMLElement) {
         link := html.Request.AbsoluteURL(html.Attr("href"))
         if isFirstVisit(mutex, link, visited) {
             c.Visit(link)
         }
     })
-    c.OnHTML("#inner_content .figcap a", func(html *colly.HTMLElement) {
+    c.OnHTML("#main-plp-block div div div div .product-card .relative a", func(html *colly.HTMLElement) {
         link := html.Request.AbsoluteURL(html.Attr("href"))
         if isFirstVisit(mutex, link, visited) {
             c.Visit(link)
         }
     })
-    c.OnHTML("section.color_variation a", func(html *colly.HTMLElement) {
-        link := html.Request.AbsoluteURL(html.Attr("href"))
-        if isFirstVisit(mutex, link, visited) {
-            c.Visit(link)
-        }
-    })
-    c.Visit("https://espguitars.co.jp/products/esp")
+    c.Visit("https://strandbergguitars.com/en-US/guitars")
     c.Wait()
 
     e.gScraper.urls = getDistinctUrls(visited)
@@ -88,7 +83,7 @@ func (e *guitarScraperStrandberg) Scrape(funcs GuitarCallbacks, ctx context.Cont
 // 必要に応じて、基盤のTryWaitReadyを組み込む
 func (e *callBacksStrandberg) FetchDynamicPage(parentCtx context.Context) func(url string) string {
     return func(url string) string {
-        if !isDetailPage(`^https://espguitars\.co\.jp/product/\d{4,}/?$`, url) {
+        if !isDetailPage(`^https://strandbergguitars.com/en-US/product/[a-z0-9\-]+`, url) {
             return ""
         }
         // タブごとに独立した context を作る
@@ -102,11 +97,10 @@ func (e *callBacksStrandberg) FetchDynamicPage(parentCtx context.Context) func(u
 
         err := chromedp.Run(ctx,
                chromedp.Navigate(url),
-               chromedp.WaitVisible("#main", chromedp.ByQuery), // 求める要素が出るまで待つ
-               chromedp.Sleep(300 * time.Millisecond), // JSが動く猶予を与える
-               tryWaitReady("h1.header_title"), // 必要な要素が生成されるのを待つ
-               tryWaitReady(".tbl_spec"),
-               tryWaitReady("p.detail_price"),
+               chromedp.WaitVisible("body", chromedp.ByQuery), // 求める要素が出るまで待つ
+               chromedp.Sleep(200 * time.Millisecond), // JSが動く猶予を与える
+               tryWaitReady(`img[width="1200"][height="1200"]`), // 必要な要素が生成されるのを待つ
+               tryWaitReady(`body div[data-sentry-component="PdpAccordion"]`),
                chromedp.OuterHTML("html", &html, chromedp.ByQuery), // 最終的なHTML出力
         )
         if err != nil {
@@ -122,22 +116,36 @@ func (e *callBacksStrandberg) CollectSpec() func(doc *goquery.Document) *[]map[s
         specs := make([]map[string]string, 0, 1)
         mutex := &sync.Mutex{}
 
-        spec := map[string]string{}
+        spec  := map[string]string{}
 
-        spec["Maker"]   = strconv.Itoa(constants.Esp)
-        spec["Name"]    = strings.TrimSpace(doc.Find("h1.header_title").Text())
-        src, _         := doc.Find("#main .header_content img.transform-5").Attr("src")
+        spec["Maker"]   = strconv.Itoa(constants.Strandberg)
+        spec["Name"]    = strings.TrimSpace(doc.Find(`div[data-sentry-component="ProductInfo"] div div h1`).Text())
+        spec["Color"]   = "tmpColor"//strings.TrimSpace(doc.Find(`h3:contains("Body finish color")`).Next().Text())
+        spec["BodyFinish"] = strings.TrimSpace(doc.Find(`h3:contains("Body Finish Type")`).Next().Text())
+        spec["BodyMaterialBack"] = strings.TrimSpace(doc.Find(`h3:contains("Body Material")`).Next().Text())
+        spec["BodyMaterialFront"] = strings.TrimSpace(doc.Find(`h3:contains("Body Top Material")`).Next().Text())
+        spec["BodyMaterial"] = spec["BodyMaterialFront"] + " " + spec["BodyMaterialBack"]
+        spec["Bridge"] = strings.TrimSpace(doc.Find(`h3:contains("Bridge")`).Next().Text())
+        spec["Controls"] = strings.TrimSpace(doc.Find(`h3:contains("Control Set")`).Next().Text())
+        spec["Comment"] = strings.TrimSpace(doc.Find(``).Text())
+        spec["Fingerboard"] = strings.TrimSpace(doc.Find(`h3:contains("Fretboard Material")`).Next().Text())
+        spec["FretCount"] = strings.TrimSpace(doc.Find(`h3:contains("Number of Frets")`).Next().Text())
+        spec["Inlays"] = strings.TrimSpace(doc.Find(`h3:contains("Fretboard Inlays")`).Next().Text())
+        spec["Joint"] = strings.TrimSpace(doc.Find(`h3:contains("Neck Construction")`).Next().Text())
+        spec["NeckMaterial"] = strings.TrimSpace(doc.Find(`h3:contains("Neck Material")`).Next().Text())
+        neckPickup := strings.TrimSpace(doc.Find(`h3:contains("Neck pickup")`).Next().Text())
+        bridgePickup := strings.TrimSpace(doc.Find(`h3:contains("Bridge pickup")`).Next().Text())
+        spec["Pickups"] = fmt.Sprintf(`(Neck) %v (Bridge) %v`, neckPickup, bridgePickup)
+        // TODO $ 1 149 形式でもできるよう改良する util
+        spec["Price"]   = strings.TrimSpace(doc.Find(`span:contains("Excluding vat")`).Prev().Text())
+        spec["ScaleLengthMM"] = strings.TrimSpace(doc.Find(`h3:contains("Instrument Length Global")`).Next().Text())
+        spec["Series"] = strings.TrimSpace(doc.Find(`h3:contains("Body Shape")`).Next().Text())
+        // TODO srcはダウンロード方式を作成
+        src, _         := doc.Find(`img[title="English"]`).Attr(`src`)
         spec["Src"]     = strings.TrimSpace(src)
-        spec["Color"]   = strings.TrimSpace(doc.Find(".header_content h3.clr_name").Text())
-        spec["Comment"] = strings.TrimSpace(doc.Find("#specialfeatures .container_small p").Text())
-        spec["Price"]   = strings.TrimSpace(doc.Find("p.detail_price").Text())
-
-        doc.Find("#specifications table.tbl_spec tr").Each(func(idx int, selector *goquery.Selection) {
-            th      := strings.TrimSpace(selector.Find("th").Text())
-            td      := strings.TrimSpace(selector.Find("td").Text())
-            th       = convertLabelStrandberg(th)
-            spec[th] = td
-        })
+        // TODO Kg単位の数値を抜き出す処理追加 util
+        spec["Weight"] = strings.TrimSpace(doc.Find(`h3:contains("Instrument Weight Global")`).Next().Text())
+log.Println(spec)
         specs = utils.LockedAppend(mutex, specs, spec)
         return &specs
     }
@@ -151,7 +159,7 @@ func (e *callBacksStrandberg) BuildGuitar() func(spec map[string]string) *model.
 
 func (e *callBacksStrandberg) IsStaticPage() func(html string) bool {
     return func(html string) bool {
-        return strings.Contains(html, "tbl_spec")
+        return strings.Contains(html, "Included Accessories")
     }
 }
 
@@ -171,6 +179,6 @@ var strandbergMap = map[string]string{
 }
 
 // サイトの項目名をフィールド名に変換
-func convertLabelStrandberg(label string) string {
-    return strandbergMap[label]
-}
+// func convertLabelStrandberg(label string) string {
+//     return strandbergMap[label]
+// }

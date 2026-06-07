@@ -22,7 +22,7 @@ func NewGuitarRepository(db *sqlx.DB) Repository {
 }
 
 func (r *guitarRepository) Upsert(guitar model.Guitar) error {
-    log.Printf("Try upsert >>> %v", guitar.String())
+    log.Printf("[Try upsert]: %v", guitar.String())
 
     // pkチェック
     if guitar.Maker <= 0 || len(guitar.Name) <= 0 || len(guitar.Color) <= 0 {

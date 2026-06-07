@@ -154,6 +154,19 @@ func fetchStaticPage(url string) string {
 }
 
 // 動的ページ取得用ヘルパー
+// WaitVisible を実行し、失敗しても無視するフォールバック
+func tryWaitVisible(sel string) chromedp.Action {
+    return chromedp.ActionFunc(func(ctx context.Context) error {
+        err := chromedp.WaitVisible(sel, chromedp.BySearch).Do(ctx)
+        if err != nil {
+            log.Printf("[TryWaitVisible fallback] selector=%s err=%v\n", sel, err)
+            return nil
+        }
+        return nil
+    })
+}
+
+// 動的ページ取得用ヘルパー
 // WaitReady を実行し、失敗しても無視するフォールバック
 func tryWaitReady(elem string) chromedp.ActionFunc {
     return func(ctx context.Context) error {
@@ -166,6 +179,7 @@ func tryWaitReady(elem string) chromedp.ActionFunc {
             ),
         )
         if err != nil || !exists {
+            log.Printf("[TryWaitReady fallback]: %v\n", elem)
             return nil // 存在しないなら待たない
         }
         // 存在する場合だけ WaitReady
@@ -173,6 +187,18 @@ func tryWaitReady(elem string) chromedp.ActionFunc {
             chromedp.WaitReady(elem, chromedp.ByQuery),
         )
     }
+}
+
+// ブラウザクリックのフォールバック版
+func tryClick(sel string) chromedp.Action {
+    return chromedp.ActionFunc(func(ctx context.Context) error {
+        err := chromedp.Click(sel, chromedp.NodeVisible).Do(ctx)
+        if err != nil {
+            log.Printf("[TryClick fallback] selector=%s err=%v\n", sel, err)
+            return nil
+        }
+        return nil
+    })
 }
 
 // URLセットに追加（重複なし）

@@ -3,11 +3,9 @@ package repository
 import (
 	"fmt"
 	"log"
-	"sync"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/kazGear/portfolio/webCrawler/internal/model"
-	"github.com/kazGear/portfolio/webCrawler/pkg/utils"
 )
 
 type Repository interface {
@@ -135,11 +133,10 @@ func (r *guitarRepository) Upsert(guitar model.Guitar) error {
 
 func (r *guitarRepository) UpsertAll(guitars []model.Guitar) {
     errs  := make([]error, 0, 300)
-    mutex := &sync.Mutex{}
 
     for _, guitar := range guitars {
         err := r.Upsert(guitar)
-        errs = utils.LockedAppend(mutex, errs, err)
+        errs = append(errs, err)
     }
     for _, err := range errs {
         log.Printf("[upsert error]: %v", err)

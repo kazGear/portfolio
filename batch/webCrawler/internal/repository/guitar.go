@@ -3,14 +3,16 @@ package repository
 import (
 	"fmt"
 	"log"
+	"sync"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/kazGear/portfolio/webCrawler/internal/model"
+	"github.com/kazGear/portfolio/webCrawler/pkg/utils"
 )
 
 type Repository interface {
     Upsert(g model.Guitar) error
-    UpsertAll(guitars []model.Guitar) error
+    UpsertAll(guitars []model.Guitar)
 }
 
 type guitarRepository struct {
@@ -131,13 +133,15 @@ func (r *guitarRepository) Upsert(guitar model.Guitar) error {
     return nil
 }
 
-func (r *guitarRepository) UpsertAll(guitars []model.Guitar) error {
+func (r *guitarRepository) UpsertAll(guitars []model.Guitar) {
+    errs  := make([]error, 0, 300)
+    mutex := &sync.Mutex{}
+
     for _, guitar := range guitars {
         err := r.Upsert(guitar)
-
-        if err != nil {
-            log.Print(err)
-        }
+        errs = utils.LockedAppend(mutex, errs, err)
     }
-    return nil
+    for _, err := range errs {
+        log.Printf("[upsert error]: %v", err)
+    }
 }

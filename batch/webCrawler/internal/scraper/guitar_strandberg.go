@@ -140,6 +140,7 @@ func (e *callBacksStrandberg) FetchDynamicPage(parentCtx context.Context) func(u
     }
 }
 
+// シリーズ名の抽出用
 var regSeries = regexp.MustCompile(`^[A-Za-z]+\s[A-Za-z]+\b`)
 
 func (e *callBacksStrandberg) CollectSpec() func(doc *goquery.Document) *[]map[string]string {

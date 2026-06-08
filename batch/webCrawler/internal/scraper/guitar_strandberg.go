@@ -179,11 +179,8 @@ func (e *callBacksStrandberg) CollectSpec() func(doc *goquery.Document) *[]map[s
         proxyUrl, _             := doc.Find(`img[width="1200"][height="1200"]`).Attr(`src`)
         realUrl                 := utils.ConvertRealUrl(proxyUrl)
         savePath                := utils.CreateImageSavePath("images/strandberg", realUrl)
-        err                     := utils.DownloadImage(realUrl, savePath)
+        utils.DownloadImage(realUrl, savePath)
 
-        if err != nil {
-            log.Printf("画像保存が失敗しました。>>> %v\n", realUrl)
-        }
         spec["Src"]              = strings.TrimSpace(savePath)
         spec["Weight"]           = getElem(`h3:contains("Instrument Weight Global")`)
 

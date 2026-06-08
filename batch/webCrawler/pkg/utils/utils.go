@@ -207,22 +207,20 @@ func CreateImageSavePath(saveDirName string, url string) string {
 
 // 画像取得 savePathはファイル名まで含める
 func DownloadImage(url, savePath string) {
-	errMessage := "[Download image error]: %v %v\n"
-
     if err := os.MkdirAll(filepath.Dir(savePath), 0755); err != nil {
-        log.Printf(errMessage, "ディレクトリ作成失敗", err)
+        log.Printf("[Make dir failed]: %v\n", err)
     }
     resp, err := http.Get(url)
 
     if err != nil {
-        log.Printf(errMessage, "レスポンス異常", err)
+        log.Printf("[Response error]: %v\n", err)
     }
     defer resp.Body.Close()
 
     data, err := io.ReadAll(resp.Body)
 
 	if err != nil {
-        log.Printf(errMessage, "リソース読み込み失敗", err)
+        log.Printf("[Resource read error]: %v\n", err)
     }
     os.WriteFile(savePath, data, 0644)
 }

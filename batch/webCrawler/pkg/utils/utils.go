@@ -206,22 +206,25 @@ func CreateImageSavePath(saveDirName string, url string) string {
 }
 
 // 画像取得 savePathはファイル名まで含める
-func DownloadImage(url, savePath string) error {
+func DownloadImage(url, savePath string) {
+	errMessage := "[Download image error]: %v %v\n"
+
     if err := os.MkdirAll(filepath.Dir(savePath), 0755); err != nil {
-        return err
+        log.Printf(errMessage, "ディレクトリ作成失敗", err)
     }
     resp, err := http.Get(url)
 
     if err != nil {
-        return err
+        log.Printf(errMessage, "レスポンス異常", err)
     }
     defer resp.Body.Close()
 
     data, err := io.ReadAll(resp.Body)
-    if err != nil {
-        return err
+
+	if err != nil {
+        log.Printf(errMessage, "リソース読み込み失敗", err)
     }
-    return os.WriteFile(savePath, data, 0644)
+    os.WriteFile(savePath, data, 0644)
 }
 
 // 指定したラベルの次（兄弟要素）の要素を取得

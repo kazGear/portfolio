@@ -11,6 +11,7 @@ import (
 	"log"
 
 	"github.com/PuerkitoBio/goquery"
+	"github.com/chromedp/cdproto/cdp"
 	"github.com/chromedp/chromedp"
 	"github.com/gocolly/colly/v2"
 	"github.com/kazGear/portfolio/webCrawler/internal/model"
@@ -34,7 +35,7 @@ func NewScraperStrandberg() Scraper {
 	)
 	collector.Limit(&colly.LimitRule{
 		DomainGlob:  "*",
-		Parallelism: 10,
+		Parallelism: 5,
 	})
     return &guitarScraperStrandberg{
         guitarScraper{
@@ -80,32 +81,59 @@ func (e *guitarScraperStrandberg) Scrape(funcs GuitarCallbacks, ctx context.Cont
     return guitars, nil
 }
 
-// 必要に応じて、基盤のTryWaitReadyを組み込む
 func (e *callBacksStrandberg) FetchDynamicPage(parentCtx context.Context) func(url string) string {
     return func(url string) string {
-        if !isDetailPage(`^https://strandbergguitars.com/en-US/product/[a-z0-9\-]+`, url) {
+        if !isDetailPage(`https://strandbergguitars.com/en-US/product/[a-z0-9\-]+`, url) {
             return ""
         }
         // タブごとに独立した context を作る
         tabCtx, tabCancel := chromedp.NewContext(parentCtx)
         defer tabCancel()
         // タブにだけ timeout を付ける
-        ctx, cancel := context.WithTimeout(tabCtx, 4*time.Second)
+        ctx, cancel := context.WithTimeout(tabCtx, 12 * time.Second)
         defer cancel()
 
-        var html string
+        var nodes []*cdp.Node
 
         err := chromedp.Run(ctx,
-               chromedp.Navigate(url),
-               chromedp.WaitVisible("body", chromedp.ByQuery), // 求める要素が出るまで待つ
-               chromedp.Sleep(200 * time.Millisecond), // JSが動く猶予を与える
-               tryWaitReady(`img[width="1200"][height="1200"]`), // 必要な要素が生成されるのを待つ
-               tryWaitReady(`body div[data-sentry-component="PdpAccordion"]`),
-               chromedp.OuterHTML("html", &html, chromedp.ByQuery), // 最終的なHTML出力
+            chromedp.Navigate(url),
+            tryWaitVisible("body"), // 求める要素が出るまで待つ
+            chromedp.Sleep(400 * time.Millisecond), // JSが動く猶予を与える
+            tryWaitReady(`img[width="1200"][height="1200"]`), // 必要な要素が生成されるのを待つ
+            tryWaitReady(`body div[data-sentry-component="PdpAccordion"]`),
+            chromedp.Nodes(
+                `//div[@data-sentry-component="PdpAccordion"]//div[@data-state="closed"]//button`,
+                &nodes,
+            ), // 全ｱｺｰﾃﾞｨｵﾝﾎﾞﾀﾝ取得
         )
         if err != nil {
-            log.Printf("[chromedp error]: %v [url]: %v\n", err, url)
+            log.Printf("[Chromedp error]: %v [url]: %v\n", err, url)
             return ""
+        }
+        // アコーディオンオープン、内部の要素を出現させる。排他的にしかオープンしないため、つどHTMLを抽出する。最後にマージ
+        htmlParts := []*string{
+            new(string), new(string), new(string), new(string), new(string), new(string), new(string),
+        }
+        for idx, node := range nodes {
+            chromedp.Run(ctx,
+                tryClick(node.FullXPath()),
+                chromedp.Sleep(300*time.Millisecond),
+                chromedp.OuterHTML(
+                    `div[data-sentry-component="PdpAccordion"]`, htmlParts[idx], chromedp.ByQuery,
+                ), // クリックの都度HTML抽出
+            )
+        }
+        // HTMLを取得、マージ
+        var html string
+        err = chromedp.Run(ctx,
+            chromedp.OuterHTML("html", &html, chromedp.ByQuery),
+        )
+        if err != nil {
+            log.Printf("[Chromedp error]: %v [url]: %v\n", err, url)
+            return ""
+        }
+        for _, part := range htmlParts {
+            html += *part
         }
         return html
     }
@@ -113,14 +141,15 @@ func (e *callBacksStrandberg) FetchDynamicPage(parentCtx context.Context) func(u
 
 func (e *callBacksStrandberg) CollectSpec() func(doc *goquery.Document) *[]map[string]string {
     return func(doc *goquery.Document) *[]map[string]string {
-        specs := make([]map[string]string, 0, 1)
+        specs := []map[string]string{}
         mutex := &sync.Mutex{}
 
-        spec  := map[string]string{}
+        spec    := map[string]string{}
+        // getElem := utils.GetElemNextToLabel(doc)
 
         spec["Maker"]   = strconv.Itoa(constants.Strandberg)
         spec["Name"]    = strings.TrimSpace(doc.Find(`div[data-sentry-component="ProductInfo"] div div h1`).Text())
-        spec["Color"]   = "tmpColor"//strings.TrimSpace(doc.Find(`h3:contains("Body finish color")`).Next().Text())
+        spec["Color"]   = strings.TrimSpace(doc.Find(`h3:contains("Body finish color")`).Next().Text())
         spec["BodyFinish"] = strings.TrimSpace(doc.Find(`h3:contains("Body Finish Type")`).Next().Text())
         spec["BodyMaterialBack"] = strings.TrimSpace(doc.Find(`h3:contains("Body Material")`).Next().Text())
         spec["BodyMaterialFront"] = strings.TrimSpace(doc.Find(`h3:contains("Body Top Material")`).Next().Text())
@@ -145,7 +174,7 @@ func (e *callBacksStrandberg) CollectSpec() func(doc *goquery.Document) *[]map[s
         spec["Src"]     = strings.TrimSpace(src)
         // TODO Kg単位の数値を抜き出す処理追加 util
         spec["Weight"] = strings.TrimSpace(doc.Find(`h3:contains("Instrument Weight Global")`).Next().Text())
-log.Println(spec)
+
         specs = utils.LockedAppend(mutex, specs, spec)
         return &specs
     }
@@ -159,26 +188,7 @@ func (e *callBacksStrandberg) BuildGuitar() func(spec map[string]string) *model.
 
 func (e *callBacksStrandberg) IsStaticPage() func(html string) bool {
     return func(html string) bool {
-        return strings.Contains(html, "Included Accessories")
+        // ありえない文字列、確実に動的ページを取得させる。
+        return strings.Contains(html, "@abcd1234@")
     }
 }
-
-// key: ESPの項目名, value: 構造体フィールド名
-var strandbergMap = map[string]string{
-	"BODY":         "BodyMaterial",
-	"NECK":         "NeckMaterial",
-	"FINGERBOARD":  "Fingerboard",
-	"BRIDGE":       "Bridge",
-	"PICKUPS":      "Pickups",
-	"CONTROLS":     "Controls",
-	"Price":        "Price",
-	"SCALE":        "ScaleLengthMM",
-	"FRET":         "FretCount",
-	"INLAY":        "Inlays",
-	"CONSTRUCTION": "Joint",
-}
-
-// サイトの項目名をフィールド名に変換
-// func convertLabelStrandberg(label string) string {
-//     return strandbergMap[label]
-// }

@@ -98,6 +98,9 @@ var _regFretStr   = regexp.MustCompile(`(1[5-9]|[2-3][0-9])\s*[Ff]+`)
 var _refNotNumber = regexp.MustCompile(`\D`)
 // ギターのフレット数を取得
 func GetFretCount(s string) (int, error) {
+	try, err :=strconv.Atoi(s)
+	if err == nil { return try, nil }
+
 	fretStr := _regFretStr.FindString(s)
 	fret    := _refNotNumber.ReplaceAllString(fretStr, "")
 

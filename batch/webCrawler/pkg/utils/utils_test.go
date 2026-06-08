@@ -129,6 +129,10 @@ func TestGetFretCount(t *testing.T) {
 			input: "22FRET/24FRET（比較表記）",
 			want:  22,
 		},
+		{
+			input: "24",
+			want:  24,
+		},
 	}
 
 	for _, fret := range frets {

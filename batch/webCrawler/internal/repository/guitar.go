@@ -26,7 +26,7 @@ func (r *guitarRepository) Upsert(guitar model.Guitar) error {
 
     // pkチェック
     if guitar.Maker <= 0 || len(guitar.Name) <= 0 || len(guitar.Color) <= 0 {
-        return fmt.Errorf("invalid primary key: maker=%v, name=%v, color=%v\n",
+        return fmt.Errorf("[Invalid primary key]: maker=%v, name=%v, color=%v\n",
             guitar.Maker,
             guitar.Name,
             guitar.Color,

@@ -12,6 +12,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/PuerkitoBio/goquery"
 	"github.com/kazGear/portfolio/webCrawler/pkg/constants"
 	"golang.org/x/text/width"
 	"gopkg.in/natefinch/lumberjack.v2"
@@ -202,3 +203,10 @@ URL抽出	正規表現より url.Parse + Query() が最強
 ファイルパス	images/{メーカー}/{モデル}/{画像種別}.jpg
 画像種別の決め方	alt / 順番 / サムネイル構造から決める
 */
+
+// 指定したラベルの次（兄弟要素）の要素を取得
+func GetElemNextToLabel(doc *goquery.Document) func(selector string) string {
+	return func(selector string) string {
+		return strings.TrimSpace(doc.Find(selector).Next().Text())
+	}
+}

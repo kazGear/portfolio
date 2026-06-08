@@ -145,35 +145,35 @@ func (e *callBacksStrandberg) CollectSpec() func(doc *goquery.Document) *[]map[s
         mutex := &sync.Mutex{}
 
         spec    := map[string]string{}
-        // getElem := utils.GetElemNextToLabel(doc)
+        getElem := utils.GetElemNextToLabel(doc)
 
         spec["Maker"]   = strconv.Itoa(constants.Strandberg)
         spec["Name"]    = strings.TrimSpace(doc.Find(`div[data-sentry-component="ProductInfo"] div div h1`).Text())
-        spec["Color"]   = strings.TrimSpace(doc.Find(`h3:contains("Body finish color")`).Next().Text())
-        spec["BodyFinish"] = strings.TrimSpace(doc.Find(`h3:contains("Body Finish Type")`).Next().Text())
-        spec["BodyMaterialBack"] = strings.TrimSpace(doc.Find(`h3:contains("Body Material")`).Next().Text())
-        spec["BodyMaterialFront"] = strings.TrimSpace(doc.Find(`h3:contains("Body Top Material")`).Next().Text())
+        spec["Color"]   = getElem(`h3:contains("Body finish color")`)
+        spec["BodyFinish"] = getElem(`h3:contains("Body Finish Type")`)
+        spec["BodyMaterialBack"] = getElem(`h3:contains("Body Material")`)
+        spec["BodyMaterialFront"] = getElem(`h3:contains("Body Top Material")`)
         spec["BodyMaterial"] = spec["BodyMaterialFront"] + " " + spec["BodyMaterialBack"]
-        spec["Bridge"] = strings.TrimSpace(doc.Find(`h3:contains("Bridge")`).Next().Text())
-        spec["Controls"] = strings.TrimSpace(doc.Find(`h3:contains("Control Set")`).Next().Text())
+        spec["Bridge"] = getElem(`h3:contains("Bridge")`)
+        spec["Controls"] = getElem(`h3:contains("Control Set")`)
         spec["Comment"] = strings.TrimSpace(doc.Find(``).Text())
-        spec["Fingerboard"] = strings.TrimSpace(doc.Find(`h3:contains("Fretboard Material")`).Next().Text())
-        spec["FretCount"] = strings.TrimSpace(doc.Find(`h3:contains("Number of Frets")`).Next().Text())
-        spec["Inlays"] = strings.TrimSpace(doc.Find(`h3:contains("Fretboard Inlays")`).Next().Text())
-        spec["Joint"] = strings.TrimSpace(doc.Find(`h3:contains("Neck Construction")`).Next().Text())
-        spec["NeckMaterial"] = strings.TrimSpace(doc.Find(`h3:contains("Neck Material")`).Next().Text())
-        neckPickup := strings.TrimSpace(doc.Find(`h3:contains("Neck pickup")`).Next().Text())
-        bridgePickup := strings.TrimSpace(doc.Find(`h3:contains("Bridge pickup")`).Next().Text())
-        spec["Pickups"] = fmt.Sprintf(`(Neck) %v (Bridge) %v`, neckPickup, bridgePickup)
+        spec["Fingerboard"] = getElem(`h3:contains("Fretboard Material")`)
+        spec["FretCount"] = getElem(`h3:contains("Number of Frets")`)
+        spec["Inlays"] = getElem(`h3:contains("Fretboard Inlays")`)
+        spec["Joint"] = getElem(`h3:contains("Neck Construction")`)
+        spec["NeckMaterial"] = getElem(`h3:contains("Neck Material")`)
+        neckPickup := getElem(`h3:contains("Neck pickup")`)
+        bridgePickup := getElem(`h3:contains("Bridge pickup")`)
+        spec["Pickups"] = fmt.Sprintf(constants.PickupsFormat, neckPickup, bridgePickup)
         // TODO $ 1 149 形式でもできるよう改良する util
         spec["Price"]   = strings.TrimSpace(doc.Find(`span:contains("Excluding vat")`).Prev().Text())
-        spec["ScaleLengthMM"] = strings.TrimSpace(doc.Find(`h3:contains("Instrument Length Global")`).Next().Text())
-        spec["Series"] = strings.TrimSpace(doc.Find(`h3:contains("Body Shape")`).Next().Text())
+        spec["ScaleLengthMM"] = getElem(`h3:contains("Instrument Length Global")`)
+        spec["Series"] = getElem(`h3:contains("Body Shape")`)
         // TODO srcはダウンロード方式を作成
         src, _         := doc.Find(`img[title="English"]`).Attr(`src`)
         spec["Src"]     = strings.TrimSpace(src)
         // TODO Kg単位の数値を抜き出す処理追加 util
-        spec["Weight"] = strings.TrimSpace(doc.Find(`h3:contains("Instrument Weight Global")`).Next().Text())
+        spec["Weight"] = getElem(`h3:contains("Instrument Weight Global")`)
 
         specs = utils.LockedAppend(mutex, specs, spec)
         return &specs

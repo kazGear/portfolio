@@ -3,6 +3,7 @@ package scraper
 import (
 	"context"
 	"fmt"
+	"regexp"
 	"strconv"
 	"strings"
 	"sync"
@@ -63,7 +64,7 @@ func (e *guitarScraperStrandberg) CollectLinks() *[]string {
             c.Visit(link)
         }
     })
-    c.OnHTML("#main-plp-block div div div div .product-card .relative a", func(html *colly.HTMLElement) {
+    c.OnHTML("div.product-card a", func(html *colly.HTMLElement) {
         link := html.Request.AbsoluteURL(html.Attr("href"))
         if isFirstVisit(mutex, link, visited) {
             c.Visit(link)
@@ -139,6 +140,8 @@ func (e *callBacksStrandberg) FetchDynamicPage(parentCtx context.Context) func(u
     }
 }
 
+var regSeries = regexp.MustCompile(`^[A-Za-z]+\s[A-Za-z]+\b`)
+
 func (e *callBacksStrandberg) CollectSpec() func(doc *goquery.Document) *[]map[string]string {
     return func(doc *goquery.Document) *[]map[string]string {
         specs := []map[string]string{}
@@ -167,14 +170,20 @@ func (e *callBacksStrandberg) CollectSpec() func(doc *goquery.Document) *[]map[s
         neckPickup              := getElem(`h3:contains("Neck pickup")`)
         bridgePickup            := getElem(`h3:contains("Bridge pickup")`)
         spec["Pickups"]          = fmt.Sprintf(constants.PickupsFormat, neckPickup, bridgePickup)
-        // TODO $ 1 149 形式でもできるよう改良する util
         spec["Price"]            = strings.TrimSpace(doc.Find(`span:contains("Excluding vat")`).Prev().Text())
         spec["ScaleLengthMM"]    = getElem(`h3:contains("Instrument Length Global")`)
-        spec["Series"]           = getElem(`h3:contains("Body Shape")`)
-        // TODO srcはダウンロード方式を作成
-        src, _                  := doc.Find(`img[title="English"]`).Attr(`src`)
-        spec["Src"]              = strings.TrimSpace(src)
-        // TODO Kg単位の数値を抜き出す処理追加 util
+        spec["Series"]           = regSeries.FindString(spec["Name"])
+
+        // 画像保存、保存場所の記録
+        proxyUrl, _             := doc.Find(`img[width="1200"][height="1200"]`).Attr(`src`)
+        realUrl                 := utils.ConvertRealUrl(proxyUrl)
+        savePath                := utils.CreateImageSavePath("images/strandberg", realUrl)
+        err                     := utils.DownloadImage(realUrl, savePath)
+
+        if err != nil {
+            log.Printf("画像保存が失敗しました。>>> %v\n", realUrl)
+        }
+        spec["Src"]              = strings.TrimSpace(savePath)
         spec["Weight"]           = getElem(`h3:contains("Instrument Weight Global")`)
 
         specs = utils.LockedAppend(mutex, specs, spec)

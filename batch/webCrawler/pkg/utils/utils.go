@@ -198,10 +198,10 @@ func ConvertRealUrl(proxyUrl string) string {
 }
 
 // 画像保存するためのパスを作成
-func CreateImageSavePath(url string, dirName string) string {
+func CreateImageSavePath(saveDirName string, url string) string {
 	hash 	 := sha1.Sum([]byte(url)) // urlをハッシュ化
 	filename := fmt.Sprintf("%x.jpg", hash)
-	savePath := filepath.Join(dirName, filename)
+	savePath := filepath.Join(saveDirName, filename)
 	return savePath
 }
 

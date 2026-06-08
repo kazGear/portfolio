@@ -85,7 +85,7 @@ func buildGuitarFrame(spec map[string]string) (*model.Guitar) {
 	guitar.BodyFinish        = spec["BodyFinish"]
 	guitar.BodyMaterial      = spec["BodyMaterial"]
     guitar.BodyMaterialBack  = utils.SearchWoodCode(spec["BodyMaterialBack"])
-	guitar.BodyMaterialFront = utils.SearchWoodCode(spec["BodyMaterialFront"])
+	guitar.BodyMaterialTop = utils.SearchWoodCode(spec["BodyMaterialTop"])
     guitar.Bridge            = spec["Bridge"]
 	guitar.Color             = spec["Color"]
     guitar.ColorCd           = utils.ConvertColorCd(guitar.Color)

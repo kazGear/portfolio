@@ -9,7 +9,7 @@ type Guitar struct {
 	Name              string  `db:"name"                json:"name"`
 	BodyFinish        string  `db:"body_finish"         json:"body_finish"`
 	BodyMaterial      string  `db:"body_material"       json:"body_material"`
-	BodyMaterialFront int     `db:"body_material_front" json:"body_material_front"`
+	BodyMaterialTop   int     `db:"body_material_top" json:"body_material_top"`
 	BodyMaterialBack  int     `db:"body_material_back"  json:"body_material_back"`
 	Bridge            string  `db:"bridge"              json:"bridge"`
 	Color             string  `db:"color"               json:"color"`

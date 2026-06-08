@@ -147,33 +147,35 @@ func (e *callBacksStrandberg) CollectSpec() func(doc *goquery.Document) *[]map[s
         spec    := map[string]string{}
         getElem := utils.GetElemNextToLabel(doc)
 
-        spec["Maker"]   = strconv.Itoa(constants.Strandberg)
-        spec["Name"]    = strings.TrimSpace(doc.Find(`div[data-sentry-component="ProductInfo"] div div h1`).Text())
-        spec["Color"]   = getElem(`h3:contains("Body finish color")`)
-        spec["BodyFinish"] = getElem(`h3:contains("Body Finish Type")`)
+        spec["Maker"]            = strconv.Itoa(constants.Strandberg)
+        spec["Name"]             = strings.TrimSpace(doc.Find(
+                                    `div[data-sentry-component="ProductInfo"] div div h1`,
+                                   ).Text())
+        spec["Color"]            = getElem(`h3:contains("Body finish color")`)
+        spec["BodyFinish"]       = getElem(`h3:contains("Body Finish Type")`)
         spec["BodyMaterialBack"] = getElem(`h3:contains("Body Material")`)
-        spec["BodyMaterialFront"] = getElem(`h3:contains("Body Top Material")`)
-        spec["BodyMaterial"] = spec["BodyMaterialFront"] + " " + spec["BodyMaterialBack"]
-        spec["Bridge"] = getElem(`h3:contains("Bridge")`)
-        spec["Controls"] = getElem(`h3:contains("Control Set")`)
-        spec["Comment"] = strings.TrimSpace(doc.Find(``).Text())
-        spec["Fingerboard"] = getElem(`h3:contains("Fretboard Material")`)
-        spec["FretCount"] = getElem(`h3:contains("Number of Frets")`)
-        spec["Inlays"] = getElem(`h3:contains("Fretboard Inlays")`)
-        spec["Joint"] = getElem(`h3:contains("Neck Construction")`)
-        spec["NeckMaterial"] = getElem(`h3:contains("Neck Material")`)
-        neckPickup := getElem(`h3:contains("Neck pickup")`)
-        bridgePickup := getElem(`h3:contains("Bridge pickup")`)
-        spec["Pickups"] = fmt.Sprintf(constants.PickupsFormat, neckPickup, bridgePickup)
+        spec["BodyMaterialTop"]  = getElem(`h3:contains("Body Top Material")`)
+        spec["BodyMaterial"]     = spec["BodyMaterialTop"] + " " + spec["BodyMaterialBack"]
+        spec["Bridge"]           = getElem(`h3:contains("Bridge")`)
+        spec["Controls"]         = getElem(`h3:contains("Control Set")`)
+        spec["Comment"]          = strings.TrimSpace(doc.Find(``).Text())
+        spec["Fingerboard"]      = getElem(`h3:contains("Fretboard Material")`)
+        spec["FretCount"]        = getElem(`h3:contains("Number of Frets")`)
+        spec["Inlays"]           = getElem(`h3:contains("Fretboard Inlays")`)
+        spec["Joint"]            = getElem(`h3:contains("Neck Construction")`)
+        spec["NeckMaterial"]     = getElem(`h3:contains("Neck Material")`)
+        neckPickup              := getElem(`h3:contains("Neck pickup")`)
+        bridgePickup            := getElem(`h3:contains("Bridge pickup")`)
+        spec["Pickups"]          = fmt.Sprintf(constants.PickupsFormat, neckPickup, bridgePickup)
         // TODO $ 1 149 形式でもできるよう改良する util
-        spec["Price"]   = strings.TrimSpace(doc.Find(`span:contains("Excluding vat")`).Prev().Text())
-        spec["ScaleLengthMM"] = getElem(`h3:contains("Instrument Length Global")`)
-        spec["Series"] = getElem(`h3:contains("Body Shape")`)
+        spec["Price"]            = strings.TrimSpace(doc.Find(`span:contains("Excluding vat")`).Prev().Text())
+        spec["ScaleLengthMM"]    = getElem(`h3:contains("Instrument Length Global")`)
+        spec["Series"]           = getElem(`h3:contains("Body Shape")`)
         // TODO srcはダウンロード方式を作成
-        src, _         := doc.Find(`img[title="English"]`).Attr(`src`)
-        spec["Src"]     = strings.TrimSpace(src)
+        src, _                  := doc.Find(`img[title="English"]`).Attr(`src`)
+        spec["Src"]              = strings.TrimSpace(src)
         // TODO Kg単位の数値を抜き出す処理追加 util
-        spec["Weight"] = getElem(`h3:contains("Instrument Weight Global")`)
+        spec["Weight"]           = getElem(`h3:contains("Instrument Weight Global")`)
 
         specs = utils.LockedAppend(mutex, specs, spec)
         return &specs

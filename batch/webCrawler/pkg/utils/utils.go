@@ -1,11 +1,14 @@
 package utils
 
 import (
+	"crypto/sha1"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
+	"path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
@@ -19,7 +22,7 @@ import (
 )
 
 
-var _regPriceSpliter   = regexp.MustCompile(`[\s(（/／:、]`)
+var _regPriceSpliter   = regexp.MustCompile(`[()（）/／:、]`)
 var _regUndefinedPrice = regexp.MustCompile(`(?i)(ask|open)`)
 const _initPrice int   = 999999999
 // 金額表記を数値に変換 "¥128,000" → 128000
@@ -29,6 +32,8 @@ func ParsePrice(price string) (int, error) {
 	}
 	var result int = 0
 	var err error
+
+	price = strings.ReplaceAll(price, " ", "")
 
 	if _regPriceSpliter.MatchString(price) {
 		result, err = parseMultiPrice(price)
@@ -113,7 +118,7 @@ func GetFretCount(s string) (int, error) {
 	return result, nil
 }
 
-var regScale = regexp.MustCompile(`\s*mm`)
+var regScale = regexp.MustCompile(`(\..*|\s)*mm`)
 // ギタースケールの単位を除去
 func TrimScaleUnit(s string) int {
 	halfed := width.Narrow.String(s)
@@ -180,33 +185,63 @@ func ConvertColorCd(colorName string) int {
 	return constants.OthersColor
 }
 
-// 画像取得
-func DownloadImage(url, filepath string) error {
+// URLを使用できる形式に変換
+func ConvertRealUrl(proxyUrl string) string {
+	u, _ 	     := url.Parse(proxyUrl)
+	encodedUrl   := u.Query().Get("url")
+	realUrl, err := url.QueryUnescape(encodedUrl)
+
+	if err != nil {
+		log.Printf("URLの変換に失敗しました。>>> %v\n", proxyUrl)
+	}
+	return realUrl
+}
+
+// 画像保存するためのパスを作成
+func CreateImageSavePath(url string, dirName string) string {
+	hash 	 := sha1.Sum([]byte(url)) // urlをハッシュ化
+	filename := fmt.Sprintf("%x.jpg", hash)
+	savePath := filepath.Join(dirName, filename)
+	return savePath
+}
+
+// 画像取得 savePathはファイル名まで含める
+func DownloadImage(url, savePath string) error {
+    if err := os.MkdirAll(filepath.Dir(savePath), 0755); err != nil {
+        return err
+    }
     resp, err := http.Get(url)
+
     if err != nil {
         return err
     }
     defer resp.Body.Close()
 
-    out, err := os.Create(filepath)
+    data, err := io.ReadAll(resp.Body)
     if err != nil {
         return err
     }
-    defer out.Close()
-
-    _, err = io.Copy(out, resp.Body)
-    return err
+    return os.WriteFile(savePath, data, 0644)
 }
-/*
-URL抽出	正規表現より url.Parse + Query() が最強
-デコード	url.QueryUnescape
-ファイルパス	images/{メーカー}/{モデル}/{画像種別}.jpg
-画像種別の決め方	alt / 順番 / サムネイル構造から決める
-*/
 
 // 指定したラベルの次（兄弟要素）の要素を取得
 func GetElemNextToLabel(doc *goquery.Document) func(selector string) string {
 	return func(selector string) string {
 		return strings.TrimSpace(doc.Find(selector).Next().Text())
 	}
+}
+
+var regWight = regexp.MustCompile(`\d\.\d{1,2}`)
+// 重量を抽出する（Kg単位）
+func ParseWight(weight string) float64 {
+	w := width.Narrow.String(weight)
+	w  = regWight.FindString(w)
+
+	result, err := strconv.ParseFloat(w, 64)
+
+	if err != nil {
+		log.Printf("重量のパースが失敗しました >>> %v\n", weight)
+		return -1
+	}
+	return result
 }

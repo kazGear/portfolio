@@ -179,6 +179,10 @@ func TestTrimScaleUnit(t *testing.T) {
 			scale: "",
 			want:  -1,
 		},
+		{
+			scale: "820.00 mm",
+			want:  820,
+		},
 	}
 
 	for _, s := range scales {
@@ -265,5 +269,30 @@ func TestConvertColorCd(t *testing.T) {
 	for _, c := range colors {
 		actual := ConvertColorCd(c.color)
 		assert.Equal(t, c.want, actual)
+	}
+}
+
+func TestParseWight(t *testing.T) {
+	weights := []struct {
+		weight string
+		want   float64
+	}{
+		{
+			weight: "2.30 +/- 10% Kg", want: 2.3,
+		},
+		{
+			weight: "２.３０ +/- 10% Kg", want: 2.3,
+		},
+		{
+			weight: "2 +/- 10% Kg", want: -1,
+		},
+		{
+			weight: "2.30 +/- 10%", want: 2.3,
+		},
+	}
+
+	for _, w := range weights {
+		actual := ParseWight(w.weight)
+		assert.Equal(t, w.want, actual)
 	}
 }

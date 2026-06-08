@@ -56,7 +56,7 @@ func (s *guitarCrawlerService) RunCrawler() {
         // ログ設定
         utils.LoggerInit(maker.name)
         log.Printf(constants.DecoLabel, "Started crawler " + maker.name)
-        // 処理時間計測
+        // 処理時間計測開始
         startTime := time.Now()
 
         maker.scraper.CollectLinks()

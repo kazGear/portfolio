@@ -3,7 +3,6 @@ package scraper
 import (
 	"context"
 	"errors"
-	"fmt"
 	"log"
 	"regexp"
 	"strconv"
@@ -157,7 +156,7 @@ func fetchStaticPage(url string) string {
 // WaitVisible を実行し、失敗しても無視するフォールバック
 func tryWaitVisible(sel string) chromedp.Action {
     return chromedp.ActionFunc(func(ctx context.Context) error {
-        err := chromedp.WaitVisible(sel, chromedp.BySearch).Do(ctx)
+        err := chromedp.WaitVisible(sel, chromedp.ByQuery).Do(ctx)
         if err != nil {
             log.Printf("[TryWaitVisible fallback] selector=%s err=%v\n", sel, err)
             return nil
@@ -169,32 +168,19 @@ func tryWaitVisible(sel string) chromedp.Action {
 // 動的ページ取得用ヘルパー
 // WaitReady を実行し、失敗しても無視するフォールバック
 func tryWaitReady(elem string) chromedp.ActionFunc {
-    return func(ctx context.Context) error {
-        // 要素が存在するかだけ先にチェック
-        var exists bool
-        err := chromedp.Run(ctx,
-            chromedp.EvaluateAsDevTools(
-                fmt.Sprintf(`document.querySelector("%s") !== null`, elem),
-                &exists,
-            ),
-        )
-        if err != nil || !exists {
-            log.Printf("[TryWaitReady fallback]: %v\n", elem)
-            return nil // 存在しないなら待たない
-        }
-        // 存在する場合だけ WaitReady
-        return chromedp.Run(ctx,
-            chromedp.WaitReady(elem, chromedp.ByQuery),
-        )
-    }
+  return chromedp.ActionFunc(func(ctx context.Context) error {
+        // 失敗しても止めない
+        _ = chromedp.WaitReady(elem, chromedp.ByQuery).Do(ctx)
+        return nil
+    })
 }
 
 // ブラウザクリックのフォールバック版
-func tryClick(sel string) chromedp.Action {
+func tryClick(path string) chromedp.Action {
     return chromedp.ActionFunc(func(ctx context.Context) error {
-        err := chromedp.Click(sel, chromedp.NodeVisible).Do(ctx)
+        err := chromedp.Click(path, chromedp.NodeVisible).Do(ctx)
         if err != nil {
-            log.Printf("[TryClick fallback] selector=%s err=%v\n", sel, err)
+            log.Printf("[TryClick fallback] selector=%s err=%v\n", path, err)
             return nil
         }
         return nil

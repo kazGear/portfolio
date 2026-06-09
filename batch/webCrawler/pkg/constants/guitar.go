@@ -2,13 +2,20 @@ package constants
 
 // ギターメーカー
 const (
-	Esp int = iota + 1
-	Fender
-	Gibson
-	Strandberg
-	SCHECTER
-	EspSignature
+    Esp int = iota + 1
+    Fender
+    Gibson
+    Strandberg
+    Schecter
+    EspSignature
+    Ibanez
+    PRS
+    Suhr
+    MusicMan
+    Zemaitis
+    Momose
 )
+
 
 // カラーコード
 const (

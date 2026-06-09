@@ -9,8 +9,8 @@ import (
 )
 
 type Repository interface {
-    Upsert(g model.Guitar) error
-    UpsertAll(guitars []model.Guitar)
+    Upsert(g *model.Guitar) error
+    UpsertAll(guitars []*model.Guitar)
 }
 
 type guitarRepository struct {
@@ -21,7 +21,7 @@ func NewGuitarRepository(db *sqlx.DB) Repository {
     return &guitarRepository{ db: db }
 }
 
-func (r *guitarRepository) Upsert(guitar model.Guitar) error {
+func (r *guitarRepository) Upsert(guitar *model.Guitar) error {
     log.Printf("[Try upsert]: %v", guitar.String())
 
     // pkチェック
@@ -131,7 +131,7 @@ func (r *guitarRepository) Upsert(guitar model.Guitar) error {
     return nil
 }
 
-func (r *guitarRepository) UpsertAll(guitars []model.Guitar) {
+func (r *guitarRepository) UpsertAll(guitars []*model.Guitar) {
     errs  := make([]error, 0, 300)
 
     for _, guitar := range guitars {

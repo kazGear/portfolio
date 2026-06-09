@@ -64,7 +64,7 @@ func (s *guitarCrawlerService) RunCrawler() {
 
         if err != nil { log.Println(err) }
 
-        s.repository.UpsertAll(*guitars)
+        s.repository.UpsertAll(guitars)
 
         log.Printf(constants.DecoLabel, "Finished crawler " + maker.name)
         log.Printf("Crawler processing time: %v\n", time.Since(startTime))

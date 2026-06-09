@@ -18,7 +18,7 @@ import (
 )
 
 type Scraper interface {
-	Scrape(funcs GuitarCallbacks, ctx context.Context) (*[]model.Guitar, error)
+	Scrape(funcs GuitarCallbacks, ctx context.Context) ([]*model.Guitar, error)
 	CollectLinks(ctx context.Context)                  []string
 }
 
@@ -38,11 +38,11 @@ type guitarScraper struct {
 type callBacks struct {}
 
 // スクレイピング実行のフレームワーク
-func (e *guitarScraper) scrapeFrame(funcs GuitarCallbacks, ctx context.Context) (*[]model.Guitar, error) {
-    var guitars = make([]model.Guitar, 0, 400)
+func (e *guitarScraper) scrapeFrame(funcs GuitarCallbacks, ctx context.Context) ([]*model.Guitar, error) {
+    var guitars = make([]*model.Guitar, 0, 400)
 
     if len(e.urls) <= 0 {
-        return &[]model.Guitar{}, errors.New("巡回用URLがありません。")
+        return []*model.Guitar{}, errors.New("None URL for crawling...")
     }
     for _, url := range e.urls {
         // 静的/動的を判定して HTML を取得、DOM化
@@ -63,10 +63,10 @@ func (e *guitarScraper) scrapeFrame(funcs GuitarCallbacks, ctx context.Context) 
             guitar := buildGuitar(spec)
 
             if len(guitar.Name) <= 0 || len(guitar.Color) <= 0 { continue }
-            guitars = utils.LockedAppend(e.mutex, guitars, *guitar)
+            guitars = utils.LockedAppend(e.mutex, guitars, guitar)
         }
     }
-    return &guitars, nil
+    return guitars, nil
 }
 
 // ギター構造体の構築フレームワーク

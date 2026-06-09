@@ -80,7 +80,7 @@ func (e *guitarScraperStrandberg) CollectLinks(parentCtx context.Context) []stri
 func (e *guitarScraperStrandberg) Scrape(
     funcs GuitarCallbacks,
     parentCtx context.Context,
-) (*[]model.Guitar, error) {
+) ([]*model.Guitar, error) {
     guitars, _ := e.gScraper.scrapeFrame(funcs, parentCtx)
     return guitars, nil
 }

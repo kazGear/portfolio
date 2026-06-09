@@ -120,8 +120,8 @@ func (e *callBacksEsp) FetchDynamicPage(parentCtx context.Context) func(url stri
     }
 }
 
-func (e *callBacksEsp) CollectSpec() func(doc *goquery.Document) *[]map[string]string {
-    return func(doc *goquery.Document) *[]map[string]string {
+func (e *callBacksEsp) CollectSpec() func(doc *goquery.Document) []map[string]string {
+    return func(doc *goquery.Document) []map[string]string {
         specs := make([]map[string]string, 0, 1)
         mutex := &sync.Mutex{}
 
@@ -142,7 +142,7 @@ func (e *callBacksEsp) CollectSpec() func(doc *goquery.Document) *[]map[string]s
             spec[th] = td
         })
         specs = utils.LockedAppend(mutex, specs, spec)
-        return &specs
+        return specs
     }
 }
 

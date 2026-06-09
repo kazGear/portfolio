@@ -25,7 +25,7 @@ type Scraper interface {
 type GuitarCallbacks interface {
     IsStaticPage() func(html string) bool
     FetchDynamicPage(ctx context.Context) func(url string) string
-    CollectSpec()  func(doc *goquery.Document)  *[]map[string]string
+    CollectSpec()  func(doc *goquery.Document)  []map[string]string
     BuildGuitar()  func(spec map[string]string) *model.Guitar
 }
 
@@ -59,7 +59,7 @@ func (e *guitarScraper) scrapeFrame(funcs GuitarCallbacks, ctx context.Context) 
         buildGuitar := funcs.BuildGuitar()
         specs       := collectSpec(doc) // 1ページ：N詳細ページでもOK
 
-        for _, spec := range *specs {
+        for _, spec := range specs {
             guitar := buildGuitar(spec)
 
             if len(guitar.Name) <= 0 || len(guitar.Color) <= 0 { continue }
@@ -85,7 +85,7 @@ func buildGuitarFrame(spec map[string]string) (*model.Guitar) {
 	guitar.BodyFinish        = spec["BodyFinish"]
 	guitar.BodyMaterial      = spec["BodyMaterial"]
     guitar.BodyMaterialBack  = utils.SearchWoodCode(spec["BodyMaterialBack"])
-	guitar.BodyMaterialTop = utils.SearchWoodCode(spec["BodyMaterialTop"])
+	guitar.BodyMaterialTop   = utils.SearchWoodCode(spec["BodyMaterialTop"])
     guitar.Bridge            = spec["Bridge"]
 	guitar.Color             = spec["Color"]
     guitar.ColorCd           = utils.ConvertColorCd(guitar.Color)
@@ -268,7 +268,7 @@ func getNeedLinks(links []string, needPattern string, cap int) []string {
     return needLinks
 }
 
-// 必要なリンクだけ取得
+// 相対パスから絶対パスへ変換
 func toAbsLinks(links []string, prefix string, cap int) []string {
     absLinks := make([]string, 0, cap)
 

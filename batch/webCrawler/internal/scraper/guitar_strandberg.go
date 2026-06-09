@@ -146,8 +146,8 @@ func (e *callBacksStrandberg) FetchDynamicPage(parentCtx context.Context) func(u
 // シリーズ名の抽出用
 var regSeries = regexp.MustCompile(`^[A-Za-z]+\s[A-Za-z]+\b`)
 
-func (e *callBacksStrandberg) CollectSpec() func(doc *goquery.Document) *[]map[string]string {
-    return func(doc *goquery.Document) *[]map[string]string {
+func (e *callBacksStrandberg) CollectSpec() func(doc *goquery.Document) []map[string]string {
+    return func(doc *goquery.Document) []map[string]string {
         specs := []map[string]string{}
         mutex := &sync.Mutex{}
 
@@ -188,7 +188,7 @@ func (e *callBacksStrandberg) CollectSpec() func(doc *goquery.Document) *[]map[s
         spec["Weight"]           = getElem(`h3:contains("Instrument Weight Global")`)
 
         specs = utils.LockedAppend(mutex, specs, spec)
-        return &specs
+        return specs
     }
 }
 

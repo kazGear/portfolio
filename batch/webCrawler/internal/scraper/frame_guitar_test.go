@@ -16,7 +16,7 @@ var (
 
 func TestCollectURLsEsp(t *testing.T) {
 	guitar := NewScraperEsp()
-	urls   := guitar.CollectLinks()
+	urls   := guitar.CollectLinks(ctx)
 	fmt.Printf("urlsCount: %v", len(*urls))
 
 	assert.GreaterOrEqual(t, len(*urls), 350)
@@ -24,7 +24,7 @@ func TestCollectURLsEsp(t *testing.T) {
 
 func TestCollectURLsEspSig(t *testing.T) {
 	guitar := NewScraperEspSig()
-	urls   := guitar.CollectLinks()
+	urls   := guitar.CollectLinks(ctx)
 	fmt.Printf("urlsCount: %v", len(*urls))
 
 	assert.LessOrEqual(t, len(*urls), 100)
@@ -32,7 +32,7 @@ func TestCollectURLsEspSig(t *testing.T) {
 
 func TestCollectURLsStrandberg(t *testing.T) {
 	guitar := NewScraperStrandberg()
-	urls   := guitar.CollectLinks()
+	urls   := guitar.CollectLinks(ctx)
 	fmt.Printf("urlsCount: %v", len(*urls))
 
 	assert.GreaterOrEqual(t, len(*urls), 30)

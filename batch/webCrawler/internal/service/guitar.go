@@ -59,7 +59,7 @@ func (s *guitarCrawlerService) RunCrawler() {
         // 処理時間計測開始
         startTime := time.Now()
 
-        maker.scraper.CollectLinks()
+        maker.scraper.CollectLinks(parentCtx)
         guitars, err := maker.scraper.Scrape(maker.funcs, parentCtx)
 
         if err != nil { log.Println(err) }

@@ -18,7 +18,6 @@ import (
 
 type Scraper interface {
 	Scrape(funcs GuitarCallbacks, ctx context.Context) (*[]model.Guitar, error)
-	CollectLinks()                                     *[]string
 }
 
 type GuitarCallbacks interface {

@@ -52,7 +52,7 @@ func NewCallBacksStrandberg() GuitarCallbacks {
     }
 }
 
-func (e *guitarScraperStrandberg) CollectLinks() *[]string {
+func (e *guitarScraperStrandberg) CollectLinks(parentCtx context.Context) *[]string {
     c       := e.gScraper.collector
     visited := make(map[string]struct{}, 50)
     mutex   := &sync.Mutex{}
@@ -77,8 +77,11 @@ func (e *guitarScraperStrandberg) CollectLinks() *[]string {
     return &e.gScraper.urls
 }
 
-func (e *guitarScraperStrandberg) Scrape(funcs GuitarCallbacks, ctx context.Context) (*[]model.Guitar, error) {
-    guitars, _ := e.gScraper.scrapeFrame(funcs, ctx)
+func (e *guitarScraperStrandberg) Scrape(
+    funcs GuitarCallbacks,
+    parentCtx context.Context,
+) (*[]model.Guitar, error) {
+    guitars, _ := e.gScraper.scrapeFrame(funcs, parentCtx)
     return guitars, nil
 }
 

@@ -48,7 +48,7 @@ func NewCallBacksEspSig() GuitarCallbacks {
     }
 }
 
-func (e *guitarScraperEspSig) CollectLinks() *[]string {
+func (e *guitarScraperEspSig) CollectLinks(parentCtx context.Context) *[]string {
     c       := e.gScraper.collector
     mutex   := &sync.Mutex{}
     visited := make(map[string]struct{}, 100)
@@ -69,8 +69,11 @@ func (e *guitarScraperEspSig) CollectLinks() *[]string {
     return &e.gScraper.urls
 }
 
-func (e *guitarScraperEspSig) Scrape(funcs GuitarCallbacks, ctx context.Context) (*[]model.Guitar, error) {
-	guitars, _ := e.gScraper.scrapeFrame(funcs, ctx)
+func (e *guitarScraperEspSig) Scrape(
+	funcs GuitarCallbacks,
+	parentCtx context.Context,
+) (*[]model.Guitar, error) {
+	guitars, _ := e.gScraper.scrapeFrame(funcs, parentCtx)
     return guitars, nil
 }
 

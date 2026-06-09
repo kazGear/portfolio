@@ -53,7 +53,7 @@ func parseSinglePrice(s string) (int, error) {
 	cleaned := _regNotNumber.ReplaceAllString(price, "")
 
 	if cleaned == "" {
-		return -1, fmt.Errorf("parseSinglePrice: 金額のパースに失敗しました。>>> %v\n", s)
+		return -1, fmt.Errorf("[ParseSinglePrice parse error]: %v\n", s)
 	}
 	result, _ := strconv.Atoi(cleaned)
 	return result, nil
@@ -66,7 +66,7 @@ func parseMultiPrice(s string) (int, error) {
 	prices := _regPriceSpliter.Split(s, -1)
 
 	var errMessage string =
-		"parseMultiPrice: 金額のパースに失敗しました。>>> %v\n"
+		"[ParseMultiPrice parse error]: %v\n"
 	if len(prices) < 2 {
 		return -1, fmt.Errorf(errMessage, s)
 	}
@@ -112,7 +112,7 @@ func GetFretCount(s string) (int, error) {
 
 	if len(fret) <= 0 {
 		log.Println(s)
-		return -1, fmt.Errorf("フレット数を取得できませんでした。>>> %v\n", s)
+		return -1, fmt.Errorf("[Get fretOfNumber error]: %v\n", s)
 	}
 	result, _ := strconv.Atoi(fret)
 	return result, nil
@@ -192,7 +192,7 @@ func ConvertRealUrl(proxyUrl string) string {
 	realUrl, err := url.QueryUnescape(encodedUrl)
 
 	if err != nil {
-		log.Printf("URLの変換に失敗しました。>>> %v\n", proxyUrl)
+		log.Printf("[URL convert error]: %v\n", proxyUrl)
 	}
 	return realUrl
 }
@@ -241,7 +241,7 @@ func ParseWight(weight string) float64 {
 	result, err := strconv.ParseFloat(w, 64)
 
 	if err != nil {
-		log.Printf("重量のパースが失敗しました >>> %v\n", weight)
+		log.Printf("[Weight parse error] %v\n", weight)
 		return -1
 	}
 	return result

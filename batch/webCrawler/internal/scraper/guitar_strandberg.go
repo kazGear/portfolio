@@ -52,29 +52,29 @@ func NewCallBacksStrandberg() GuitarCallbacks {
     }
 }
 
-func (e *guitarScraperStrandberg) CollectLinks(parentCtx context.Context) *[]string {
-    c       := e.gScraper.collector
-    visited := make(map[string]struct{}, 50)
-    mutex   := &sync.Mutex{}
+func (e *guitarScraperStrandberg) CollectLinks(parentCtx context.Context) []string {
+    // タブごとに独立した context を作る
+    tabCtx, tabCancel := chromedp.NewContext(parentCtx)
+    defer tabCancel()
+    // タブにだけ timeout を付ける
+    ctx, cancel := context.WithTimeout(tabCtx, 20 * time.Second)
+    defer cancel()
 
-    // ページネーション用
-    c.OnHTML("nav ul li a", func(html *colly.HTMLElement) {
-        link := html.Request.AbsoluteURL(html.Attr("href"))
-        if isFirstVisit(mutex, link, visited) {
-            c.Visit(link)
-        }
-    })
-    c.OnHTML("div.product-card a", func(html *colly.HTMLElement) {
-        link := html.Request.AbsoluteURL(html.Attr("href"))
-        if isFirstVisit(mutex, link, visited) {
-            c.Visit(link)
-        }
-    })
-    c.Visit("https://strandbergguitars.com/en-US/guitars")
-    c.Wait()
+    modelLinks := []string{}
 
-    e.gScraper.urls = getDistinctUrls(visited)
-    return &e.gScraper.urls
+    // 詳細ページリンク収集
+    doc := renderHTML(
+        ctx,
+        `https://strandbergguitars.com/en-US/guitars`,
+        `div[data-sentry-component="ProductListingTypeTwo"]`,
+    )
+    modelLinks = collectLinks(".product-card a", doc, 50)
+    modelLinks = getNeedLinks(modelLinks, `/en-US/product/`, 50)
+    modelLinks = toAbsLinks(modelLinks, `https://strandbergguitars.com`, 50)
+    utils.LogCollectedLinks(modelLinks)
+
+    e.gScraper.urls = modelLinks
+    return e.gScraper.urls
 }
 
 func (e *guitarScraperStrandberg) Scrape(
@@ -94,7 +94,7 @@ func (e *callBacksStrandberg) FetchDynamicPage(parentCtx context.Context) func(u
         tabCtx, tabCancel := chromedp.NewContext(parentCtx)
         defer tabCancel()
         // タブにだけ timeout を付ける
-        ctx, cancel := context.WithTimeout(tabCtx, 12 * time.Second)
+        ctx, cancel := context.WithTimeout(tabCtx, 20 * time.Second)
         defer cancel()
 
         var nodes []*cdp.Node

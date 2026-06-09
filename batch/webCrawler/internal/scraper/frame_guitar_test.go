@@ -17,25 +17,25 @@ var (
 func TestCollectURLsEsp(t *testing.T) {
 	guitar := NewScraperEsp()
 	urls   := guitar.CollectLinks(ctx)
-	fmt.Printf("urlsCount: %v", len(*urls))
+	fmt.Printf("urlsCount: %v", len(urls))
 
-	assert.GreaterOrEqual(t, len(*urls), 350)
+	assert.GreaterOrEqual(t, len(urls), 350)
 }
 
 func TestCollectURLsEspSig(t *testing.T) {
 	guitar := NewScraperEspSig()
 	urls   := guitar.CollectLinks(ctx)
-	fmt.Printf("urlsCount: %v", len(*urls))
+	fmt.Printf("urlsCount: %v", len(urls))
 
-	assert.LessOrEqual(t, len(*urls), 100)
+	assert.LessOrEqual(t, len(urls), 100)
 }
 
 func TestCollectURLsStrandberg(t *testing.T) {
 	guitar := NewScraperStrandberg()
 	urls   := guitar.CollectLinks(ctx)
-	fmt.Printf("urlsCount: %v", len(*urls))
+	fmt.Printf("urlsCount: %v", len(urls))
 
-	assert.GreaterOrEqual(t, len(*urls), 30)
+	assert.GreaterOrEqual(t, len(urls), 30)
 }
 
 func TestConvertLabelEsp(t *testing.T) {

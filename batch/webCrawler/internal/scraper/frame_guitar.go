@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/chromedp/chromedp"
@@ -18,7 +19,7 @@ import (
 
 type Scraper interface {
 	Scrape(funcs GuitarCallbacks, ctx context.Context) (*[]model.Guitar, error)
-	CollectLinks(ctx context.Context)                  *[]string
+	CollectLinks(ctx context.Context)                  []string
 }
 
 type GuitarCallbacks interface {
@@ -217,4 +218,62 @@ func getDistinctUrls(visited map[string]struct{}) []string {
 func isDetailPage(pattern string, url string) bool {
     matched, _ := regexp.MatchString(pattern, url)
     return matched
+}
+
+// 動的ページのレンダー(CSR/SSRに影響を受けない)
+func renderHTML(ctx context.Context, startURL string, waitElem string) *goquery.Document {
+    var html string
+
+    // 一覧ページをレンダリング
+    err := chromedp.Run(ctx,
+        chromedp.Navigate(startURL),
+        tryWaitVisible(waitElem), // 商品一覧の親
+        chromedp.Sleep(1500 * time.Millisecond),    // JS描画待
+        chromedp.OuterHTML("html", &html),
+    )
+    if err != nil {
+        log.Printf("[Chromedp error]: %v", err)
+    }
+    doc, err := goquery.NewDocumentFromReader(strings.NewReader(html))
+
+    if err != nil {
+        log.Printf("[Document read error]: %v", err)
+    }
+    return doc
+}
+
+// link収集
+func collectLinks(eachSelector string, doc *goquery.Document, cap int) []string {
+    var links = make([]string, 0, cap)
+
+    // 複数リンクを収集
+    doc.Find(eachSelector).Each(func(idx int, selector *goquery.Selection) {
+        link, _ := selector.Attr("href")
+        if link != "" {
+            links = append(links, link)
+        }
+    })
+    return links
+}
+
+// 必要なリンクだけ取得
+func getNeedLinks(links []string, needPattern string, cap int) []string {
+    needLinks := make([]string, 0, cap)
+
+    for _, link := range links {
+        if strings.Contains(link, needPattern) {
+            needLinks = append(needLinks, link)
+        }
+    }
+    return needLinks
+}
+
+// 必要なリンクだけ取得
+func toAbsLinks(links []string, prefix string, cap int) []string {
+    absLinks := make([]string, 0, cap)
+
+    for _, link := range links {
+        absLinks = append(absLinks, prefix + link)
+    }
+    return absLinks
 }

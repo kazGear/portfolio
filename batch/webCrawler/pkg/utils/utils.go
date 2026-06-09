@@ -148,6 +148,13 @@ func LoggerInit(maker string) {
 	})
 }
 
+// 取得したログを表示
+func LogCollectedLinks(links []string) {
+	for _, link := range links {
+		log.Printf("[Collected link]: %v\n", link)
+	}
+}
+
 // スレッドセーフなappend 注：mutexに直接&sync.Mutex{}を渡すのは禁止
 func LockedAppend[T any](mutex *sync.Mutex, slice []T, elem ...T) []T {
 	mutex.Lock()

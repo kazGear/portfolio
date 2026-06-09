@@ -60,7 +60,7 @@ func (e *guitarScraperStrandberg) CollectLinks(parentCtx context.Context) []stri
     ctx, cancel := context.WithTimeout(tabCtx, 20 * time.Second)
     defer cancel()
 
-    modelLinks := []string{}
+    targetLinks := []string{}
 
     // 詳細ページリンク収集
     doc := renderHTML(
@@ -68,12 +68,12 @@ func (e *guitarScraperStrandberg) CollectLinks(parentCtx context.Context) []stri
         `https://strandbergguitars.com/en-US/guitars`,
         `div[data-sentry-component="ProductListingTypeTwo"]`,
     )
-    modelLinks = collectLinks(".product-card a", doc, 50)
-    modelLinks = getNeedLinks(modelLinks, `/en-US/product/`, 50)
-    modelLinks = toAbsLinks(modelLinks, `https://strandbergguitars.com`, 50)
-    utils.LogCollectedLinks(modelLinks)
+    targetLinks = collectLinks(".product-card a", doc, 50)
+    targetLinks = getNeedLinks(targetLinks, `/en-US/product/`, 50)
+    targetLinks = toAbsLinks(targetLinks, `https://strandbergguitars.com`, 50)
+    utils.LogCollectedLinks(targetLinks)
 
-    e.gScraper.urls = modelLinks
+    e.gScraper.urls = targetLinks
     return e.gScraper.urls
 }
 

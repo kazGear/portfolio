@@ -177,14 +177,6 @@ func (e *callBacksStrandberg) CollectSpec() func(doc *goquery.Document) []map[st
         spec["Price"]            = strings.TrimSpace(doc.Find(`span:contains("Excluding vat")`).Prev().Text())
         spec["ScaleLengthMM"]    = getElem(`h3:contains("Instrument Length Global")`)
         spec["Series"]           = regSeriesStrandberg.FindString(spec["Name"])
-
-        // 画像保存、保存場所の記録
-        // proxyUrl, _             := doc.Find(`img[width="1200"][height="1200"]`).Attr(`src`)
-        // realUrl                 := utils.ConvertRealUrl(proxyUrl)
-        // savePath                := utils.CreateImageSavePath("images/strandberg", realUrl)
-        // utils.DownloadImage(realUrl, savePath)
-
-        // spec["Src"]              = strings.TrimSpace(savePath)
         spec["Src"], _           = doc.Find(`img[width="1200"][height="1200"]`).Attr(`src`)
         spec["Weight"]           = getElem(`h3:contains("Instrument Weight Global")`)
 

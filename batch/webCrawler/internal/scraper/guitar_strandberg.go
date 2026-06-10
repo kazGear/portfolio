@@ -81,6 +81,7 @@ func (e *guitarScraperStrandberg) Scrape(funcs GuitarCallbacks,
                                          parentCtx context.Context,
 ) ([]*model.Guitar, error) {
     guitars, _ := e.gScraper.scrapeFrame(funcs, parentCtx)
+    utils.AutoDownLoader(guitars, "images/strandberg")
     return guitars, nil
 }
 
@@ -178,12 +179,13 @@ func (e *callBacksStrandberg) CollectSpec() func(doc *goquery.Document) []map[st
         spec["Series"]           = regSeriesStrandberg.FindString(spec["Name"])
 
         // 画像保存、保存場所の記録
-        proxyUrl, _             := doc.Find(`img[width="1200"][height="1200"]`).Attr(`src`)
-        realUrl                 := utils.ConvertRealUrl(proxyUrl)
-        savePath                := utils.CreateImageSavePath("images/strandberg", realUrl)
-        utils.DownloadImage(realUrl, savePath)
+        // proxyUrl, _             := doc.Find(`img[width="1200"][height="1200"]`).Attr(`src`)
+        // realUrl                 := utils.ConvertRealUrl(proxyUrl)
+        // savePath                := utils.CreateImageSavePath("images/strandberg", realUrl)
+        // utils.DownloadImage(realUrl, savePath)
 
-        spec["Src"]              = strings.TrimSpace(savePath)
+        // spec["Src"]              = strings.TrimSpace(savePath)
+        spec["Src"], _           = doc.Find(`img[width="1200"][height="1200"]`).Attr(`src`)
         spec["Weight"]           = getElem(`h3:contains("Instrument Weight Global")`)
 
         specs = utils.LockedAppend(mutex, specs, spec)

@@ -72,3 +72,4 @@ docker/db/init/*.sql
 # ============================
 *.orig
 *.jpg
+*.png

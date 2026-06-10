@@ -195,12 +195,18 @@ func ConvertColorCd(colorName string) int {
 
 // URLを使用できる形式に変換
 func ConvertRealUrl(proxyUrl string) string {
-	u, _ 	     := url.Parse(proxyUrl)
+	u, err 	     := url.Parse(proxyUrl)
+
+	if err != nil || len(u.String()) == 0 {
+		log.Printf("[URL parse error]: %v\n", proxyUrl)
+		return proxyUrl
+	}
 	encodedUrl   := u.Query().Get("url")
 	realUrl, err := url.QueryUnescape(encodedUrl)
 
-	if err != nil {
+	if err != nil || len(realUrl) == 0 {
 		log.Printf("[URL convert error]: %v\n", proxyUrl)
+		return proxyUrl
 	}
 	return realUrl
 }
@@ -220,6 +226,10 @@ func DownloadImage(url, savePath string) {
     }
     resp, err := http.Get(url)
 
+	if resp == nil {
+		log.Printf("[Response error]: %v\n", "res == nil")
+		return
+	}
     if err != nil {
         log.Printf("[Response error]: %v\n", err)
     }
@@ -242,6 +252,7 @@ func AutoDownLoader(guitars []*model.Guitar, saveDirName string) {
 	queue := make(chan struct{}, 5) // 並列数制御
 
 	for _, g := range guitars {
+		g := g // 並列バグ対策
 		queue <- struct{}{}
 		wg.Add(1)
 
@@ -249,18 +260,16 @@ func AutoDownLoader(guitars []*model.Guitar, saveDirName string) {
 			defer wg.Done()
 			defer func() { <-queue }() // 次のワーカーへ
 
-			url := ConvertRealUrl(guitar.Src)
-
-			if strings.HasPrefix(url, "https://") ||
-			   strings.HasPrefix(url, "http://") {
-				return // 保存の必要なし
+			if strings.HasPrefix(guitar.Src, "https://") || strings.HasPrefix(guitar.Src, "http://") {
+				return
 			}
+			url := ConvertRealUrl(guitar.Src)
 			savePath := CreateImageSavePath(saveDirName, url)
 
 			if _, err := os.Stat(savePath); err == nil {
-				return // 画像は保存済
+				return // キャッシュ、画像は保存済
 			}
-			DownloadImage(url, savePath)
+			DownloadImage(url, savePath) // atomicな保存
 			guitar.Src = savePath
 		}(g)
 	}

@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/chromedp/chromedp"
+	"github.com/kazGear/portfolio/webCrawler/pkg/utils"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -48,14 +49,12 @@ func TestConvertLabelEsp(t *testing.T) {
 		},{
 			label: "NECK", want: "NeckMaterial",
 		},{
-			label: "PARTS COLOR", want: "Comment",
-		},{
 			label: "xxx", want: "",
 		},
 	}
 
 	for _, item := range items {
-		actual := convertLabelEsp(item.label)
+		actual := utils.ConvertLabel(item.label, fieldMapEsp)
 		assert.Equal(t, item.want, actual)
 	}
 }

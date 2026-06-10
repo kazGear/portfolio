@@ -16,6 +16,7 @@ import (
 	"time"
 
 	"github.com/PuerkitoBio/goquery"
+	"github.com/kazGear/portfolio/webCrawler/internal/model"
 	"github.com/kazGear/portfolio/webCrawler/pkg/constants"
 	"golang.org/x/text/width"
 	"gopkg.in/natefinch/lumberjack.v2"
@@ -204,10 +205,10 @@ func ConvertRealUrl(proxyUrl string) string {
 	return realUrl
 }
 
-// 画像保存するためのパスを作成
+// 画像保存するためのパスを作成。dir名＋ファイル名
 func CreateImageSavePath(saveDirName string, url string) string {
 	hash 	 := sha1.Sum([]byte(url)) // urlをハッシュ化
-	filename := fmt.Sprintf("%x.jpg", hash)
+	filename := fmt.Sprintf("%x.png", hash)
 	savePath := filepath.Join(saveDirName, filename)
 	return savePath
 }
@@ -229,7 +230,41 @@ func DownloadImage(url, savePath string) {
 	if err != nil {
         log.Printf("[Resource read error]: %v\n", err)
     }
-    os.WriteFile(savePath, data, 0644)
+	// atomicな保存
+	tmp := savePath + ".tmp"
+	os.WriteFile(tmp, data, 0644)  // 一時ファイルに書く
+	os.Rename(tmp, savePath)
+}
+
+// まとめてリソースをDL。不要ならDLしない
+func AutoDownLoader(guitars []*model.Guitar, saveDirName string) {
+	var wg = &sync.WaitGroup{}
+	queue := make(chan struct{}, 5) // 並列数制御
+
+	for _, g := range guitars {
+		queue <- struct{}{}
+		wg.Add(1)
+
+		go func(guitar *model.Guitar) {
+			defer wg.Done()
+			defer func() { <-queue }() // 次のワーカーへ
+
+			url := ConvertRealUrl(guitar.Src)
+
+			if strings.HasPrefix(url, "https://") ||
+			   strings.HasPrefix(url, "http://") {
+				return // 保存の必要なし
+			}
+			savePath := CreateImageSavePath(saveDirName, url)
+
+			if _, err := os.Stat(savePath); err == nil {
+				return // 画像は保存済
+			}
+			DownloadImage(url, savePath)
+			guitar.Src = savePath
+		}(g)
+	}
+	wg.Wait()
 }
 
 // 指定したラベルの要素を取得

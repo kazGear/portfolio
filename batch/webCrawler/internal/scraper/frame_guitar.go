@@ -55,8 +55,6 @@ func (e *guitarScraper) scrapeFrame(funcs GuitarCallbacks, ctx context.Context) 
             defer wg.Done()
             doc, err := goquery.NewDocumentFromReader(strings.NewReader(html))
 
-            if len(html) <= 0 { return }
-
             if err != nil {
                 log.Println("goquery error:", err)
                 return
@@ -234,13 +232,6 @@ func renderHTML(ctx context.Context, startURL string, waitElem string) *goquery.
     // 一覧ページをレンダリング
     err := chromedp.Run(ctx,
         chromedp.Navigate(startURL),
-        // chromedp.ActionFunc(func(ctx context.Context) error { // スクロールして遅延描画を発火
-        //     for i := 0; i < 10; i++ {
-        //         chromedp.KeyEvent("\uE00F").Do(ctx) // PgDn キー
-        //         time.Sleep(500 * time.Millisecond)
-        //     }
-        //     return nil
-        // }),
         tryWaitVisible(waitElem), // 商品一覧の親
         chromedp.Sleep(2000 * time.Millisecond),    // JS描画待
         chromedp.OuterHTML("html", &html),

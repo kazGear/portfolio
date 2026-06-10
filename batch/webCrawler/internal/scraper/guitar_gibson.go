@@ -19,16 +19,16 @@ import (
 	"github.com/kazGear/portfolio/webCrawler/pkg/utils"
 )
 
-type guitarScraperFender struct {
+type guitarScraperGibson struct {
     gScraper guitarScraper
 }
 
-type callBacksFender struct {
+type callBacksGibson struct {
     funcs callBacks
 }
 
 
-func NewScraperFender() Scraper {
+func NewScraperGibson() Scraper {
 	collector := colly.NewCollector(
 		colly.Async(true),
 		colly.MaxDepth(3),
@@ -37,7 +37,7 @@ func NewScraperFender() Scraper {
 		DomainGlob:  "*",
 		Parallelism: 5,
 	})
-    return &guitarScraperFender{
+    return &guitarScraperGibson{
         guitarScraper{
             collector: collector,
             mutex:     &sync.Mutex{},
@@ -45,13 +45,13 @@ func NewScraperFender() Scraper {
     }
 }
 
-func NewCallBacksFender() GuitarCallbacks {
-    return &callBacksFender{
+func NewCallBacksGibson() GuitarCallbacks {
+    return &callBacksGibson{
         callBacks{},
     }
 }
 
-func (e *guitarScraperFender) CollectLinks(parentCtx context.Context) []string {
+func (e *guitarScraperGibson) CollectLinks(parentCtx context.Context) []string {
     // タブごとに独立した context を作る
     tabCtx, tabCancel := chromedp.NewContext(parentCtx)
     defer tabCancel()
@@ -61,30 +61,31 @@ func (e *guitarScraperFender) CollectLinks(parentCtx context.Context) []string {
 
     targetLinks := []string{}
 
-    // 詳細ページリンク収集
+    // シリーズ一覧リンク収集
     doc := renderHTML(
         ctx,
-        `https://strandbergguitars.com/en-US/guitars`,
-        `div[data-sentry-component="ProductListingTypeTwo"]`,
+        // `https://jp.fender.com/collections/electric-guitars`
+        `https://jp.fender.com/collections/electric-guitars`,
+        // `div[data-component-id*="section"] div[role="region"] .swiper-container`,
+        `div.footer-title`,
     )
-    targetLinks = collectLinks(".product-card a", doc, 50)
-    targetLinks = getNeedLinks(targetLinks, `/en-US/product/`, 50)
-    targetLinks = toAbsLinks(targetLinks, `https://strandbergguitars.com`, 50)
+    targetLinks = collectLinks(`a[class*="Title"]`, doc, 10)
     utils.LogCollectedLinks(targetLinks)
+    // targetLinks = getNeedLinks(targetLinks, `/en-US/product/`, 50)
+    // targetLinks = toAbsLinks(targetLinks, `https://strandbergguitars.com`, 50)
 
     e.gScraper.urls = targetLinks
     return e.gScraper.urls
 }
 
-func (e *guitarScraperFender) Scrape(
-    funcs GuitarCallbacks,
-    parentCtx context.Context,
+func (e *guitarScraperGibson) Scrape(funcs GuitarCallbacks,
+                                     parentCtx context.Context,
 ) ([]*model.Guitar, error) {
     guitars, _ := e.gScraper.scrapeFrame(funcs, parentCtx)
     return guitars, nil
 }
 
-func (e *callBacksFender) FetchDynamicPage(parentCtx context.Context) func(url string) string {
+func (e *callBacksGibson) FetchDynamicPage(parentCtx context.Context) func(url string) string {
     return func(url string) string {
         if !isDetailPage(`https://strandbergguitars.com/en-US/product/[a-z0-9\-]+`, url) {
             return ""
@@ -142,7 +143,7 @@ func (e *callBacksFender) FetchDynamicPage(parentCtx context.Context) func(url s
     }
 }
 
-func (e *callBacksFender) CollectSpec() func(doc *goquery.Document) []map[string]string {
+func (e *callBacksGibson) CollectSpec() func(doc *goquery.Document) []map[string]string {
     return func(doc *goquery.Document) []map[string]string {
         specs := []map[string]string{}
         mutex := &sync.Mutex{}
@@ -150,7 +151,7 @@ func (e *callBacksFender) CollectSpec() func(doc *goquery.Document) []map[string
         spec    := map[string]string{}
         getElem := utils.GetElemNextToLabel(doc)
 
-        spec["Maker"]            = strconv.Itoa(constants.Fender)
+        spec["Maker"]            = strconv.Itoa(constants.Gibson)
         spec["Name"]             = strings.TrimSpace(doc.Find(
                                     `div[data-sentry-component="ProductInfo"] div div h1`,
                                    ).Text())
@@ -188,13 +189,13 @@ func (e *callBacksFender) CollectSpec() func(doc *goquery.Document) []map[string
     }
 }
 
-func (e *callBacksFender) BuildGuitar() func(spec map[string]string) *model.Guitar {
+func (e *callBacksGibson) BuildGuitar() func(spec map[string]string) *model.Guitar {
     return func(spec map[string]string) *model.Guitar {
         return buildGuitarFrame(spec)
     }
 }
 
-func (e *callBacksFender) IsStaticPage() func(html string) bool {
+func (e *callBacksGibson) IsStaticPage() func(html string) bool {
     return func(html string) bool {
         // ありえない文字列、確実に動的ページを取得させる。
         return strings.Contains(html, "@abcd1234@")

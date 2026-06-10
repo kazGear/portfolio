@@ -153,11 +153,11 @@ func fetchStaticPage(url string) string {
 
 // 動的ページ取得用ヘルパー
 // WaitVisible を実行し、失敗しても無視するフォールバック
-func tryWaitVisible(sel string) chromedp.Action {
+func tryWaitVisible(selector string) chromedp.Action {
     return chromedp.ActionFunc(func(ctx context.Context) error {
-        err := chromedp.WaitVisible(sel, chromedp.ByQuery).Do(ctx)
+        err := chromedp.WaitVisible(selector, chromedp.ByQuery).Do(ctx)
         if err != nil {
-            log.Printf("[TryWaitVisible fallback] selector=%s err=%v\n", sel, err)
+            log.Printf("[TryWaitVisible fallback] selector=%s err=%v\n", selector, err)
             return nil
         }
         return nil
@@ -227,17 +227,24 @@ func renderHTML(ctx context.Context, startURL string, waitElem string) *goquery.
     // 一覧ページをレンダリング
     err := chromedp.Run(ctx,
         chromedp.Navigate(startURL),
+        // chromedp.ActionFunc(func(ctx context.Context) error { // スクロールして遅延描画を発火
+        //     for i := 0; i < 10; i++ {
+        //         chromedp.KeyEvent("\uE00F").Do(ctx) // PgDn キー
+        //         time.Sleep(500 * time.Millisecond)
+        //     }
+        //     return nil
+        // }),
         tryWaitVisible(waitElem), // 商品一覧の親
-        chromedp.Sleep(1500 * time.Millisecond),    // JS描画待
+        chromedp.Sleep(2000 * time.Millisecond),    // JS描画待
         chromedp.OuterHTML("html", &html),
     )
     if err != nil {
-        log.Printf("[Chromedp error]: %v", err)
+        log.Printf("[Chromedp error]: %v %v\n", err, waitElem)
     }
     doc, err := goquery.NewDocumentFromReader(strings.NewReader(html))
 
     if err != nil {
-        log.Printf("[Document read error]: %v", err)
+        log.Printf("[Document read error]: %v %v\n", err, waitElem)
     }
     return doc
 }

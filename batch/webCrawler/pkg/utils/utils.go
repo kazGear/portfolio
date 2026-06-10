@@ -143,7 +143,7 @@ func LoggerInit(maker string) {
 		Filename:   filename,
 		MaxSize:    5,   // 5MBでローテーション
 		MaxBackups: 7,   // 最大7ファイル保持
-		MaxAge:     30,  // 30日で削除
+		MaxAge:     10,  // 30日で削除
 		Compress:   true,
 	})
 }

@@ -69,9 +69,8 @@ func (e *guitarScraperEspSig) CollectLinks(parentCtx context.Context) []string {
     return e.gScraper.urls
 }
 
-func (e *guitarScraperEspSig) Scrape(
-	funcs GuitarCallbacks,
-	parentCtx context.Context,
+func (e *guitarScraperEspSig) Scrape(funcs GuitarCallbacks,
+									 parentCtx context.Context,
 ) ([]*model.Guitar, error) {
 	guitars, _ := e.gScraper.scrapeFrame(funcs, parentCtx)
     return guitars, nil

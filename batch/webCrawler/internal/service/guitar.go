@@ -48,7 +48,8 @@ func (s *guitarCrawlerService) RunCrawler() {
     makers := []maker {
         // NewMaker("ESP", scraper.NewScraperEsp(), scraper.NewCallBacksEsp()),
         // NewMaker("ESP_sig", scraper.NewScraperEspSig(), scraper.NewCallBacksEspSig()),
-        NewMaker(".strandberg", scraper.NewScraperStrandberg(), scraper.NewCallBacksStrandberg()),
+        // NewMaker(".strandberg", scraper.NewScraperStrandberg(), scraper.NewCallBacksStrandberg()),
+        NewMaker("Gibson", scraper.NewScraperGibson(), scraper.NewCallBacksGibson()), // TODO 未実装
     }
 
     // スクレイピング + DB保存
@@ -60,11 +61,11 @@ func (s *guitarCrawlerService) RunCrawler() {
         startTime := time.Now()
 
         maker.scraper.CollectLinks(parentCtx)
-        guitars, err := maker.scraper.Scrape(maker.funcs, parentCtx)
+        // guitars, err := maker.scraper.Scrape(maker.funcs, parentCtx)
 
-        if err != nil { log.Println(err) }
+        // if err != nil { log.Println(err) }
 
-        s.repository.UpsertAll(guitars)
+        // s.repository.UpsertAll(guitars)
 
         log.Printf(constants.DecoLabel, "Finished crawler " + maker.name)
         log.Printf("Crawler processing time: %v\n", time.Since(startTime))

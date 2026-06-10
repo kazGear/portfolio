@@ -76,7 +76,7 @@ func (e *guitarScraperEsp) CollectLinks(parentCtx context.Context) []string {
     c.Visit("https://espguitars.co.jp/products/esp")
     c.Wait()
 
-    e.gScraper.urls = getDistinctUrls(visited)
+    e.gScraper.urls = mapToSliceUrl(visited)
     return e.gScraper.urls
 }
 

@@ -211,7 +211,7 @@ func isFirstVisit(mutex *sync.Mutex, url string, visited map[string]struct{}) bo
 }
 
 // 重複なしのURL配列を取得
-func getDistinctUrls(visited map[string]struct{}) []string {
+func mapToSliceUrl(visited map[string]struct{}) []string {
     urls  := make([]string, 0, 500)
     mutex := &sync.Mutex{}
 

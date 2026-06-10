@@ -125,10 +125,9 @@ func buildGuitarFrame(spec map[string]string) (*model.Guitar) {
 }
 
 // 動的、静的ページを取得（動的が優先）。funcは個々で実装の必要あり。
-func fetchPage(
-    url string,
-    isStaticPage func(string)bool,
-    fetchDynamicPage func(string)string,
+func fetchPage(url string,
+               isStaticPage func(string)bool,
+               fetchDynamicPage func(string)string,
 ) string {
 
     html := fetchStaticPage(url)

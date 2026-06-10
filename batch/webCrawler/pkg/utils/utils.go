@@ -260,3 +260,8 @@ func ParseWight(weight string) float64 {
 	}
 	return result
 }
+
+// サイトの項目名をフィールド名に変換
+func ConvertLabel(label string, fieldMap map[string]string) string {
+    return fieldMap[label]
+}

@@ -137,7 +137,7 @@ func (e *callBacksEsp) CollectSpec() func(doc *goquery.Document) []map[string]st
         doc.Find("#specifications table.tbl_spec tr").Each(func(idx int, selector *goquery.Selection) {
             th      := strings.TrimSpace(selector.Find("th").Text())
             td      := strings.TrimSpace(selector.Find("td").Text())
-            th       = convertLabelEsp(th)
+            th       = utils.ConvertLabel(th, fieldMapEsp)
             spec[th] = td
         })
         specs = utils.LockedAppend(mutex, specs, spec)
@@ -158,7 +158,7 @@ func (e *callBacksEsp) IsStaticPage() func(html string) bool {
 }
 
 // key: ESPの項目名, value: 構造体フィールド名
-var espFieldMap = map[string]string{
+var fieldMapEsp = map[string]string{
 	"BODY":         "BodyMaterial",
 	"NECK":         "NeckMaterial",
 	"FINGERBOARD":  "Fingerboard",
@@ -170,9 +170,4 @@ var espFieldMap = map[string]string{
 	"FRET":         "FretCount",
 	"INLAY":        "Inlays",
 	"CONSTRUCTION": "Joint",
-}
-
-// サイトの項目名をフィールド名に変換
-func convertLabelEsp(label string) string {
-    return espFieldMap[label]
 }

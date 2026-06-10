@@ -133,14 +133,18 @@ func (r *guitarRepository) Upsert(guitar *model.Guitar) error {
 
 func (r *guitarRepository) UpsertAll(guitars []*model.Guitar) {
     errs  := make([]error, 0, 300)
+    count := 0
 
     for _, guitar := range guitars {
         err := r.Upsert(guitar)
         if err != nil {
             errs = append(errs, err)
+            continue
         }
+        count++
     }
     for _, err := range errs {
         log.Printf("[Upsert error]: %v\n", err)
     }
+    log.Printf("[Upsert count]: %v 件", count)
 }

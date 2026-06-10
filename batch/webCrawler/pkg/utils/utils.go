@@ -232,6 +232,13 @@ func DownloadImage(url, savePath string) {
     os.WriteFile(savePath, data, 0644)
 }
 
+// 指定したラベルの要素を取得
+func GetElem(doc *goquery.Document) func(selector string) string {
+	return func(selector string) string {
+		return strings.TrimSpace(doc.Find(selector).Text())
+	}
+}
+
 // 指定したラベルの次（兄弟要素）の要素を取得
 func GetElemNextToLabel(doc *goquery.Document) func(selector string) string {
 	return func(selector string) string {

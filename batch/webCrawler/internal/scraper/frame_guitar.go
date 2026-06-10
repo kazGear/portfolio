@@ -44,28 +44,36 @@ func (e *guitarScraper) scrapeFrame(funcs GuitarCallbacks, ctx context.Context) 
     if len(e.urls) <= 0 {
         return []*model.Guitar{}, errors.New("None URL for crawling...")
     }
+    wg := &sync.WaitGroup{}
+
     for _, url := range e.urls {
         // 静的/動的を判定して HTML を取得、DOM化
         html := fetchPage(url, funcs.IsStaticPage(), funcs.FetchDynamicPage(ctx))
-        doc, err := goquery.NewDocumentFromReader(strings.NewReader(html))
 
-        if err != nil {
-            log.Println("goquery error:", err)
-            continue
-        }
-        if len(html) <= 0 { continue }
+        wg.Add(1)
+        go func(html string) {
+            defer wg.Done()
+            doc, err := goquery.NewDocumentFromReader(strings.NewReader(html))
 
-        collectSpec := funcs.CollectSpec()
-        buildGuitar := funcs.BuildGuitar()
-        specs       := collectSpec(doc) // 1ページ：N詳細ページでもOK
+            if len(html) <= 0 { return }
 
-        for _, spec := range specs {
-            guitar := buildGuitar(spec)
+            if err != nil {
+                log.Println("goquery error:", err)
+                return
+            }
+            collectSpec := funcs.CollectSpec()
+            buildGuitar := funcs.BuildGuitar()
+            specs       := collectSpec(doc) // 1ページ：N詳細ページでもOK
 
-            if len(guitar.Name) <= 0 || len(guitar.Color) <= 0 { continue }
-            guitars = utils.LockedAppend(e.mutex, guitars, guitar)
-        }
+            for _, spec := range specs {
+                guitar := buildGuitar(spec)
+
+                if len(guitar.Name) <= 0 || len(guitar.Color) <= 0 { continue }
+                guitars = utils.LockedAppend(e.mutex, guitars, guitar)
+            }
+        }(html)
     }
+    wg.Wait()
     return guitars, nil
 }
 

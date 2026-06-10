@@ -143,7 +143,7 @@ func (e *callBacksStrandberg) FetchDynamicPage(parentCtx context.Context) func(u
 }
 
 // シリーズ名の抽出用
-var regSeries = regexp.MustCompile(`^[A-Za-z]+\s[A-Za-z]+\b`)
+var regSeriesStrandberg = regexp.MustCompile(`^[A-Za-z]+\s[A-Za-z]+\b`)
 
 func (e *callBacksStrandberg) CollectSpec() func(doc *goquery.Document) []map[string]string {
     return func(doc *goquery.Document) []map[string]string {
@@ -175,7 +175,7 @@ func (e *callBacksStrandberg) CollectSpec() func(doc *goquery.Document) []map[st
         spec["Pickups"]          = fmt.Sprintf(constants.PickupsFormat, neckPickup, bridgePickup)
         spec["Price"]            = strings.TrimSpace(doc.Find(`span:contains("Excluding vat")`).Prev().Text())
         spec["ScaleLengthMM"]    = getElem(`h3:contains("Instrument Length Global")`)
-        spec["Series"]           = regSeries.FindString(spec["Name"])
+        spec["Series"]           = regSeriesStrandberg.FindString(spec["Name"])
 
         // 画像保存、保存場所の記録
         proxyUrl, _             := doc.Find(`img[width="1200"][height="1200"]`).Attr(`src`)

@@ -23,8 +23,8 @@ type Scraper interface {
 }
 
 type GuitarCallbacks interface {
-    IsStaticPage() func(html string) bool
-    FetchDynamicPage(ctx context.Context) func(url string) string
+    IsStaticPage() func(html string)            bool
+    FetchDynamicPage(ctx context.Context)       func(url string) string
     CollectSpec()  func(doc *goquery.Document)  []map[string]string
     BuildGuitar()  func(spec map[string]string) *model.Guitar
 }

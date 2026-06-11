@@ -149,6 +149,26 @@ func LoggerInit(maker string) {
 	})
 }
 
+// ログインスタンスを作成
+func NewLogger(maker string) *log.Logger {
+    // 日付入りのログファイル名
+    date := time.Now().Format("2006-01-02")
+    filename := fmt.Sprintf("logs/%v_%v.log", maker, date)
+
+    // ディレクトリがなければ作成
+    os.MkdirAll("logs", 0755)
+
+    // メーカーごとにローテーション設定
+    writer := &lumberjack.Logger{
+        Filename:   filename,
+        MaxSize:    5,   // 5MBでローテーション
+        MaxBackups: 7,   // 最大7ファイル保持
+        MaxAge:     10,  // 10日で削除
+        Compress:   true,
+    }
+    return log.New(writer, "", log.LstdFlags)
+}
+
 // 取得したログを表示
 func LogCollectedLinks(links []string) {
 	for _, link := range links {

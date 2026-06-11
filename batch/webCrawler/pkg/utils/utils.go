@@ -166,28 +166,121 @@ func LockedAppend[T any](mutex *sync.Mutex, slice []T, elem ...T) []T {
 }
 
 // color > colorCd 変換用
-var colorRegexMap = map[int]*regexp.Regexp{
-    constants.Red:     regexp.MustCompile(`(?i)\bRed\b`),
-    constants.Pink:    regexp.MustCompile(`(?i)\bPink\b`),
-    constants.Orange:  regexp.MustCompile(`(?i)\bOrange\b`),
-    constants.Yellow:  regexp.MustCompile(`(?i)\bYellow\b`),
-    constants.Green:   regexp.MustCompile(`(?i)\bGreen\b`),
-    constants.SkyBlue: regexp.MustCompile(`(?i)\bSkyBlue\b`),
-    constants.Blue:    regexp.MustCompile(`(?i)\bBlue\b`),
-    constants.Purple:  regexp.MustCompile(`(?i)\bPurple\b`),
-    constants.Gray:    regexp.MustCompile(`(?i)\bGray\b`),
-    constants.Black:   regexp.MustCompile(`(?i)\bBlack\b`),
-    constants.White:   regexp.MustCompile(`(?i)\bWhite\b`),
-    constants.Natural: regexp.MustCompile(`(?i)\bNatural\b`),
-    constants.Brown:   regexp.MustCompile(`(?i)\bBrown\b`),
-    constants.Gold:    regexp.MustCompile(`(?i)\bGold\b`),
-    constants.Silver:  regexp.MustCompile(`(?i)\bSilver\b`),
+type colorKeyword struct {
+    Cd       int
+    Keywords []string
 }
+
+var colorKeywords = []colorKeyword{
+    {
+        Cd: constants.Red,
+        Keywords: []string{
+            "red", "cherry", "apple", "fiesta", "burgundy", "cranberry",
+            "garnet", "cardinal", "tomato", "ember", "lava",
+            "vermillion", "rose",
+        },
+    },
+    {
+        Cd: constants.Pink,
+        Keywords: []string{
+            "pink", "coral", "sakura", "rose", "twinkle",
+        },
+    },
+    {
+        Cd: constants.Orange,
+        Keywords: []string{
+            "orange", "sunset", "sunrise", "autumn", "coral",
+            "tangerine", "poppy",
+        },
+    },
+    {
+        Cd: constants.Yellow,
+        Keywords: []string{
+            "yellow", "honey", "amber", "mustard", "lemon", "blond",
+        },
+    },
+    {
+        Cd: constants.Green,
+        Keywords: []string{
+            "green", "citron", "ivy", "forest", "olive", "mint",
+            "snake", "iguana", "malachite",
+        },
+    },
+    {
+        Cd: constants.SkyBlue,
+        Keywords: []string{
+            "skyblue", "sky", "frost",
+        },
+    },
+    {
+        Cd: constants.Blue,
+        Keywords: []string{
+            "blue", "marine", "supreme", "nebula", "peacock", "mercury",
+            "aqua", "turquoise", "azure", "navy", "bonnet",
+        },
+    },
+    {
+        Cd: constants.Purple,
+        Keywords: []string{
+            "purple", "indigo", "violet", "plum", "amethyst", "sugilite", "tanzanite",
+        },
+    },
+    {
+        Cd: constants.Gray,
+        Keywords: []string{
+            "gray", "granite", "pewter", "slate", "ash", "graphite",
+            "charcoal", "stone", "meteorite", "rusty", "iron",
+        },
+    },
+    {
+        Cd: constants.Black,
+        Keywords: []string{
+            "black", "obsidian", "onyx", "ebony", "jet", "pitch",
+        },
+    },
+    {
+        Cd: constants.White,
+        Keywords: []string{
+            "white", "snow", "ivory", "cream", "pearl", "fox",
+        },
+    },
+    {
+        Cd: constants.Brown,
+        Keywords: []string{
+            "brown", "walnut", "mahogany", "chocolate", "bourbon", "tobacco",
+        },
+    },
+    {
+        Cd: constants.Gold,
+        Keywords: []string{
+            "gold", "champagne", "brass",
+        },
+    },
+    {
+        Cd: constants.Silver,
+        Keywords: []string{
+            "silver", "chrome",
+        },
+    },
+    {
+        Cd: constants.Natural,
+        Keywords: []string{
+            "natural", "raw", "naked", "plain", "wood", "driftwood", "burnt",
+        },
+    },
+}
+
+
 // カラー名を抽象化してカラーコードに変換する
 func ConvertColorCd(colorName string) int {
-	for cd, regex := range colorRegexMap {
-		if regex.MatchString(colorName) {
-			return cd
+	lowerColorName := strings.ToLower(colorName)
+
+	for _, colors := range colorKeywords {
+		cd := colors.Cd
+		for _, color := range colors.Keywords {
+			if strings.Contains(lowerColorName, strings.ToLower(color)) {
+				return cd
+			}
 		}
 	}
 	return constants.OthersColor

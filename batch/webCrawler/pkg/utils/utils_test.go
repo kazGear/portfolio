@@ -262,12 +262,20 @@ func TestConvertColorCd(t *testing.T) {
 			want: 15,
 		},
 		{
-			color: "whiteGold",
-			want: 99,
+			color: "extraGold",
+			want: 14,
 		},
 		{
 			color: "Obsidian Metallic",
 			want: 99,
+		},
+		{
+			color: "blueeeeee",
+			want: 7,
+		},
+		{
+			color: "aqua",
+			want: 7,
 		},
 	}
 	for _, c := range colors {

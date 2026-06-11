@@ -132,7 +132,7 @@ func TrimScaleUnit(s string) int {
 	return result
 }
 
-// ログ設定
+// ログ設定(グローバル設定)
 func LoggerInit(maker string) {
 	date 	 := time.Now().Format("2006-01-02")
 	filename := fmt.Sprintf("logs/%v_%v.log", maker, date)

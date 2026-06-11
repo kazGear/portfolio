@@ -71,9 +71,9 @@ func (e *guitarScraperEspSig) CollectLinks(parentCtx context.Context) []string {
 
 func (e *guitarScraperEspSig) Scrape(funcs GuitarCallbacks,
 									 parentCtx context.Context,
-) ([]*model.Guitar, error) {
+) []*model.Guitar {
 	guitars, _ := e.gScraper.scrapeFrame(funcs, parentCtx)
-    return guitars, nil
+    return guitars
 }
 
 // 必要に応じて、基盤のTryWaitReadyを組み込む

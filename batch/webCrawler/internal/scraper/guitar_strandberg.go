@@ -79,10 +79,10 @@ func (e *guitarScraperStrandberg) CollectLinks(parentCtx context.Context) []stri
 
 func (e *guitarScraperStrandberg) Scrape(funcs GuitarCallbacks,
                                          parentCtx context.Context,
-) ([]*model.Guitar, error) {
+) []*model.Guitar {
     guitars, _ := e.gScraper.scrapeFrame(funcs, parentCtx)
     utils.AutoDownLoader(guitars, "images/strandberg")
-    return guitars, nil
+    return guitars
 }
 
 func (e *callBacksStrandberg) FetchDynamicPage(parentCtx context.Context) func(url string) string {

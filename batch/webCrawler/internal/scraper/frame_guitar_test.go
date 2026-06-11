@@ -16,7 +16,7 @@ var (
 )
 
 func TestCollectURLsEsp(t *testing.T) {
-	guitar := NewScraperEsp()
+	guitar := NewScraperEsp(nil)
 	urls   := guitar.CollectLinks(ctx)
 	fmt.Printf("urlsCount: %v", len(urls))
 
@@ -24,7 +24,7 @@ func TestCollectURLsEsp(t *testing.T) {
 }
 
 func TestCollectURLsEspSig(t *testing.T) {
-	guitar := NewScraperEspSig()
+	guitar := NewScraperEspSig(nil)
 	urls   := guitar.CollectLinks(ctx)
 	fmt.Printf("urlsCount: %v", len(urls))
 
@@ -32,7 +32,7 @@ func TestCollectURLsEspSig(t *testing.T) {
 }
 
 func TestCollectURLsStrandberg(t *testing.T) {
-	guitar := NewScraperStrandberg()
+	guitar := NewScraperStrandberg(nil)
 	urls   := guitar.CollectLinks(ctx)
 	fmt.Printf("urlsCount: %v", len(urls))
 

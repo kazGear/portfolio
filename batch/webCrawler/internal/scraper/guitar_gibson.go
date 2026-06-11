@@ -28,7 +28,7 @@ type callBacksGibson struct {
 }
 
 
-func NewScraperGibson() Scraper {
+func NewScraperGibson(logger *log.Logger) Scraper {
 	collector := colly.NewCollector(
 		colly.Async(true),
 		colly.MaxDepth(3),
@@ -41,6 +41,7 @@ func NewScraperGibson() Scraper {
         guitarScraper{
             collector: collector,
             mutex:     &sync.Mutex{},
+            logger:    logger,
         },
     }
 }

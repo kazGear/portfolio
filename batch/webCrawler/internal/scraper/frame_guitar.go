@@ -33,6 +33,7 @@ type guitarScraper struct {
     urls      []string
 	collector *colly.Collector
     mutex     *sync.Mutex
+    logger    *log.Logger
 }
 
 type callBacks struct {}

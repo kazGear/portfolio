@@ -32,23 +32,18 @@ type Maker struct {
     logger  *log.Logger
 }
 
-func NewMaker(name string, scraper scraper.Scraper, funcs scraper.GuitarCallbacks) *Maker {
+func NewMaker(name string, scraper scraper.Scraper, funcs scraper.GuitarCallbacks, logger *log.Logger) *Maker {
     return &Maker{
         name,
         scraper,
         funcs,
-        utils.NewLogger(name),
+        logger,
     }
 }
 
 func (s *guitarCrawlerService) RunCrawler() {
-    // メーカーが増えたら追加
-    makers := []*Maker {
-        NewMaker("ESP", scraper.NewScraperEsp(), scraper.NewCallBacksEsp()),
-        NewMaker("ESP_sig", scraper.NewScraperEspSig(), scraper.NewCallBacksEspSig()),
-        // NewMaker(".strandberg", scraper.NewScraperStrandberg(), scraper.NewCallBacksStrandberg()),
-        // NewMaker("Gibson", scraper.NewScraperGibson(), scraper.NewCallBacksGibson()),
-    }
+    makers := makersFactory()
+
     wg := &sync.WaitGroup{}
     queue := make(chan struct{}, 5) // 並列数制御
 
@@ -56,6 +51,7 @@ func (s *guitarCrawlerService) RunCrawler() {
     for _, maker := range makers {
         maker := maker
         wg.Add(1)
+
         go func(maker Maker) {
             queue <- struct{}{}
             defer wg.Done()
@@ -74,9 +70,9 @@ func (s *guitarCrawlerService) RunCrawler() {
 
             startTime := time.Now() // 処理時間計測開始
 
+            // クローラー起動
             maker.scraper.CollectLinks(parentCtx)
             guitars := maker.scraper.Scrape(maker.funcs, parentCtx)
-
             s.repository.UpsertAll(guitars)
 
             maker.logger.Printf(constants.DecoLabel, "Finished crawler " + maker.name)
@@ -84,4 +80,27 @@ func (s *guitarCrawlerService) RunCrawler() {
         }(*maker)
     }
     wg.Wait()
+}
+
+// 各種メーカー作成
+func makersFactory() map[string]*Maker {
+    makers := map[string]*Maker{}
+
+    makerName  := "ESP"
+    logger     := utils.NewLogger(makerName)
+    makers[makerName] = NewMaker(makerName, scraper.NewScraperEsp(logger), scraper.NewCallBacksEsp(), logger)
+
+    makerName = "ESP_sig"
+    logger    = utils.NewLogger(makerName)
+    makers[makerName] = NewMaker(makerName, scraper.NewScraperEspSig(logger), scraper.NewCallBacksEspSig(), logger)
+
+    makerName = ".strandberg"
+    logger    = utils.NewLogger(makerName)
+    makers[makerName] = NewMaker(makerName, scraper.NewScraperStrandberg(logger), scraper.NewCallBacksStrandberg(), logger)
+
+    makerName = "Gibson"
+    logger    = utils.NewLogger(makerName)
+    makers[makerName] = NewMaker(makerName, scraper.NewScraperGibson(logger), scraper.NewCallBacksGibson(), logger)
+
+    return makers
 }

@@ -29,7 +29,7 @@ type callBacksStrandberg struct {
 }
 
 
-func NewScraperStrandberg() Scraper {
+func NewScraperStrandberg(logger *log.Logger) Scraper {
 	collector := colly.NewCollector(
 		colly.Async(true),
 		colly.MaxDepth(3),
@@ -42,6 +42,7 @@ func NewScraperStrandberg() Scraper {
         guitarScraper{
             collector: collector,
             mutex:     &sync.Mutex{},
+            logger:    logger,
         },
     }
 }

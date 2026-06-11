@@ -150,10 +150,10 @@ func LoggerInit(maker string) {
 }
 
 // ログインスタンスを作成
-func NewLogger(maker string) *log.Logger {
+func NewLogger(makerName string) *log.Logger {
     // 日付入りのログファイル名
     date := time.Now().Format("2006-01-02")
-    filename := fmt.Sprintf("logs/%v_%v.log", maker, date)
+    filename := fmt.Sprintf("logs/%v_%v.log", makerName, date)
 
     // ディレクトリがなければ作成
     os.MkdirAll("logs", 0755)

@@ -26,7 +26,7 @@ type callBacksEsp struct {
 }
 
 
-func NewScraperEsp() Scraper {
+func NewScraperEsp(logger *log.Logger) Scraper {
 	collector := colly.NewCollector(
 		colly.Async(true),
 		colly.MaxDepth(4),
@@ -39,6 +39,7 @@ func NewScraperEsp() Scraper {
         guitarScraper{
             collector: collector,
             mutex:     &sync.Mutex{},
+            logger:    logger,
         },
     }
 }

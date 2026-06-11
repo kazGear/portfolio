@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"log"
+	"sync"
 	"time"
 
 	"github.com/chromedp/chromedp"
@@ -24,50 +25,63 @@ func NewGuitarCrawlerService(repository repository.Repository) CrawlerService {
     return &guitarCrawlerService{ repository: repository }
 }
 
-type maker struct {
+type Maker struct {
     name    string
     scraper scraper.Scraper
     funcs   scraper.GuitarCallbacks
+    logger  *log.Logger
 }
 
-func NewMaker(name string, scraper scraper.Scraper, funcs scraper.GuitarCallbacks) maker {
-    return maker{ name, scraper, funcs}
+func NewMaker(name string, scraper scraper.Scraper, funcs scraper.GuitarCallbacks) *Maker {
+    return &Maker{
+        name,
+        scraper,
+        funcs,
+        utils.NewLogger(name),
+    }
 }
 
 func (s *guitarCrawlerService) RunCrawler() {
-    // chromedpコンテキスト構築
-    allocCtx, allocCancel := chromedp.NewExecAllocator(
-        context.Background(),
-        chromedp.DefaultExecAllocatorOptions[:]...,
-    )
-    defer allocCancel()
-    parentCtx, parentCancel := chromedp.NewContext(allocCtx)
-    defer parentCancel()
-
     // メーカーが増えたら追加
-    makers := []maker {
-        // NewMaker("ESP", scraper.NewScraperEsp(), scraper.NewCallBacksEsp()),
-        // NewMaker("ESP_sig", scraper.NewScraperEspSig(), scraper.NewCallBacksEspSig()),
+    makers := []*Maker {
+        NewMaker("ESP", scraper.NewScraperEsp(), scraper.NewCallBacksEsp()),
+        NewMaker("ESP_sig", scraper.NewScraperEspSig(), scraper.NewCallBacksEspSig()),
         // NewMaker(".strandberg", scraper.NewScraperStrandberg(), scraper.NewCallBacksStrandberg()),
-        NewMaker("Gibson", scraper.NewScraperGibson(), scraper.NewCallBacksGibson()), // TODO 未実装
+        // NewMaker("Gibson", scraper.NewScraperGibson(), scraper.NewCallBacksGibson()),
     }
+    wg := &sync.WaitGroup{}
+    queue := make(chan struct{}, 5) // 並列数制御
 
     // スクレイピング + DB保存
     for _, maker := range makers {
-        // ログ設定
-        utils.LoggerInit(maker.name)
-        log.Printf(constants.DecoLabel, "Started crawler " + maker.name)
-        // 処理時間計測開始
-        startTime := time.Now()
+        maker := maker
+        wg.Add(1)
+        go func(maker Maker) {
+            queue <- struct{}{}
+            defer wg.Done()
+            defer func() { <- queue }() // 次のワーカーへ
 
-        maker.scraper.CollectLinks(parentCtx)
-        // guitars, err := maker.scraper.Scrape(maker.funcs, parentCtx)
+            // chromedpコンテキスト構築
+            allocCtx, allocCancel := chromedp.NewExecAllocator(
+                context.Background(),
+                chromedp.DefaultExecAllocatorOptions[:]...,
+            )
+            defer allocCancel()
+            parentCtx, parentCancel := chromedp.NewContext(allocCtx)
+            defer parentCancel()
 
-        // if err != nil { log.Println(err) }
+            maker.logger.Printf(constants.DecoLabel, "Started crawler " + maker.name)
 
-        // s.repository.UpsertAll(guitars)
+            startTime := time.Now() // 処理時間計測開始
 
-        log.Printf(constants.DecoLabel, "Finished crawler " + maker.name)
-        log.Printf("Crawler processing time: %v\n", time.Since(startTime))
+            maker.scraper.CollectLinks(parentCtx)
+            guitars := maker.scraper.Scrape(maker.funcs, parentCtx)
+
+            s.repository.UpsertAll(guitars)
+
+            maker.logger.Printf(constants.DecoLabel, "Finished crawler " + maker.name)
+            maker.logger.Printf("Crawler processing time: %v\n", time.Since(startTime))
+        }(*maker)
     }
+    wg.Wait()
 }

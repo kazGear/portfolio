@@ -82,8 +82,8 @@ func (s *guitarCrawlerService) RunCrawler() {
 func makersFactory() map[string]*Maker {
     makers := map[string]*Maker{}
 
-    makerName  := "ESP"
-    logger     := utils.NewLogger(makerName)
+    makerName := "ESP"
+    logger    := utils.NewLogger(makerName)
     makers[makerName] = NewMaker(makerName, scraper.NewScraperEsp(logger), scraper.NewCallBacksEsp(), logger)
 
     makerName = "ESP_sig"

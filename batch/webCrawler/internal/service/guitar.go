@@ -47,7 +47,7 @@ func (s *guitarCrawlerService) RunCrawler() {
     wg := &sync.WaitGroup{}
     queue := make(chan struct{}, 5) // 並列数制御
 
-    // スクレイピング + DB保存
+    // クロール + スクレイピング + DB保存
     for _, maker := range makers {
         maker := maker
         wg.Add(1)
@@ -58,13 +58,9 @@ func (s *guitarCrawlerService) RunCrawler() {
             defer func() { <- queue }() // 次のワーカーへ
 
             // chromedpコンテキスト構築
-            allocCtx, allocCancel := chromedp.NewExecAllocator(
-                context.Background(),
-                chromedp.DefaultExecAllocatorOptions[:]...,
-            )
-            defer allocCancel()
-            parentCtx, parentCancel := chromedp.NewContext(allocCtx)
-            defer parentCancel()
+            cancelAlloc, cancelParent, parentCtx := createChromedpCtx()
+            defer cancelAlloc()
+            defer cancelParent()
 
             maker.logger.Printf(constants.DecoLabel, "Started crawler " + maker.name)
 
@@ -103,4 +99,19 @@ func makersFactory() map[string]*Maker {
     makers[makerName] = NewMaker(makerName, scraper.NewScraperGibson(logger), scraper.NewCallBacksGibson(), logger)
 
     return makers
+}
+
+// chromedp環境構築
+func createChromedpCtx() (cancelAlloc context.CancelFunc,
+                          cancelParent context.CancelFunc,
+                          parentCtx context.Context,
+) {
+    // chromedpコンテキスト構築
+    allocCtx, allocCancel := chromedp.NewExecAllocator(
+        context.Background(),
+        chromedp.DefaultExecAllocatorOptions[:]...,
+    )
+    parentCtx, parentCancel := chromedp.NewContext(allocCtx)
+
+    return allocCancel, parentCancel, parentCtx
 }

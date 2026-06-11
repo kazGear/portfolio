@@ -222,7 +222,7 @@ var colorKeywords = []colorKeyword{
     {
         Cd: constants.Purple,
         Keywords: []string{
-            "purple", "indigo", "violet", "plum", "amethyst", "sugilite", "tanzanite",
+            "purple", "indigo", "violet", "lavender", "plum", "amethyst", "sugilite", "tanzanite",
         },
     },
     {

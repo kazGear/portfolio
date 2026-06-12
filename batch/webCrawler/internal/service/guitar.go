@@ -41,7 +41,7 @@ func NewMaker(name string, scraper scraper.Scraper, funcs scraper.GuitarCallback
     }
 }
 
-func (s *guitarCrawlerService) RunCrawler() {
+func (g *guitarCrawlerService) RunCrawler() {
     makers := makersFactory()
 
     wg := &sync.WaitGroup{}
@@ -69,8 +69,13 @@ func (s *guitarCrawlerService) RunCrawler() {
             // クローラー起動
             maker.scraper.CollectLinks(parentCtx)
             guitars := maker.scraper.Scrape(maker.funcs, parentCtx)
-            s.repository.UpsertAll(guitars)
+            okCnt, ngCnt, errs := g.repository.UpsertAll(guitars)
 
+            maker.logger.Printf("[Upsert result]: OK %v 件, NG %v 件", okCnt, ngCnt)
+
+            for _, err := range errs {
+                maker.logger.Println(err)
+            }
             maker.logger.Printf(constants.DecoLabel, "Finished crawler " + maker.name)
             maker.logger.Printf("Crawler processing time: %v\n", time.Since(startTime))
         }(*maker)

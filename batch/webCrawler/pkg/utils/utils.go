@@ -168,9 +168,9 @@ func NewLogger(makerName string) *log.Logger {
 }
 
 // 取得したログを表示
-func LogCollectedLinks(links []string) {
+func LogCollectedLinks(links []string, logger *log.Logger) {
 	for _, link := range links {
-		log.Printf("[Collected link]: %v\n", link)
+		logger.Printf("[Collected link]: %v\n", link)
 	}
 }
 

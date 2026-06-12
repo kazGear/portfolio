@@ -2,7 +2,6 @@ package repository
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/kazGear/portfolio/webCrawler/internal/model"
@@ -10,7 +9,7 @@ import (
 
 type Repository interface {
     Upsert(g *model.Guitar) error
-    UpsertAll(guitars []*model.Guitar)
+    UpsertAll(guitars []*model.Guitar) (ok int, ng int, errs []error)
 }
 
 type guitarRepository struct {
@@ -22,8 +21,6 @@ func NewGuitarRepository(db *sqlx.DB) Repository {
 }
 
 func (r *guitarRepository) Upsert(guitar *model.Guitar) error {
-    log.Printf("[Try upsert]: %v", guitar.String())
-
     // pkチェック
     if guitar.Maker <= 0 || len(guitar.Name) <= 0 || len(guitar.Color) <= 0 {
         return fmt.Errorf("[Invalid primary key]: maker=%v, name=%v, color=%v\n",
@@ -131,20 +128,19 @@ func (r *guitarRepository) Upsert(guitar *model.Guitar) error {
     return nil
 }
 
-func (r *guitarRepository) UpsertAll(guitars []*model.Guitar) {
+func (r *guitarRepository) UpsertAll(guitars []*model.Guitar) (int, int, []error) {
     errs  := make([]error, 0, 300)
-    count := 0
+    okCount := 0
+    ngCount := 0
 
     for _, guitar := range guitars {
         err := r.Upsert(guitar)
         if err != nil {
             errs = append(errs, err)
+            ngCount++
             continue
         }
-        count++
+        okCount++
     }
-    for _, err := range errs {
-        log.Printf("[Upsert error]: %v\n", err)
-    }
-    log.Printf("[Upsert count]: %v 件", count)
+    return okCount, ngCount, errs
 }

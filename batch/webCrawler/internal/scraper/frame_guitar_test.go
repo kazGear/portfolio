@@ -79,12 +79,13 @@ func TestIsFirstVisit(t *testing.T) {
 		},
 	}
 
-	var mutex   = &sync.Mutex{}
-	visited    := map[string]struct{}{}
+	var mutex = &sync.Mutex{}
+	visited  := map[string]struct{}{}
+	guitar   := guitarScraper{ logger: utils.NewLogger("")}
 
 	for _, url := range urls {
 		url    := url
-		actual := isFirstVisit(mutex, url.url, visited)
+		actual := guitar.isFirstVisit(mutex, url.url, visited)
 		assert.True(t, url.want == actual)
 	}
 }

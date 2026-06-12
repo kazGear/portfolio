@@ -39,18 +39,18 @@ type guitarScraper struct {
 type callBacks struct {}
 
 // スクレイピング実行のフレームワーク
-func (e *guitarScraper) scrapeFrame(funcs GuitarCallbacks, ctx context.Context) []*model.Guitar {
+func (g *guitarScraper) scrapeFrame(funcs GuitarCallbacks, ctx context.Context) []*model.Guitar {
     var guitars = make([]*model.Guitar, 0, 400)
 
-    if len(e.urls) <= 0 {
-        e.logger.Println("None URL for crawling...")
+    if len(g.urls) <= 0 {
+        g.logger.Println("None URL for crawling...")
         return []*model.Guitar{}
     }
     wg := &sync.WaitGroup{}
 
-    for _, url := range e.urls {
+    for _, url := range g.urls {
         // 静的/動的を判定して HTML を取得、DOM化
-        html := fetchPage(url, funcs.IsStaticPage(), funcs.FetchDynamicPage(ctx))
+        html := g.fetchPage(url, funcs.IsStaticPage(), funcs.FetchDynamicPage(ctx))
 
         wg.Add(1)
         go func(html string) {
@@ -58,7 +58,7 @@ func (e *guitarScraper) scrapeFrame(funcs GuitarCallbacks, ctx context.Context) 
             doc, err := goquery.NewDocumentFromReader(strings.NewReader(html))
 
             if err != nil {
-                e.logger.Println("goquery error:", err)
+                g.logger.Println("goquery error:", err)
                 return
             }
             collectSpec := funcs.CollectSpec()
@@ -69,7 +69,7 @@ func (e *guitarScraper) scrapeFrame(funcs GuitarCallbacks, ctx context.Context) 
                 guitar := buildGuitar(spec)
 
                 if len(guitar.Name) <= 0 || len(guitar.Color) <= 0 { continue }
-                guitars = utils.LockedAppend(e.mutex, guitars, guitar)
+                guitars = utils.LockedAppend(g.mutex, guitars, guitar)
             }
         }(html)
     }
@@ -137,31 +137,36 @@ func buildGuitarFrame(spec map[string]string) (*model.Guitar) {
 }
 
 // 動的、静的ページを取得（動的が優先）。funcは個々で実装の必要あり。
-func fetchPage(url string,
-               isStaticPage func(string)bool,
-               fetchDynamicPage func(string) (string, error),
+func (g *guitarScraper) fetchPage(url string,
+                                  isStaticPage func(string)bool,
+                                  fetchDynamicPage func(string) (string, error),
 ) string {
     var html string
-    html = fetchStaticPage(url)
+    html = g.fetchStaticPage(url)
 
     if !isStaticPage(html) {
         var err error
         html, err = fetchDynamicPage(url)
 
         if err != nil {
-            log.Println(err)
+            g.logger.Println(err)
         }
     }
     return html
 }
 
 // 静的HTMLを取得
-func fetchStaticPage(url string) string {
+func (g *guitarScraper) fetchStaticPage(url string) string {
     var html string
     c := colly.NewCollector()
 
     c.OnHTML("html", func(e *colly.HTMLElement) {
-        html, _ = e.DOM.Html()
+        var err error
+        html, err = e.DOM.Html()
+
+        if err != nil {
+            g.logger.Printf("[fetchStaticPage failed]: %v", err)
+        }
     })
     c.Visit(url)
     return html
@@ -173,7 +178,7 @@ func tryWaitVisible(selector string) chromedp.Action {
     return chromedp.ActionFunc(func(ctx context.Context) error {
         err := chromedp.WaitVisible(selector, chromedp.ByQuery).Do(ctx)
         if err != nil {
-            log.Printf("[TryWaitVisible fallback] selector=%s err=%v\n", selector, err)
+            log.Printf("[TryWaitVisible failed] selector=%s err=%v\n", selector, err)
             return nil
         }
         return nil
@@ -204,7 +209,7 @@ func tryClick(path string) chromedp.Action {
 
 // URLセットに追加（重複なし）
 // true: 初visit, false: visit済
-func isFirstVisit(mutex *sync.Mutex, url string, visited map[string]struct{}) bool {
+func (g *guitarScraper) isFirstVisit(mutex *sync.Mutex, url string, visited map[string]struct{}) bool {
     mutex.Lock()
     defer mutex.Unlock()
 
@@ -214,7 +219,7 @@ func isFirstVisit(mutex *sync.Mutex, url string, visited map[string]struct{}) bo
         return false
     }
     visited[url] = struct{}{} // struct{} = use memory 0
-    log.Printf("visited: %v", url)
+    g.logger.Printf("[visited]: %v", url)
 
     return true
 }

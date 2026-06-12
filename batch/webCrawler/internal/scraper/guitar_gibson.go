@@ -52,39 +52,39 @@ func NewCallBacksGibson() GuitarCallbacks {
     }
 }
 
-func (e *guitarScraperGibson) CollectLinks(parentCtx context.Context) ([]string, error) {
-    c       := e.gScraper.collector
+func (g *guitarScraperGibson) CollectLinks(parentCtx context.Context) ([]string, error) {
+    c       := g.gScraper.collector
     visited := make(map[string]struct{}, 600)
     mutex   := &sync.Mutex{}
 
     c.OnHTML(".body-types a", func(html *colly.HTMLElement) {
         link := html.Request.AbsoluteURL(html.Attr("href"))
-        if isFirstVisit(mutex, link, visited) {
+        if g.gScraper.isFirstVisit(mutex, link, visited) {
             c.Visit(link)
         }
     })
     c.OnHTML(".category-wrapper .model-card a", func(html *colly.HTMLElement) {
         link := html.Request.AbsoluteURL(html.Attr("href"))
-        if isFirstVisit(mutex, link, visited) {
+        if g.gScraper.isFirstVisit(mutex, link, visited) {
             c.Visit(link)
         }
     })
     c.Visit("https://gibson.jp/")
     c.Wait()
 
-    e.gScraper.urls = mapToSliceUrl(visited)
-    return e.gScraper.urls, nil
+    g.gScraper.urls = mapToSliceUrl(visited)
+    return g.gScraper.urls, nil
 }
 
-func (e *guitarScraperGibson) Scrape(funcs GuitarCallbacks,
+func (g *guitarScraperGibson) Scrape(funcs GuitarCallbacks,
                                      parentCtx context.Context,
 ) []*model.Guitar {
-    guitars := e.gScraper.scrapeFrame(funcs, parentCtx)
+    guitars := g.gScraper.scrapeFrame(funcs, parentCtx)
     utils.AutoDownLoader(guitars, "images/gibson")
     return guitars
 }
 
-func (e *callBacksGibson) FetchDynamicPage(parentCtx context.Context) func(url string) (string, error) {
+func (c *callBacksGibson) FetchDynamicPage(parentCtx context.Context) func(url string) (string, error) {
     return func(url string) (string, error) {
         if !isDetailPage(`https://gibson.jp/(electric|acoustic)/[a-z0-9\-]+`, url) {
             return "", nil
@@ -121,7 +121,7 @@ var regSeriesGibson = regexp.MustCompile(
     `(Les Paul|SG|ES-\d+|Flying V|Explorer|Firebird|Hummingbird|J\-\d+)+\s[A-Za-z]+\b`,
 )
 
-func (e *callBacksGibson) CollectSpec() func(doc *goquery.Document) []map[string]string {
+func (c *callBacksGibson) CollectSpec() func(doc *goquery.Document) []map[string]string {
     return func(doc *goquery.Document) []map[string]string {
         specs := []map[string]string{}
         mutex := &sync.Mutex{}
@@ -158,13 +158,13 @@ func (e *callBacksGibson) CollectSpec() func(doc *goquery.Document) []map[string
     }
 }
 
-func (e *callBacksGibson) BuildGuitar() func(spec map[string]string) *model.Guitar {
+func (c *callBacksGibson) BuildGuitar() func(spec map[string]string) *model.Guitar {
     return func(spec map[string]string) *model.Guitar {
         return buildGuitarFrame(spec)
     }
 }
 
-func (e *callBacksGibson) IsStaticPage() func(html string) bool {
+func (c *callBacksGibson) IsStaticPage() func(html string) bool {
     return func(html string) bool {
         return strings.Contains(html, "product-overview")
     }

@@ -51,46 +51,46 @@ func NewCallBacksEsp() GuitarCallbacks {
     }
 }
 
-func (e *guitarScraperEsp) CollectLinks(parentCtx context.Context) ([]string, error) {
-    c       := e.gScraper.collector
+func (g *guitarScraperEsp) CollectLinks(parentCtx context.Context) ([]string, error) {
+    c       := g.gScraper.collector
     visited := make(map[string]struct{}, 500)
     mutex   := &sync.Mutex{}
 
     // URL収集、クロール
     c.OnHTML("#item .figcap a", func(html *colly.HTMLElement) {
         link := html.Request.AbsoluteURL(html.Attr("href"))
-        if isFirstVisit(mutex, link, visited) {
+        if g.gScraper.isFirstVisit(mutex, link, visited) {
             c.Visit(link)
         }
     })
     c.OnHTML("#inner_content .figcap a", func(html *colly.HTMLElement) {
         link := html.Request.AbsoluteURL(html.Attr("href"))
-        if isFirstVisit(mutex, link, visited) {
+        if g.gScraper.isFirstVisit(mutex, link, visited) {
             c.Visit(link)
         }
     })
     c.OnHTML("section.color_variation a", func(html *colly.HTMLElement) {
         link := html.Request.AbsoluteURL(html.Attr("href"))
-        if isFirstVisit(mutex, link, visited) {
+        if g.gScraper.isFirstVisit(mutex, link, visited) {
             c.Visit(link)
         }
     })
     c.Visit("https://espguitars.co.jp/products/esp")
     c.Wait()
 
-    e.gScraper.urls = mapToSliceUrl(visited)
-    return e.gScraper.urls, nil
+    g.gScraper.urls = mapToSliceUrl(visited)
+    return g.gScraper.urls, nil
 }
 
-func (e *guitarScraperEsp) Scrape(funcs GuitarCallbacks,
+func (g *guitarScraperEsp) Scrape(funcs GuitarCallbacks,
                                   parentCtx context.Context,
 ) []*model.Guitar {
-    guitars := e.gScraper.scrapeFrame(funcs, parentCtx)
+    guitars := g.gScraper.scrapeFrame(funcs, parentCtx)
     return guitars
 }
 
 // 必要に応じて、基盤のTryWaitReadyを組み込む
-func (e *callBacksEsp) FetchDynamicPage(parentCtx context.Context) func(url string) (string, error) {
+func (c *callBacksEsp) FetchDynamicPage(parentCtx context.Context) func(url string) (string, error) {
     return func(url string) (string, error) {
         if !isDetailPage(`^https://espguitars\.co\.jp/product/\d{4,}/?$`, url) {
             return "", nil
@@ -120,7 +120,7 @@ func (e *callBacksEsp) FetchDynamicPage(parentCtx context.Context) func(url stri
     }
 }
 
-func (e *callBacksEsp) CollectSpec() func(doc *goquery.Document) []map[string]string {
+func (c *callBacksEsp) CollectSpec() func(doc *goquery.Document) []map[string]string {
     return func(doc *goquery.Document) []map[string]string {
         specs := make([]map[string]string, 0, 1)
         mutex := &sync.Mutex{}
@@ -146,13 +146,13 @@ func (e *callBacksEsp) CollectSpec() func(doc *goquery.Document) []map[string]st
     }
 }
 
-func (e *callBacksEsp) BuildGuitar() func(spec map[string]string) *model.Guitar {
+func (c *callBacksEsp) BuildGuitar() func(spec map[string]string) *model.Guitar {
     return func(spec map[string]string) *model.Guitar {
         return buildGuitarFrame(spec)
     }
 }
 
-func (e *callBacksEsp) IsStaticPage() func(html string) bool {
+func (c *callBacksEsp) IsStaticPage() func(html string) bool {
     return func(html string) bool {
         return strings.Contains(html, "tbl_spec")
     }

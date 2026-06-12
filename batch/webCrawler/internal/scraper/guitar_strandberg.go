@@ -54,7 +54,7 @@ func NewCallBacksStrandberg() GuitarCallbacks {
     }
 }
 
-func (e *guitarScraperStrandberg) CollectLinks(parentCtx context.Context) ([]string, error) {
+func (g *guitarScraperStrandberg) CollectLinks(parentCtx context.Context) ([]string, error) {
     // タブごとに独立した context を作る
     tabCtx, tabCancel := chromedp.NewContext(parentCtx)
     defer tabCancel()
@@ -78,19 +78,19 @@ func (e *guitarScraperStrandberg) CollectLinks(parentCtx context.Context) ([]str
     targetLinks = toAbsLinks(targetLinks, `https://strandbergguitars.com`, 50)
     utils.LogCollectedLinks(targetLinks)
 
-    e.gScraper.urls = targetLinks
-    return e.gScraper.urls, nil
+    g.gScraper.urls = targetLinks
+    return g.gScraper.urls, nil
 }
 
-func (e *guitarScraperStrandberg) Scrape(funcs GuitarCallbacks,
+func (g *guitarScraperStrandberg) Scrape(funcs GuitarCallbacks,
                                          parentCtx context.Context,
 ) []*model.Guitar {
-    guitars := e.gScraper.scrapeFrame(funcs, parentCtx)
+    guitars := g.gScraper.scrapeFrame(funcs, parentCtx)
     utils.AutoDownLoader(guitars, "images/strandberg")
     return guitars
 }
 
-func (e *callBacksStrandberg) FetchDynamicPage(parentCtx context.Context) func(url string) (string, error) {
+func (c *callBacksStrandberg) FetchDynamicPage(parentCtx context.Context) func(url string) (string, error) {
     return func(url string) (string, error) {
         if !isDetailPage(`https://strandbergguitars.com/en-US/product/[a-z0-9\-]+`, url) {
             return "", nil
@@ -149,7 +149,7 @@ func (e *callBacksStrandberg) FetchDynamicPage(parentCtx context.Context) func(u
 // シリーズ名の抽出用
 var regSeriesStrandberg = regexp.MustCompile(`^[A-Za-z]+\s[A-Za-z]+\b`)
 
-func (e *callBacksStrandberg) CollectSpec() func(doc *goquery.Document) []map[string]string {
+func (c *callBacksStrandberg) CollectSpec() func(doc *goquery.Document) []map[string]string {
     return func(doc *goquery.Document) []map[string]string {
         specs := []map[string]string{}
         mutex := &sync.Mutex{}
@@ -188,13 +188,13 @@ func (e *callBacksStrandberg) CollectSpec() func(doc *goquery.Document) []map[st
     }
 }
 
-func (e *callBacksStrandberg) BuildGuitar() func(spec map[string]string) *model.Guitar {
+func (c *callBacksStrandberg) BuildGuitar() func(spec map[string]string) *model.Guitar {
     return func(spec map[string]string) *model.Guitar {
         return buildGuitarFrame(spec)
     }
 }
 
-func (e *callBacksStrandberg) IsStaticPage() func(html string) bool {
+func (c *callBacksStrandberg) IsStaticPage() func(html string) bool {
     return func(html string) bool {
         // ありえない文字列、確実に動的ページを取得させる。
         return strings.Contains(html, "@abcd1234@")

@@ -80,7 +80,7 @@ func (g *guitarScraper) scrapeFrame(funcs GuitarCallbacks, ctx context.Context) 
 }
 
 // ギター構造体の構築フレームワーク
-func buildGuitarFrame(spec map[string]string) (*model.Guitar) {
+func buildGuitarFrame(spec map[string]string, logger *log.Logger) (*model.Guitar) {
 
 	guitar := model.Guitar{}
 

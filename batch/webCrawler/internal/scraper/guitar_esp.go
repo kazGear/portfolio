@@ -150,7 +150,7 @@ func (c *callBacksEsp) CollectSpec() func(doc *goquery.Document) []map[string]st
 
 func (c *callBacksEsp) BuildGuitar() func(spec map[string]string) *model.Guitar {
     return func(spec map[string]string) *model.Guitar {
-        return buildGuitarFrame(spec)
+        return buildGuitarFrame(spec, c.funcs.logger)
     }
 }
 

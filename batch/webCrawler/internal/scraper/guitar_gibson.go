@@ -162,7 +162,7 @@ func (c *callBacksGibson) CollectSpec() func(doc *goquery.Document) []map[string
 
 func (c *callBacksGibson) BuildGuitar() func(spec map[string]string) *model.Guitar {
     return func(spec map[string]string) *model.Guitar {
-        return buildGuitarFrame(spec)
+        return buildGuitarFrame(spec, c.funcs.logger)
     }
 }
 

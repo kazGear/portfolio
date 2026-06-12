@@ -18,6 +18,7 @@ import (
 	"github.com/PuerkitoBio/goquery"
 	"github.com/kazGear/portfolio/webCrawler/internal/model"
 	"github.com/kazGear/portfolio/webCrawler/pkg/constants"
+
 	"golang.org/x/text/width"
 	"gopkg.in/natefinch/lumberjack.v2"
 )
@@ -31,7 +32,7 @@ func ParsePrice(price string) (int, error) {
 	if _regUndefinedPrice.MatchString(price) {
 		return -1, nil
 	}
-	var result int = 0
+	var result int = _initPrice
 	var err error
 
 	price = strings.ReplaceAll(price, " ", "")
@@ -66,10 +67,8 @@ func parseMultiPrice(s string) (int, error) {
 	// 全分割
 	prices := _regPriceSpliter.Split(s, -1)
 
-	var errMessage string =
-		"[ParseMultiPrice parse error]: %v\n"
 	if len(prices) < 2 {
-		return -1, fmt.Errorf(errMessage, s)
+		return -1, fmt.Errorf("[ParseMultiPrice parse error]: %v\n", s)
 	}
 
 	var minPrice int = _initPrice
@@ -112,7 +111,6 @@ func GetFretCount(s string) (int, error) {
 	fret    := _refNotNumber.ReplaceAllString(fretStr, "")
 
 	if len(fret) <= 0 {
-		log.Println(s)
 		return -1, fmt.Errorf("[Get fretOfNumber error]: %v\n", s)
 	}
 	result, _ := strconv.Atoi(fret)
@@ -290,7 +288,6 @@ var colorKeywords = []colorKeyword{
     },
 }
 
-
 // カラー名を抽象化してカラーコードに変換する
 func ConvertColorCd(colorName string) int {
 	lowerColorName := strings.ToLower(colorName)
@@ -307,21 +304,19 @@ func ConvertColorCd(colorName string) int {
 }
 
 // URLを使用できる形式に変換
-func ConvertRealUrl(proxyUrl string) string {
+func ConvertRealUrl(proxyUrl string) (string, error) {
 	u, err 	     := url.Parse(proxyUrl)
 
 	if err != nil || len(u.String()) == 0 {
-		log.Printf("[URL parse error]: %v\n", proxyUrl)
-		return proxyUrl
+		return proxyUrl, fmt.Errorf("[URL parse error]: %v\n", proxyUrl)
 	}
 	encodedUrl   := u.Query().Get("url")
 	realUrl, err := url.QueryUnescape(encodedUrl)
 
 	if err != nil || len(realUrl) == 0 {
-		log.Printf("[URL convert error]: %v\n", proxyUrl)
-		return proxyUrl
+		return proxyUrl, fmt.Errorf("[URL convert error]: %v\n", proxyUrl)
 	}
-	return realUrl
+	return realUrl, nil
 }
 
 // 画像保存するためのパスを作成。dir名＋ファイル名
@@ -333,36 +328,38 @@ func CreateImageSavePath(saveDirName string, url string) string {
 }
 
 // 画像取得 savePathはファイル名まで含める
-func DownloadImage(url, savePath string) {
+func DownloadImage(url, savePath string) error {
     if err := os.MkdirAll(filepath.Dir(savePath), 0755); err != nil {
-        log.Printf("[Make dir failed]: %v\n", err)
+        return fmt.Errorf("[Make dir failed]: %v\n", err)
     }
     resp, err := http.Get(url)
 
 	if resp == nil {
-		log.Printf("[Response error]: %v\n", "res == nil")
-		return
+		return fmt.Errorf("[Response error]: %v\n", "res == nil")
 	}
     if err != nil {
-        log.Printf("[Response error]: %v\n", err)
+        return fmt.Errorf("[Response error]: %v\n", err)
     }
     defer resp.Body.Close()
 
     data, err := io.ReadAll(resp.Body)
 
 	if err != nil {
-        log.Printf("[Resource read error]: %v\n", err)
+        return fmt.Errorf("[Resource read error]: %v\n", err)
     }
 	// atomicな保存
 	tmp := savePath + ".tmp"
 	os.WriteFile(tmp, data, 0644)  // 一時ファイルに書く
 	os.Rename(tmp, savePath)
+	return nil
 }
 
 // まとめてリソースをDL。不要ならDLしない
-func AutoDownLoader(guitars []*model.Guitar, saveDirName string) {
-	var wg = &sync.WaitGroup{}
-	queue := make(chan struct{}, 5) // 並列数制御
+func AutoDownLoader(guitars []*model.Guitar, saveDirName string) []error {
+ 	var wg 	  = &sync.WaitGroup{}
+	var mutex = &sync.Mutex{}
+	queue 	 := make(chan struct{}, 7) // 並列数制御
+	errs  	 := make([]error, 0, 300)
 
 	for _, g := range guitars {
 		g := g // 並列バグ対策
@@ -376,7 +373,10 @@ func AutoDownLoader(guitars []*model.Guitar, saveDirName string) {
 			if strings.HasPrefix(guitar.Src, "https://") || strings.HasPrefix(guitar.Src, "http://") {
 				return
 			}
-			url := ConvertRealUrl(guitar.Src)
+			url, err := ConvertRealUrl(guitar.Src)
+
+			if err != nil { LockedAppend(mutex, errs, err) }
+
 			savePath := CreateImageSavePath(saveDirName, url)
 
 			if _, err := os.Stat(savePath); err == nil {
@@ -387,6 +387,12 @@ func AutoDownLoader(guitars []*model.Guitar, saveDirName string) {
 		}(g)
 	}
 	wg.Wait()
+
+	if len(errs) == 0 {
+		return nil
+	} else {
+		return errs
+	}
 }
 
 // 指定したラベルの要素を取得
@@ -405,17 +411,16 @@ func GetElemNextToLabel(doc *goquery.Document) func(selector string) string {
 
 var regWight = regexp.MustCompile(`\d\.\d{1,2}`)
 // 重量を抽出する（Kg単位）
-func ParseWight(weight string) float64 {
+func ParseWight(weight string) (float64, error) {
 	w := width.Narrow.String(weight)
 	w  = regWight.FindString(w)
 
 	result, err := strconv.ParseFloat(w, 64)
 
 	if err != nil {
-		log.Printf("[Weight parse error] %v\n", weight)
-		return -1
+		return -1, fmt.Errorf("[Weight parse error] %v\n", weight)
 	}
-	return result
+	return result, nil
 }
 
 // サイトの項目名をフィールド名に変換

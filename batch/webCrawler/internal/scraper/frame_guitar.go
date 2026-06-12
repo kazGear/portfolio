@@ -126,7 +126,11 @@ func buildGuitarFrame(spec map[string]string) (*model.Guitar) {
     if len(guitar.Src) <= 0 {
         return &model.Guitar{}
     }
-    guitar.Weight = utils.ParseWight(spec["Weight"])
+    var errWeight error
+    guitar.Weight, errWeight = utils.ParseWight(spec["Weight"])
+    if errWeight != nil {
+        log.Println(errWeight)
+    }
 
 	return &guitar
 }

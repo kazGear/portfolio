@@ -266,7 +266,7 @@ func TestConvertColorCd(t *testing.T) {
 			want: 14,
 		},
 		{
-			color: "Obsidian Metallic",
+			color: "3 Tone Sunburst",
 			want: 99,
 		},
 		{
@@ -304,7 +304,7 @@ func TestParseWight(t *testing.T) {
 	}
 
 	for _, w := range weights {
-		actual := ParseWight(w.weight)
+		actual, _ := ParseWight(w.weight)
 		assert.Equal(t, w.want, actual)
 	}
 }

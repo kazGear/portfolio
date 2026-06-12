@@ -106,7 +106,7 @@ func createChromedpCtx() (cancelAlloc context.CancelFunc,
                           cancelParent context.CancelFunc,
                           parentCtx context.Context,
 ) {
-    // chromedpコンテキスト構築
+    // 動的ページ取得のためのchromedpコンテキスト構築
     allocCtx, allocCancel := chromedp.NewExecAllocator(
         context.Background(),
         chromedp.DefaultExecAllocatorOptions[:]...,

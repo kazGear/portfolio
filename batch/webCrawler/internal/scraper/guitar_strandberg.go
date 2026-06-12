@@ -69,6 +69,7 @@ func (g *guitarScraperStrandberg) CollectLinks(parentCtx context.Context) ([]str
     // 詳細ページリンク収集
     doc, err := renderHTML(
         ctx,
+        g.gScraper.logger,
         `https://strandbergguitars.com/en-US/guitars`,
         `div[data-sentry-component="ProductListingTypeTwo"]`,
     )
@@ -108,10 +109,10 @@ func (c *callBacksStrandberg) FetchDynamicPage(parentCtx context.Context) func(u
 
         err := chromedp.Run(ctx,
             chromedp.Navigate(url),
-            tryWaitVisible("body"), // 求める要素が出るまで待つ
+            tryWaitVisible("body", c.funcs.logger), // 求める要素が出るまで待つ
             chromedp.Sleep(400 * time.Millisecond), // JSが動く猶予を与える
-            tryWaitReady(`img[width="1200"][height="1200"]`), // 必要な要素が生成されるのを待つ
-            tryWaitReady(`body div[data-sentry-component="PdpAccordion"]`),
+            tryWaitReady(`img[width="1200"][height="1200"]`, c.funcs.logger), // 必要な要素が生成されるのを待つ
+            tryWaitReady(`body div[data-sentry-component="PdpAccordion"]`, c.funcs.logger),
             chromedp.Nodes(
                 `//div[@data-sentry-component="PdpAccordion"]//div[@data-state="closed"]//button`,
                 &nodes,
@@ -126,7 +127,7 @@ func (c *callBacksStrandberg) FetchDynamicPage(parentCtx context.Context) func(u
         }
         for idx, node := range nodes {
             chromedp.Run(ctx,
-                tryClick(node.FullXPath()),
+                tryClick(node.FullXPath(), c.funcs.logger),
                 chromedp.Sleep(300*time.Millisecond),
                 chromedp.OuterHTML(
                     `div[data-sentry-component="PdpAccordion"]`, htmlParts[idx], chromedp.ByQuery,

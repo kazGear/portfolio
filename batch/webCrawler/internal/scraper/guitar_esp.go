@@ -110,9 +110,9 @@ func (c *callBacksEsp) FetchDynamicPage(parentCtx context.Context) func(url stri
                chromedp.Navigate(url),
                chromedp.WaitVisible("#main", chromedp.ByQuery), // 求める要素が出るまで待つ
                chromedp.Sleep(300 * time.Millisecond), // JSが動く猶予を与える
-               tryWaitReady("h1.header_title"), // 必要な要素が生成されるのを待つ
-               tryWaitReady(".tbl_spec"),
-               tryWaitReady("p.detail_price"),
+               tryWaitReady("h1.header_title", c.funcs.logger), // 必要な要素が生成されるのを待つ
+               tryWaitReady(".tbl_spec", c.funcs.logger),
+               tryWaitReady("p.detail_price", c.funcs.logger),
                chromedp.OuterHTML("html", &html, chromedp.ByQuery), // 最終的なHTML出力
         )
         if err != nil {

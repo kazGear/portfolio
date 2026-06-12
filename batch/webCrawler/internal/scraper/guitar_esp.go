@@ -45,9 +45,11 @@ func NewScraperEsp(logger *log.Logger) Scraper {
     }
 }
 
-func NewCallBacksEsp() GuitarCallbacks {
+func NewCallBacksEsp(logger *log.Logger) GuitarCallbacks {
     return &callBacksEsp{
-        callBacks{},
+        callBacks{
+            logger: logger,
+        },
     }
 }
 

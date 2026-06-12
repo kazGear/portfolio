@@ -46,9 +46,11 @@ func NewScraperGibson(logger *log.Logger) Scraper {
     }
 }
 
-func NewCallBacksGibson() GuitarCallbacks {
+func NewCallBacksGibson(logger *log.Logger) GuitarCallbacks {
     return &callBacksGibson{
-        callBacks{},
+        callBacks{
+            logger: logger,
+        },
     }
 }
 

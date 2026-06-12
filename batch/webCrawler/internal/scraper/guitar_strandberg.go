@@ -48,9 +48,11 @@ func NewScraperStrandberg(logger *log.Logger) Scraper {
     }
 }
 
-func NewCallBacksStrandberg() GuitarCallbacks {
+func NewCallBacksStrandberg(logger *log.Logger) GuitarCallbacks {
     return &callBacksStrandberg{
-        callBacks{},
+        callBacks{
+            logger: logger,
+        },
     }
 }
 

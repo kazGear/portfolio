@@ -36,7 +36,9 @@ type guitarScraper struct {
     logger    *log.Logger
 }
 
-type callBacks struct {}
+type callBacks struct {
+    logger *log.Logger
+}
 
 // スクレイピング実行のフレームワーク
 func (g *guitarScraper) scrapeFrame(funcs GuitarCallbacks, ctx context.Context) []*model.Guitar {

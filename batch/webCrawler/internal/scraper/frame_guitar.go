@@ -3,6 +3,7 @@ package scraper
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log"
 	"regexp"
 	"strconv"
@@ -19,7 +20,7 @@ import (
 
 type Scraper interface {
 	Scrape(funcs GuitarCallbacks, ctx context.Context) []*model.Guitar
-	CollectLinks(ctx context.Context)                  []string
+	CollectLinks(ctx context.Context)                  ([]string, error)
 }
 
 type GuitarCallbacks interface {
@@ -57,7 +58,7 @@ func (e *guitarScraper) scrapeFrame(funcs GuitarCallbacks, ctx context.Context) 
             doc, err := goquery.NewDocumentFromReader(strings.NewReader(html))
 
             if err != nil {
-                log.Println("goquery error:", err)
+                e.logger.Println("goquery error:", err)
                 return
             }
             collectSpec := funcs.CollectSpec()
@@ -236,25 +237,25 @@ func isDetailPage(pattern string, url string) bool {
 }
 
 // 動的ページのレンダー(CSR/SSRに影響を受けない)
-func renderHTML(ctx context.Context, startURL string, waitElem string) *goquery.Document {
+func renderHTML(ctx context.Context, startURL string, waitElem string) (*goquery.Document, error) {
     var html string
 
     // 一覧ページをレンダリング
     err := chromedp.Run(ctx,
         chromedp.Navigate(startURL),
         tryWaitVisible(waitElem), // 商品一覧の親
-        chromedp.Sleep(2000 * time.Millisecond),    // JS描画待
+        chromedp.Sleep(2000 * time.Millisecond), // JS描画待
         chromedp.OuterHTML("html", &html),
     )
     if err != nil {
-        log.Printf("[Chromedp error]: %v %v\n", err, waitElem)
+        return nil, fmt.Errorf("[Chromedp error]: %v %v\n", err, waitElem)
     }
     doc, err := goquery.NewDocumentFromReader(strings.NewReader(html))
 
     if err != nil {
-        log.Printf("[Document read error]: %v %v\n", err, waitElem)
+        return nil, fmt.Errorf("[Document read error]: %v %v\n", err, waitElem)
     }
-    return doc
+    return doc, nil
 }
 
 // link収集

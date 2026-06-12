@@ -2,6 +2,7 @@ package scraper
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"regexp"
 	"strconv"
@@ -53,7 +54,7 @@ func NewCallBacksStrandberg() GuitarCallbacks {
     }
 }
 
-func (e *guitarScraperStrandberg) CollectLinks(parentCtx context.Context) []string {
+func (e *guitarScraperStrandberg) CollectLinks(parentCtx context.Context) ([]string, error) {
     // タブごとに独立した context を作る
     tabCtx, tabCancel := chromedp.NewContext(parentCtx)
     defer tabCancel()
@@ -64,18 +65,21 @@ func (e *guitarScraperStrandberg) CollectLinks(parentCtx context.Context) []stri
     targetLinks := []string{}
 
     // 詳細ページリンク収集
-    doc := renderHTML(
+    doc, err := renderHTML(
         ctx,
         `https://strandbergguitars.com/en-US/guitars`,
         `div[data-sentry-component="ProductListingTypeTwo"]`,
     )
+    if err != nil {
+        return nil, errors.New(err.Error())
+    }
     targetLinks = collectLinks(".product-card a", doc, 50)
     targetLinks = getNeedLinks(targetLinks, `/en-US/product/`, 50)
     targetLinks = toAbsLinks(targetLinks, `https://strandbergguitars.com`, 50)
     utils.LogCollectedLinks(targetLinks)
 
     e.gScraper.urls = targetLinks
-    return e.gScraper.urls
+    return e.gScraper.urls, nil
 }
 
 func (e *guitarScraperStrandberg) Scrape(funcs GuitarCallbacks,

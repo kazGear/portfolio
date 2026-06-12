@@ -52,7 +52,7 @@ func NewCallBacksGibson() GuitarCallbacks {
     }
 }
 
-func (e *guitarScraperGibson) CollectLinks(parentCtx context.Context) []string {
+func (e *guitarScraperGibson) CollectLinks(parentCtx context.Context) ([]string, error) {
     c       := e.gScraper.collector
     visited := make(map[string]struct{}, 600)
     mutex   := &sync.Mutex{}
@@ -73,7 +73,7 @@ func (e *guitarScraperGibson) CollectLinks(parentCtx context.Context) []string {
     c.Wait()
 
     e.gScraper.urls = mapToSliceUrl(visited)
-    return e.gScraper.urls
+    return e.gScraper.urls, nil
 }
 
 func (e *guitarScraperGibson) Scrape(funcs GuitarCallbacks,

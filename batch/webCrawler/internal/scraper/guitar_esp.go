@@ -85,7 +85,7 @@ func (e *guitarScraperEsp) CollectLinks(parentCtx context.Context) ([]string, er
 func (e *guitarScraperEsp) Scrape(funcs GuitarCallbacks,
                                   parentCtx context.Context,
 ) []*model.Guitar {
-    guitars, _ := e.gScraper.scrapeFrame(funcs, parentCtx)
+    guitars := e.gScraper.scrapeFrame(funcs, parentCtx)
     return guitars
 }
 

@@ -85,7 +85,7 @@ func (e *guitarScraperStrandberg) CollectLinks(parentCtx context.Context) ([]str
 func (e *guitarScraperStrandberg) Scrape(funcs GuitarCallbacks,
                                          parentCtx context.Context,
 ) []*model.Guitar {
-    guitars, _ := e.gScraper.scrapeFrame(funcs, parentCtx)
+    guitars := e.gScraper.scrapeFrame(funcs, parentCtx)
     utils.AutoDownLoader(guitars, "images/strandberg")
     return guitars
 }

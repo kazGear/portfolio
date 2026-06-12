@@ -2,7 +2,6 @@ package scraper
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"log"
 	"regexp"
@@ -40,11 +39,12 @@ type guitarScraper struct {
 type callBacks struct {}
 
 // スクレイピング実行のフレームワーク
-func (e *guitarScraper) scrapeFrame(funcs GuitarCallbacks, ctx context.Context) ([]*model.Guitar, error) {
+func (e *guitarScraper) scrapeFrame(funcs GuitarCallbacks, ctx context.Context) []*model.Guitar {
     var guitars = make([]*model.Guitar, 0, 400)
 
     if len(e.urls) <= 0 {
-        return []*model.Guitar{}, errors.New("None URL for crawling...")
+        e.logger.Println("None URL for crawling...")
+        return []*model.Guitar{}
     }
     wg := &sync.WaitGroup{}
 
@@ -74,7 +74,7 @@ func (e *guitarScraper) scrapeFrame(funcs GuitarCallbacks, ctx context.Context) 
         }(html)
     }
     wg.Wait()
-    return guitars, nil
+    return guitars
 }
 
 // ギター構造体の構築フレームワーク

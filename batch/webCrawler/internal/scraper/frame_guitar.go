@@ -24,7 +24,7 @@ type Scraper interface {
 
 type GuitarCallbacks interface {
     IsStaticPage() func(html string)            bool
-    FetchDynamicPage(ctx context.Context)       func(url string) string
+    FetchDynamicPage(ctx context.Context)       func(url string) (string, error)
     CollectSpec()  func(doc *goquery.Document)  []map[string]string
     BuildGuitar()  func(spec map[string]string) *model.Guitar
 }
@@ -138,13 +138,18 @@ func buildGuitarFrame(spec map[string]string) (*model.Guitar) {
 // 動的、静的ページを取得（動的が優先）。funcは個々で実装の必要あり。
 func fetchPage(url string,
                isStaticPage func(string)bool,
-               fetchDynamicPage func(string)string,
+               fetchDynamicPage func(string) (string, error),
 ) string {
-
-    html := fetchStaticPage(url)
+    var html string
+    html = fetchStaticPage(url)
 
     if !isStaticPage(html) {
-        html = fetchDynamicPage(url)
+        var err error
+        html, err = fetchDynamicPage(url)
+
+        if err != nil {
+            log.Println(err)
+        }
     }
     return html
 }

@@ -2,6 +2,7 @@ package scraper
 
 import (
 	"context"
+	"fmt"
 	"strconv"
 	"strings"
 	"sync"
@@ -89,10 +90,10 @@ func (e *guitarScraperEsp) Scrape(funcs GuitarCallbacks,
 }
 
 // 必要に応じて、基盤のTryWaitReadyを組み込む
-func (e *callBacksEsp) FetchDynamicPage(parentCtx context.Context) func(url string) string {
-    return func(url string) string {
+func (e *callBacksEsp) FetchDynamicPage(parentCtx context.Context) func(url string) (string, error) {
+    return func(url string) (string, error) {
         if !isDetailPage(`^https://espguitars\.co\.jp/product/\d{4,}/?$`, url) {
-            return ""
+            return "", nil
         }
         // タブごとに独立した context を作る
         tabCtx, tabCancel := chromedp.NewContext(parentCtx)
@@ -113,10 +114,9 @@ func (e *callBacksEsp) FetchDynamicPage(parentCtx context.Context) func(url stri
                chromedp.OuterHTML("html", &html, chromedp.ByQuery), // 最終的なHTML出力
         )
         if err != nil {
-            log.Printf("[chromedp error]: %v [url]: %v\n", err, url)
-            return ""
+            return "", fmt.Errorf("[chromedp error]: %v [url]: %v\n", err, url)
         }
-        return html
+        return html, nil
     }
 }
 

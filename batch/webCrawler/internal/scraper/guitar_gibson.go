@@ -84,10 +84,10 @@ func (e *guitarScraperGibson) Scrape(funcs GuitarCallbacks,
     return guitars
 }
 
-func (e *callBacksGibson) FetchDynamicPage(parentCtx context.Context) func(url string) string {
-    return func(url string) string {
+func (e *callBacksGibson) FetchDynamicPage(parentCtx context.Context) func(url string) (string, error) {
+    return func(url string) (string, error) {
         if !isDetailPage(`https://gibson.jp/(electric|acoustic)/[a-z0-9\-]+`, url) {
-            return ""
+            return "", nil
         }
         // タブごとに独立した context を作る
         tabCtx, tabCancel := chromedp.NewContext(parentCtx)
@@ -102,8 +102,7 @@ func (e *callBacksGibson) FetchDynamicPage(parentCtx context.Context) func(url s
             chromedp.Sleep(200 * time.Millisecond), // JSが動く猶予を与える
         )
         if err != nil {
-            log.Printf("[Chromedp error]: %v [url]: %v\n", err, url)
-            return ""
+            return "", fmt.Errorf("[Chromedp error]: %v [url]: %v\n", err, url)
         }
         // HTMLを取得、マージ
         var html string
@@ -111,10 +110,9 @@ func (e *callBacksGibson) FetchDynamicPage(parentCtx context.Context) func(url s
             chromedp.OuterHTML("html", &html, chromedp.ByQuery),
         )
         if err != nil {
-            log.Printf("[Chromedp error]: %v [url]: %v\n", err, url)
-            return ""
+            return "", fmt.Errorf("[Chromedp error]: %v [url]: %v\n", err, url)
         }
-        return html
+        return html, nil
     }
 }
 

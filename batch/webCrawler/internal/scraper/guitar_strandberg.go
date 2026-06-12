@@ -86,10 +86,10 @@ func (e *guitarScraperStrandberg) Scrape(funcs GuitarCallbacks,
     return guitars
 }
 
-func (e *callBacksStrandberg) FetchDynamicPage(parentCtx context.Context) func(url string) string {
-    return func(url string) string {
+func (e *callBacksStrandberg) FetchDynamicPage(parentCtx context.Context) func(url string) (string, error) {
+    return func(url string) (string, error) {
         if !isDetailPage(`https://strandbergguitars.com/en-US/product/[a-z0-9\-]+`, url) {
-            return ""
+            return "", nil
         }
         // タブごとに独立した context を作る
         tabCtx, tabCancel := chromedp.NewContext(parentCtx)
@@ -112,8 +112,7 @@ func (e *callBacksStrandberg) FetchDynamicPage(parentCtx context.Context) func(u
             ), // 全ｱｺｰﾃﾞｨｵﾝﾎﾞﾀﾝ取得
         )
         if err != nil {
-            log.Printf("[Chromedp error]: %v [url]: %v\n", err, url)
-            return ""
+            return "", fmt.Errorf("[Chromedp error]: %v [url]: %v\n", err, url)
         }
         // アコーディオンオープン、内部の要素を出現させる。排他的にしかオープンしないため、つどHTMLを抽出する。最後にマージ
         htmlParts := []*string{
@@ -134,13 +133,12 @@ func (e *callBacksStrandberg) FetchDynamicPage(parentCtx context.Context) func(u
             chromedp.OuterHTML("html", &html, chromedp.ByQuery),
         )
         if err != nil {
-            log.Printf("[Chromedp error]: %v [url]: %v\n", err, url)
-            return ""
+            return "", fmt.Errorf("[Chromedp error]: %v [url]: %v\n", err, url)
         }
         for _, part := range htmlParts {
             html += *part
         }
-        return html
+        return html, nil
     }
 }
 

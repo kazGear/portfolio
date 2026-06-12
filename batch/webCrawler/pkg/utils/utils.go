@@ -104,7 +104,7 @@ var _regFretStr   = regexp.MustCompile(`(1[5-9]|[2-3][0-9])\s*[Ff]+`)
 var _refNotNumber = regexp.MustCompile(`\D`)
 // ギターのフレット数を取得
 func GetFretCount(s string) (int, error) {
-	try, err :=strconv.Atoi(s)
+	try, err := strconv.Atoi(s)
 	if err == nil { return try, nil }
 
 	fretStr := _regFretStr.FindString(s)
@@ -308,13 +308,13 @@ func ConvertRealUrl(proxyUrl string) (string, error) {
 	u, err 	     := url.Parse(proxyUrl)
 
 	if err != nil || len(u.String()) == 0 {
-		return proxyUrl, fmt.Errorf("[URL parse error]: %v\n", proxyUrl)
+		return proxyUrl, fmt.Errorf("[URL parse error]: %v %w\n", proxyUrl, err)
 	}
 	encodedUrl   := u.Query().Get("url")
 	realUrl, err := url.QueryUnescape(encodedUrl)
 
 	if err != nil || len(realUrl) == 0 {
-		return proxyUrl, fmt.Errorf("[URL convert error]: %v\n", proxyUrl)
+		return proxyUrl, fmt.Errorf("[URL convert error]: %v %w\n", proxyUrl, err)
 	}
 	return realUrl, nil
 }
@@ -330,7 +330,7 @@ func CreateImageSavePath(saveDirName string, url string) string {
 // 画像取得 savePathはファイル名まで含める
 func DownloadImage(url, savePath string) error {
     if err := os.MkdirAll(filepath.Dir(savePath), 0755); err != nil {
-        return fmt.Errorf("[Make dir failed]: %v\n", err)
+        return fmt.Errorf("[Make dir failed]: %w\n", err)
     }
     resp, err := http.Get(url)
 
@@ -338,14 +338,14 @@ func DownloadImage(url, savePath string) error {
 		return fmt.Errorf("[Response error]: %v\n", "res == nil")
 	}
     if err != nil {
-        return fmt.Errorf("[Response error]: %v\n", err)
+        return fmt.Errorf("[Response error]: %w\n", err)
     }
     defer resp.Body.Close()
 
     data, err := io.ReadAll(resp.Body)
 
 	if err != nil {
-        return fmt.Errorf("[Resource read error]: %v\n", err)
+        return fmt.Errorf("[Resource read error]: %w\n", err)
     }
 	// atomicな保存
 	tmp := savePath + ".tmp"
@@ -418,7 +418,7 @@ func ParseWight(weight string) (float64, error) {
 	result, err := strconv.ParseFloat(w, 64)
 
 	if err != nil {
-		return -1, fmt.Errorf("[Weight parse error] %v\n", weight)
+		return -1, fmt.Errorf("[Weight parse error] %v %w\n", weight, err)
 	}
 	return result, nil
 }

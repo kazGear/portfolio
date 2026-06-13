@@ -88,7 +88,7 @@ func buildGuitarFrame(spec map[string]string, logger *log.Logger) (*model.Guitar
 	guitar.Name            = spec["Name"]
 
     if errMaker != nil {
-        logger.Printf("[Maker convert error]: %v", errMaker)
+        // logger.Printf("[Maker convert error]: %v", errMaker)
         return &model.Guitar{}
 	}
 
@@ -107,7 +107,7 @@ func buildGuitarFrame(spec map[string]string, logger *log.Logger) (*model.Guitar
 	guitar.FretCount, errFretCount = utils.GetFretCount(spec["FretCount"])
 
     if errFretCount != nil {
-        logger.Println(errFretCount)
+        // logger.Println(errFretCount)
     }
 
 	guitar.Inlays       = spec["Inlays"]
@@ -119,7 +119,7 @@ func buildGuitarFrame(spec map[string]string, logger *log.Logger) (*model.Guitar
 	guitar.Price, errPrice = utils.ParsePrice(spec["Price"])
 
     if errPrice != nil {
-        logger.Println(errPrice)
+        // logger.Println(errPrice)
     }
 
     guitar.ScaleLengthMM = utils.TrimScaleUnit(spec["ScaleLengthMM"])
@@ -127,14 +127,14 @@ func buildGuitarFrame(spec map[string]string, logger *log.Logger) (*model.Guitar
 	guitar.Src           = spec["Src"]
 
     if len(guitar.Src) <= 0 {
-        logger.Println("Guitar image none ...")
+        // logger.Println("Guitar image none ...")
         return &model.Guitar{}
     }
     var errWeight error
     guitar.Weight, errWeight = utils.ParseWight(spec["Weight"])
 
     if errWeight != nil {
-        logger.Println(errWeight)
+        // logger.Println(errWeight)
     }
 	return &guitar
 }
@@ -177,11 +177,11 @@ func (g *guitarScraper) fetchStaticPage(url string) string {
 
 // 動的ページ取得用ヘルパー
 // WaitVisible を実行し、失敗しても無視するフォールバック
-func tryWaitVisible(selector string, logger *log.Logger) chromedp.Action {
+func tryWaitVisible(selector string) chromedp.Action {
     return chromedp.ActionFunc(func(ctx context.Context) error {
         err := chromedp.WaitVisible(selector, chromedp.ByQuery).Do(ctx)
         if err != nil {
-            logger.Printf("[TryWaitVisible fallback]: selector=%s err=%v\n", selector, err)
+            log.Printf("[TryWaitVisible fallback]: selector=%s err=%v\n", selector, err)
             return nil
         }
         return nil
@@ -190,24 +190,24 @@ func tryWaitVisible(selector string, logger *log.Logger) chromedp.Action {
 
 // 動的ページ取得用ヘルパー
 // WaitReady を実行し、失敗しても無視するフォールバック
-func tryWaitReady(elem string, logger *log.Logger) chromedp.ActionFunc {
+func tryWaitReady(elem string) chromedp.ActionFunc {
   return chromedp.ActionFunc(func(ctx context.Context) error {
         // 失敗しても止めない
         err := chromedp.WaitReady(elem, chromedp.ByQuery).Do(ctx)
 
         if err != nil {
-            logger.Printf("[TryWaitReady fallback]: elem=%v err=%v\n", elem, err)
+            log.Printf("[TryWaitReady fallback]: elem=%v err=%v\n", elem, err)
         }
         return nil
     })
 }
 
 // ブラウザクリックのフォールバック版
-func tryClick(path string, logger *log.Logger) chromedp.Action {
+func tryClick(path string) chromedp.Action {
     return chromedp.ActionFunc(func(ctx context.Context) error {
         err := chromedp.Click(path, chromedp.NodeVisible).Do(ctx)
         if err != nil {
-            logger.Printf("[TryClick fallback]: selector=%s err=%v\n", path, err)
+            log.Printf("[TryClick fallback]: selector=%s err=%v\n", path, err)
             return nil
         }
         return nil
@@ -249,14 +249,15 @@ func isDetailPage(pattern string, url string) bool {
 }
 
 // 動的ページのレンダー(CSR/SSRに影響を受けない)
-func renderHTML(ctx context.Context, logger *log.Logger, startURL string, waitElem string,
+func renderHTML(ctx context.Context, startURL string, waitElem string,
 ) (*goquery.Document, error) {
+
     var html string
 
     // 一覧ページをレンダリング
     err := chromedp.Run(ctx,
         chromedp.Navigate(startURL),
-        tryWaitVisible(waitElem, logger), // 商品一覧の親
+        tryWaitVisible(waitElem), // 商品一覧の親
         chromedp.Sleep(2000 * time.Millisecond), // JS描画待
         chromedp.OuterHTML("html", &html),
     )

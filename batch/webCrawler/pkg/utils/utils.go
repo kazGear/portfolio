@@ -305,7 +305,7 @@ func ConvertColorCd(colorName string) int {
 
 // URLを使用できる形式に変換
 func ConvertRealUrl(proxyUrl string) (string, error) {
-	u, err 	     := url.Parse(proxyUrl)
+	u, err := url.Parse(proxyUrl)
 
 	if err != nil || len(u.String()) == 0 {
 		return proxyUrl, fmt.Errorf("[URL parse error]: %v %w\n", proxyUrl, err)

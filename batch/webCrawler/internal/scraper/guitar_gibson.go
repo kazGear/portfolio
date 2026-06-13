@@ -100,7 +100,7 @@ func (c *callBacksGibson) FetchDynamicPage(parentCtx context.Context) func(url s
 
         err := chromedp.Run(ctx,
             chromedp.Navigate(url),
-            tryWaitVisible("#body-wrap", c.funcs.logger), // 求める要素が出るまで待つ
+            tryWaitVisible("#body-wrap"), // 求める要素が出るまで待つ
             chromedp.Sleep(200 * time.Millisecond), // JSが動く猶予を与える
         )
         if err != nil {

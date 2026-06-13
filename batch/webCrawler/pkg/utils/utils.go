@@ -2,6 +2,7 @@ package utils
 
 import (
 	"crypto/sha1"
+	"encoding/json"
 	"fmt"
 	"io"
 	"log"
@@ -25,7 +26,7 @@ import (
 
 
 var _regPriceSpliter   = regexp.MustCompile(`[()（）/／:、]`)
-var _regUndefinedPrice = regexp.MustCompile(`(?i)(ask|open)`)
+var _regUndefinedPrice = regexp.MustCompile(`(?i)(ask|open|""|\s+)`)
 const _initPrice int   = 999999999
 // 金額表記を数値に変換 "¥128,000" → 128000
 func ParsePrice(price string) (int, error) {
@@ -429,4 +430,30 @@ func ParseWight(weight string) (float64, error) {
 // サイトの項目名をフィールド名に変換
 func ConvertLabel(label string, fieldMap map[string]string) string {
     return fieldMap[label]
+}
+
+type exchange struct {
+	Amount int                `json:"amount"`
+    Base   string             `json:"base"`
+    Date   string             `json:"date"`
+    Rates  map[string]float64 `json:"rates"`
+}
+
+// 為替レート取得
+func GetExchangeUSDtoJPY() float64 {
+	res, err := http.Get(`https://api.frankfurter.dev/v1/latest?from=USD&to=JPY`)
+	if err != nil || res == nil {
+		return 1 // ×1で＄表記そのままにする
+	}
+	defer res.Body.Close()
+
+	body, err := io.ReadAll(res.Body)
+
+	var exchange exchange
+	json.Unmarshal(body, &exchange)
+
+	if err != nil {
+		return 1
+	}
+	return exchange.Rates["JPY"]
 }

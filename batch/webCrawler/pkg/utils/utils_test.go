@@ -1,6 +1,8 @@
 package utils
 
 import (
+	"log"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -304,7 +306,23 @@ func TestParseWight(t *testing.T) {
 	}
 
 	for _, w := range weights {
+		w := w
 		actual, _ := ParseWight(w.weight)
 		assert.Equal(t, w.want, actual)
+	}
+}
+
+func TestConvertRealUrl(t *testing.T) {
+	urls := []string {
+		`/_next/image?url=https%3A%2F%2Fstrandbergs.cdn-norce.tech%2F81de294c-bd81-40ae-ad76-e8b983e5b528&w=3840&q=85`,
+		`/_next/image?url=https%3A%2F%2Fstrandbergs.cdn-norce.tech%2Fe3b3ad85-57b9-449f-9d72-6dfc03de6c11&w=3840&q=85`,
+		// `/product-images/Custom/CUSGJ5555/Ebony2-Pickup/front-banner-1600_900.png`,
+	}
+
+	for _, url := range urls {
+		url := url
+		converted, _ := ConvertRealUrl(url)
+		log.Println(converted)
+		assert.True(t, strings.HasPrefix(converted, "http"))
 	}
 }

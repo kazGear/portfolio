@@ -88,7 +88,6 @@ func (g *guitarScraperStrandberg) Scrape(funcs GuitarCallbacks,
                                          parentCtx context.Context,
 ) []*model.Guitar {
     guitars := g.gScraper.scrapeFrame(funcs, parentCtx)
-    utils.AutoDownLoader(guitars, "images/strandberg")
     return guitars
 }
 
@@ -182,7 +181,8 @@ func (c *callBacksStrandberg) CollectSpec() func(doc *goquery.Document) []map[st
         spec["Price"]            = strings.TrimSpace(doc.Find(`span:contains("Excluding vat")`).Prev().Text())
         spec["ScaleLengthMM"]    = getElem(`h3:contains("Instrument Length Global")`)
         spec["Series"]           = regSeriesStrandberg.FindString(spec["Name"])
-        spec["Src"], _           = doc.Find(`img[width="1200"][height="1200"]`).Attr(`src`)
+        proxyPath, _            := doc.Find(`img[width="1200"][height="1200"]`).Attr(`src`)
+        spec["Src"], _           = utils.ConvertRealUrl(proxyPath)
         spec["Weight"]           = getElem(`h3:contains("Instrument Weight Global")`)
 
         specs = utils.LockedAppend(mutex, specs, spec)

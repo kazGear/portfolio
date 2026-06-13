@@ -259,6 +259,7 @@ func renderHTML(ctx context.Context, startURL string, waitElem string,
         chromedp.Navigate(startURL),
         tryWaitVisible(waitElem), // 商品一覧の親
         chromedp.Sleep(2000 * time.Millisecond), // JS描画待
+        // autoScroll(ctx),
         chromedp.OuterHTML("html", &html),
     )
     if err != nil {
@@ -270,6 +271,30 @@ func renderHTML(ctx context.Context, startURL string, waitElem string,
         return nil, fmt.Errorf("[Document read error]: %v %v\n", err, waitElem)
     }
     return doc, nil
+}
+
+// htmlを自動でスクロールさせる
+func autoScroll(ctx context.Context) chromedp.Action {
+    var lastHeight int
+    var scrollY int
+    var innerHeight int
+
+    for i := 0; i < 50; i++ {
+        chromedp.Run(ctx,
+            chromedp.Evaluate(`document.body.scrollHeight`, &lastHeight), // ページ全体の高さ
+        )
+        chromedp.Run(ctx,
+            chromedp.Evaluate(`window.scrollBy(0, 800)`, nil),
+            chromedp.Sleep(300 * time.Millisecond),
+            chromedp.Evaluate(`window.scrollY`, &scrollY), // 画面上端のスクロール位置
+            chromedp.Evaluate(`window.innerHeight`, &innerHeight),
+        )
+        if scrollY + innerHeight >= lastHeight - 50 {
+            break // 最後までスクロール済
+        }
+        time.Sleep(1 * time.Second)
+    }
+    return nil
 }
 
 // link収集

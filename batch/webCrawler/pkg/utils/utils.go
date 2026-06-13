@@ -370,11 +370,14 @@ func AutoDownLoader(guitars []*model.Guitar, saveDirName string) []error {
 			defer wg.Done()
 			defer func() { <-queue }() // 次のワーカーへ
 
-			if strings.HasPrefix(guitar.Src, "https://") || strings.HasPrefix(guitar.Src, "http://") {
+			if strings.HasPrefix(guitar.Src, "http") {
 				return
 			}
 			url, err := ConvertRealUrl(guitar.Src)
 
+			if !strings.HasPrefix(guitar.Src, "http") {
+				return // url convert failed
+			}
 			if err != nil { LockedAppend(mutex, errs, err) }
 
 			savePath := CreateImageSavePath(saveDirName, url)

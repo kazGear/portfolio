@@ -3,6 +3,7 @@ package scraper
 import (
 	"context"
 	"fmt"
+	"regexp"
 	"strconv"
 	"strings"
 	"sync"
@@ -122,6 +123,8 @@ func (c *callBacksEsp) FetchDynamicPage(parentCtx context.Context) func(url stri
     }
 }
 
+var regSeries = regexp.MustCompile(`^[\w-]+`)
+
 func (c *callBacksEsp) CollectSpec() func(doc *goquery.Document) []map[string]string {
     return func(doc *goquery.Document) []map[string]string {
         specs := make([]map[string]string, 0, 1)
@@ -131,11 +134,12 @@ func (c *callBacksEsp) CollectSpec() func(doc *goquery.Document) []map[string]st
 
         spec["Maker"]   = strconv.Itoa(constants.Esp)
         spec["Name"]    = strings.TrimSpace(doc.Find("h1.header_title").Text())
-        src, _         := doc.Find("#main .header_content img.transform-5").Attr("src")
-        spec["Src"]     = strings.TrimSpace(src)
         spec["Color"]   = strings.TrimSpace(doc.Find(".header_content h3.clr_name").Text())
         spec["Comment"] = strings.TrimSpace(doc.Find("#specialfeatures .container_small p").Text())
         spec["Price"]   = strings.TrimSpace(doc.Find("p.detail_price").Text())
+        src, _         := doc.Find("#main .header_content img.transform-5").Attr("src")
+        spec["Src"]     = strings.TrimSpace(src)
+        spec["Series"]  = regSeries.FindString(spec["Name"])
 
         doc.Find("#specifications table.tbl_spec tr").Each(func(idx int, selector *goquery.Selection) {
             th      := strings.TrimSpace(selector.Find("th").Text())

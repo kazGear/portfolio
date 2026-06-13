@@ -150,6 +150,8 @@ func (c *callBacksStrandberg) FetchDynamicPage(parentCtx context.Context) func(u
 // シリーズ名の抽出用
 var regSeriesStrandberg = regexp.MustCompile(`^[A-Za-z]+\s[A-Za-z]+\b`)
 
+var exchangeRate        = utils.GetExchangeUSDtoJPY()
+
 func (c *callBacksStrandberg) CollectSpec() func(doc *goquery.Document) []map[string]string {
     return func(doc *goquery.Document) []map[string]string {
         specs := []map[string]string{}
@@ -178,7 +180,8 @@ func (c *callBacksStrandberg) CollectSpec() func(doc *goquery.Document) []map[st
         neckPickup              := getElem(`h3:contains("Neck pickup")`)
         bridgePickup            := getElem(`h3:contains("Bridge pickup")`)
         spec["Pickups"]          = fmt.Sprintf(constants.PickupsFormat, neckPickup, bridgePickup)
-        spec["Price"]            = strings.TrimSpace(doc.Find(`span:contains("Excluding vat")`).Prev().Text())
+        priceStr                := strings.TrimSpace(doc.Find(`span:contains("Excluding vat")`).Prev().Text())
+        spec["Price"]            = utils.CalcExchangedPrice(priceStr, exchangeRate)
         spec["ScaleLengthMM"]    = getElem(`h3:contains("Instrument Length Global")`)
         spec["Series"]           = regSeriesStrandberg.FindString(spec["Name"])
         proxyPath, _            := doc.Find(`img[width="1200"][height="1200"]`).Attr(`src`)

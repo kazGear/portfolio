@@ -19,6 +19,7 @@ import (
 	"github.com/PuerkitoBio/goquery"
 	"github.com/kazGear/portfolio/webCrawler/internal/model"
 	"github.com/kazGear/portfolio/webCrawler/pkg/constants"
+	"github.com/shopspring/decimal"
 
 	"golang.org/x/text/width"
 	"gopkg.in/natefinch/lumberjack.v2"
@@ -26,7 +27,7 @@ import (
 
 
 var _regPriceSpliter   = regexp.MustCompile(`[()（）/／:、]`)
-var _regUndefinedPrice = regexp.MustCompile(`(?i)(ask|open|""|\s+)`)
+var _regUndefinedPrice = regexp.MustCompile(`(?i)(ask|open)`)
 const _initPrice int   = 999999999
 // 金額表記を数値に変換 "¥128,000" → 128000
 func ParsePrice(price string) (int, error) {
@@ -456,4 +457,13 @@ func GetExchangeUSDtoJPY() float64 {
 		return 1
 	}
 	return exchange.Rates["JPY"]
+}
+
+// 国外価格 * rate >> 日本価格
+func CalcExchangedPrice(foreignPrice string, rate float64) string {
+	parsed, _ := ParsePrice(foreignPrice)
+	foreignP  := decimal.NewFromInt(int64(parsed))
+	exchange  := decimal.NewFromFloat(rate)
+	// 小数点以下は切り捨て
+	return foreignP.Mul(exchange).Truncate(0).String()
 }

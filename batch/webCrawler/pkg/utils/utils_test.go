@@ -326,3 +326,35 @@ func TestConvertRealUrl(t *testing.T) {
 		assert.True(t, strings.HasPrefix(converted, "http"))
 	}
 }
+
+func TestGetExchangeUSDtoJPY(t *testing.T) {
+	rate := GetExchangeUSDtoJPY()
+	assert.GreaterOrEqual(t, rate, 1.0)
+	assert.LessOrEqual(t, rate, 360.0)
+}
+func TestCalcExchangedPrice(t *testing.T) {
+	tests := []struct {
+		dollar string
+		rate   float64
+		want   string
+	}{
+		{
+			dollar: "99", rate: 120.0, want: "11880",
+		},
+		{
+			dollar: "99", rate: 120.1, want: "11889",
+		},
+		{
+			dollar: "99", rate: 120.11, want: "11890",
+		},
+		{
+			dollar: "$99", rate: 120.11, want: "11890",
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		actual := CalcExchangedPrice(test.dollar, test.rate)
+		assert.Equal(t, test.want, actual)
+	}
+}

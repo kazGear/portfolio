@@ -12,6 +12,7 @@ import (
 	"log"
 
 	"github.com/PuerkitoBio/goquery"
+	"github.com/chromedp/cdproto/cdp"
 	"github.com/chromedp/chromedp"
 	"github.com/gocolly/colly/v2"
 	"github.com/kazGear/portfolio/webCrawler/internal/model"
@@ -19,16 +20,16 @@ import (
 	"github.com/kazGear/portfolio/webCrawler/pkg/utils"
 )
 
-type guitarScraperGibson struct {
+type guitarScraperIbanez struct {
     gScraper guitarScraper
 }
 
-type callBacksGibson struct {
+type callBacksIbanez struct {
     funcs callBacks
 }
 
 
-func NewScraperGibson(logger *log.Logger) Scraper {
+func NewScraperIbanez(logger *log.Logger) Scraper {
 	collector := colly.NewCollector(
 		colly.Async(true),
 		colly.MaxDepth(3),
@@ -37,7 +38,7 @@ func NewScraperGibson(logger *log.Logger) Scraper {
 		DomainGlob:  "*",
 		Parallelism: 30,
 	})
-    return &guitarScraperGibson{
+    return &guitarScraperIbanez{
         guitarScraper{
             collector: collector,
             mutex:     &sync.Mutex{},
@@ -46,39 +47,97 @@ func NewScraperGibson(logger *log.Logger) Scraper {
     }
 }
 
-func NewCallBacksGibson(logger *log.Logger) GuitarCallbacks {
-    return &callBacksGibson{
+func NewCallBacksIbanez(logger *log.Logger) GuitarCallbacks {
+    return &callBacksIbanez{
         callBacks{
             logger: logger,
         },
     }
 }
 
-func (g *guitarScraperGibson) CollectLinks(parentCtx context.Context) ([]string, error) {
-    c       := g.gScraper.collector
-    visited := make(map[string]struct{}, 600)
-    mutex   := &sync.Mutex{}
+func (g *guitarScraperIbanez) CollectLinks(parentCtx context.Context) ([]string, error) {
+    // タブごとに独立した context を作る
+    tabCtx, tabCancel := chromedp.NewContext(parentCtx)
+    defer tabCancel()
+    // タブにだけ timeout を付ける
+    ctx, cancel := context.WithTimeout(tabCtx, 20 * time.Second)
+    defer cancel()
 
-    c.OnHTML(".body-types a", func(html *colly.HTMLElement) {
-        link := html.Request.AbsoluteURL(html.Attr("href"))
-        if g.gScraper.isFirstVisit(mutex, link, visited) {
-            c.Visit(link)
-        }
-    })
-    c.OnHTML(".category-wrapper .model-card a", func(html *colly.HTMLElement) {
-        link := html.Request.AbsoluteURL(html.Attr("href"))
-        if g.gScraper.isFirstVisit(mutex, link, visited) {
-            c.Visit(link)
-        }
-    })
-    c.Visit("https://gibson.jp/")
-    c.Wait()
+    // モデル一覧へのリンク収集
 
-    g.gScraper.urls = mapToSliceUrl(visited)
+    var nodes []*cdp.Node
+    var targetLinks = make([]string, 0, 450)
+
+    chromedp.Run(ctx,
+        chromedp.Navigate(`https://www.ibanez.com/jp/`),
+        tryWaitVisible(".idx-product-tabs-wrap"),
+        chromedp.Sleep(400 * time.Millisecond),
+        chromedp.Nodes(
+            `//div[contains(@class, "idx-product-tabs")]//div[contains(@class, "js-tab-parent-in")]`,
+            &nodes,
+        ),
+    )
+    if len(nodes) == 0 {
+        log.Println(`[WARN] nodes is empty, but continuing`)
+    }
+
+    var html string
+    var htmlParts = make([]*string, 0, len(nodes))
+    for i := 0; i < len(nodes); i++ {
+        htmlParts = append(htmlParts, new(string))
+    }
+    // クリックの都度HTML抽出
+    for idx, node := range nodes {
+        chromedp.Run(ctx,
+            chromedp.Sleep(600 * time.Millisecond),
+            tryClick(node.FullXPath()),
+            chromedp.OuterHTML(`.idx-product-tabs-wrap`, htmlParts[idx], chromedp.ByQuery),
+        )
+        html += *htmlParts[idx]
+    }
+    doc, err   := goquery.NewDocumentFromReader(strings.NewReader(html))
+    if err != nil {
+        return nil, fmt.Errorf(`[Html read error(goquery)]: %w`, err)
+    }
+    targetLinks = collectLinks(".idx-product-tabs-wrap a.rt_cf_pm_href", doc, 450)
+    targetLinks = toAbsLinks(targetLinks, `https://www.ibanez.com`, 450)
+
+    // 詳細ページのリンク収集
+
+    html = ""
+    htmlParts = make([]*string, 0, len(targetLinks))
+
+    for i := 0; i < len(targetLinks); i++ {
+        htmlParts = append(htmlParts, new(string))
+    }
+
+    for idx, link := range targetLinks {
+        chromedp.Run(ctx,
+            chromedp.Navigate(link),
+            tryWaitVisible(".products-model-series-lineup"),
+            chromedp.Sleep(200 * time.Millisecond),
+            autoScroll(ctx),
+            chromedp.Sleep(500 * time.Millisecond),
+            chromedp.OuterHTML(
+                `.products-model-series-lineup-list`, htmlParts[idx], chromedp.ByQueryAll,
+            ),
+        )
+        html += *htmlParts[idx]
+    }
+    doc, err    = goquery.NewDocumentFromReader(strings.NewReader(html))
+    if err != nil {
+        return nil, fmt.Errorf(`[Html read error(goquery)]: %w`, err)
+    }
+    targetLinks = collectLinks(".products-model-series-lineup-list a", doc, 1500)
+    targetLinks = toAbsLinks(targetLinks, `https://www.ibanez.com`, 1500)
+
+g.gScraper.logger.Println("[[ html ]]", html)
+utils.LogCollectedLinks(targetLinks, g.gScraper.logger)
+    // g.gScraper.urls = mapToSliceUrl(visited)
     return g.gScraper.urls, nil
 }
 
-func (g *guitarScraperGibson) Scrape(funcs GuitarCallbacks,
+func (g *guitarScraperIbanez) Scrape(funcs GuitarCallbacks,
                                      parentCtx context.Context,
 ) []*model.Guitar {
     guitars := g.gScraper.scrapeFrame(funcs, parentCtx)
@@ -86,7 +145,7 @@ func (g *guitarScraperGibson) Scrape(funcs GuitarCallbacks,
     return guitars
 }
 
-func (c *callBacksGibson) FetchDynamicPage(parentCtx context.Context) func(url string) (string, error) {
+func (c *callBacksIbanez) FetchDynamicPage(parentCtx context.Context) func(url string) (string, error) {
     return func(url string) (string, error) {
         if !isDetailPage(`https://gibson.jp/(electric|acoustic)/[a-z0-9\-]+`, url) {
             return "", nil
@@ -119,11 +178,11 @@ func (c *callBacksGibson) FetchDynamicPage(parentCtx context.Context) func(url s
 }
 
 // シリーズ名の抽出用
-var regSeriesGibson = regexp.MustCompile(
+var regSeriesIbanez = regexp.MustCompile(
     `(Les Paul|SG|ES-\d+|Flying V|Explorer|Firebird|Hummingbird|J\-\d+)+\s[A-Za-z]+\b`,
 )
 
-func (c *callBacksGibson) CollectSpec() func(doc *goquery.Document) []map[string]string {
+func (c *callBacksIbanez) CollectSpec() func(doc *goquery.Document) []map[string]string {
     return func(doc *goquery.Document) []map[string]string {
         specs := []map[string]string{}
         mutex := &sync.Mutex{}
@@ -134,7 +193,7 @@ func (c *callBacksGibson) CollectSpec() func(doc *goquery.Document) []map[string
 
         doc.Find(`#cart-options h2.marketing-headline small`).Remove() // Nameからノイズを除去
 
-        spec["Maker"]            = strconv.Itoa(constants.Gibson)
+        spec["Maker"]            = strconv.Itoa(constants.Ibanez)
         spec["Name"]             = getElem(`h2.marketing-headline`)
         spec["Color"]            = getElem(`div#displayed-finish`)
         spec["Comment"]          = getElem(`#cart-options .marketing-copy p`)
@@ -144,13 +203,13 @@ func (c *callBacksGibson) CollectSpec() func(doc *goquery.Document) []map[string
         spec["Price"]            = strconv.Itoa(constants.InvalidNumber)
         src, _                  := doc.Find(`img#gallery-front`).Attr(`src`)
         spec["Src"]              = strings.TrimSpace(src)
-        spec["Series"]           = regSeriesGibson.FindString(spec["Name"])
+        spec["Series"]           = regSeriesIbanez.FindString(spec["Name"])
         spec["Weight"]           = strconv.Itoa(constants.InvalidNumber)
 
         doc.Find(`#product-overview .spec-section .spec-item`).Each(func(idx int, selector *goquery.Selection) {
             label      := strings.TrimSpace(selector.Find(`div:nth-child(1)`).Text())
             elem       := strings.TrimSpace(selector.Find(`div:nth-child(2)`).Text())
-            field      := utils.ConvertLabel(label, fieldMapGibson)
+            field      := utils.ConvertLabel(label, fieldMapIbanez)
             spec[field] = elem
         })
         spec["BodyMaterial"] = spec["BodyMaterialTop"] + " " + spec["BodyMaterialBack"]
@@ -160,19 +219,19 @@ func (c *callBacksGibson) CollectSpec() func(doc *goquery.Document) []map[string
     }
 }
 
-func (c *callBacksGibson) BuildGuitar() func(spec map[string]string) *model.Guitar {
+func (c *callBacksIbanez) BuildGuitar() func(spec map[string]string) *model.Guitar {
     return func(spec map[string]string) *model.Guitar {
         return buildGuitarFrame(spec, c.funcs.logger)
     }
 }
 
-func (c *callBacksGibson) IsStaticPage() func(html string) bool {
+func (c *callBacksIbanez) IsStaticPage() func(html string) bool {
     return func(html string) bool {
         return strings.Contains(html, "product-overview")
     }
 }
 
-var fieldMapGibson = map[string]string{
+var fieldMapIbanez = map[string]string{
     "Finish":               "BodyFinish",
     "Top":                  "BodyMaterialTop",
     "Body Material":        "BodyMaterialBack",

@@ -358,3 +358,12 @@ func TestCalcExchangedPrice(t *testing.T) {
 		assert.Equal(t, test.want, actual)
 	}
 }
+
+func TestConvertRelToAbsUrl(t *testing.T) {
+	result  := `https://www.ibanez.com/common/product_artist_file/file/p_region_AZ2407F_BSR_00_01.png`
+	baseUrl := `https://www.ibanez.com/jp/products/detail/az2407f_00_01.html`
+	src 	:= `/common/product_artist_file/file/p_region_AZ2407F_BSR_00_01.png`
+	try, _  := ConvertRelToAbsUrl(baseUrl, src)
+
+	assert.Equal(t, try, result)
+}

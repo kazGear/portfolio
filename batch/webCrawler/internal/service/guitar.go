@@ -91,17 +91,21 @@ func makersFactory() map[string]*Maker {
     logger    := utils.NewLogger(makerName)
     makers[makerName] = NewMaker(makerName, scraper.NewScraperEsp(logger), scraper.NewCallBacksEsp(logger), logger)
 
-    makerName = "ESP_sig"
-    logger    = utils.NewLogger(makerName)
-    makers[makerName] = NewMaker(makerName, scraper.NewScraperEspSig(logger), scraper.NewCallBacksEspSig(logger), logger)
+    // makerName = "ESP_sig"
+    // logger    = utils.NewLogger(makerName)
+    // makers[makerName] = NewMaker(makerName, scraper.NewScraperEspSig(logger), scraper.NewCallBacksEspSig(logger), logger)
 
-    makerName = ".strandberg"
-    logger    = utils.NewLogger(makerName)
-    makers[makerName] = NewMaker(makerName, scraper.NewScraperStrandberg(logger), scraper.NewCallBacksStrandberg(logger), logger)
+    // makerName = ".strandberg"
+    // logger    = utils.NewLogger(makerName)
+    // makers[makerName] = NewMaker(makerName, scraper.NewScraperStrandberg(logger), scraper.NewCallBacksStrandberg(logger), logger)
 
-    makerName = "Gibson"
+    // makerName = "Gibson"
+    // logger    = utils.NewLogger(makerName)
+    // makers[makerName] = NewMaker(makerName, scraper.NewScraperGibson(logger), scraper.NewCallBacksGibson(logger), logger)
+
+    makerName = "Ibanez"
     logger    = utils.NewLogger(makerName)
-    makers[makerName] = NewMaker(makerName, scraper.NewScraperGibson(logger), scraper.NewCallBacksGibson(logger), logger)
+    makers[makerName] = NewMaker(makerName, scraper.NewScraperIbanez(logger), scraper.NewCallBacksIbanez(logger), logger)
 
     return makers
 }

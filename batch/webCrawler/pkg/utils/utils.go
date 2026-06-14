@@ -305,7 +305,7 @@ func ConvertColorCd(colorName string) int {
 	return constants.OthersColor
 }
 
-// URLを使用できる形式に変換
+// URLを使用できる形式に変換（next.jsの謎パス等
 func ConvertRealUrl(proxyUrl string) (string, error) {
 	u, err := url.Parse(proxyUrl)
 
@@ -319,6 +319,20 @@ func ConvertRealUrl(proxyUrl string) (string, error) {
 		return proxyUrl, fmt.Errorf("[URL convert error]: %v %w\n", proxyUrl, err)
 	}
 	return realUrl, nil
+}
+
+// 相対パスを絶対パスに変換
+func ConvertRelToAbsUrl(baseUrl string, src string) (string, error) {
+	var err error
+	base, err := url.Parse(baseUrl)
+	ref, err  := url.Parse(src)
+
+	if err != nil {
+		return "", fmt.Errorf(`[Url parse failed]: %v %w`, src, err)
+	}
+	absURL := base.ResolveReference(ref)
+
+	return absURL.String(), nil
 }
 
 // 画像保存するためのパスを作成。dir名＋ファイル名

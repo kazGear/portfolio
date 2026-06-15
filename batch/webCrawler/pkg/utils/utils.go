@@ -322,17 +322,17 @@ func ConvertRealUrl(proxyUrl string) (string, error) {
 }
 
 // 相対パスを絶対パスに変換
-func ConvertRelToAbsUrl(baseUrl string, src string) (string, error) {
+func ConvertRelToAbsUrl(absUrl string, src string) (string, error) {
 	var err error
-	base, err := url.Parse(baseUrl)
+	base, err := url.Parse(absUrl)
 	ref, err  := url.Parse(src)
 
 	if err != nil {
 		return "", fmt.Errorf(`[Url parse failed]: %v %w`, src, err)
 	}
-	absURL := base.ResolveReference(ref)
+	result := base.ResolveReference(ref)
 
-	return absURL.String(), nil
+	return result.String(), nil
 }
 
 // 画像保存するためのパスを作成。dir名＋ファイル名

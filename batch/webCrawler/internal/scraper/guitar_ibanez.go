@@ -99,7 +99,7 @@ func collectLinksModelView(ctx context.Context) ([]string, error) {
         return []string{}, fmt.Errorf(`[WARN] nodes is empty, but continuing`)
     }
 
-    var html string
+    var htmlBuilder strings.Builder
     var htmlParts = make([]*string, 0, len(nodes))
     for i := 0; i < len(nodes); i++ {
         htmlParts = append(htmlParts, new(string))
@@ -112,9 +112,9 @@ func collectLinksModelView(ctx context.Context) ([]string, error) {
             chromedp.Sleep(200 * time.Millisecond),
             chromedp.OuterHTML(`.idx-product-tabs-wrap`, htmlParts[i], chromedp.ByQuery),
         )
-        html += *htmlParts[i]
+        htmlBuilder.WriteString(*htmlParts[i])
     }
-    doc, err   := goquery.NewDocumentFromReader(strings.NewReader(html))
+    doc, err := goquery.NewDocumentFromReader(strings.NewReader(htmlBuilder.String()))
     if err != nil {
         return []string{}, fmt.Errorf(`[Html read error(goquery)]: %w`, err)
     }
@@ -125,7 +125,7 @@ func collectLinksModelView(ctx context.Context) ([]string, error) {
 
 // 詳細ページのリンク収集
 func collectLinksDetailView(ctx context.Context, modelLinks []string) ([]string, error) {
-    html      := ""
+    var htmlBuilder strings.Builder
     htmlParts := make([]*string, 0, len(modelLinks))
 
     for i := 0; i < len(modelLinks); i++ {
@@ -140,9 +140,9 @@ func collectLinksDetailView(ctx context.Context, modelLinks []string) ([]string,
                 "main", htmlParts[idx], chromedp.ByQuery, // 必要なリンクが散らばっているので大きく取得 main
             ),
         )
-        html += *htmlParts[idx]
+        htmlBuilder.WriteString(*htmlParts[idx])
     }
-    doc, err := goquery.NewDocumentFromReader(strings.NewReader(html))
+    doc, err := goquery.NewDocumentFromReader(strings.NewReader(htmlBuilder.String()))
 
     if err != nil {
         return []string{}, fmt.Errorf(`[Html read error(goquery)]: %w`, err)

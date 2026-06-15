@@ -48,6 +48,8 @@ func (g *guitarScraper) scrapeFrame(funcs GuitarCallbacks, ctx context.Context) 
         g.logger.Println("None URL for crawling...")
         return []*model.Guitar{}
     }
+    utils.LogCollectedLinks(g.urls, g.logger)
+
     wg := &sync.WaitGroup{}
 
     for _, url := range g.urls {
@@ -226,8 +228,6 @@ func (g *guitarScraper) isFirstVisit(mutex *sync.Mutex, url string, visited map[
         return false
     }
     visited[url] = struct{}{} // struct{} = use memory 0
-    g.logger.Printf("[visited]: %v", url)
-
     return true
 }
 
@@ -259,7 +259,6 @@ func renderHTML(ctx context.Context, startURL string, waitElem string,
         chromedp.Navigate(startURL),
         tryWaitVisible(waitElem), // 商品一覧の親
         chromedp.Sleep(2000 * time.Millisecond), // JS描画待
-        // autoScroll(ctx),
         chromedp.OuterHTML("html", &html),
     )
     if err != nil {

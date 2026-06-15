@@ -63,11 +63,27 @@ func (g *guitarScraperIbanez) CollectLinks(parentCtx context.Context) ([]string,
     ctx, cancel := context.WithTimeout(tabCtx, 600 * time.Second)
     defer cancel()
 
-    // モデル一覧へのリンク収集
+    modelLinks, err := collectLinksModelView(ctx)
 
+    if err != nil {
+        return []string{}, err
+    }
+    detailLinks, err := collectLinksDetailView(ctx, modelLinks)
+
+    if err != nil {
+        return []string{}, err
+    }
+    utils.LogCollectedLinks(detailLinks, g.gScraper.logger)
+    g.gScraper.urls = detailLinks
+    return g.gScraper.urls, nil
+}
+
+// モデル一覧へのリンク収集
+func collectLinksModelView(ctx context.Context) ([]string, error) {
     var nodes []*cdp.Node
     var modelLinks = make([]string, 0, 450)
 
+    // クリック対象のノード取得
     err := chromedp.Run(ctx,
         chromedp.Navigate(`https://www.ibanez.com/jp/`),
         tryWaitVisible(".idx-product-tabs-wrap"),
@@ -104,42 +120,36 @@ func (g *guitarScraperIbanez) CollectLinks(parentCtx context.Context) ([]string,
     }
     modelLinks = collectLinks(".idx-product-tabs-wrap a.rt_cf_pm_href", doc, 450)
     modelLinks = toAbsLinks(modelLinks, `https://www.ibanez.com`, 450)
+    return modelLinks, nil
+}
 
-    // 詳細ページのリンク収集
-
-    html = ""
-    htmlParts = make([]*string, 0, len(modelLinks))
+// 詳細ページのリンク収集
+func collectLinksDetailView(ctx context.Context, modelLinks []string) ([]string, error) {
+    html      := ""
+    htmlParts := make([]*string, 0, len(modelLinks))
 
     for i := 0; i < len(modelLinks); i++ {
         htmlParts = append(htmlParts, new(string))
     }
+    // モデル一覧から詳細ページへのリンクを収集
     for idx, link := range modelLinks {
         chromedp.Run(ctx,
             chromedp.Navigate(link),
             tryWaitVisible(".products-model-series-lineup-list a"),
             chromedp.OuterHTML(
-                "main", htmlParts[idx], chromedp.ByQuery,
+                "main", htmlParts[idx], chromedp.ByQuery, // 必要なリンクが散らばっているので大きく取得 main
             ),
         )
         html += *htmlParts[idx]
     }
-    doc, err    = goquery.NewDocumentFromReader(strings.NewReader(html))
+    doc, err := goquery.NewDocumentFromReader(strings.NewReader(html))
+
     if err != nil {
         return []string{}, fmt.Errorf(`[Html read error(goquery)]: %w`, err)
     }
     detailLinks := collectLinks(".products-model-series-lineup-list a", doc, 2050)
     detailLinks  = toAbsLinks(detailLinks, `https://www.ibanez.com`, 2050)
-
-    utils.LogCollectedLinks(detailLinks, g.gScraper.logger)
-    g.gScraper.urls = detailLinks
-    return g.gScraper.urls, nil
-}
-
-func collectLinksModelViewc(ctx context.Context) []string {
-    return []string{}
-}
-func collectLinksDetailView(ctx context.Context) []string {
-    return []string{}
+    return detailLinks, nil
 }
 
 func (g *guitarScraperIbanez) Scrape(funcs GuitarCallbacks,

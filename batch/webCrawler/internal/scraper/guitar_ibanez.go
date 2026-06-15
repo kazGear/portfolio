@@ -60,25 +60,27 @@ func (g *guitarScraperIbanez) CollectLinks(parentCtx context.Context) ([]string,
     tabCtx, tabCancel := chromedp.NewContext(parentCtx)
     defer tabCancel()
     // タブにだけ timeout を付ける
-    ctx, cancel := context.WithTimeout(tabCtx, 20 * time.Second)
+    ctx, cancel := context.WithTimeout(tabCtx, 600 * time.Second)
     defer cancel()
 
     // モデル一覧へのリンク収集
 
     var nodes []*cdp.Node
-    var targetLinks = make([]string, 0, 450)
+    var modelLinks = make([]string, 0, 450)
 
-    chromedp.Run(ctx,
+    err := chromedp.Run(ctx,
         chromedp.Navigate(`https://www.ibanez.com/jp/`),
         tryWaitVisible(".idx-product-tabs-wrap"),
-        chromedp.Sleep(400 * time.Millisecond),
         chromedp.Nodes(
             `//div[contains(@class, "idx-product-tabs")]//div[contains(@class, "js-tab-parent-in")]`,
             &nodes,
         ),
     )
+    if err != nil {
+        return []string{}, fmt.Errorf("[Chromedp error]: %w\n", err)
+    }
     if len(nodes) == 0 {
-        log.Println(`[WARN] nodes is empty, but continuing`)
+        return []string{}, fmt.Errorf(`[WARN] nodes is empty, but continuing`)
     }
 
     var html string
@@ -87,54 +89,57 @@ func (g *guitarScraperIbanez) CollectLinks(parentCtx context.Context) ([]string,
         htmlParts = append(htmlParts, new(string))
     }
     // クリックの都度HTML抽出
-    for idx, node := range nodes {
+    // 左から４ノードのみ必要。[nodes]: ELECTRIC GUITARS | BASSES | HOLLOW BODIES | ACOUSTICS | ELECTRONICS | ACCESSORIES
+    for i := 0; i < 4; i++ {
         chromedp.Run(ctx,
-            chromedp.Sleep(600 * time.Millisecond),
-            tryClick(node.FullXPath()),
-            chromedp.OuterHTML(`.idx-product-tabs-wrap`, htmlParts[idx], chromedp.ByQuery),
+            tryClick(nodes[i].FullXPath()),
+            chromedp.Sleep(200 * time.Millisecond),
+            chromedp.OuterHTML(`.idx-product-tabs-wrap`, htmlParts[i], chromedp.ByQuery),
         )
-        html += *htmlParts[idx]
+        html += *htmlParts[i]
     }
     doc, err   := goquery.NewDocumentFromReader(strings.NewReader(html))
     if err != nil {
-        return nil, fmt.Errorf(`[Html read error(goquery)]: %w`, err)
+        return []string{}, fmt.Errorf(`[Html read error(goquery)]: %w`, err)
     }
-    targetLinks = collectLinks(".idx-product-tabs-wrap a.rt_cf_pm_href", doc, 450)
-    targetLinks = toAbsLinks(targetLinks, `https://www.ibanez.com`, 450)
+    modelLinks = collectLinks(".idx-product-tabs-wrap a.rt_cf_pm_href", doc, 450)
+    modelLinks = toAbsLinks(modelLinks, `https://www.ibanez.com`, 450)
 
     // 詳細ページのリンク収集
 
     html = ""
-    htmlParts = make([]*string, 0, len(targetLinks))
+    htmlParts = make([]*string, 0, len(modelLinks))
 
-    for i := 0; i < len(targetLinks); i++ {
+    for i := 0; i < len(modelLinks); i++ {
         htmlParts = append(htmlParts, new(string))
     }
-
-    for idx, link := range targetLinks {
+    for idx, link := range modelLinks {
         chromedp.Run(ctx,
             chromedp.Navigate(link),
-            tryWaitVisible(".products-model-series-lineup"),
-            chromedp.Sleep(200 * time.Millisecond),
-            autoScroll(ctx),
-            chromedp.Sleep(500 * time.Millisecond),
+            tryWaitVisible(".products-model-series-lineup-list a"),
             chromedp.OuterHTML(
-                `.products-model-series-lineup-list`, htmlParts[idx], chromedp.ByQueryAll,
+                "main", htmlParts[idx], chromedp.ByQuery,
             ),
         )
         html += *htmlParts[idx]
     }
     doc, err    = goquery.NewDocumentFromReader(strings.NewReader(html))
     if err != nil {
-        return nil, fmt.Errorf(`[Html read error(goquery)]: %w`, err)
+        return []string{}, fmt.Errorf(`[Html read error(goquery)]: %w`, err)
     }
-    targetLinks = collectLinks(".products-model-series-lineup-list a", doc, 1500)
-    targetLinks = toAbsLinks(targetLinks, `https://www.ibanez.com`, 1500)
+    detailLinks := collectLinks(".products-model-series-lineup-list a", doc, 2050)
+    detailLinks  = toAbsLinks(detailLinks, `https://www.ibanez.com`, 2050)
 
-g.gScraper.logger.Println("[[ html ]]", html)
-utils.LogCollectedLinks(targetLinks, g.gScraper.logger)
-    // g.gScraper.urls = mapToSliceUrl(visited)
+    utils.LogCollectedLinks(detailLinks, g.gScraper.logger)
+    g.gScraper.urls = detailLinks
     return g.gScraper.urls, nil
+}
+
+func collectLinksModelViewc(ctx context.Context) []string {
+    return []string{}
+}
+func collectLinksDetailView(ctx context.Context) []string {
+    return []string{}
 }
 
 func (g *guitarScraperIbanez) Scrape(funcs GuitarCallbacks,

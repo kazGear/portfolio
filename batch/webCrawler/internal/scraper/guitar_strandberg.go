@@ -78,7 +78,6 @@ func (g *guitarScraperStrandberg) CollectLinks(parentCtx context.Context) ([]str
     targetLinks = collectLinks(".product-card a", doc, 50)
     targetLinks = getNeedLinks(targetLinks, `/en-US/product/`, 50)
     targetLinks = toAbsLinks(targetLinks, `https://strandbergguitars.com`, 50)
-    utils.LogCollectedLinks(targetLinks, g.gScraper.logger)
 
     g.gScraper.urls = targetLinks
     return g.gScraper.urls, nil

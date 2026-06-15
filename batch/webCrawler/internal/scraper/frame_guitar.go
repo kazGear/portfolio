@@ -72,7 +72,7 @@ func (g *guitarScraper) scrapeFrame(funcs GuitarCallbacks, ctx context.Context) 
             for _, spec := range specs {
                 guitar := buildGuitar(spec)
 
-                if len(guitar.Name) <= 0 || len(guitar.Color) <= 0 { continue }
+            if len(guitar.Name) <= 0 || len(guitar.Color) <= 0 { continue }
                 guitars = utils.LockedAppend(g.mutex, guitars, guitar)
             }
         }(html)

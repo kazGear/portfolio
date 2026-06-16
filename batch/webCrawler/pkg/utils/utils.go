@@ -145,7 +145,7 @@ func LoggerInit(maker string) {
 		MaxSize:    5,   // 5MBでローテーション
 		MaxBackups: 7,   // 最大7ファイル保持
 		MaxAge:     10,  // 30日で削除
-		Compress:   true,
+		Compress:   false,
 	})
 }
 
@@ -164,7 +164,7 @@ func NewLogger(makerName string) *log.Logger {
         MaxSize:    5,   // 5MBでローテーション
         MaxBackups: 7,   // 最大7ファイル保持
         MaxAge:     10,  // 10日で削除
-        Compress:   true,
+        Compress:   false,
     }
     return log.New(writer, "", log.LstdFlags)
 }

@@ -19,8 +19,8 @@ const (
 // date用フォーマット
 const (
 	DateOnly     = "2006-01-02"
-	DateTime     = "2006-01-02_T150405"
-	DateTimeMin  = "2006-01-02_T1504"
+	DateTime     = "2006-01-02_T15-04-05"
+	DateTimeMin  = "2006-01-02_T15-04"
 	FileDateTime = "20060102_150405"
 )
 

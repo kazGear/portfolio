@@ -305,18 +305,6 @@ func collectLinks(eachSelector string, doc *goquery.Document, cap int) []string 
     return links
 }
 
-// 必要なリンクだけ取得
-func getNeedLinks(links []string, needPattern string, cap int) []string {
-    needLinks := make([]string, 0, cap)
-
-    for _, link := range links {
-        if strings.Contains(link, needPattern) {
-            needLinks = append(needLinks, link)
-        }
-    }
-    return needLinks
-}
-
 // 相対パスから絶対パスへ変換
 func toAbsLinks(links []string, prefix string, cap int) []string {
     absLinks := make([]string, 0, cap)

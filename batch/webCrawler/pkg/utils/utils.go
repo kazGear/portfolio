@@ -507,3 +507,15 @@ func MapToSliceUrl(visited map[string]struct{}) []string {
     }
     return urls
 }
+
+// 必要なリンクだけ取得
+func GetNeedLinks(links []string, needPattern string, cap int) []string {
+    needLinks := make([]string, 0, cap)
+
+    for _, link := range links {
+        if strings.Contains(link, needPattern) {
+            needLinks = append(needLinks, link)
+        }
+    }
+    return needLinks
+}

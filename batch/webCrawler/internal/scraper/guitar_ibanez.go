@@ -3,7 +3,6 @@ package scraper
 import (
 	"context"
 	"fmt"
-	"regexp"
 	"strconv"
 	"strings"
 	"sync"
@@ -60,7 +59,7 @@ func (g *guitarScraperIbanez) CollectLinks(parentCtx context.Context) ([]string,
     tabCtx, tabCancel := chromedp.NewContext(parentCtx)
     defer tabCancel()
     // タブにだけ timeout を付ける
-    ctx, cancel := context.WithTimeout(tabCtx, 600 * time.Second)
+    ctx, cancel := context.WithTimeout(tabCtx, 300 * time.Second)
     defer cancel()
 
     modelLinks, err := collectLinksModelView(ctx)
@@ -73,8 +72,7 @@ func (g *guitarScraperIbanez) CollectLinks(parentCtx context.Context) ([]string,
     if err != nil {
         return []string{}, err
     }
-    utils.LogCollectedLinks(detailLinks, g.gScraper.logger)
-    g.gScraper.urls = detailLinks
+    g.gScraper.urls = utils.GetDistinctLinks(detailLinks)
     return g.gScraper.urls, nil
 }
 
@@ -115,11 +113,12 @@ func collectLinksModelView(ctx context.Context) ([]string, error) {
         htmlBuilder.WriteString(*htmlParts[i])
     }
     doc, err := goquery.NewDocumentFromReader(strings.NewReader(htmlBuilder.String()))
+
     if err != nil {
         return []string{}, fmt.Errorf(`[Html read error(goquery)]: %w`, err)
     }
-    modelLinks = collectLinks(".idx-product-tabs-wrap a.rt_cf_pm_href", doc, 450)
-    modelLinks = toAbsLinks(modelLinks, `https://www.ibanez.com`, 450)
+    modelLinks = collectLinks(".idx-product-tabs-wrap a.rt_cf_pm_href", doc, 500)
+    modelLinks = toAbsLinks(modelLinks, `https://www.ibanez.com`, 500)
     return modelLinks, nil
 }
 
@@ -147,8 +146,8 @@ func collectLinksDetailView(ctx context.Context, modelLinks []string) ([]string,
     if err != nil {
         return []string{}, fmt.Errorf(`[Html read error(goquery)]: %w`, err)
     }
-    detailLinks := collectLinks(".products-model-series-lineup-list a", doc, 2050)
-    detailLinks  = toAbsLinks(detailLinks, `https://www.ibanez.com`, 2050)
+    detailLinks := collectLinks(".products-model-series-lineup-list a", doc, 2100)
+    detailLinks  = toAbsLinks(detailLinks, `https://www.ibanez.com`, 2100)
     return detailLinks, nil
 }
 
@@ -156,13 +155,12 @@ func (g *guitarScraperIbanez) Scrape(funcs GuitarCallbacks,
                                      parentCtx context.Context,
 ) []*model.Guitar {
     guitars := g.gScraper.scrapeFrame(funcs, parentCtx)
-    utils.AutoDownLoader(guitars, "images/gibson")
     return guitars
 }
 
 func (c *callBacksIbanez) FetchDynamicPage(parentCtx context.Context) func(url string) (string, error) {
     return func(url string) (string, error) {
-        if !isDetailPage(`https://gibson.jp/(electric|acoustic)/[a-z0-9\-]+`, url) {
+        if !isDetailPage(`https://www/ibanez/com/jp/products/detail/[a-z]+\d+`, url) {
             return "", nil
         }
         // タブごとに独立した context を作る
@@ -174,7 +172,7 @@ func (c *callBacksIbanez) FetchDynamicPage(parentCtx context.Context) func(url s
 
         err := chromedp.Run(ctx,
             chromedp.Navigate(url),
-            tryWaitVisible("#body-wrap"), // 求める要素が出るまで待つ
+            tryWaitVisible(".products-spec-table-li"), // 求める要素が出るまで待つ
             chromedp.Sleep(200 * time.Millisecond), // JSが動く猶予を与える
         )
         if err != nil {
@@ -192,42 +190,57 @@ func (c *callBacksIbanez) FetchDynamicPage(parentCtx context.Context) func(url s
     }
 }
 
-// シリーズ名の抽出用
-var regSeriesIbanez = regexp.MustCompile(
-    `(Les Paul|SG|ES-\d+|Flying V|Explorer|Firebird|Hummingbird|J\-\d+)+\s[A-Za-z]+\b`,
-)
-
 func (c *callBacksIbanez) CollectSpec() func(doc *goquery.Document) []map[string]string {
     return func(doc *goquery.Document) []map[string]string {
+        getElem       := utils.GetElem(doc)
+
+        // 詳細urlにギター、ベース以外が紛れてしまうのでフィルタリング
+        factoryTuning := getElem(`.rt_cf_p_data_factory_tuning`)
+        if len(factoryTuning) <= 0 {
+            return []map[string]string{} // upsertで弾かれる
+        }
+
         specs := []map[string]string{}
+        spec  := map[string]string{}
         mutex := &sync.Mutex{}
 
-        spec        := map[string]string{}
-        getElem     := utils.GetElem(doc)
-        getElemNext := utils.GetElemNextToLabel(doc)
-
-        doc.Find(`#cart-options h2.marketing-headline small`).Remove() // Nameからノイズを除去
-
         spec["Maker"]            = strconv.Itoa(constants.Ibanez)
-        spec["Name"]             = getElem(`h2.marketing-headline`)
-        spec["Color"]            = getElem(`div#displayed-finish`)
-        spec["Comment"]          = getElem(`#cart-options .marketing-copy p`)
-        neckPickup              := getElemNext(`.spec-item div:contains("Neck pickup")`)
-        bridgePickup            := getElemNext(`.spec-item div:contains("Bridge pickup")`)
-        spec["Pickups"]          = fmt.Sprintf(constants.PickupsFormat, neckPickup, bridgePickup)
-        spec["Price"]            = strconv.Itoa(constants.InvalidNumber)
-        src, _                  := doc.Find(`img#gallery-front`).Attr(`src`)
-        spec["Src"]              = strings.TrimSpace(src)
-        spec["Series"]           = regSeriesIbanez.FindString(spec["Name"])
-        spec["Weight"]           = strconv.Itoa(constants.InvalidNumber)
+        spec["Name"]             = getElem(`.rt_cf_p_cm_product_code`)
+        spec["Color"]            = getElem(`.rt_cf_pcl_color_name_jp_1, .rt_cf_pcl_color_name_ag_jp_1`)
+        spec["Comment"]          = ""
+        spec["BodyFinish"]       = ""
+        spec["BodyMaterialBack"] = getElem(`.rt_cf_p_data_body_material, .rt_cf_p_ag_side_material`)
+        spec["BodyMaterialTop"]  = getElem(`.rt_cf_p_data_body_top_material`)
+        spec["BodyMaterial"]     = spec["BodyMaterialTop"] + " / " + spec["BodyMaterialBack"]
+        spec["Bridge"]           = getElem(`.rt_cf_p_data_bridge`)
+        spec["Controls"]         = ""
+        spec["Comment"]          = ""
+        spec["Fingerboard"]      = getElem(`.rt_cf_p_data_fretboard`)
+        spec["FretCount"]        = getElem(`.rt_cf_p_data_number_fret`)
 
-        doc.Find(`#product-overview .spec-section .spec-item`).Each(func(idx int, selector *goquery.Selection) {
-            label      := strings.TrimSpace(selector.Find(`div:nth-child(1)`).Text())
-            elem       := strings.TrimSpace(selector.Find(`div:nth-child(2)`).Text())
-            field      := utils.ConvertLabel(label, fieldMapIbanez)
-            spec[field] = elem
-        })
-        spec["BodyMaterial"] = spec["BodyMaterialTop"] + " " + spec["BodyMaterialBack"]
+        inlays                  := getElem(`.rt_cf_p_ag_face_inlay`)
+        if len(inlays) > 0 {
+            spec["Inlays"] = inlays
+        } else {
+            spec["Inlays"] = getElem(`.rt_cf_p_data_in`)
+        }
+
+        spec["Joint"]            = ""
+        spec["NeckMaterial"]     = getElem(`.rt_cf_p_data_neck_material`)
+
+        neckPickup              := getElem(`.rt_cf_p_data_neck_pickup`)
+        middlePickup            := getElem(`.rt_cf_p_data_middle_pickup`)
+        bridgePickup            := getElem(`.rt_cf_p_data_bridge_pickup`)
+        spec["Pickups"]          = fmt.Sprintf(`%v / %v / %v `, neckPickup, middlePickup, bridgePickup)
+
+        spec["Price"]            = getElem(`.rt_cf_p_cm_price`)
+        src, _                  := doc.Find(`.products-detail-main-modal-img`).Attr(`src`)
+        spec["Src"]              = strings.TrimSpace(src)
+        spec["Series"]           = strings.TrimSpace(doc.Find(
+                                    `ul a:contains("` + spec["Name"] + `")`,
+                                         ).Parent().Parent().Prev().Children().Text())
+        spec["ScaleLengthMM"]    = getElem(`.rt_cf_p_data_scale_mm`)
+        spec["Weight"]           = strconv.Itoa(constants.InvalidNumber)
 
         specs = utils.LockedAppend(mutex, specs, spec)
         return specs
@@ -242,21 +255,6 @@ func (c *callBacksIbanez) BuildGuitar() func(spec map[string]string) *model.Guit
 
 func (c *callBacksIbanez) IsStaticPage() func(html string) bool {
     return func(html string) bool {
-        return strings.Contains(html, "product-overview")
+        return strings.Contains(html, "products-spec-table-li")
     }
-}
-
-var fieldMapIbanez = map[string]string{
-    "Finish":               "BodyFinish",
-    "Top":                  "BodyMaterialTop",
-    "Body Material":        "BodyMaterialBack",
-    "Body":                 "BodyMaterialBack",
-    "Bridge":               "Bridge",
-    "Controls":             "Controls",
-    "Fingerboard Material": "Fingerboard",
-    "Number Of Frets":      "FretCount",
-    "Inlays":               "Inlays",
-    "Joint":                "Joint",
-    "Material":             "NeckMaterial",
-    "Scale Length":         "ScaleLengthMM",
 }

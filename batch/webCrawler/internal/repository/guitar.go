@@ -129,7 +129,7 @@ func (r *guitarRepository) Upsert(guitar *model.Guitar) error {
 }
 
 func (r *guitarRepository) UpsertAll(guitars []*model.Guitar) (int, int, []error) {
-    errs  := make([]error, 0, 300)
+    errs    := make([]error, 0, 300)
     okCount := 0
     ngCount := 0
 

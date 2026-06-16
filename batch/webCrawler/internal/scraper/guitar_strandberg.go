@@ -157,7 +157,7 @@ func (c *callBacksStrandberg) CollectSpec() func(doc *goquery.Document) []map[st
         mutex := &sync.Mutex{}
 
         spec    := map[string]string{}
-        getElem := utils.GetElemNextToLabel(doc)
+        getElem := utils.GetNextElem(doc)
 
         spec["Maker"]            = strconv.Itoa(constants.Strandberg)
         spec["Name"]             = strings.TrimSpace(doc.Find(

@@ -27,7 +27,7 @@ import (
 
 
 var _regPriceSpliter   = regexp.MustCompile(`[()（）/／:、]`)
-var _regUndefinedPrice = regexp.MustCompile(`(?i)(ask|open)`)
+var _regUndefinedPrice = regexp.MustCompile(`(?i)(ask|open|オープン)`)
 const _initPrice int   = 999999999
 // 金額表記を数値に変換 "¥128,000" → 128000
 func ParsePrice(price string) (int, error) {
@@ -421,8 +421,8 @@ func GetElem(doc *goquery.Document) func(selector string) string {
 	}
 }
 
-// 指定したラベルの次（兄弟要素）の要素を取得
-func GetElemNextToLabel(doc *goquery.Document) func(selector string) string {
+// 指定した要素の次（兄弟要素）の要素を取得
+func GetNextElem(doc *goquery.Document) func(selector string) string {
 	return func(selector string) string {
 		return strings.TrimSpace(doc.Find(selector).Next().Text())
 	}

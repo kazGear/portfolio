@@ -53,7 +53,8 @@ func (g *guitarScraper) scrapeFrame(funcs GuitarCallbacks, ctx context.Context) 
     wg := &sync.WaitGroup{}
 
     for _, url := range g.urls {
-        // 静的/動的を判定して HTML を取得、DOM化
+        url := url
+        // 静的/動的を判定してHTMLを取得
         html := g.fetchPage(url, funcs.IsStaticPage(), funcs.FetchDynamicPage(ctx))
 
         wg.Add(1)
@@ -62,7 +63,7 @@ func (g *guitarScraper) scrapeFrame(funcs GuitarCallbacks, ctx context.Context) 
             doc, err := goquery.NewDocumentFromReader(strings.NewReader(html))
 
             if err != nil {
-                g.logger.Println("goquery error:", err)
+                g.logger.Println("[Goquery error]:", err)
                 return
             }
             collectSpec := funcs.CollectSpec()
@@ -72,7 +73,9 @@ func (g *guitarScraper) scrapeFrame(funcs GuitarCallbacks, ctx context.Context) 
             for _, spec := range specs {
                 guitar := buildGuitar(spec)
 
-            if len(guitar.Name) <= 0 || len(guitar.Color) <= 0 { continue }
+                if len(guitar.Name) <= 0 || len(guitar.Color) <= 0 {
+                    continue
+                }
                 guitars = utils.LockedAppend(g.mutex, guitars, guitar)
             }
         }(html)

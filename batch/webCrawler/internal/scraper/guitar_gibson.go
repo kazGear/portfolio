@@ -130,7 +130,7 @@ func (c *callBacksGibson) CollectSpec() func(doc *goquery.Document) []map[string
 
         spec        := map[string]string{}
         getElem     := utils.GetElem(doc)
-        getElemNext := utils.GetElemNextToLabel(doc)
+        getElemNext := utils.GetNextElem(doc)
 
         doc.Find(`#cart-options h2.marketing-headline small`).Remove() // Nameからノイズを除去
 

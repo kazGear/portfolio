@@ -482,6 +482,7 @@ func CalcExchangedPrice(foreignPrice string, rate float64) string {
 	return foreignP.Mul(exchange).Truncate(0).String()
 }
 
+// リンクの重複を排除する
 func GetDistinctLinks(links []string) []string {
 	removed := map[string]struct{}{}
 
@@ -494,4 +495,15 @@ func GetDistinctLinks(links []string) []string {
 		distinctLinks = append(distinctLinks, link)
 	}
 	return distinctLinks
+}
+
+// 重複なしのURL配列を取得
+func MapToSliceUrl(visited map[string]struct{}) []string {
+    urls  := make([]string, 0, 500)
+    mutex := &sync.Mutex{}
+
+    for k, _ := range visited {
+        urls = LockedAppend(mutex, urls, k)
+    }
+    return urls
 }

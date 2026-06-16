@@ -69,7 +69,7 @@ func (g *guitarScraperEspSig) CollectLinks(parentCtx context.Context) ([]string,
     c.Visit("https://espguitars.co.jp/signatureseries/")
     c.Wait()
 
-    g.gScraper.urls = mapToSliceUrl(visited)
+    g.gScraper.urls = utils.MapToSliceUrl(visited)
     return g.gScraper.urls, nil
 }
 

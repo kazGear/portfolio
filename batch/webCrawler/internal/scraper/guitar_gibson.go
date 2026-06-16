@@ -74,7 +74,7 @@ func (g *guitarScraperGibson) CollectLinks(parentCtx context.Context) ([]string,
     c.Visit("https://gibson.jp/")
     c.Wait()
 
-    g.gScraper.urls = mapToSliceUrl(visited)
+    g.gScraper.urls = utils.MapToSliceUrl(visited)
     return g.gScraper.urls, nil
 }
 

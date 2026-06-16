@@ -49,6 +49,7 @@ func (g *guitarScraper) scrapeFrame(funcs GuitarCallbacks, ctx context.Context) 
         return []*model.Guitar{}
     }
     utils.LogCollectedLinks(g.urls, g.logger)
+    g.logger.Printf("[Urls count]: %v 件\n", len(g.urls))
 
     wg := &sync.WaitGroup{}
 
@@ -71,9 +72,11 @@ func (g *guitarScraper) scrapeFrame(funcs GuitarCallbacks, ctx context.Context) 
             specs       := collectSpec(doc) // 1ページ：N詳細ページでもOK
 
             for _, spec := range specs {
+                spec := spec
                 guitar := buildGuitar(spec)
 
                 if len(guitar.Name) <= 0 || len(guitar.Color) <= 0 {
+                    g.logger.Printf("[Skip guitar]: %v\n", guitar)
                     continue
                 }
                 guitars = utils.LockedAppend(g.mutex, guitars, guitar)
@@ -93,7 +96,7 @@ func buildGuitarFrame(spec map[string]string, logger *log.Logger) (*model.Guitar
 	guitar.Name            = spec["Name"]
 
     if errMaker != nil {
-        // logger.Printf("[Maker convert error]: %v", errMaker)
+        logger.Printf("[Maker convert error]: %v", errMaker)
         return &model.Guitar{}
 	}
 
@@ -132,7 +135,7 @@ func buildGuitarFrame(spec map[string]string, logger *log.Logger) (*model.Guitar
 	guitar.Src           = spec["Src"]
 
     if len(guitar.Src) <= 0 {
-        // logger.Println("Guitar image none ...")
+        logger.Println("Guitar image none ...")
         return &model.Guitar{}
     }
     var errWeight error
@@ -232,17 +235,6 @@ func (g *guitarScraper) isFirstVisit(mutex *sync.Mutex, url string, visited map[
     }
     visited[url] = struct{}{} // struct{} = use memory 0
     return true
-}
-
-// 重複なしのURL配列を取得
-func mapToSliceUrl(visited map[string]struct{}) []string {
-    urls  := make([]string, 0, 500)
-    mutex := &sync.Mutex{}
-
-    for k, _ := range visited {
-        urls = utils.LockedAppend(mutex, urls, k)
-    }
-    return urls
 }
 
 // 詳細データが載っているページであるか判定

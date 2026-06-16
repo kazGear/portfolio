@@ -23,10 +23,10 @@ type Scraper interface {
 }
 
 type GuitarCallbacks interface {
-    IsStaticPage() func(html string)            bool
-    FetchDynamicPage(ctx context.Context)       func(url string) (string, error)
-    CollectSpec()  func(doc *goquery.Document)  []map[string]string
-    BuildGuitar()  func(spec map[string]string) *model.Guitar
+    IsStaticPage()          func(html string)            bool
+    FetchDynamicPage(ctx context.Context)                func(url string) (string, error)
+    CollectSpec()           func(doc *goquery.Document)  []map[string]string
+    BuildGuitar(url string) func(spec map[string]string) *model.Guitar
 }
 
 type guitarScraper struct {
@@ -59,7 +59,7 @@ func (g *guitarScraper) scrapeFrame(funcs GuitarCallbacks, ctx context.Context) 
         html := g.fetchPage(url, funcs.IsStaticPage(), funcs.FetchDynamicPage(ctx))
 
         wg.Add(1)
-        go func(html string) {
+        go func(html string, url string) {
             defer wg.Done()
             doc, err := goquery.NewDocumentFromReader(strings.NewReader(html))
 
@@ -68,7 +68,7 @@ func (g *guitarScraper) scrapeFrame(funcs GuitarCallbacks, ctx context.Context) 
                 return
             }
             collectSpec := funcs.CollectSpec()
-            buildGuitar := funcs.BuildGuitar()
+            buildGuitar := funcs.BuildGuitar(url)
             specs       := collectSpec(doc) // 1ページ：N詳細ページでもOK
 
             for _, spec := range specs {
@@ -81,14 +81,14 @@ func (g *guitarScraper) scrapeFrame(funcs GuitarCallbacks, ctx context.Context) 
                 }
                 guitars = utils.LockedAppend(g.mutex, guitars, guitar)
             }
-        }(html)
+        }(html, url)
     }
     wg.Wait()
     return guitars
 }
 
 // ギター構造体の構築フレームワーク
-func buildGuitarFrame(spec map[string]string, logger *log.Logger) (*model.Guitar) {
+func buildGuitarFrame(spec map[string]string, url string, logger *log.Logger) (*model.Guitar) {
 	guitar := model.Guitar{}
 
     var errMaker error
@@ -99,7 +99,6 @@ func buildGuitarFrame(spec map[string]string, logger *log.Logger) (*model.Guitar
         logger.Printf("[Maker convert error]: %v", errMaker)
         return &model.Guitar{}
 	}
-
 	guitar.BodyFinish        = spec["BodyFinish"]
 	guitar.BodyMaterial      = spec["BodyMaterialTop"] + " / " + spec["BodyMaterialBack"]
     guitar.BodyMaterialBack  = utils.SearchWoodCode(spec["BodyMaterialBack"])
@@ -117,7 +116,6 @@ func buildGuitarFrame(spec map[string]string, logger *log.Logger) (*model.Guitar
     if errFretCount != nil {
         // logger.Println(errFretCount)
     }
-
 	guitar.Inlays       = spec["Inlays"]
 	guitar.Joint        = spec["Joint"]
     guitar.NeckMaterial = utils.SearchWoodCode(spec["NeckMaterial"])
@@ -129,16 +127,24 @@ func buildGuitarFrame(spec map[string]string, logger *log.Logger) (*model.Guitar
     if errPrice != nil {
         // logger.Println(errPrice)
     }
-
     guitar.ScaleLengthMM = utils.TrimScaleUnit(spec["ScaleLengthMM"])
 	guitar.Series        = spec["Series"]
-	guitar.Src           = spec["Src"]
+
+    guitar.Src           = spec["Src"]
+    // 画像の相対パスをフルパスへ
+    if strings.HasPrefix(guitar.Src, "/") {
+        fullPass, err := utils.CreateImagePath(url, guitar.Src)
+
+        if err != nil {
+            logger.Println(err)
+        }
+        guitar.Src = fullPass
+    }
 
     if len(guitar.Src) <= 0 {
         logger.Println("Guitar image none ...")
         return &model.Guitar{}
     }
-
     var errWeight error
     guitar.Weight, errWeight = utils.ParseWight(spec["Weight"])
 

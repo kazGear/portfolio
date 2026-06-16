@@ -145,9 +145,9 @@ func (c *callBacksEspSig) CollectSpec() func(doc *goquery.Document) []map[string
     }
 }
 
-func (c *callBacksEspSig) BuildGuitar() func(spec map[string]string) *model.Guitar {
+func (c *callBacksEspSig) BuildGuitar(url string) func(spec map[string]string) *model.Guitar {
 	return func(spec map[string]string) *model.Guitar {
-		return buildGuitarFrame(spec, c.funcs.logger)
+		return buildGuitarFrame(spec, url, c.funcs.logger)
     }
 }
 

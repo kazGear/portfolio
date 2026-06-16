@@ -363,11 +363,11 @@ func TestCalcExchangedPrice(t *testing.T) {
 	}
 }
 
-func TestConvertRelToAbsUrl(t *testing.T) {
+func TestCreateImagePath(t *testing.T) {
 	result  := `https://www.ibanez.com/common/product_artist_file/file/p_region_AZ2407F_BSR_00_01.png`
 	absUrl  := `https://www.ibanez.com/jp/products/detail/az2407f_00_01.html`
 	src 	:= `/common/product_artist_file/file/p_region_AZ2407F_BSR_00_01.png`
-	try, _  := ConvertRelToAbsUrl(absUrl, src)
+	try, _  := CreateImagePath(absUrl, src)
 
 	assert.Equal(t, try, result)
 }

@@ -245,9 +245,9 @@ func (c *callBacksIbanez) CollectSpec() func(doc *goquery.Document) []map[string
     }
 }
 
-func (c *callBacksIbanez) BuildGuitar() func(spec map[string]string) *model.Guitar {
+func (c *callBacksIbanez) BuildGuitar(url string) func(spec map[string]string) *model.Guitar {
     return func(spec map[string]string) *model.Guitar {
-        return buildGuitarFrame(spec, c.funcs.logger)
+        return buildGuitarFrame(spec, url, c.funcs.logger)
     }
 }
 

@@ -322,7 +322,7 @@ func ConvertRealUrl(proxyUrl string) (string, error) {
 }
 
 // 相対パスを絶対パスに変換
-func ConvertRelToAbsUrl(absUrl string, src string) (string, error) {
+func CreateImagePath(absUrl string, src string) (string, error) {
 	var err error
 	base, err := url.Parse(absUrl)
 	ref, err  := url.Parse(src)

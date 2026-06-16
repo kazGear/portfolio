@@ -211,7 +211,6 @@ func (c *callBacksIbanez) CollectSpec() func(doc *goquery.Document) []map[string
         spec["BodyFinish"]       = ""
         spec["BodyMaterialBack"] = getElem(`.rt_cf_p_data_body_material, .rt_cf_p_ag_side_material`)
         spec["BodyMaterialTop"]  = getElem(`.rt_cf_p_data_body_top_material`)
-        spec["BodyMaterial"]     = spec["BodyMaterialTop"] + " / " + spec["BodyMaterialBack"]
         spec["Bridge"]           = getElem(`.rt_cf_p_data_bridge`)
         spec["Controls"]         = ""
         spec["Comment"]          = ""

@@ -167,7 +167,6 @@ func (c *callBacksStrandberg) CollectSpec() func(doc *goquery.Document) []map[st
         spec["BodyFinish"]       = getElem(`h3:contains("Body Finish Type")`)
         spec["BodyMaterialBack"] = getElem(`h3:contains("Body Material")`)
         spec["BodyMaterialTop"]  = getElem(`h3:contains("Body Top Material")`)
-        spec["BodyMaterial"]     = spec["BodyMaterialTop"] + " " + spec["BodyMaterialBack"]
         spec["Bridge"]           = getElem(`h3:contains("Bridge")`)
         spec["Controls"]         = getElem(`h3:contains("Control Set")`)
         spec["Comment"]          = strings.TrimSpace(doc.Find(``).Text())

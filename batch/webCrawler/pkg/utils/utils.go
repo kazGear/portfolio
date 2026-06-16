@@ -134,7 +134,7 @@ func TrimScaleUnit(s string) int {
 
 // ログ設定(グローバル設定)
 func LoggerInit(maker string) {
-	date 	 := time.Now().Format("2006-01-02")
+	date 	 := time.Now().Format(constants.DateTime)
 	filename := fmt.Sprintf("logs/%v_%v.log", maker, date)
 
 	os.MkdirAll("logs", 0755)
@@ -152,7 +152,7 @@ func LoggerInit(maker string) {
 // ログインスタンスを作成
 func NewLogger(makerName string) *log.Logger {
     // 日付入りのログファイル名
-    date := time.Now().Format("2006-01-02")
+    date := time.Now().Format(constants.DateTime)
     filename := fmt.Sprintf("logs/%v_%v.log", makerName, date)
 
     // ディレクトリがなければ作成

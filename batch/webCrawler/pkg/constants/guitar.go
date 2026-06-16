@@ -16,6 +16,13 @@ const (
     Momose
 )
 
+// date用フォーマット
+const (
+	DateOnly     = "2006-01-02"
+	DateTime     = "2006-01-02_T150405"
+	DateTimeMin  = "2006-01-02_T1504"
+	FileDateTime = "20060102_150405"
+)
 
 // カラーコード
 const (

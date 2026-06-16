@@ -519,3 +519,27 @@ func GetNeedLinks(links []string, needPattern string, cap int) []string {
     }
     return needLinks
 }
+
+// 相対パスから絶対パスへ変換
+func ToAbsLinks(links []string, prefix string, cap int) []string {
+    absLinks := make([]string, 0, cap)
+
+    for _, link := range links {
+        absLinks = append(absLinks, prefix + link)
+    }
+    return absLinks
+}
+
+// link収集
+func CollectLinks(eachSelector string, doc *goquery.Document, cap int) []string {
+    var links = make([]string, 0, cap)
+
+    // 複数リンクを収集
+    doc.Find(eachSelector).Each(func(idx int, selector *goquery.Selection) {
+        link, _ := selector.Attr("href")
+        if link != "" {
+            links = append(links, link)
+        }
+    })
+    return links
+}

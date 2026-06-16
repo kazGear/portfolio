@@ -117,8 +117,8 @@ func collectLinksModelView(ctx context.Context) ([]string, error) {
     if err != nil {
         return []string{}, fmt.Errorf(`[Html read error(goquery)]: %w`, err)
     }
-    modelLinks = collectLinks(".idx-product-tabs-wrap a.rt_cf_pm_href", doc, 500)
-    modelLinks = toAbsLinks(modelLinks, `https://www.ibanez.com`, 500)
+    modelLinks = utils.CollectLinks(".idx-product-tabs-wrap a.rt_cf_pm_href", doc, 500)
+    modelLinks = utils.ToAbsLinks(modelLinks, `https://www.ibanez.com`, 500)
     return modelLinks, nil
 }
 
@@ -146,8 +146,8 @@ func collectLinksDetailView(ctx context.Context, modelLinks []string) ([]string,
     if err != nil {
         return []string{}, fmt.Errorf(`[Html read error(goquery)]: %w`, err)
     }
-    detailLinks := collectLinks(".products-model-series-lineup-list a", doc, 2100)
-    detailLinks  = toAbsLinks(detailLinks, `https://www.ibanez.com`, 2100)
+    detailLinks := utils.CollectLinks(".products-model-series-lineup-list a", doc, 2100)
+    detailLinks  = utils.ToAbsLinks(detailLinks, `https://www.ibanez.com`, 2100)
     return detailLinks, nil
 }
 

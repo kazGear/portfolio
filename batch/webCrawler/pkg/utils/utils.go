@@ -481,3 +481,17 @@ func CalcExchangedPrice(foreignPrice string, rate float64) string {
 	// 小数点以下は切り捨て
 	return foreignP.Mul(exchange).Truncate(0).String()
 }
+
+func GetDistinctLinks(links []string) []string {
+	removed := map[string]struct{}{}
+
+	for _, link := range links {
+		removed[link] = struct{}{}
+	}
+	distinctLinks := []string{}
+
+	for link := range removed {
+		distinctLinks = append(distinctLinks, link)
+	}
+	return distinctLinks
+}

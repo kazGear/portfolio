@@ -371,3 +371,19 @@ func TestConvertRelToAbsUrl(t *testing.T) {
 
 	assert.Equal(t, try, result)
 }
+
+func TestGetDistinctLinks(t *testing.T) {
+	links := []string{
+		"https://example.com3/",
+		"https://example.com1/",
+		"https://example.com1/",
+		"https://example.com2/",
+		"https://example.com1/",
+		"https://example.com3/",
+		"https://example.com1/",
+	}
+
+	result := GetDistinctLinks(links)
+	assert.Equal(t, 3, len(result))
+
+}

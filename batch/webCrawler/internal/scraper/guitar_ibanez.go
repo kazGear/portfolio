@@ -27,7 +27,6 @@ type callBacksIbanez struct {
     funcs callBacks
 }
 
-
 func NewScraperIbanez(logger *log.Logger) Scraper {
 	collector := colly.NewCollector(
 		colly.Async(true),

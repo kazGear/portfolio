@@ -138,6 +138,7 @@ func buildGuitarFrame(spec map[string]string, logger *log.Logger) (*model.Guitar
         logger.Println("Guitar image none ...")
         return &model.Guitar{}
     }
+
     var errWeight error
     guitar.Weight, errWeight = utils.ParseWight(spec["Weight"])
 

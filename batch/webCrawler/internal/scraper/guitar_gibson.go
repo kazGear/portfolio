@@ -153,8 +153,6 @@ func (c *callBacksGibson) CollectSpec() func(doc *goquery.Document) []map[string
             field      := utils.ConvertLabel(label, fieldMapGibson)
             spec[field] = elem
         })
-        spec["BodyMaterial"] = spec["BodyMaterialTop"] + " / " + spec["BodyMaterialBack"]
-
         specs = utils.LockedAppend(mutex, specs, spec)
         return specs
     }

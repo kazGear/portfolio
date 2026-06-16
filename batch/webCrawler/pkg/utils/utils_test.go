@@ -385,5 +385,4 @@ func TestGetDistinctLinks(t *testing.T) {
 
 	result := GetDistinctLinks(links)
 	assert.Equal(t, 3, len(result))
-
 }

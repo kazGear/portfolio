@@ -1,6 +1,6 @@
 package constants
 
-// ギターメーカー
+// guitar makers
 const (
     Esp int = iota + 1
     Fender
@@ -16,7 +16,7 @@ const (
     Momose
 )
 
-// date用フォーマット
+// format of date
 const (
 	DateOnly     = "2006-01-02"
 	DateTime     = "2006-01-02_T15-04-05"
@@ -24,7 +24,7 @@ const (
 	FileDateTime = "20060102_150405"
 )
 
-// カラーコード
+// color code
 const (
     Red int = iota + 1
     Pink
@@ -49,7 +49,7 @@ type wood struct {
 	Code int
 }
 
-// ギターで使われる木材セット
+// wood materials
 func GetWoods() []wood {
 	woods := []wood{
 		{"Unknown", 0},
@@ -88,6 +88,30 @@ func GetWoods() []wood {
 	}
 	return woods
 }
+
+// Guitar Spec Keys
+const (
+    Maker            = "Maker"
+    Name             = "Name"
+    BodyFinish       = "BodyFinish"
+    BodyMaterialTop  = "BodyMaterialTop"
+    BodyMaterialBack = "BodyMaterialBack"
+    Bridge           = "Bridge"
+    Color            = "Color"
+    Controls         = "Controls"
+    Comment          = "Comment"
+    Fingerboard      = "Fingerboard"
+    FretCount        = "FretCount"
+    Inlays           = "Inlays"
+    Joint            = "Joint"
+    NeckMaterial     = "NeckMaterial"
+    Pickups          = "Pickups"
+    Price            = "Price"
+    ScaleLengthMM    = "ScaleLengthMM"
+    Series           = "Series"
+    Src              = "Src"
+    Weight           = "Weight"
+)
 
 // others
 const (

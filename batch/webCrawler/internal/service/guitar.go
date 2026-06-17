@@ -9,7 +9,7 @@ import (
 	"github.com/chromedp/chromedp"
 	"github.com/kazGear/portfolio/webCrawler/internal/repository"
 	"github.com/kazGear/portfolio/webCrawler/internal/scraper"
-	"github.com/kazGear/portfolio/webCrawler/pkg/constants"
+	C "github.com/kazGear/portfolio/webCrawler/pkg/constants"
 	"github.com/kazGear/portfolio/webCrawler/pkg/utils"
 )
 
@@ -63,7 +63,7 @@ func (g *guitarCrawlerService) RunCrawler() {
             defer cancelAlloc()
             defer cancelParent()
 
-            maker.logger.Printf(constants.DecoLabel, "Started crawler " + maker.name)
+            maker.logger.Printf(C.DecoLabel, "Started crawler " + maker.name)
 
             startTime := time.Now() // 処理時間計測開始
 
@@ -77,7 +77,7 @@ func (g *guitarCrawlerService) RunCrawler() {
             for _, err := range errs {
                 maker.logger.Println(err)
             }
-            maker.logger.Printf(constants.DecoLabel, "Finished crawler " + maker.name)
+            maker.logger.Printf(C.DecoLabel, "Finished crawler " + maker.name)
             maker.logger.Printf("Crawler processing time: %v\n", time.Since(startTime))
         }(*maker)
     }

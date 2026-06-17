@@ -135,18 +135,18 @@ func (c *callBacksGibson) CollectSpec() func(doc *goquery.Document) []map[string
 
         doc.Find(`#cart-options h2.marketing-headline small`).Remove() // Nameからノイズを除去
 
-        spec["Maker"]            = strconv.Itoa(C.Gibson)
-        spec["Name"]             = getElem(`h2.marketing-headline`)
-        spec["Color"]            = getElem(`div#displayed-finish`)
-        spec["Comment"]          = getElem(`#cart-options .marketing-copy p`)
+        spec[C.Maker]            = strconv.Itoa(C.Gibson)
+        spec[C.Name]             = getElem(`h2.marketing-headline`)
+        spec[C.Color]            = getElem(`div#displayed-finish`)
+        spec[C.Comment]          = getElem(`#cart-options .marketing-copy p`)
         neckPickup              := getElemNext(`.spec-item div:contains("Neck pickup")`)
         bridgePickup            := getElemNext(`.spec-item div:contains("Bridge pickup")`)
-        spec["Pickups"]          = fmt.Sprintf("%v / %v", neckPickup, bridgePickup)
-        spec["Price"]            = strconv.Itoa(C.InvalidNumber)
+        spec[C.Pickups]          = fmt.Sprintf("%v / %v", neckPickup, bridgePickup)
+        spec[C.Price]            = strconv.Itoa(C.InvalidNumber)
         src, _                  := doc.Find(`img#gallery-front`).Attr(`src`)
-        spec["Src"]              = strings.TrimSpace(src)
-        spec["Series"]           = regSeriesGibson.FindString(spec["Name"])
-        spec["Weight"]           = strconv.Itoa(C.InvalidNumber)
+        spec[C.Src]              = strings.TrimSpace(src)
+        spec[C.Series]           = regSeriesGibson.FindString(spec[C.Name])
+        spec[C.Weight]           = strconv.Itoa(C.InvalidNumber)
 
         doc.Find(`#product-overview .spec-section .spec-item`).Each(func(idx int, selector *goquery.Selection) {
             label      := strings.TrimSpace(selector.Find(`div:nth-child(1)`).Text())

@@ -133,14 +133,14 @@ func (c *callBacksEsp) CollectSpec() func(doc *goquery.Document) []map[string]st
 
         spec := map[string]string{}
 
-        spec["Maker"]   = strconv.Itoa(C.Esp)
-        spec["Name"]    = strings.TrimSpace(doc.Find("h1.header_title").Text())
-        spec["Color"]   = strings.TrimSpace(doc.Find(".header_content h3.clr_name").Text())
-        spec["Comment"] = strings.TrimSpace(doc.Find("#specialfeatures .container_small p").Text())
-        spec["Price"]   = strings.TrimSpace(doc.Find("p.detail_price").Text())
+        spec[C.Maker]   = strconv.Itoa(C.Esp)
+        spec[C.Name]    = strings.TrimSpace(doc.Find("h1.header_title").Text())
+        spec[C.Color]   = strings.TrimSpace(doc.Find(".header_content h3.clr_name").Text())
+        spec[C.Comment] = strings.TrimSpace(doc.Find("#specialfeatures .container_small p").Text())
+        spec[C.Price]   = strings.TrimSpace(doc.Find("p.detail_price").Text())
         src, _         := doc.Find("#main .header_content img.transform-5").Attr("src")
-        spec["Src"]     = strings.TrimSpace(src)
-        spec["Series"]  = regSeries.FindString(spec["Name"])
+        spec[C.Src]     = strings.TrimSpace(src)
+        spec[C.Series]  = regSeries.FindString(spec[C.Name])
 
         doc.Find("#specifications table.tbl_spec tr").Each(func(idx int, selector *goquery.Selection) {
             th      := strings.TrimSpace(selector.Find("th").Text())
@@ -153,12 +153,12 @@ func (c *callBacksEsp) CollectSpec() func(doc *goquery.Document) []map[string]st
         materials    := strings.Split(bodyMaterial, ",")
 
         if len(materials) == 1 {
-            spec["BodyMaterialBack"] = materials[0]
+            spec[C.BodyMaterialBack] = materials[0]
         } else if len(materials) == 2 {
-            spec["BodyMaterialTop"]  = materials[0]
-            spec["BodyMaterialBack"] = materials[1]
+            spec[C.BodyMaterialTop]  = materials[0]
+            spec[C.BodyMaterialBack] = materials[1]
         } else {
-            spec["BodyMaterialBack"] = materials[0]
+            spec[C.BodyMaterialBack] = materials[0]
         }
 
         specs = utils.LockedAppend(mutex, specs, spec)

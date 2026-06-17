@@ -55,6 +55,7 @@ func GetWoods() []wood {
 		{"Unknown", 0},
 		{"HardMaple", 1},
 		{"FlameMaple", 2},
+		{"FlamedMaple", 2},
 		{"QuiltedMaple", 3},
 		{"BirdseyeMaple", 4},
 		{"RoastedMaple", 5},

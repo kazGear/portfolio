@@ -123,16 +123,16 @@ func (c *callBacksEspSig) CollectSpec() func(doc *goquery.Document) []map[string
 		doc.Find("#main section.tab_detail").Each(func(idx int, selector1 *goquery.Selection) {
 			spec := map[string]string{}
 
-			spec["Maker"]   = strconv.Itoa(C.EspSignature)
-			spec["Name"]    = strings.TrimSpace(selector1.Find(".product_series_logo_name").Text())
+			spec[C.Maker]   = strconv.Itoa(C.EspSignature)
+			spec[C.Name]    = strings.TrimSpace(selector1.Find(".product_series_logo_name").Text())
 			src, _         := selector1.Find("img.main_image").Attr("src")
-			spec["Src"]     = strings.TrimSpace(src)
-			spec["Comment"] = strings.TrimSpace(selector1.Find(".content_spec-detail em strong").Text())
-			spec["Price"]   = strings.TrimSpace(selector1.Find(
+			spec[C.Src]     = strings.TrimSpace(src)
+			spec[C.Comment] = strings.TrimSpace(selector1.Find(".content_spec-detail em strong").Text())
+			spec[C.Price]   = strings.TrimSpace(selector1.Find(
 				".content_borderline.text-center p, .content_spec-detail div p.text-center",
 			).Text())
 
-			spec["Series"] 	= strings.TrimSpace(doc.Find("div.pd30 h1.text-center span").Text())
+			spec[C.Series] 	= strings.TrimSpace(doc.Find("div.pd30 h1.text-center span").Text())
 
 			selector1.Find(".tbl_spec tr").Each(func(idx int, selector2 *goquery.Selection) {
 				th      := strings.TrimSpace(selector2.Find("th").Text())
@@ -145,12 +145,12 @@ func (c *callBacksEspSig) CollectSpec() func(doc *goquery.Document) []map[string
 			materials    := strings.Split(bodyMaterial, ",")
 
 			if len(materials) == 1 {
-				spec["BodyMaterialBack"] = materials[0]
+				spec[C.BodyMaterialBack] = materials[0]
 			} else if len(materials) == 2 {
-				spec["BodyMaterialTop"]  = materials[0]
-				spec["BodyMaterialBack"] = materials[1]
+				spec[C.BodyMaterialTop]  = materials[0]
+				spec[C.BodyMaterialBack] = materials[1]
 			} else {
-				spec["BodyMaterialBack"] = materials[0]
+				spec[C.BodyMaterialBack] = materials[0]
 			}
 
 			specs = utils.LockedAppend(mutex, specs, spec)

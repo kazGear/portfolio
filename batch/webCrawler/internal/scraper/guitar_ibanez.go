@@ -204,42 +204,41 @@ func (c *callBacksIbanez) CollectSpec() func(doc *goquery.Document) []map[string
         spec  := map[string]string{}
         mutex := &sync.Mutex{}
 
-        spec["Maker"]            = strconv.Itoa(C.Ibanez)
-        spec["Name"]             = getElem(`.rt_cf_p_cm_product_code`)
-        spec["Color"]            = getElem(`.rt_cf_pcl_color_name_jp_1, .rt_cf_pcl_color_name_ag_jp_1`)
-        spec["Comment"]          = ""
-        spec["BodyFinish"]       = ""
-        spec["BodyMaterialBack"] = getElem(`.rt_cf_p_data_body_material, .rt_cf_p_ag_side_material`)
-        spec["BodyMaterialTop"]  = getElem(`.rt_cf_p_data_body_top_material`)
-        spec["Bridge"]           = getElem(`.rt_cf_p_data_bridge`)
-        spec["Controls"]         = ""
-        spec["Comment"]          = ""
-        spec["Fingerboard"]      = getElem(`.rt_cf_p_data_fretboard`)
-        spec["FretCount"]        = getElem(`.rt_cf_p_data_number_fret`)
+        spec[C.Maker]            = strconv.Itoa(C.Ibanez)
+        spec[C.Name]             = getElem(`.rt_cf_p_cm_product_code`)
+        spec[C.Color]            = getElem(`.rt_cf_pcl_color_name_jp_1, .rt_cf_pcl_color_name_ag_jp_1`)
+        spec[C.BodyFinish]       = ""
+        spec[C.BodyMaterialBack] = getElem(`.rt_cf_p_data_body_material, .rt_cf_p_ag_side_material`)
+        spec[C.BodyMaterialTop]  = getElem(`.rt_cf_p_data_body_top_material`)
+        spec[C.Bridge]           = getElem(`.rt_cf_p_data_bridge`)
+        spec[C.Controls]         = ""
+        spec[C.Comment]          = ""
+        spec[C.Fingerboard]      = getElem(`.rt_cf_p_data_fretboard`)
+        spec[C.FretCount]        = getElem(`.rt_cf_p_data_number_fret`)
 
         inlays                  := getElem(`.rt_cf_p_ag_face_inlay`)
         if len(inlays) > 0 {
-            spec["Inlays"] = inlays
+            spec[C.Inlays] = inlays
         } else {
-            spec["Inlays"] = getElem(`.rt_cf_p_data_in`)
+            spec[C.Inlays] = getElem(`.rt_cf_p_data_in`)
         }
 
-        spec["Joint"]            = ""
-        spec["NeckMaterial"]     = getElem(`.rt_cf_p_data_neck_material`)
+        spec[C.Joint]            = ""
+        spec[C.NeckMaterial]     = getElem(`.rt_cf_p_data_neck_material`)
 
         neckPickup              := getElem(`.rt_cf_p_data_neck_pickup`)
         middlePickup            := getElem(`.rt_cf_p_data_middle_pickup`)
         bridgePickup            := getElem(`.rt_cf_p_data_bridge_pickup`)
-        spec["Pickups"]          = fmt.Sprintf(`%v / %v / %v `, neckPickup, middlePickup, bridgePickup)
+        spec[C.Pickups]          = fmt.Sprintf(`%v / %v / %v `, neckPickup, middlePickup, bridgePickup)
 
-        spec["Price"]            = getElem(`.rt_cf_p_cm_price`)
+        spec[C.Price]            = getElem(`.rt_cf_p_cm_price`)
         src, _                  := doc.Find(`.products-detail-main-modal-img`).Attr(`src`)
-        spec["Src"]              = strings.TrimSpace(src)
-        spec["Series"]           = strings.TrimSpace(doc.Find(
-                                    `ul a:contains("` + spec["Name"] + `")`,
+        spec[C.Src]              = strings.TrimSpace(src)
+        spec[C.Series]           = strings.TrimSpace(doc.Find(
+                                    `ul a:contains("` + spec[C.Name] + `")`,
                                          ).Parent().Parent().Prev().Children().Text())
-        spec["ScaleLengthMM"]    = getElem(`.rt_cf_p_data_scale_mm`)
-        spec["Weight"]           = strconv.Itoa(C.InvalidNumber)
+        spec[C.ScaleLengthMM]    = getElem(`.rt_cf_p_data_scale_mm`)
+        spec[C.Weight]           = strconv.Itoa(C.InvalidNumber)
 
         specs = utils.LockedAppend(mutex, specs, spec)
         return specs

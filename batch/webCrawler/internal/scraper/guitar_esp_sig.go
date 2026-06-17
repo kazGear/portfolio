@@ -14,7 +14,7 @@ import (
 	"github.com/chromedp/chromedp"
 	"github.com/gocolly/colly/v2"
 	"github.com/kazGear/portfolio/webCrawler/internal/model"
-	"github.com/kazGear/portfolio/webCrawler/pkg/constants"
+	C "github.com/kazGear/portfolio/webCrawler/pkg/constants"
 	"github.com/kazGear/portfolio/webCrawler/pkg/utils"
 )
 
@@ -123,7 +123,7 @@ func (c *callBacksEspSig) CollectSpec() func(doc *goquery.Document) []map[string
 		doc.Find("#main section.tab_detail").Each(func(idx int, selector1 *goquery.Selection) {
 			spec := map[string]string{}
 
-			spec["Maker"]   = strconv.Itoa(constants.EspSignature)
+			spec["Maker"]   = strconv.Itoa(C.EspSignature)
 			spec["Name"]    = strings.TrimSpace(selector1.Find(".product_series_logo_name").Text())
 			src, _         := selector1.Find("img.main_image").Attr("src")
 			spec["Src"]     = strings.TrimSpace(src)

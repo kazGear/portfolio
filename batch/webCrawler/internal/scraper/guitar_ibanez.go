@@ -15,7 +15,7 @@ import (
 	"github.com/chromedp/chromedp"
 	"github.com/gocolly/colly/v2"
 	"github.com/kazGear/portfolio/webCrawler/internal/model"
-	"github.com/kazGear/portfolio/webCrawler/pkg/constants"
+	C "github.com/kazGear/portfolio/webCrawler/pkg/constants"
 	"github.com/kazGear/portfolio/webCrawler/pkg/utils"
 )
 
@@ -204,7 +204,7 @@ func (c *callBacksIbanez) CollectSpec() func(doc *goquery.Document) []map[string
         spec  := map[string]string{}
         mutex := &sync.Mutex{}
 
-        spec["Maker"]            = strconv.Itoa(constants.Ibanez)
+        spec["Maker"]            = strconv.Itoa(C.Ibanez)
         spec["Name"]             = getElem(`.rt_cf_p_cm_product_code`)
         spec["Color"]            = getElem(`.rt_cf_pcl_color_name_jp_1, .rt_cf_pcl_color_name_ag_jp_1`)
         spec["Comment"]          = ""
@@ -239,7 +239,7 @@ func (c *callBacksIbanez) CollectSpec() func(doc *goquery.Document) []map[string
                                     `ul a:contains("` + spec["Name"] + `")`,
                                          ).Parent().Parent().Prev().Children().Text())
         spec["ScaleLengthMM"]    = getElem(`.rt_cf_p_data_scale_mm`)
-        spec["Weight"]           = strconv.Itoa(constants.InvalidNumber)
+        spec["Weight"]           = strconv.Itoa(C.InvalidNumber)
 
         specs = utils.LockedAppend(mutex, specs, spec)
         return specs

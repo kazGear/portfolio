@@ -15,7 +15,7 @@ import (
 	"github.com/chromedp/chromedp"
 	"github.com/gocolly/colly/v2"
 	"github.com/kazGear/portfolio/webCrawler/internal/model"
-	"github.com/kazGear/portfolio/webCrawler/pkg/constants"
+	C "github.com/kazGear/portfolio/webCrawler/pkg/constants"
 	"github.com/kazGear/portfolio/webCrawler/pkg/utils"
 )
 
@@ -133,7 +133,7 @@ func (c *callBacksEsp) CollectSpec() func(doc *goquery.Document) []map[string]st
 
         spec := map[string]string{}
 
-        spec["Maker"]   = strconv.Itoa(constants.Esp)
+        spec["Maker"]   = strconv.Itoa(C.Esp)
         spec["Name"]    = strings.TrimSpace(doc.Find("h1.header_title").Text())
         spec["Color"]   = strings.TrimSpace(doc.Find(".header_content h3.clr_name").Text())
         spec["Comment"] = strings.TrimSpace(doc.Find("#specialfeatures .container_small p").Text())

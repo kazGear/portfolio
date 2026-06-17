@@ -17,7 +17,7 @@ import (
 	"github.com/chromedp/chromedp"
 	"github.com/gocolly/colly/v2"
 	"github.com/kazGear/portfolio/webCrawler/internal/model"
-	"github.com/kazGear/portfolio/webCrawler/pkg/constants"
+	C "github.com/kazGear/portfolio/webCrawler/pkg/constants"
 	"github.com/kazGear/portfolio/webCrawler/pkg/utils"
 )
 
@@ -160,7 +160,7 @@ func (c *callBacksStrandberg) CollectSpec() func(doc *goquery.Document) []map[st
         spec    := map[string]string{}
         getElem := utils.GetNextElem(doc)
 
-        spec["Maker"]            = strconv.Itoa(constants.Strandberg)
+        spec["Maker"]            = strconv.Itoa(C.Strandberg)
         spec["Name"]             = strings.TrimSpace(doc.Find(
                                     `div[data-sentry-component="ProductInfo"] div div h1`,
                                    ).Text())

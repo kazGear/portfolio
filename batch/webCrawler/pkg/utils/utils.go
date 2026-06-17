@@ -18,7 +18,7 @@ import (
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/kazGear/portfolio/webCrawler/internal/model"
-	"github.com/kazGear/portfolio/webCrawler/pkg/constants"
+	C "github.com/kazGear/portfolio/webCrawler/pkg/constants"
 	"github.com/shopspring/decimal"
 
 	"golang.org/x/text/width"
@@ -96,7 +96,7 @@ var regWood = regexp.MustCompile(`\s+`)
 func SearchWoodCode(s string) int {
 	trimed := regWood.ReplaceAllString(s, "")
 
-	for _, wood := range constants.GetWoods() {
+	for _, wood := range C.GetWoods() {
 		if strings.Contains(strings.ToLower(trimed), strings.ToLower(wood.Name)) {
 			return wood.Code
 		}
@@ -137,7 +137,7 @@ func TrimScaleUnit(s string) int {
 
 // ログ設定(グローバル設定)
 func LoggerInit(maker string) {
-	date 	 := time.Now().Format(constants.DateTime)
+	date 	 := time.Now().Format(C.DateTime)
 	filename := fmt.Sprintf("logs/%v_%v.log", maker, date)
 
 	os.MkdirAll("logs", 0755)
@@ -155,7 +155,7 @@ func LoggerInit(maker string) {
 // ログインスタンスを作成
 func NewLogger(makerName string) *log.Logger {
     // 日付入りのログファイル名
-    date := time.Now().Format(constants.DateTime)
+    date := time.Now().Format(C.DateTime)
     filename := fmt.Sprintf("logs/%v_%v.log", makerName, date)
 
     // ディレクトリがなければ作成
@@ -196,7 +196,7 @@ type colorKeyword struct {
 
 var colorKeywords = []colorKeyword{
     {
-        Cd: constants.Red,
+        Cd: C.Red,
         Keywords: []string{
             "red", "cherry", "apple", "fiesta", "burgundy", "cranberry",
             "garnet", "cardinal", "tomato", "ember", "lava",
@@ -204,89 +204,89 @@ var colorKeywords = []colorKeyword{
         },
     },
     {
-        Cd: constants.Pink,
+        Cd: C.Pink,
         Keywords: []string{
             "pink", "coral", "sakura", "rose", "twinkle",
         },
     },
     {
-        Cd: constants.Orange,
+        Cd: C.Orange,
         Keywords: []string{
             "orange", "sunset", "sunrise", "autumn", "coral",
             "tangerine", "poppy",
         },
     },
     {
-        Cd: constants.Yellow,
+        Cd: C.Yellow,
         Keywords: []string{
             "yellow", "honey", "amber", "mustard", "lemon", "blond",
         },
     },
     {
-        Cd: constants.Green,
+        Cd: C.Green,
         Keywords: []string{
             "green", "citron", "ivy", "forest", "olive", "mint",
             "snake", "iguana", "malachite",
         },
     },
     {
-        Cd: constants.SkyBlue,
+        Cd: C.SkyBlue,
         Keywords: []string{
             "skyblue", "sky", "frost",
         },
     },
     {
-        Cd: constants.Blue,
+        Cd: C.Blue,
         Keywords: []string{
             "blue", "marine", "supreme", "nebula", "peacock", "mercury",
             "aqua", "turquoise", "azure", "navy", "bonnet",
         },
     },
     {
-        Cd: constants.Purple,
+        Cd: C.Purple,
         Keywords: []string{
             "purple", "indigo", "violet", "lavender", "plum", "amethyst", "sugilite", "tanzanite",
         },
     },
     {
-        Cd: constants.Gray,
+        Cd: C.Gray,
         Keywords: []string{
             "gray", "granite", "pewter", "slate", "ash", "graphite",
             "charcoal", "stone", "meteorite", "rusty", "iron",
         },
     },
     {
-        Cd: constants.Black,
+        Cd: C.Black,
         Keywords: []string{
             "black", "obsidian", "onyx", "ebony", "jet", "pitch",
         },
     },
     {
-        Cd: constants.White,
+        Cd: C.White,
         Keywords: []string{
             "white", "snow", "ivory", "cream", "pearl", "fox",
         },
     },
     {
-        Cd: constants.Brown,
+        Cd: C.Brown,
         Keywords: []string{
             "brown", "walnut", "mahogany", "chocolate", "bourbon", "tobacco",
         },
     },
     {
-        Cd: constants.Gold,
+        Cd: C.Gold,
         Keywords: []string{
             "gold", "champagne", "brass",
         },
     },
     {
-        Cd: constants.Silver,
+        Cd: C.Silver,
         Keywords: []string{
             "silver", "chrome",
         },
     },
     {
-        Cd: constants.Natural,
+        Cd: C.Natural,
         Keywords: []string{
             "natural", "raw", "naked", "plain", "wood", "driftwood", "burnt",
         },
@@ -305,7 +305,7 @@ func ConvertColorCd(colorName string) int {
 			}
 		}
 	}
-	return constants.OthersColor
+	return C.OthersColor
 }
 
 // URLを使用できる形式に変換（next.jsの謎パス等

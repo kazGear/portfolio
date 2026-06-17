@@ -68,6 +68,7 @@ func GetWoods() []wood {
 		{"Alder", 12},
 		{"Ash", 13},
 		{"Basswood", 14},
+		{"Linden", 14},
 		{"Poplar", 15},
 		{"Spruce", 16},
 		{"Cedar", 17},
@@ -86,6 +87,8 @@ func GetWoods() []wood {
 		{"Wenge", 30},
 		{"Purpleheart", 31},
 		{"Zebrawood", 32},
+		{"Okoume", 33},
+		{"Meranti", 34},
 	}
 	return woods
 }

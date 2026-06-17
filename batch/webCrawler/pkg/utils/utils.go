@@ -91,10 +91,13 @@ func parseMultiPrice(s string) (int, error) {
 	return minPrice, nil
 }
 
+var regWood = regexp.MustCompile(`\s+`)
 // 木材コードを探しだす
 func SearchWoodCode(s string) int {
+	trimed := regWood.ReplaceAllString(s, "")
+
 	for _, wood := range constants.GetWoods() {
-		if strings.Contains(strings.ToLower(s), strings.ToLower(wood.Name)) {
+		if strings.Contains(strings.ToLower(trimed), strings.ToLower(wood.Name)) {
 			return wood.Code
 		}
 	}

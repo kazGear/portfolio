@@ -53,6 +53,9 @@ func TestParsePrice(t *testing.T) {
 		{
 			price: "￥1,320,000（本体価格￥1,200,000）", want: 1200000,
 		},
+		{
+			price: "", want: -1,
+		},
 
 	}
 

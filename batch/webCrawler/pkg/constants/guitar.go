@@ -44,11 +44,6 @@ const (
     OthersColor int = 99
 )
 
-const (
-	InvalidNumber int = -1
-	DecoLabel = "◆◇◆◇ %v ◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇\n"
-)
-
 type wood struct {
 	Name string
 	Code int
@@ -93,3 +88,9 @@ func GetWoods() []wood {
 	}
 	return woods
 }
+
+// others
+const (
+	InvalidNumber int = -1
+	DecoLabel = "◆◇◆◇ %v ◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇\n"
+)

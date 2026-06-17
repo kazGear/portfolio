@@ -147,6 +147,19 @@ func (c *callBacksEsp) CollectSpec() func(doc *goquery.Document) []map[string]st
             th       = utils.ConvertLabel(th, fieldMapEsp)
             spec[th] = td
         })
+
+        bodyMaterial := spec["BodyMaterial"]
+        materials    := strings.Split(bodyMaterial, ",")
+
+        if len(materials) == 1 {
+            spec["BodyMaterialBack"] = materials[0]
+        } else if len(materials) == 2 {
+            spec["BodyMaterialTop"]  = materials[0]
+            spec["BodyMaterialBack"] = materials[1]
+        } else {
+            spec["BodyMaterialBack"] = materials[0]
+        }
+
         specs = utils.LockedAppend(mutex, specs, spec)
         return specs
     }

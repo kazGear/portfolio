@@ -47,7 +47,6 @@ const (
 const (
 	InvalidNumber int = -1
 	DecoLabel = "◆◇◆◇ %v ◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇\n"
-	PickupsFormat = `(Neck) %v (Bridge) %v`
 )
 
 type wood struct {

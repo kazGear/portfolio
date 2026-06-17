@@ -141,7 +141,7 @@ func (c *callBacksGibson) CollectSpec() func(doc *goquery.Document) []map[string
         spec["Comment"]          = getElem(`#cart-options .marketing-copy p`)
         neckPickup              := getElemNext(`.spec-item div:contains("Neck pickup")`)
         bridgePickup            := getElemNext(`.spec-item div:contains("Bridge pickup")`)
-        spec["Pickups"]          = fmt.Sprintf(constants.PickupsFormat, neckPickup, bridgePickup)
+        spec["Pickups"]          = fmt.Sprintf("%v / %v", neckPickup, bridgePickup)
         spec["Price"]            = strconv.Itoa(constants.InvalidNumber)
         src, _                  := doc.Find(`img#gallery-front`).Attr(`src`)
         spec["Src"]              = strings.TrimSpace(src)

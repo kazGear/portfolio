@@ -178,7 +178,7 @@ func (c *callBacksStrandberg) CollectSpec() func(doc *goquery.Document) []map[st
         spec["NeckMaterial"]     = getElem(`h3:contains("Neck Material")`)
         neckPickup              := getElem(`h3:contains("Neck pickup")`)
         bridgePickup            := getElem(`h3:contains("Bridge pickup")`)
-        spec["Pickups"]          = fmt.Sprintf(constants.PickupsFormat, neckPickup, bridgePickup)
+        spec["Pickups"]          = fmt.Sprintf("%v / %v", neckPickup, bridgePickup)
         priceStr                := strings.TrimSpace(doc.Find(`span:contains("Excluding vat")`).Prev().Text())
         spec["Price"]            = utils.CalcExchangedPrice(priceStr, exchangeRate)
         spec["ScaleLengthMM"]    = getElem(`h3:contains("Instrument Length Global")`)

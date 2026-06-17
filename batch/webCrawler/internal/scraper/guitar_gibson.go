@@ -46,7 +46,7 @@ func NewScraperGibson(logger *log.Logger) Scraper {
     }
 }
 
-func NewCallBacksGibson(logger *log.Logger) GuitarCallbacks {
+func NewCallBacksGibson(logger *log.Logger) *callBacksGibson {
     return &callBacksGibson{
         callBacks{
             logger: logger,
@@ -78,10 +78,11 @@ func (g *guitarScraperGibson) CollectLinks(parentCtx context.Context) ([]string,
     return g.gScraper.urls, nil
 }
 
-func (g *guitarScraperGibson) Scrape(funcs GuitarCallbacks,
+func (g *guitarScraperGibson) Scrape(provider  PageProvider,
+                                     parser    GuitarParser,
                                      parentCtx context.Context,
 ) []*model.Guitar {
-    guitars := g.gScraper.scrapeFrame(funcs, parentCtx)
+    guitars := g.gScraper.scrapeFrame(provider, parser, parentCtx)
     utils.AutoDownLoader(guitars, "images/gibson")
     return guitars
 }

@@ -18,13 +18,16 @@ import (
 )
 
 type Scraper interface {
-	Scrape(funcs GuitarCallbacks, ctx context.Context) []*model.Guitar
-	CollectLinks(ctx context.Context)                  ([]string, error)
+	Scrape(provider PageProvider, parser GuitarParser, ctx context.Context) []*model.Guitar
+	CollectLinks(ctx context.Context)                                       ([]string, error)
 }
 
-type GuitarCallbacks interface {
-    IsStaticPage()          func(html string)            bool
-    FetchDynamicPage(ctx context.Context)                func(url string) (string, error)
+type PageProvider interface {
+    IsStaticPage() func(html string) bool
+    FetchDynamicPage(ctx context.Context) func(url string) (string, error)
+}
+
+type GuitarParser interface {
     CollectSpec()           func(doc *goquery.Document)  []map[string]string
     BuildGuitar(url string) func(spec map[string]string) *model.Guitar
 }
@@ -41,7 +44,10 @@ type callBacks struct {
 }
 
 // スクレイピング実行のフレームワーク
-func (g *guitarScraper) scrapeFrame(funcs GuitarCallbacks, ctx context.Context) []*model.Guitar {
+func (g *guitarScraper) scrapeFrame(provider PageProvider,
+                                    parser GuitarParser,
+                                    ctx context.Context,
+) []*model.Guitar {
     var guitars = make([]*model.Guitar, 0, 400)
 
     if len(g.urls) <= 0 {
@@ -56,7 +62,7 @@ func (g *guitarScraper) scrapeFrame(funcs GuitarCallbacks, ctx context.Context) 
     for _, url := range g.urls {
         url := url
         // 静的/動的を判定してHTMLを取得
-        html := g.fetchPage(url, funcs.IsStaticPage(), funcs.FetchDynamicPage(ctx))
+        html := g.fetchPage(url, provider.IsStaticPage(), provider.FetchDynamicPage(ctx))
 
         wg.Add(1)
         go func(html string, url string) {
@@ -67,8 +73,8 @@ func (g *guitarScraper) scrapeFrame(funcs GuitarCallbacks, ctx context.Context) 
                 g.logger.Println("[Goquery error]:", err)
                 return
             }
-            collectSpec := funcs.CollectSpec()
-            buildGuitar := funcs.BuildGuitar(url)
+            collectSpec := parser.CollectSpec()
+            buildGuitar := parser.BuildGuitar(url)
             specs       := collectSpec(doc) // 1ページ：N詳細ページでもOK
 
             for _, spec := range specs {

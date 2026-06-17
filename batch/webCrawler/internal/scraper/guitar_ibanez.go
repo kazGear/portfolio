@@ -45,7 +45,7 @@ func NewScraperIbanez(logger *log.Logger) Scraper {
     }
 }
 
-func NewCallBacksIbanez(logger *log.Logger) GuitarCallbacks {
+func NewCallBacksIbanez(logger *log.Logger) *callBacksIbanez {
     return &callBacksIbanez{
         callBacks{
             logger: logger,
@@ -150,10 +150,11 @@ func collectLinksDetailView(ctx context.Context, modelLinks []string) ([]string,
     return detailLinks, nil
 }
 
-func (g *guitarScraperIbanez) Scrape(funcs GuitarCallbacks,
+func (g *guitarScraperIbanez) Scrape(provider  PageProvider,
+                                     parser    GuitarParser,
                                      parentCtx context.Context,
 ) []*model.Guitar {
-    guitars := g.gScraper.scrapeFrame(funcs, parentCtx)
+    guitars := g.gScraper.scrapeFrame(provider, parser, parentCtx)
     return guitars
 }
 

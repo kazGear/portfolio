@@ -46,7 +46,7 @@ func NewScraperEsp(logger *log.Logger) Scraper {
     }
 }
 
-func NewCallBacksEsp(logger *log.Logger) GuitarCallbacks {
+func NewCallBacksEsp(logger *log.Logger) *callBacksEsp {
     return &callBacksEsp{
         callBacks{
             logger: logger,
@@ -85,10 +85,11 @@ func (g *guitarScraperEsp) CollectLinks(parentCtx context.Context) ([]string, er
     return g.gScraper.urls, nil
 }
 
-func (g *guitarScraperEsp) Scrape(funcs GuitarCallbacks,
+func (g *guitarScraperEsp) Scrape(provider  PageProvider,
+                                  parser    GuitarParser,
                                   parentCtx context.Context,
 ) []*model.Guitar {
-    guitars := g.gScraper.scrapeFrame(funcs, parentCtx)
+    guitars := g.gScraper.scrapeFrame(provider, parser, parentCtx)
     return guitars
 }
 

@@ -546,3 +546,15 @@ func CollectLinks(eachSelector string, doc *goquery.Document, cap int) []string 
     })
     return links
 }
+
+// 不要なリンクを除外する。reg: 不要なパターンを予めMustCompileして渡す。
+func RemoveNotNeedLinks(links []string, reg *regexp.Regexp) []string {
+    needLinks := make([]string, 0, 150)
+
+    for _, link := range links {
+        if !reg.MatchString(link) {
+            needLinks = append(needLinks, link)
+        }
+    }
+    return needLinks
+}

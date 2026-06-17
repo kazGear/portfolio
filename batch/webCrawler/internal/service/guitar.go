@@ -138,6 +138,16 @@ func makersFactory() map[string]*Maker {
         logger,
     )
 
+    makerName = "PRS"
+    logger    = utils.NewLogger(makerName)
+    makers[makerName] = NewMaker(
+        makerName,
+        scraper.NewScraperPRS(logger),
+        scraper.NewCallBacksPRS(logger),
+        scraper.NewCallBacksPRS(logger),
+        logger,
+    )
+
     return makers
 }
 

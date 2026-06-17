@@ -151,7 +151,7 @@ func (c *callBacksGibson) CollectSpec() func(doc *goquery.Document) []map[string
         doc.Find(`#product-overview .spec-section .spec-item`).Each(func(idx int, selector *goquery.Selection) {
             label      := strings.TrimSpace(selector.Find(`div:nth-child(1)`).Text())
             elem       := strings.TrimSpace(selector.Find(`div:nth-child(2)`).Text())
-            field      := utils.ConvertLabel(label, fieldMapGibson)
+            field, _   := utils.ConvertLabel(label, fieldMapGibson)
             spec[field] = elem
         })
         specs = utils.LockedAppend(mutex, specs, spec)

@@ -137,7 +137,7 @@ func (c *callBacksEspSig) CollectSpec() func(doc *goquery.Document) []map[string
 			selector1.Find(".tbl_spec tr").Each(func(idx int, selector2 *goquery.Selection) {
 				th      := strings.TrimSpace(selector2.Find("th").Text())
 				td      := strings.TrimSpace(selector2.Find("td").Text())
-				th       = utils.ConvertLabel(th, fieldMapEspSig)
+				th, _    = utils.ConvertLabel(th, fieldMapEspSig)
 				spec[th] = td
 			})
 

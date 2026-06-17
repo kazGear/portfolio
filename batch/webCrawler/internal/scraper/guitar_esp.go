@@ -145,7 +145,7 @@ func (c *callBacksEsp) CollectSpec() func(doc *goquery.Document) []map[string]st
         doc.Find("#specifications table.tbl_spec tr").Each(func(idx int, selector *goquery.Selection) {
             th      := strings.TrimSpace(selector.Find("th").Text())
             td      := strings.TrimSpace(selector.Find("td").Text())
-            th       = utils.ConvertLabel(th, fieldMapEsp)
+            th, _    = utils.ConvertLabel(th, fieldMapEsp)
             spec[th] = td
         })
 

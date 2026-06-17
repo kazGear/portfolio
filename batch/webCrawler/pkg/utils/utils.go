@@ -446,8 +446,9 @@ func ParseWight(weight string) (float64, error) {
 }
 
 // サイトの項目名をフィールド名に変換
-func ConvertLabel(label string, fieldMap map[string]string) string {
-    return fieldMap[label]
+func ConvertLabel(label string, fieldMap map[string]string) (string, bool) {
+    val, exist := fieldMap[label]
+	return val, exist
 }
 
 type exchange struct {

@@ -54,7 +54,7 @@ func TestConvertLabelEsp(t *testing.T) {
 	}
 
 	for _, item := range items {
-		actual := utils.ConvertLabel(item.label, fieldMapEsp)
+		actual, _ := utils.ConvertLabel(item.label, fieldMapEsp)
 		assert.Equal(t, item.want, actual)
 	}
 }

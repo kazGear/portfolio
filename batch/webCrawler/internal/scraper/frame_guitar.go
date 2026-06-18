@@ -118,8 +118,8 @@ func buildGuitarFrame(spec map[string]string, url string, logger *log.Logger) (*
     guitar.Fingerboard       = utils.SearchWoodCode(spec[C.Fingerboard])
 
 	var errFretCount error
-	guitar.FretCount, errFretCount = utils.GetFretCount(spec[C.FretCount])
-
+	fretCount                     := strings.TrimSpace(spec[C.FretCount])
+    guitar.FretCount, errFretCount = utils.GetFretCount(fretCount)
     if errFretCount != nil {
         // logger.Println(errFretCount)
     }
@@ -134,7 +134,8 @@ func buildGuitarFrame(spec map[string]string, url string, logger *log.Logger) (*
     if errPrice != nil {
         // logger.Println(errPrice)
     }
-    guitar.ScaleLengthMM = utils.TrimScaleUnit(spec[C.ScaleLengthMM])
+    scaleLengthMM       := strings.TrimSpace(spec[C.ScaleLengthMM])
+    guitar.ScaleLengthMM = utils.TrimScaleUnit(scaleLengthMM)
 	guitar.Series        = spec[C.Series]
 
     guitar.Src           = spec[C.Src]

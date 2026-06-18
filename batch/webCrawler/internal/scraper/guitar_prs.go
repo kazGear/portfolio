@@ -3,6 +3,8 @@ package scraper
 import (
 	"context"
 	"fmt"
+	"maps"
+	"regexp"
 	"strconv"
 	"strings"
 	"sync"
@@ -29,7 +31,7 @@ type callBacksPRS struct {
 func NewScraperPRS(logger *log.Logger) Scraper {
 	collector := colly.NewCollector(
 		colly.Async(true),
-		colly.MaxDepth(4),
+		colly.MaxDepth(3),
 	)
 	collector.Limit(&colly.LimitRule{
 		DomainGlob:  "*",
@@ -52,34 +54,24 @@ func NewCallBacksPRS(logger *log.Logger) *callBacksPRS {
     }
 }
 
+var regNotNeed = regexp.MustCompile(`(privatestock|amplifiers|pedals|accessories|contents/color)`)
+
 func (g *guitarScraperPRS) CollectLinks(parentCtx context.Context) ([]string, error) {
     c       := g.gScraper.collector
-    visited := make(map[string]struct{}, 500)
+    visited := make(map[string]struct{}, 150)
     mutex   := &sync.Mutex{}
 
-    // URL収集、クロール
-    c.OnHTML("#item .figcap a", func(html *colly.HTMLElement) {
+    c.OnHTML("fluid-columns-repeater a", func(html *colly.HTMLElement) {
         link := html.Request.AbsoluteURL(html.Attr("href"))
         if g.gScraper.isFirstVisit(mutex, link, visited) {
             c.Visit(link)
         }
     })
-    c.OnHTML("#inner_content .figcap a", func(html *colly.HTMLElement) {
-        link := html.Request.AbsoluteURL(html.Attr("href"))
-        if g.gScraper.isFirstVisit(mutex, link, visited) {
-            c.Visit(link)
-        }
-    })
-    c.OnHTML("section.color_variation a", func(html *colly.HTMLElement) {
-        link := html.Request.AbsoluteURL(html.Attr("href"))
-        if g.gScraper.isFirstVisit(mutex, link, visited) {
-            c.Visit(link)
-        }
-    })
-    c.Visit("https://espguitars.co.jp/products/esp")
+    c.Visit("https://www.prsguitars.jp/products")
     c.Wait()
 
     g.gScraper.urls = utils.MapToSliceUrl(visited)
+    g.gScraper.urls = utils.RemoveNotNeedLinks(g.gScraper.urls, regNotNeed)
     return g.gScraper.urls, nil
 }
 
@@ -94,25 +86,22 @@ func (g *guitarScraperPRS) Scrape(provider  PageProvider,
 // 必要に応じて、基盤のTryWaitReadyを組み込む
 func (c *callBacksPRS) FetchDynamicPage(parentCtx context.Context) func(url string) (string, error) {
     return func(url string) (string, error) {
-        if !isDetailPage(`^https://espguitars\.co\.jp/product/\d{4,}/?$`, url) {
+        if !isDetailPage(`^https://www.prsguitars.jp/products/[\w-]+/[\w-]+`, url) {
             return "", nil
         }
         // タブごとに独立した context を作る
         tabCtx, tabCancel := chromedp.NewContext(parentCtx)
         defer tabCancel()
         // タブにだけ timeout を付ける
-        ctx, cancel := context.WithTimeout(tabCtx, 4*time.Second)
+        ctx, cancel := context.WithTimeout(tabCtx, 10 * time.Second)
         defer cancel()
 
         var html string
 
         err := chromedp.Run(ctx,
                chromedp.Navigate(url),
-               chromedp.WaitVisible("#main", chromedp.ByQuery), // 求める要素が出るまで待つ
-               chromedp.Sleep(300 * time.Millisecond), // JSが動く猶予を与える
-               tryWaitReady("h1.header_title"), // 必要な要素が生成されるのを待つ
-               tryWaitReady(".tbl_spec"),
-               tryWaitReady("p.detail_price"),
+               chromedp.WaitVisible(`//span[contains("Tuning")]`, chromedp.ByQuery), // 求める要素が出るまで待つ
+               chromedp.Sleep(200 * time.Millisecond), // JSが動く猶予を与える
                chromedp.OuterHTML("html", &html, chromedp.ByQuery), // 最終的なHTML出力
         )
         if err != nil {
@@ -130,36 +119,72 @@ func (c *callBacksPRS) CollectSpec() func(doc *goquery.Document) []map[string]st
         spec := map[string]string{}
 
         spec[C.Maker]   = strconv.Itoa(C.PRS)
-        spec[C.Name]    = strings.TrimSpace(doc.Find("h1.header_title").Text())
-        spec[C.Color]   = strings.TrimSpace(doc.Find(".header_content h3.clr_name").Text())
-        spec[C.Comment] = strings.TrimSpace(doc.Find("#specialfeatures .container_small p").Text())
-        spec[C.Price]   = strings.TrimSpace(doc.Find("p.detail_price").Text())
-        src, _         := doc.Find("#main .header_content img.transform-5").Attr("src")
-        spec[C.Src]     = strings.TrimSpace(src)
-        spec[C.Series]  = regSeries.FindString(spec[C.Name])
+        spec[C.Name]    = doc.Find(`h1 span span span span span`).First().Text()
+        spec[C.Comment] = ""
+        spec[C.Series]  = strings.SplitN(spec[C.Name], " ", 2)[0]
 
-        doc.Find("#specifications table.tbl_spec tr").Each(func(idx int, selector *goquery.Selection) {
-            th      := strings.TrimSpace(selector.Find("th").Text())
-            td      := strings.TrimSpace(selector.Find("td").Text())
-            th       = utils.ConvertLabel(th, fieldMapPRS)
-            spec[th] = td
-        })
+        /*
+        スペック表の構造例
+        <span>
+            Body Construction : Solidbody<br>
+            Body Wood : Poplar<br>
+            Top Carve : Flat Top
+        </span>
+        */
+        bodySection        := doc.Find(`p span:contains("Top Wood"), p span:contains("Body Wood")`).Text()
+        neckSection        := doc.Find(`p span:contains("Fretboard")`).Text()
+        jointSection       := doc.Find(`p span:contains("Assembly")`).Text()
+        finishSection      := doc.Find(`p span:contains("Finish Type")`).Text()
+        hardwareSection    := doc.Find(`p span:contains("Bridge")`).Text()
+        electronicsSection := doc.Find(`p span:contains("Pickup")`).Text()
 
-        bodyMaterial := spec["BodyMaterial"]
-        materials    := strings.Split(bodyMaterial, ",")
+        spec = parseSpec(bodySection, spec)
+        spec = parseSpec(neckSection, spec)
+        spec = parseSpec(jointSection, spec)
+        spec = parseSpec(finishSection, spec)
+        spec = parseSpec(hardwareSection, spec)
+        spec = parseSpec(electronicsSection, spec)
 
-        if len(materials) == 1 {
-            spec[C.BodyMaterialBack] = materials[0]
-        } else if len(materials) == 2 {
-            spec[C.BodyMaterialTop]  = materials[0]
-            spec[C.BodyMaterialBack] = materials[1]
-        } else {
-            spec[C.BodyMaterialBack] = materials[0]
+        if len(spec["TreblePickup"]) <= 0 {
+            spec["TreblePickup"] = spec["BassPickup"]
         }
+        spec[C.Pickups] = fmt.Sprintf("%v / %v / %v", spec["BassPickup"], spec["MiddlePickup"], spec["TreblePickup"])
 
-        specs = utils.LockedAppend(mutex, specs, spec)
+        // 画像、カラー取得
+        doc.Find(`span:contains("COLORS")`).
+            Closest("div").Parent(). // 直近の親divの親
+            Children().Next().Children().Children().Children(). // 各色のギターカード
+                Each(func(idx int, selector *goquery.Selection) {
+                    nextSpec := make(map[string]string)
+                    maps.Copy(nextSpec, spec)
+
+                    nextSpec[C.Src], _ = selector.Find("img").Attr("src")
+                    nextSpec[C.Color]  = strings.TrimSpace(selector.Text())
+
+                    specs = utils.LockedAppend(mutex, specs, nextSpec)
+                })
         return specs
     }
+}
+
+func parseSpec(specSection string, spec map[string]string) map[string]string {
+    specSection     = strings.ReplaceAll(specSection, "\r\n", "\n") // 改行正規化
+    specSection     = "\n" + specSection + "\n"
+    splitedSection := strings.Split(specSection, "\n")
+
+    for _, elem := range splitedSection {
+        if len(elem) == 0 {
+            continue
+        }
+        labelAndSpec := strings.SplitN(elem, ":", 2)
+        specLabel   := strings.TrimSpace(labelAndSpec[0])
+        key, exist := utils.ConvertLabel(specLabel, fieldMapPRS)
+
+        if exist && len(labelAndSpec) > 1 {
+            spec[key] = labelAndSpec[1]
+        }
+    }
+    return spec
 }
 
 func (c *callBacksPRS) BuildGuitar(url string) func(spec map[string]string) *model.Guitar {
@@ -170,21 +195,26 @@ func (c *callBacksPRS) BuildGuitar(url string) func(spec map[string]string) *mod
 
 func (c *callBacksPRS) IsStaticPage() func(html string) bool {
     return func(html string) bool {
-        return strings.Contains(html, "tbl_spec")
+        return strings.Contains(html, "Tuning")
     }
 }
 
 // key: PRSの項目名, value: 構造体フィールド名
+
 var fieldMapPRS = map[string]string{
-	"BODY":         "BodyMaterial",
-	"NECK":         "NeckMaterial",
-	"FINGERBOARD":  "Fingerboard",
-	"BRIDGE":       "Bridge",
-	"PICKUPS":      "Pickups",
-	"CONTROLS":     "Controls",
-	"Price":        "Price",
-	"SCALE":        "ScaleLengthMM",
-	"FRET":         "FretCount",
-	"INLAY":        "Inlays",
-	"CONSTRUCTION": "Joint",
+	"Finish Type":            "BodyFinish",
+    "Top Wood":               "BodyMaterialTop",
+	"Body Wood":              "BodyMaterialBack",
+    "Back Wood":              "BodyMaterialBack",
+	"Bridge":                 "Bridge",
+	"Controls":               "Controls",
+	"Fretboard Wood":         "Fingerboard",
+	"Number of Frets":        "FretCount",
+	"Fretboard Inlay":        "Inlays",
+	"Neck/Body Assembly Type":"Joint",
+	"Neck Wood":              "NeckMaterial",
+	"Scale Length":           "ScaleLengthMM",
+    "Treble Pickup":          "TreblePickup",
+    "Middle Pickup":          "MiddlePickup",
+    "Bass Pickup":            "BassPickup",
 }

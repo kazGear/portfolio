@@ -122,7 +122,7 @@ func GetFretCount(s string) (int, error) {
 	return result, nil
 }
 
-var regScale = regexp.MustCompile(`(\..*|\s)*mm`)
+var regScale = regexp.MustCompile(`(\..*|\s)*(mm|”)`)
 // ギタースケールの単位を除去
 func TrimScaleUnit(s string) int {
 	halfed := width.Narrow.String(s)

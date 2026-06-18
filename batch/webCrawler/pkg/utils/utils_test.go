@@ -196,6 +196,10 @@ func TestTrimScaleUnit(t *testing.T) {
 			scale: `24.75" / 628.65mm`,
 			want:  24,
 		},
+		{
+			scale: `24.594”`,
+			want:  24,
+		},
 	}
 
 	for _, s := range scales {

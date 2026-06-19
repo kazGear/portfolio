@@ -283,25 +283,27 @@ func renderHTML(ctx context.Context, startURL string, waitElem string,
 }
 
 // htmlを自動でスクロールさせる
-func autoScroll(ctx context.Context) chromedp.Action {
-    var lastHeight int
-    var scrollY int
-    var innerHeight int
+func autoScroll() chromedp.Action {
+    return chromedp.ActionFunc(func(ctx context.Context) error {
+        var lastHeight int
+        var scrollY int
+        var innerHeight int
 
-    for i := 0; i < 50; i++ {
-        chromedp.Run(ctx,
-            chromedp.Evaluate(`document.body.scrollHeight`, &lastHeight), // ページ全体の高さ
-        )
-        chromedp.Run(ctx,
-            chromedp.Evaluate(`window.scrollBy(0, 800)`, nil),
-            chromedp.Sleep(300 * time.Millisecond),
-            chromedp.Evaluate(`window.scrollY`, &scrollY), // 画面上端のスクロール位置
-            chromedp.Evaluate(`window.innerHeight`, &innerHeight),
-        )
-        if scrollY + innerHeight >= lastHeight - 50 {
-            break // 最後までスクロール済
+        for i := 0; i < 50; i++ {
+            chromedp.Run(ctx,
+                chromedp.Evaluate(`document.body.scrollHeight`, &lastHeight), // ページ全体の高さ
+            )
+            chromedp.Run(ctx,
+                chromedp.Evaluate(`window.scrollBy(0, 800)`, nil),
+                chromedp.Sleep(300 * time.Millisecond),
+                chromedp.Evaluate(`window.scrollY`, &scrollY), // 画面上端のスクロール位置
+                chromedp.Evaluate(`window.innerHeight`, &innerHeight),
+            )
+            if scrollY + innerHeight >= lastHeight - 50 {
+                break // 最後までスクロール済
+            }
+            time.Sleep(1 * time.Second)
         }
-        time.Sleep(1 * time.Second)
-    }
-    return nil
+        return nil
+    })
 }

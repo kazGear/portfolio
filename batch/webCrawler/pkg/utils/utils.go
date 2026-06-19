@@ -17,6 +17,7 @@ import (
 	"time"
 
 	"github.com/PuerkitoBio/goquery"
+	"github.com/chromedp/cdproto/cdp"
 	"github.com/kazGear/portfolio/webCrawler/internal/model"
 	C "github.com/kazGear/portfolio/webCrawler/pkg/constants"
 	"github.com/shopspring/decimal"
@@ -558,4 +559,15 @@ func RemoveNotNeedLinks(links []string, reg *regexp.Regexp) []string {
         }
     }
     return needLinks
+}
+
+// cdp.Node.Attributes の構造 []string{ id", "frame1", "src", "https://example.com", "class", "foo", ...}
+func GetAttr(node *cdp.Node, name string) string {
+    for i := 0; i < len(node.Attributes)-1; i += 2 {
+        if node.Attributes[i] == name {
+            // 次の要素が属性の内容
+            return node.Attributes[i+1]
+        }
+    }
+    return ""
 }

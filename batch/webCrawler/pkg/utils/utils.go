@@ -562,9 +562,9 @@ func RemoveNotNeedLinks(links []string, reg *regexp.Regexp) []string {
 }
 
 // cdp.Node.Attributes の構造 []string{ id", "frame1", "src", "https://example.com", "class", "foo", ...}
-func GetAttr(node *cdp.Node, name string) string {
+func GetAttr(node *cdp.Node, attrName string) string {
     for i := 0; i < len(node.Attributes)-1; i += 2 {
-        if node.Attributes[i] == name {
+        if node.Attributes[i] == attrName {
             // 次の要素が属性の内容
             return node.Attributes[i+1]
         }

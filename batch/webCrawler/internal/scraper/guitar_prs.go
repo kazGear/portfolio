@@ -2,8 +2,11 @@ package scraper
 
 import (
 	"context"
+	"encoding/csv"
 	"fmt"
+	"io"
 	"maps"
+	"net/http"
 	"regexp"
 	"strconv"
 	"strings"
@@ -13,6 +16,7 @@ import (
 	"log"
 
 	"github.com/PuerkitoBio/goquery"
+	"github.com/chromedp/cdproto/cdp"
 	"github.com/chromedp/chromedp"
 	"github.com/gocolly/colly/v2"
 	"github.com/kazGear/portfolio/webCrawler/internal/model"
@@ -29,7 +33,20 @@ type callBacksPRS struct {
 }
 
 func NewScraperPRS(logger *log.Logger) Scraper {
-	collector := colly.NewCollector(
+    allocCtx, allocCancel := chromedp.NewExecAllocator(
+        context.Background(),
+        chromedp.DefaultExecAllocatorOptions[:]...,
+    )
+    parentCtx, parentCancel := chromedp.NewContext(allocCtx)
+    ctx, cancel := context.WithTimeout(parentCtx, 30 * time.Second)
+    defer allocCancel()
+    defer parentCancel()
+    defer cancel()
+
+    getPrices(ctx)
+    // autoScroll(ctx)
+
+    collector := colly.NewCollector(
 		colly.Async(true),
 		colly.MaxDepth(3),
 	)
@@ -51,6 +68,111 @@ func NewCallBacksPRS(logger *log.Logger) *callBacksPRS {
         callBacks{
             logger: logger,
         },
+    }
+}
+
+type priceData struct {
+    name  string
+    price string
+}
+var regItems = regexp.MustCompile(`(製|Product)[\s\S]+?csvUrl`)
+var regPrice = regexp.MustCompile(`,(\d{3})`)
+var regItemAndPrice = regexp.MustCompile(`(¥,?\d{3,7})+([A-Za-z]{1})`) // 例 ¥200,000Archon1x12ClosedBack
+
+func getPrices(ctx context.Context) {
+    var nodes []*cdp.Node
+    var baseUrl = `https://www.prsguitars.jp/products/plicelist`
+
+    // 価格表に繋がるデータを複数取得。直接はとれない
+    err := chromedp.Run(ctx,
+        chromedp.Navigate(baseUrl),
+        autoScroll(),
+        chromedp.WaitReady("body"),
+        chromedp.Sleep(2000 * time.Millisecond),
+        chromedp.Nodes(`iframe`, &nodes),
+    )
+    if err != nil {
+        log.Printf("[getPrice chromedp error]: %+v", err)
+    }
+
+    // 価格データ収集
+    for _, node := range nodes {
+        if node.NodeName != "IFRAME" {
+            continue
+        }
+        // アクセス先の設定
+        iframeSrc := utils.GetAttr(node, "src")
+        req, _    := http.NewRequest("GET", iframeSrc, nil)
+        req.Header.Set("Referer", baseUrl) // 無いとforbiddenで弾かれる
+
+        // 雑な価格データ取得
+        client    := &http.Client{}
+        resp, err := client.Do(req)
+
+        if err != nil {
+            log.Printf("client do res error: %+v\n", err)
+            continue
+        }
+        body, _ := io.ReadAll(resp.Body)
+        csvStr  := regItems.FindString(string(body))
+        resp.Body.Close()
+
+        // データクレンジング
+        csvStr = strings.ReplaceAll(csvStr, "\n", "")
+        csvStr = strings.ReplaceAll(csvStr, "\\n", "")
+        csvStr = strings.ReplaceAll(csvStr, "\t", "")
+        csvStr = strings.ReplaceAll(csvStr, "\\t", "")
+        csvStr = strings.ReplaceAll(csvStr, "\"", "")
+        csvStr = strings.ReplaceAll(csvStr, "\\", "")
+        csvStr = strings.ReplaceAll(csvStr, " ", "")
+        csvStr = strings.ReplaceAll(csvStr, "  ", "")
+        csvStr = strings.ReplaceAll(csvStr, "csvUrl", "")
+        csvStr = strings.ReplaceAll(csvStr, "{", ",{")
+        csvStr = regPrice.ReplaceAllString(csvStr, "$1") // (\d{3}) 部分
+        csvStr = regItemAndPrice.ReplaceAllString(csvStr, "$1,$2") // (¥,?\d{3,7}), ([A-Za-z]{1}) 部分
+        csvStr = strings.ReplaceAll(csvStr, ",,", ",")
+
+        // csv変換
+        csv := csv.NewReader(strings.NewReader(csvStr))
+        csv.LazyQuotes       = true
+        csv.TrimLeadingSpace = true
+
+        // csv >>> []string
+        var flatData []string
+        loadCsv, err := csv.ReadAll()
+
+        for _, outer := range loadCsv {
+            for _, csv := range outer {
+                flatData = append(flatData, csv)
+            }
+        }
+
+        // 価格表構築 まず価格を探し、そこから商品名を探す。
+        var prices []priceData
+        for idx, data := range flatData {
+            if !strings.HasPrefix(data, "¥") {
+                continue
+            }
+            var priceData priceData
+            priceData.price = data
+
+            // 商品名を探す
+            for backIdx := idx - 1; idx - backIdx <= 6; backIdx-- { // ６つ前まで走査
+                if strings.Contains(flatData[backIdx], ":") {
+                    if strings.Contains(flatData[backIdx], "text") {
+                        priceData.name = strings.ReplaceAll(flatData[backIdx], "text:", "")
+                        break
+                    }
+                } else {
+                    priceData.name = flatData[backIdx]
+                    break
+                }
+            }
+            prices = append(prices, priceData)
+        }
+        for _, price := range prices {
+            log.Println("priceData:", price)
+        }
     }
 }
 

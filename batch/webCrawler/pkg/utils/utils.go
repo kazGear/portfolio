@@ -571,3 +571,19 @@ func GetAttr(node *cdp.Node, attrName string) string {
     }
     return ""
 }
+
+// 文字列の様式を統一する
+func NormalizeGuitarName(str string) string {
+    normalized := width.Narrow.String(str)
+    normalized  = strings.ToLower(normalized)
+    normalized  = strings.TrimSpace(normalized)
+    normalized  = strings.ReplaceAll(normalized, " ", "")
+    normalized  = strings.ReplaceAll(normalized, "\r\n", "")
+    normalized  = strings.ReplaceAll(normalized, "\n", "")
+    normalized  = strings.ReplaceAll(normalized, "\"", "")
+    normalized  = strings.ReplaceAll(normalized, "“", "")
+    normalized  = strings.ReplaceAll(normalized, "”", "")
+    normalized  = strings.ReplaceAll(normalized, "'", "")
+    normalized  = strings.ReplaceAll(normalized, "-", "")
+    return normalized
+}

@@ -26,13 +26,14 @@ import (
 
 type guitarScraperPRS struct {
     gScraper guitarScraper
+    priceSet map[string]string
 }
 
 type callBacksPRS struct {
     funcs callBacks
 }
 
-func NewScraperPRS(logger *log.Logger) Scraper {
+func NewScraperPRS(logger *log.Logger) *guitarScraperPRS {
     allocCtx, allocCancel := chromedp.NewExecAllocator(
         context.Background(),
         chromedp.DefaultExecAllocatorOptions[:]...,
@@ -43,8 +44,7 @@ func NewScraperPRS(logger *log.Logger) Scraper {
     defer parentCancel()
     defer cancel()
 
-    getPrices(ctx)
-    // autoScroll(ctx)
+    priceSet := getPrices(ctx)
 
     collector := colly.NewCollector(
 		colly.Async(true),
@@ -60,6 +60,7 @@ func NewScraperPRS(logger *log.Logger) Scraper {
             mutex:     &sync.Mutex{},
             logger:    logger,
         },
+        priceSet,
     }
 }
 
@@ -79,13 +80,13 @@ var regItems = regexp.MustCompile(`(製|Product)[\s\S]+?csvUrl`)
 var regPrice = regexp.MustCompile(`,(\d{3})`)
 var regItemAndPrice = regexp.MustCompile(`(¥,?\d{3,7})+([A-Za-z]{1})`) // 例 ¥200,000Archon1x12ClosedBack
 
-func getPrices(ctx context.Context) {
+func getPrices(ctx context.Context) map[string]string {
     var baseUrl = `https://www.prsguitars.jp/products/plicelist`
 
     sheets := getPrsPriceSheets(ctx, baseUrl)
 
     // 価格データ収集
-    var priceSet []priceData
+    var priceSet = map[string]string{}
     for _, node := range sheets {
         if node.NodeName != "IFRAME" {
             continue
@@ -102,12 +103,10 @@ func getPrices(ctx context.Context) {
         flatData := createFlatData(loadCsv)
 
         // 価格表構築
-        prices  := searchGuitarPrices(flatData)
-        priceSet = append(priceSet, prices...)
+        prices := searchGuitarPrices(flatData)
+        maps.Copy(priceSet, prices)
     }
-    for _, price := range priceSet {
-        log.Println("priceData:", price)
-    }
+    return priceSet
 }
 
 func getPrsPriceSheets(ctx context.Context, baseUrl string) []*cdp.Node {
@@ -190,30 +189,32 @@ func createFlatData(loadCsv [][]string) []string {
     return flatData
 }
 
-func searchGuitarPrices(flatData []string) []priceData {
-    var price  priceData
-    var prices []priceData
+func searchGuitarPrices(flatData []string) map[string]string {
+    var prices = map[string]string{}
 
     // まず価格を探し、そこから商品名を探す
     for idx, data := range flatData {
         if !strings.HasPrefix(data, "¥") {
             continue
         }
+        var price   = priceData{}
         price.price = data
 
         // 商品名を探す
         for backIdx := idx - 1; idx - backIdx <= 6; backIdx-- { // ６つ前まで走査
             if strings.Contains(flatData[backIdx], ":") {
                 if strings.Contains(flatData[backIdx], "text") {
-                    price.name = strings.ReplaceAll(flatData[backIdx], "text:", "")
+                    price.name = utils.NormalizeGuitarName(
+                        strings.ReplaceAll(flatData[backIdx], "text:", ""),
+                    )
                     break
                 }
             } else {
-                price.name = flatData[backIdx]
+                price.name = utils.NormalizeGuitarName(flatData[backIdx])
                 break
             }
         }
-        prices = append(prices, price)
+        prices[price.name] = price.price
     }
     return prices
 }
@@ -244,7 +245,16 @@ func (g *guitarScraperPRS) Scrape(provider  PageProvider,
                                   parentCtx context.Context,
 ) []*model.Guitar {
     guitars := g.gScraper.scrapeFrame(provider, parser, parentCtx)
+    mergePrice(guitars, g.priceSet)
     return guitars
+}
+
+func mergePrice(guitars []*model.Guitar, priceSet map[string]string) {
+    for _, guitar := range guitars {
+        guitarName     := utils.NormalizeGuitarName(guitar.Name)
+        price          := priceSet[guitarName]
+        guitar.Price, _ = utils.ParsePrice(price)
+    }
 }
 
 // 必要に応じて、基盤のTryWaitReadyを組み込む

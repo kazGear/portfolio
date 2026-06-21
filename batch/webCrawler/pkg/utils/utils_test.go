@@ -393,3 +393,28 @@ func TestGetDistinctLinks(t *testing.T) {
 	result := GetDistinctLinks(links)
 	assert.Equal(t, 3, len(result))
 }
+
+func TestTrimSpace(t *testing.T) {
+	strSet := []struct{
+		target string
+		want   string
+	}{
+		{
+			target: "str" ,want: "str",
+		},
+		{
+			target: " str " ,want: "str",
+		},
+		{
+			target: "  str  " ,want: "str",
+		},
+		{
+			target: "　 str　　" ,want: "str",
+		},
+	}
+	trim := TrimSpace()
+	for _, s := range strSet {
+		actual := trim(s.target)
+		assert.Equal(t, s.want, actual)
+	}
+}

@@ -432,6 +432,12 @@ func GetNextElem(doc *goquery.Document) func(selector string) string {
 	}
 }
 
+func TrimSpace() func(string) string {
+	return func(s string) string {
+		return strings.TrimSpace(s)
+	}
+}
+
 var regWight = regexp.MustCompile(`\d\.\d{1,2}`)
 // 重量を抽出する（Kg単位）
 func ParseWight(weight string) (float64, error) {

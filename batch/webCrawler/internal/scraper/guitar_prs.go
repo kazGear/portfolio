@@ -322,7 +322,11 @@ func (c *callBacksPRS) CollectSpec() func(doc *goquery.Document) []map[string]st
         if len(spec["TreblePickup"]) <= 0 {
             spec["TreblePickup"] = spec["BassPickup"]
         }
-        spec[C.Pickups] = fmt.Sprintf("%v / %v / %v", spec["BassPickup"], spec["MiddlePickup"], spec["TreblePickup"])
+
+        trim := utils.TrimSpace()
+        spec[C.Pickups] = fmt.Sprintf(
+            "%v / %v / %v", trim(spec["BassPickup"]), trim(spec["MiddlePickup"]), trim(spec["TreblePickup"]),
+        )
 
         // 画像、カラー取得
         doc.Find(`span:contains("COLORS")`).

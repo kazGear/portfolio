@@ -35,7 +35,7 @@ func NewScraperGibson(logger *log.Logger) Scraper {
 	)
 	collector.Limit(&colly.LimitRule{
 		DomainGlob:  "*",
-		Parallelism: 30,
+		Parallelism: 5, // URL収集漏れが発生するため5に制限
 	})
     return &guitarScraperGibson{
         guitarScraper{
@@ -130,17 +130,15 @@ func (c *callBacksGibson) CollectSpec() func(doc *goquery.Document) []map[string
         mutex := &sync.Mutex{}
 
         spec        := map[string]string{}
-        getElem     := utils.GetElem(doc)
-        getElemNext := utils.GetNextElem(doc)
 
         doc.Find(`#cart-options h2.marketing-headline small`).Remove() // Nameからノイズを除去
 
         spec[C.Maker]            = strconv.Itoa(C.Gibson)
-        spec[C.Name]             = getElem(`h2.marketing-headline`)
-        spec[C.Color]            = getElem(`div#displayed-finish`)
-        spec[C.Comment]          = getElem(`#cart-options .marketing-copy p`)
-        neckPickup              := getElemNext(`.spec-item div:contains("Neck pickup")`)
-        bridgePickup            := getElemNext(`.spec-item div:contains("Bridge pickup")`)
+        spec[C.Name]             = doc.Find(`h2.marketing-headline`).Text()
+        spec[C.Color]            = doc.Find(`div#displayed-finish`).Text()
+        spec[C.Comment]          = doc.Find(`#cart-options .marketing-copy p`).Text()
+        neckPickup              := doc.Find(`.spec-item div:contains("Neck pickup")`).Next().Text()
+        bridgePickup            := doc.Find(`.spec-item div:contains("Bridge pickup")`).Next().Text()
         spec[C.Pickups]          = fmt.Sprintf("%v / %v", neckPickup, bridgePickup)
         spec[C.Price]            = strconv.Itoa(C.InvalidNumber)
         src, _                  := doc.Find(`img#gallery-front`).Attr(`src`)

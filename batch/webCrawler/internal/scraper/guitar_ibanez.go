@@ -34,7 +34,7 @@ func NewScraperIbanez(logger *log.Logger) Scraper {
 	)
 	collector.Limit(&colly.LimitRule{
 		DomainGlob:  "*",
-		Parallelism: 30,
+		Parallelism: 5, // URL収集漏れが発生するため5に制限
 	})
     return &guitarScraperIbanez{
         guitarScraper{
@@ -192,10 +192,8 @@ func (c *callBacksIbanez) FetchDynamicPage(parentCtx context.Context) func(url s
 
 func (c *callBacksIbanez) CollectSpec() func(doc *goquery.Document) []map[string]string {
     return func(doc *goquery.Document) []map[string]string {
-        getElem       := utils.GetElem(doc)
-
         // 詳細urlにギター、ベース以外が紛れてしまうのでフィルタリング
-        factoryTuning := getElem(`.rt_cf_p_data_factory_tuning`)
+        factoryTuning := doc.Find(`.rt_cf_p_data_factory_tuning`).Text()
         if len(factoryTuning) <= 0 {
             return []map[string]string{} // upsertで弾かれる
         }
@@ -205,39 +203,39 @@ func (c *callBacksIbanez) CollectSpec() func(doc *goquery.Document) []map[string
         mutex := &sync.Mutex{}
 
         spec[C.Maker]            = strconv.Itoa(C.Ibanez)
-        spec[C.Name]             = getElem(`.rt_cf_p_cm_product_code`)
-        spec[C.Color]            = getElem(`.rt_cf_pcl_color_name_jp_1, .rt_cf_pcl_color_name_ag_jp_1`)
+        spec[C.Name]             = doc.Find(`.rt_cf_p_cm_product_code`).Text()
+        spec[C.Color]            = doc.Find(`.rt_cf_pcl_color_name_jp_1, .rt_cf_pcl_color_name_ag_jp_1`).Text()
         spec[C.BodyFinish]       = ""
-        spec[C.BodyMaterialBack] = getElem(`.rt_cf_p_data_body_material, .rt_cf_p_ag_side_material`)
-        spec[C.BodyMaterialTop]  = getElem(`.rt_cf_p_data_body_top_material`)
-        spec[C.Bridge]           = getElem(`.rt_cf_p_data_bridge`)
+        spec[C.BodyMaterialBack] = doc.Find(`.rt_cf_p_data_body_material, .rt_cf_p_ag_side_material`).Text()
+        spec[C.BodyMaterialTop]  = doc.Find(`.rt_cf_p_data_body_top_material`).Text()
+        spec[C.Bridge]           = doc.Find(`.rt_cf_p_data_bridge`).Text()
         spec[C.Controls]         = ""
         spec[C.Comment]          = ""
-        spec[C.Fingerboard]      = getElem(`.rt_cf_p_data_fretboard`)
-        spec[C.FretCount]        = getElem(`.rt_cf_p_data_number_fret`)
+        spec[C.Fingerboard]      = doc.Find(`.rt_cf_p_data_fretboard`).Text()
+        spec[C.FretCount]        = doc.Find(`.rt_cf_p_data_number_fret`).Text()
 
-        inlays                  := getElem(`.rt_cf_p_ag_face_inlay`)
+        inlays                  := doc.Find(`.rt_cf_p_ag_face_inlay`).Text()
         if len(inlays) > 0 {
             spec[C.Inlays] = inlays
         } else {
-            spec[C.Inlays] = getElem(`.rt_cf_p_data_in`)
+            spec[C.Inlays] = doc.Find(`.rt_cf_p_data_in`).Text()
         }
 
         spec[C.Joint]            = ""
-        spec[C.NeckMaterial]     = getElem(`.rt_cf_p_data_neck_material`)
+        spec[C.NeckMaterial]     = doc.Find(`.rt_cf_p_data_neck_material`).Text()
 
-        neckPickup              := getElem(`.rt_cf_p_data_neck_pickup`)
-        middlePickup            := getElem(`.rt_cf_p_data_middle_pickup`)
-        bridgePickup            := getElem(`.rt_cf_p_data_bridge_pickup`)
+        neckPickup              := doc.Find(`.rt_cf_p_data_neck_pickup`).Text()
+        middlePickup            := doc.Find(`.rt_cf_p_data_middle_pickup`).Text()
+        bridgePickup            := doc.Find(`.rt_cf_p_data_bridge_pickup`).Text()
         spec[C.Pickups]          = fmt.Sprintf(`%v / %v / %v `, neckPickup, middlePickup, bridgePickup)
 
-        spec[C.Price]            = getElem(`.rt_cf_p_cm_price`)
+        spec[C.Price]            = doc.Find(`.rt_cf_p_cm_price`).Text()
         src, _                  := doc.Find(`.products-detail-main-modal-img`).Attr(`src`)
         spec[C.Src]              = strings.TrimSpace(src)
         spec[C.Series]           = strings.TrimSpace(doc.Find(
                                     `ul a:contains("` + spec[C.Name] + `")`,
                                          ).Parent().Parent().Prev().Children().Text())
-        spec[C.ScaleLengthMM]    = getElem(`.rt_cf_p_data_scale_mm`)
+        spec[C.ScaleLengthMM]    = doc.Find(`.rt_cf_p_data_scale_mm`).Text()
         spec[C.Weight]           = strconv.Itoa(C.InvalidNumber)
 
         specs = utils.LockedAppend(mutex, specs, spec)

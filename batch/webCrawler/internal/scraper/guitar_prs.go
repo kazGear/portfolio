@@ -44,6 +44,9 @@ func NewScraperPRS(logger *log.Logger) *guitarScraperPRS {
     defer parentCancel()
     defer cancel()
 
+    mutex := &sync.Mutex{}
+    mutex.Lock()
+    defer mutex.Unlock()
     priceSet := getPrices(ctx)
 
     collector := colly.NewCollector(
@@ -52,7 +55,7 @@ func NewScraperPRS(logger *log.Logger) *guitarScraperPRS {
 	)
 	collector.Limit(&colly.LimitRule{
 		DomainGlob:  "*",
-		Parallelism: 20,
+		Parallelism: 5, // URL収集漏れが発生するため5に制限
 	})
     return &guitarScraperPRS{
         guitarScraper{

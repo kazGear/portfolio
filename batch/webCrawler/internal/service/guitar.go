@@ -46,7 +46,7 @@ func (g *guitarCrawlerService) RunCrawler() {
     makers := makersFactory()
 
     wg := &sync.WaitGroup{}
-    queue := make(chan struct{}, 5) // 並列数制御
+    queue := make(chan struct{}, 10) // 並列数制御
 
     // クロール + スクレイピング + DB保存
     for _, maker := range makers {

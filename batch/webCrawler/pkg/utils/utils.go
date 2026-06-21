@@ -418,20 +418,6 @@ func AutoDownLoader(guitars []*model.Guitar, saveDirName string) []error {
 	}
 }
 
-// 指定したラベルの要素を取得
-func GetElem(doc *goquery.Document) func(selector string) string {
-	return func(selector string) string {
-		return strings.TrimSpace(doc.Find(selector).Text())
-	}
-}
-
-// 指定した要素の次（兄弟要素）の要素を取得
-func GetNextElem(doc *goquery.Document) func(selector string) string {
-	return func(selector string) string {
-		return strings.TrimSpace(doc.Find(selector).Next().Text())
-	}
-}
-
 func TrimSpace() func(string) string {
 	return func(s string) string {
 		return strings.TrimSpace(s)

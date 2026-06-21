@@ -35,7 +35,7 @@ func NewScraperEsp(logger *log.Logger) Scraper {
 	)
 	collector.Limit(&colly.LimitRule{
 		DomainGlob:  "*",
-		Parallelism: 20,
+		Parallelism: 5, // URL収集漏れが発生するため5に制限
 	})
     return &guitarScraperEsp{
         guitarScraper{

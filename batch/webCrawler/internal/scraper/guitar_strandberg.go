@@ -37,7 +37,7 @@ func NewScraperStrandberg(logger *log.Logger) Scraper {
 	)
 	collector.Limit(&colly.LimitRule{
 		DomainGlob:  "*",
-		Parallelism: 5,
+		Parallelism: 5, // URL収集漏れが発生するため5に制限
 	})
     return &guitarScraperStrandberg{
         guitarScraper{
@@ -158,34 +158,33 @@ func (c *callBacksStrandberg) CollectSpec() func(doc *goquery.Document) []map[st
         mutex := &sync.Mutex{}
 
         spec    := map[string]string{}
-        getElem := utils.GetNextElem(doc)
 
         spec[C.Maker]            = strconv.Itoa(C.Strandberg)
         spec[C.Name]             = strings.TrimSpace(doc.Find(
                                     `div[data-sentry-component="ProductInfo"] div div h1`,
                                    ).Text())
-        spec[C.Color]            = getElem(`h3:contains("Body finish color")`)
-        spec[C.BodyFinish]       = getElem(`h3:contains("Body Finish Type")`)
-        spec[C.BodyMaterialBack] = getElem(`h3:contains("Body Material")`)
-        spec[C.BodyMaterialTop]  = getElem(`h3:contains("Body Top Material")`)
-        spec[C.Bridge]           = getElem(`h3:contains("Bridge")`)
-        spec[C.Controls]         = getElem(`h3:contains("Control Set")`)
-        spec[C.Comment]          = strings.TrimSpace(doc.Find(``).Text())
-        spec[C.Fingerboard]      = getElem(`h3:contains("Fretboard Material")`)
-        spec[C.FretCount]        = getElem(`h3:contains("Number of Frets")`)
-        spec[C.Inlays]           = getElem(`h3:contains("Fretboard Inlays")`)
-        spec[C.Joint]            = getElem(`h3:contains("Neck Construction")`)
-        spec[C.NeckMaterial]     = getElem(`h3:contains("Neck Material")`)
-        neckPickup              := getElem(`h3:contains("Neck pickup")`)
-        bridgePickup            := getElem(`h3:contains("Bridge pickup")`)
+        spec[C.Color]            = doc.Find(`h3:contains("Body finish color")`).Next().Text()
+        spec[C.BodyFinish]       = doc.Find(`h3:contains("Body Finish Type")`).Next().Text()
+        spec[C.BodyMaterialBack] = doc.Find(`h3:contains("Body Material")`).Next().Text()
+        spec[C.BodyMaterialTop]  = doc.Find(`h3:contains("Body Top Material")`).Next().Text()
+        spec[C.Bridge]           = doc.Find(`h3:contains("Bridge")`).Next().Text()
+        spec[C.Controls]         = doc.Find(`h3:contains("Control Set")`).Next().Text()
+        spec[C.Comment]          = ""
+        spec[C.Fingerboard]      = doc.Find(`h3:contains("Fretboard Material")`).Next().Text()
+        spec[C.FretCount]        = doc.Find(`h3:contains("Number of Frets")`).Next().Text()
+        spec[C.Inlays]           = doc.Find(`h3:contains("Fretboard Inlays")`).Next().Text()
+        spec[C.Joint]            = doc.Find(`h3:contains("Neck Construction")`).Next().Text()
+        spec[C.NeckMaterial]     = doc.Find(`h3:contains("Neck Material")`).Next().Text()
+        neckPickup              := doc.Find(`h3:contains("Neck pickup")`).Next().Text()
+        bridgePickup            := doc.Find(`h3:contains("Bridge pickup")`).Next().Text()
         spec[C.Pickups]          = fmt.Sprintf("%v / %v", neckPickup, bridgePickup)
         priceStr                := strings.TrimSpace(doc.Find(`span:contains("Excluding vat")`).Prev().Text())
         spec[C.Price]            = utils.CalcExchangedPrice(priceStr, exchangeRate)
-        spec[C.ScaleLengthMM]    = getElem(`h3:contains("Instrument Length Global")`)
+        spec[C.ScaleLengthMM]    = doc.Find(`h3:contains("Instrument Length Global")`).Next().Text()
         spec[C.Series]           = regSeriesStrandberg.FindString(spec[C.Name])
         proxyPath, _            := doc.Find(`img[width="1200"][height="1200"]`).Attr(`src`)
         spec[C.Src], _           = utils.ConvertRealUrl(proxyPath)
-        spec[C.Weight]           = getElem(`h3:contains("Instrument Weight Global")`)
+        spec[C.Weight]           = doc.Find(`h3:contains("Instrument Weight Global")`).Next().Text()
 
         specs = utils.LockedAppend(mutex, specs, spec)
         return specs

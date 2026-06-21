@@ -97,36 +97,37 @@ func (g *guitarScraper) scrapeFrame(provider PageProvider,
 // ギター構造体の構築フレームワーク
 func buildGuitarFrame(spec map[string]string, url string, logger *log.Logger) (*model.Guitar) {
 	guitar := model.Guitar{}
+    trim   := utils.TrimSpace()
 
     var errMaker error
 	guitar.Maker, errMaker = strconv.Atoi(spec[C.Maker])
-	guitar.Name            = spec[C.Name]
+	guitar.Name            = trim(spec[C.Name])
 
     if errMaker != nil {
         logger.Printf("[Maker convert error]: %v", errMaker)
         return &model.Guitar{}
 	}
-	guitar.BodyFinish        = spec[C.BodyFinish]
-	guitar.BodyMaterial      = spec[C.BodyMaterialTop] + " / " + spec[C.BodyMaterialBack]
+	guitar.BodyFinish        = trim(spec[C.BodyFinish])
+	guitar.BodyMaterial      = trim(spec[C.BodyMaterialTop]) + " / " + trim(spec[C.BodyMaterialBack])
     guitar.BodyMaterialBack  = utils.SearchWoodCode(spec[C.BodyMaterialBack])
 	guitar.BodyMaterialTop   = utils.SearchWoodCode(spec[C.BodyMaterialTop])
-    guitar.Bridge            = spec[C.Bridge]
-	guitar.Color             = spec[C.Color]
+    guitar.Bridge            = trim(spec[C.Bridge])
+	guitar.Color             = trim(spec[C.Color])
     guitar.ColorCd           = utils.ConvertColorCd(guitar.Color)
-	guitar.Comment           = spec[C.Comment]
-	guitar.Controls          = spec[C.Controls]
+	guitar.Comment           = trim(spec[C.Comment])
+	guitar.Controls          = trim(spec[C.Controls])
     guitar.Fingerboard       = utils.SearchWoodCode(spec[C.Fingerboard])
 
 	var errFretCount error
-	fretCount                     := strings.TrimSpace(spec[C.FretCount])
+	fretCount                     := trim(spec[C.FretCount])
     guitar.FretCount, errFretCount = utils.GetFretCount(fretCount)
     if errFretCount != nil {
         // logger.Println(errFretCount)
     }
-	guitar.Inlays       = spec[C.Inlays]
-	guitar.Joint        = spec[C.Joint]
+	guitar.Inlays       = trim(spec[C.Inlays])
+	guitar.Joint        = trim(spec[C.Joint])
     guitar.NeckMaterial = utils.SearchWoodCode(spec[C.NeckMaterial])
-    guitar.Pickups      = spec[C.Pickups]
+    guitar.Pickups      = trim(spec[C.Pickups])
 
     var errPrice error
 	guitar.Price, errPrice = utils.ParsePrice(spec[C.Price])
@@ -134,11 +135,11 @@ func buildGuitarFrame(spec map[string]string, url string, logger *log.Logger) (*
     if errPrice != nil {
         // logger.Println(errPrice)
     }
-    scaleLengthMM       := strings.TrimSpace(spec[C.ScaleLengthMM])
+    scaleLengthMM       := trim(spec[C.ScaleLengthMM])
     guitar.ScaleLengthMM = utils.TrimScaleUnit(scaleLengthMM)
-	guitar.Series        = spec[C.Series]
+	guitar.Series        = trim(spec[C.Series])
 
-    guitar.Src           = spec[C.Src]
+    guitar.Src           = trim(spec[C.Src])
     // 画像の相対パスをフルパスへ
     if strings.HasPrefix(guitar.Src, "/") {
         fullPass, err := utils.CreateImagePath(url, guitar.Src)
@@ -154,7 +155,7 @@ func buildGuitarFrame(spec map[string]string, url string, logger *log.Logger) (*
         return &model.Guitar{}
     }
     var errWeight error
-    guitar.Weight, errWeight = utils.ParseWight(spec[C.Weight])
+    guitar.Weight, errWeight = utils.ParseWight(trim(spec[C.Weight]))
 
     if errWeight != nil {
         // logger.Println(errWeight)

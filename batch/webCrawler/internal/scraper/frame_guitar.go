@@ -348,3 +348,57 @@ func loggingCrawlStats(stats *crawlStats, logger *log.Logger) {
         stats.errors.Load(),
     )
 }
+
+var specFieldMap = map[string]string{
+	"Top":                     C.BodyMaterialTop,
+	"Top Wood":                C.BodyMaterialTop,
+
+	"Back Wood":               C.BodyMaterialBack,
+	"Body":                    C.BodyMaterialBack,
+	"BODY":                    C.BodyMaterialBack,
+	"Body Material":           C.BodyMaterialBack,
+	"Body Wood":               C.BodyMaterialBack,
+
+	"Finish":                  C.BodyFinish,
+	"Finish Type":             C.BodyFinish,
+
+	"Bridge":                  C.Bridge,
+	"BRIDGE":                  C.Bridge,
+
+	"COLOR":                   C.Color,
+
+	"Controls":                C.Controls,
+	"CONTROLS":                C.Controls,
+
+	"Fingerboard Material":    C.Fingerboard,
+	"FINGERBOARD":             C.Fingerboard,
+	"Fretboard Wood":          C.Fingerboard,
+
+	"FRET":                    C.FretCount,
+	"FRETS":                   C.FretCount,
+	"Number Of Frets":         C.FretCount,
+	"Number of Frets":         C.FretCount,
+
+	"INLAY":                   C.Inlays,
+	"Inlays":                  C.Inlays,
+	"Fretboard Inlay":         C.Inlays,
+
+	"CONSTRUCTION":            C.Joint,
+	"Joint":                   C.Joint,
+	"Neck/Body Assembly Type": C.Joint,
+
+	"Material":                C.NeckMaterial,
+	"NECK":                    C.NeckMaterial,
+	"Neck Wood":               C.NeckMaterial,
+
+	"PICKUPS":                 C.Pickups,
+
+	"Price":                   C.Price,
+	"Bass Pickup":             C.BassPickup,
+	"Middle Pickup":           C.MiddlePickup,
+	"Treble Pickup":           C.TreblePickup,
+
+	"SCALE":                   C.ScaleLengthMM,
+	"Scale Length":            C.ScaleLengthMM,
+
+}

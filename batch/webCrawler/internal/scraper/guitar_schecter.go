@@ -3,6 +3,7 @@ package scraper
 import (
 	"context"
 	"fmt"
+	"regexp"
 	"strconv"
 	"strings"
 	"sync"
@@ -25,7 +26,6 @@ type guitarScraperSchecter struct {
 type callBacksSchecter struct {
     funcs callBacks
 }
-
 
 func NewScraperSchecter(logger *log.Logger) Scraper {
 	collector := colly.NewCollector(
@@ -64,30 +64,33 @@ func (g *guitarScraperSchecter) CollectLinks(parentCtx context.Context) ([]strin
     visited := make(map[string]struct{}, 500)
     mutex   := &sync.Mutex{}
 
-    c.OnHTML("#item .figcap a", func(html *colly.HTMLElement) {
+    c.OnHTML("#guitar a", func(html *colly.HTMLElement) {
         link := html.Request.AbsoluteURL(html.Attr("href"))
         if g.gScraper.isFirstVisit(mutex, link, visited) {
             c.Visit(link)
         }
     })
-    c.OnHTML("#inner_content .figcap a", func(html *colly.HTMLElement) {
+    c.OnHTML("#products a", func(html *colly.HTMLElement) {
         link := html.Request.AbsoluteURL(html.Attr("href"))
         if g.gScraper.isFirstVisit(mutex, link, visited) {
             c.Visit(link)
         }
     })
-    c.OnHTML("section.color_variation a", func(html *colly.HTMLElement) {
+    c.OnHTML("#main_visual aside a", func(html *colly.HTMLElement) {
         link := html.Request.AbsoluteURL(html.Attr("href"))
         if g.gScraper.isFirstVisit(mutex, link, visited) {
             c.Visit(link)
         }
     })
-    c.Visit("https://Schecterguitars.co.jp/products/Schecter")
+
+    c.Visit("https://schecter.co.jp/guitar/")
     c.Wait()
 
     loggingCrawlStats(crawlStats, g.gScraper.logger)
 
     g.gScraper.urls = utils.MapToSliceUrl(visited)
+    g.gScraper.urls = utils.GetNeedLinks(g.gScraper.urls, `?variation=`, 130)
+
     return g.gScraper.urls, nil
 }
 
@@ -102,7 +105,7 @@ func (g *guitarScraperSchecter) Scrape(provider  PageProvider,
 // 必要に応じて、基盤のTryWaitReadyを組み込む
 func (c *callBacksSchecter) FetchDynamicPage(parentCtx context.Context) func(url string) (string, error) {
     return func(url string) (string, error) {
-        if !isDetailPage(`^https://Schecterguitars\.co\.jp/product/\d{4,}/?$`, url) {
+        if !isDetailPage(`^https://schecter.co.jp/[a-z]+/\d{3,5}/\?variation=`, url) {
             return "", nil
         }
         // タブごとに独立した context を作る
@@ -115,13 +118,10 @@ func (c *callBacksSchecter) FetchDynamicPage(parentCtx context.Context) func(url
         var html string
 
         err := chromedp.Run(ctx,
-               chromedp.Navigate(url),
-               chromedp.WaitVisible("#main", chromedp.ByQuery), // 求める要素が出るまで待つ
-               chromedp.Sleep(300 * time.Millisecond), // JSが動く猶予を与える
-               tryWaitReady("h1.header_title"), // 必要な要素が生成されるのを待つ
-               tryWaitReady(".tbl_spec"),
-               tryWaitReady("p.detail_price"),
-               chromedp.OuterHTML("html", &html, chromedp.ByQuery), // 最終的なHTML出力
+            chromedp.Navigate(url),
+            chromedp.WaitVisible("main", chromedp.ByQuery), // 求める要素が出るまで待つ
+            chromedp.Sleep(300 * time.Millisecond), // JSが動く猶予を与える
+            chromedp.OuterHTML("html", &html, chromedp.ByQuery), // 最終的なHTML出力
         )
         if err != nil {
             return "", fmt.Errorf("[chromedp error]: %v [url]: %v\n", err, url)
@@ -130,6 +130,8 @@ func (c *callBacksSchecter) FetchDynamicPage(parentCtx context.Context) func(url
     }
 }
 
+var regEX_IV = regexp.MustCompile(`\[EX-IV\][\n.]+`)
+
 func (c *callBacksSchecter) CollectSpec() func(doc *goquery.Document) []map[string]string {
     return func(doc *goquery.Document) []map[string]string {
         specs := make([]map[string]string, 0, 1)
@@ -137,32 +139,57 @@ func (c *callBacksSchecter) CollectSpec() func(doc *goquery.Document) []map[stri
 
         spec := map[string]string{}
 
-        spec[C.Maker]   = strconv.Itoa(C.Schecter)
-        spec[C.Name]    = doc.Find("h1.header_title").Text()
-        spec[C.Color]   = doc.Find(".header_content h3.clr_name").Text()
-        spec[C.Comment] = doc.Find("#specialfeatures .container_small p").Text()
-        spec[C.Price]   = doc.Find("p.detail_price").Text()
-        src, _         := doc.Find("#main .header_content img.transform-5").Attr("src")
-        spec[C.Src]     = src
-        spec[C.Series]  = regSeries.FindString(spec[C.Name])
+        spec[C.Maker]      = strconv.Itoa(C.Schecter)
+        spec[C.Name]       = doc.Find(`h1.name.order`).Text()
+        spec[C.BodyFinish] = ""
+        spec[C.Comment]    = ""
+        spec[C.Inlays]     = ""
+        src, _            := doc.Find(`.product_main_visual_image img`).Attr(`src`)
+        spec[C.Src], _     = utils.ConvertRealUrl(src)
+        spec[C.Weight]     = strconv.Itoa(C.InvalidNumber)
 
-        doc.Find("#specifications table.tbl_spec tr").Each(func(idx int, selector *goquery.Selection) {
-            th      := selector.Find("th").Text()
-            td      := selector.Find("td").Text()
-            th, _    = utils.ConvertLabel(th, specFieldMap)
-            spec[th] = td
+        doc.Find(`.product_spec_tbl tr`).Each(func(idx int, selector *goquery.Selection) {
+            label      := strings.TrimSpace(selector.Find(`th`).Text())
+            elem       := selector.Find(`td`).Text()
+            field, _   := utils.ConvertLabel(label, specFieldMap)
+            spec[field] = elem
         })
+        spec[C.Color] = strings.ReplaceAll(doc.Find(`.product_main_visual_title h2.color`).Text(), " ", "")
 
+        // 不要データ排除
+        if (len(spec[C.Color])) <= 4 {
+            return []map[string]string{}
+        }
+
+        // ボディ材 整形
         bodyMaterial := spec[C.BodyMaterialBack]
-        materials    := strings.Split(bodyMaterial, ",")
+        if strings.Contains(bodyMaterial, "&") { // top / back の形式
+            topAndBack := strings.Split(bodyMaterial, "&")
+            spec[C.BodyMaterialTop]  = topAndBack[0]
+            spec[C.BodyMaterialBack] = topAndBack[1]
+        } else if strings.Contains(bodyMaterial, ",") { // top / back の形式
+            topAndBack := strings.Split(bodyMaterial, ",")
+            spec[C.BodyMaterialTop]  = topAndBack[0]
+            spec[C.BodyMaterialBack] = topAndBack[1]
+        } else if strings.Contains(bodyMaterial, "/") { // back / top の形式
+            backAndTop := strings.Split(bodyMaterial, "/")
+            spec[ C.BodyMaterialBack] = backAndTop[0]
+            spec[C.BodyMaterialTop]  = backAndTop[1]
+        }
 
-        if len(materials) == 1 {
-            spec[C.BodyMaterialBack] = materials[0]
-        } else if len(materials) == 2 {
-            spec[C.BodyMaterialTop]  = materials[0]
-            spec[C.BodyMaterialBack] = materials[1]
+        // pickup 整形
+        pickup := strings.TrimSpace(spec[C.Pickups])
+        pickup  = regEX_IV.ReplaceAllString(pickup, "")
+        pickup  = strings.ReplaceAll(pickup, "[EX-V]\n", "")
+        pickup  = strings.ReplaceAll(pickup, " ", "")
+        pickups := strings.Split(pickup, "\n")
+
+        if len(pickups) <= 1 {
+            spec[C.Pickups] = pickups[0]
+        } else if len(pickups) == 2 {
+            spec[C.Pickups] = pickups[0] + " / " + pickups[1]
         } else {
-            spec[C.BodyMaterialBack] = materials[0]
+            spec[C.Pickups] = pickups[0] + " / " + pickups[1] + " / " + pickups[2]
         }
 
         specs = utils.LockedAppend(mutex, specs, spec)
@@ -178,6 +205,6 @@ func (c *callBacksSchecter) BuildGuitar(url string) func(spec map[string]string)
 
 func (c *callBacksSchecter) IsStaticPage() func(html string) bool {
     return func(html string) bool {
-        return strings.Contains(html, "tbl_spec")
+        return strings.Contains(html, "Notes")
     }
 }

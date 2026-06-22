@@ -256,42 +256,42 @@ var colorKeywords = []colorKeyword{
             "charcoal", "stone", "meteorite", "rusty", "iron",
         },
     },
-    {
-        Cd: C.Black,
-        Keywords: []string{
-            "black", "obsidian", "onyx", "ebony", "jet", "pitch",
-        },
-    },
-    {
-        Cd: C.White,
-        Keywords: []string{
-            "white", "snow", "ivory", "cream", "pearl", "fox",
-        },
-    },
-    {
-        Cd: C.Brown,
-        Keywords: []string{
-            "brown", "walnut", "mahogany", "chocolate", "bourbon", "tobacco",
-        },
-    },
-    {
-        Cd: C.Gold,
-        Keywords: []string{
-            "gold", "champagne", "brass",
-        },
-    },
-    {
-        Cd: C.Silver,
-        Keywords: []string{
-            "silver", "chrome",
-        },
-    },
-    {
-        Cd: C.Natural,
-        Keywords: []string{
-            "natural", "raw", "naked", "plain", "wood", "driftwood", "burnt",
-        },
-    },
+	{
+		Cd: C.Brown,
+		Keywords: []string{
+			"brown", "walnut", "mahogany", "chocolate", "bourbon", "tobacco",
+		},
+	},
+	{
+		Cd: C.Natural,
+		Keywords: []string{
+			"natural", "raw", "naked", "plain", "wood", "driftwood", "burnt",
+		},
+	},
+	{
+		Cd: C.Gold,
+		Keywords: []string{
+			"gold", "champagne", "brass",
+		},
+	},
+	{
+		Cd: C.Silver,
+		Keywords: []string{
+			"silver", "chrome",
+		},
+	},
+	{
+		Cd: C.Black,
+		Keywords: []string{
+			"black", "obsidian", "onyx", "ebony", "jet", "pitch",
+		},
+	},
+	{
+		Cd: C.White,
+		Keywords: []string{
+			"white", "snow", "ivory", "cream", "pearl", "fox",
+		},
+	},
 }
 
 // カラー名を抽象化してカラーコードに変換する

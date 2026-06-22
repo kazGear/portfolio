@@ -141,22 +141,22 @@ func (c *callBacksEsp) CollectSpec() func(doc *goquery.Document) []map[string]st
         spec := map[string]string{}
 
         spec[C.Maker]   = strconv.Itoa(C.Esp)
-        spec[C.Name]    = strings.TrimSpace(doc.Find("h1.header_title").Text())
-        spec[C.Color]   = strings.TrimSpace(doc.Find(".header_content h3.clr_name").Text())
-        spec[C.Comment] = strings.TrimSpace(doc.Find("#specialfeatures .container_small p").Text())
-        spec[C.Price]   = strings.TrimSpace(doc.Find("p.detail_price").Text())
+        spec[C.Name]    = doc.Find("h1.header_title").Text()
+        spec[C.Color]   = doc.Find(".header_content h3.clr_name").Text()
+        spec[C.Comment] = doc.Find("#specialfeatures .container_small p").Text()
+        spec[C.Price]   = doc.Find("p.detail_price").Text()
         src, _         := doc.Find("#main .header_content img.transform-5").Attr("src")
-        spec[C.Src]     = strings.TrimSpace(src)
+        spec[C.Src]     = src
         spec[C.Series]  = regSeries.FindString(spec[C.Name])
 
         doc.Find("#specifications table.tbl_spec tr").Each(func(idx int, selector *goquery.Selection) {
-            th      := strings.TrimSpace(selector.Find("th").Text())
-            td      := strings.TrimSpace(selector.Find("td").Text())
-            th, _    = utils.ConvertLabel(th, fieldMapEsp)
+            th      := selector.Find("th").Text()
+            td      := selector.Find("td").Text()
+            th, _    = utils.ConvertLabel(th, specFieldMap)
             spec[th] = td
         })
 
-        bodyMaterial := spec["BodyMaterial"]
+        bodyMaterial := spec[C.BodyMaterialBack]
         materials    := strings.Split(bodyMaterial, ",")
 
         if len(materials) == 1 {
@@ -183,19 +183,4 @@ func (c *callBacksEsp) IsStaticPage() func(html string) bool {
     return func(html string) bool {
         return strings.Contains(html, "tbl_spec")
     }
-}
-
-// key: ESPの項目名, value: 構造体フィールド名
-var fieldMapEsp = map[string]string{
-	"BODY":         "BodyMaterial",
-	"NECK":         "NeckMaterial",
-	"FINGERBOARD":  "Fingerboard",
-	"BRIDGE":       "Bridge",
-	"PICKUPS":      "Pickups",
-	"CONTROLS":     "Controls",
-	"Price":        "Price",
-	"SCALE":        "ScaleLengthMM",
-	"FRET":         "FretCount",
-	"INLAY":        "Inlays",
-	"CONSTRUCTION": "Joint",
 }

@@ -131,24 +131,24 @@ func (c *callBacksEspSig) CollectSpec() func(doc *goquery.Document) []map[string
 			spec := map[string]string{}
 
 			spec[C.Maker]   = strconv.Itoa(C.EspSignature)
-			spec[C.Name]    = strings.TrimSpace(selector1.Find(".product_series_logo_name").Text())
+			spec[C.Name]    = selector1.Find(".product_series_logo_name").Text()
 			src, _         := selector1.Find("img.main_image").Attr("src")
-			spec[C.Src]     = strings.TrimSpace(src)
-			spec[C.Comment] = strings.TrimSpace(selector1.Find(".content_spec-detail em strong").Text())
-			spec[C.Price]   = strings.TrimSpace(selector1.Find(
+			spec[C.Src]     = src
+			spec[C.Comment] = selector1.Find(".content_spec-detail em strong").Text()
+			spec[C.Price]   = selector1.Find(
 				".content_borderline.text-center p, .content_spec-detail div p.text-center",
-			).Text())
+			).Text()
 
-			spec[C.Series] 	= strings.TrimSpace(doc.Find("div.pd30 h1.text-center span").Text())
+			spec[C.Series] 	= doc.Find("div.pd30 h1.text-center span").Text()
 
 			selector1.Find(".tbl_spec tr").Each(func(idx int, selector2 *goquery.Selection) {
-				th      := strings.TrimSpace(selector2.Find("th").Text())
-				td      := strings.TrimSpace(selector2.Find("td").Text())
-				th, _    = utils.ConvertLabel(th, fieldMapEspSig)
+				th   := selector2.Find("th").Text()
+				td   := selector2.Find("td").Text()
+				th, _ = utils.ConvertLabel(th, specFieldMap)
 				spec[th] = td
 			})
 
-			bodyMaterial := spec["BodyMaterial"]
+			bodyMaterial := spec[C.BodyMaterialBack]
 			materials    := strings.Split(bodyMaterial, ",")
 
 			if len(materials) == 1 {
@@ -176,21 +176,4 @@ func (c *callBacksEspSig) IsStaticPage() func(html string) bool {
     return func(html string) bool {
         return strings.Contains(html, "tbl_spec")
     }
-}
-
-// key: ESPの項目名, value: 構造体フィールド名
-var fieldMapEspSig = map[string]string{
-	"BODY":         "BodyMaterial",
-	"NECK":         "NeckMaterial",
-	"FINGERBOARD":  "Fingerboard",
-	"BRIDGE":       "Bridge",
-	"PICKUPS":      "Pickups",
-	"CONTROLS":     "Controls",
-	"Price":        "Price",
-	"SCALE":        "ScaleLengthMM",
-	"FRET":         "FretCount",
-	"FRETS":        "FretCount",
-	"INLAY":        "Inlays",
-	"CONSTRUCTION": "Joint",
-	"COLOR":		"Color",
 }

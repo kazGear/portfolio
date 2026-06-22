@@ -348,7 +348,7 @@ func (c *callBacksPRS) CollectSpec() func(doc *goquery.Document) []map[string]st
                     maps.Copy(nextSpec, spec)
 
                     nextSpec[C.Src], _ = selector.Find("img").Attr("src")
-                    nextSpec[C.Color]  = strings.TrimSpace(selector.Text())
+                    nextSpec[C.Color]  = selector.Text()
 
                     specs = utils.LockedAppend(mutex, specs, nextSpec)
                 })
@@ -366,8 +366,8 @@ func parseSpec(specSection string, spec map[string]string) map[string]string {
             continue
         }
         labelAndSpec := strings.SplitN(elem, ":", 2)
-        specLabel   := strings.TrimSpace(labelAndSpec[0])
-        key, exist := utils.ConvertLabel(specLabel, fieldMapPRS)
+        specLabel    := strings.TrimSpace(labelAndSpec[0])
+        key, exist   := utils.ConvertLabel(specLabel, specFieldMap)
 
         if exist && len(labelAndSpec) > 1 {
             spec[key] = labelAndSpec[1]
@@ -386,24 +386,4 @@ func (c *callBacksPRS) IsStaticPage() func(html string) bool {
     return func(html string) bool {
         return strings.Contains(html, "Tuning")
     }
-}
-
-// key: PRSの項目名, value: 構造体フィールド名
-
-var fieldMapPRS = map[string]string{
-	"Finish Type":            "BodyFinish",
-    "Top Wood":               "BodyMaterialTop",
-	"Body Wood":              "BodyMaterialBack",
-    "Back Wood":              "BodyMaterialBack",
-	"Bridge":                 "Bridge",
-	"Controls":               "Controls",
-	"Fretboard Wood":         "Fingerboard",
-	"Number of Frets":        "FretCount",
-	"Fretboard Inlay":        "Inlays",
-	"Neck/Body Assembly Type":"Joint",
-	"Neck Wood":              "NeckMaterial",
-	"Scale Length":           "ScaleLengthMM",
-    "Treble Pickup":          "TreblePickup",
-    "Middle Pickup":          "MiddlePickup",
-    "Bass Pickup":            "BassPickup",
 }

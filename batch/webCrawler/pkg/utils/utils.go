@@ -517,6 +517,18 @@ func GetNeedLinks(links []string, needPattern string, cap int) []string {
     return needLinks
 }
 
+// 不要なリンクを除外する。reg: 不要なパターンを予めMustCompileして渡す。
+func RemoveNotNeedLinks(links []string, notNeedPattern *regexp.Regexp) []string {
+    needLinks := make([]string, 0, 150)
+
+    for _, link := range links {
+        if !notNeedPattern.MatchString(link) {
+            needLinks = append(needLinks, link)
+        }
+    }
+    return needLinks
+}
+
 // 相対パスから絶対パスへ変換
 func ToAbsLinks(links []string, prefix string, cap int) []string {
     absLinks := make([]string, 0, cap)
@@ -539,18 +551,6 @@ func CollectLinks(eachSelector string, doc *goquery.Document, cap int) []string 
         }
     })
     return links
-}
-
-// 不要なリンクを除外する。reg: 不要なパターンを予めMustCompileして渡す。
-func RemoveNotNeedLinks(links []string, reg *regexp.Regexp) []string {
-    needLinks := make([]string, 0, 150)
-
-    for _, link := range links {
-        if !reg.MatchString(link) {
-            needLinks = append(needLinks, link)
-        }
-    }
-    return needLinks
 }
 
 // cdp.Node.Attributes の構造 []string{ id", "frame1", "src", "https://example.com", "class", "foo", ...}

@@ -392,11 +392,11 @@ var specFieldMap = map[string]string{
 	"Neck Wood":               C.NeckMaterial,
 
 	"PICKUPS":                 C.Pickups,
+	"Bass Pickup":             C.NeckPickup,
+	"Middle Pickup":           C.CenterPickup,
+	"Treble Pickup":           C.BridgePickup,
 
 	"Price":                   C.Price,
-	"Bass Pickup":             C.BassPickup,
-	"Middle Pickup":           C.MiddlePickup,
-	"Treble Pickup":           C.TreblePickup,
 
 	"SCALE":                   C.ScaleLengthMM,
 	"Scale Length":            C.ScaleLengthMM,

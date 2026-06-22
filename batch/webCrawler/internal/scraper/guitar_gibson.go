@@ -150,14 +150,14 @@ func (c *callBacksGibson) CollectSpec() func(doc *goquery.Document) []map[string
         spec[C.Pickups]          = fmt.Sprintf("%v / %v", neckPickup, bridgePickup)
         spec[C.Price]            = strconv.Itoa(C.InvalidNumber)
         src, _                  := doc.Find(`img#gallery-front`).Attr(`src`)
-        spec[C.Src]              = strings.TrimSpace(src)
+        spec[C.Src]              = src
         spec[C.Series]           = regSeriesGibson.FindString(spec[C.Name])
         spec[C.Weight]           = strconv.Itoa(C.InvalidNumber)
 
         doc.Find(`#product-overview .spec-section .spec-item`).Each(func(idx int, selector *goquery.Selection) {
-            label      := strings.TrimSpace(selector.Find(`div:nth-child(1)`).Text())
-            elem       := strings.TrimSpace(selector.Find(`div:nth-child(2)`).Text())
-            field, _   := utils.ConvertLabel(label, fieldMapGibson)
+            label      := selector.Find(`div:nth-child(1)`).Text()
+            elem       := selector.Find(`div:nth-child(2)`).Text()
+            field, _   := utils.ConvertLabel(label, specFieldMap)
             spec[field] = elem
         })
         specs = utils.LockedAppend(mutex, specs, spec)
@@ -175,19 +175,4 @@ func (c *callBacksGibson) IsStaticPage() func(html string) bool {
     return func(html string) bool {
         return strings.Contains(html, "product-overview")
     }
-}
-
-var fieldMapGibson = map[string]string{
-    "Finish":               "BodyFinish",
-    "Top":                  "BodyMaterialTop",
-    "Body Material":        "BodyMaterialBack",
-    "Body":                 "BodyMaterialBack",
-    "Bridge":               "Bridge",
-    "Controls":             "Controls",
-    "Fingerboard Material": "Fingerboard",
-    "Number Of Frets":      "FretCount",
-    "Inlays":               "Inlays",
-    "Joint":                "Joint",
-    "Material":             "NeckMaterial",
-    "Scale Length":         "ScaleLengthMM",
 }

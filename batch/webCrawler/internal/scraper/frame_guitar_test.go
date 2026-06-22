@@ -45,7 +45,7 @@ func TestConvertLabelEsp(t *testing.T) {
 		want   string
 	}{
 		{
-			label: "BODY", want: "BodyMaterial",
+			label: "BODY", want: "BodyMaterialBack",
 		},{
 			label: "NECK", want: "NeckMaterial",
 		},{
@@ -54,7 +54,7 @@ func TestConvertLabelEsp(t *testing.T) {
 	}
 
 	for _, item := range items {
-		actual, _ := utils.ConvertLabel(item.label, fieldMapEsp)
+		actual, _ := utils.ConvertLabel(item.label, specFieldMap)
 		assert.Equal(t, item.want, actual)
 	}
 }

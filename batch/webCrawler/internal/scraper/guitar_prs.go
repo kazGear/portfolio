@@ -207,13 +207,13 @@ func searchGuitarPrices(flatData []string) map[string]string {
         for backIdx := idx - 1; idx - backIdx <= 6; backIdx-- { // ６つ前まで走査
             if strings.Contains(flatData[backIdx], ":") {
                 if strings.Contains(flatData[backIdx], "text") {
-                    price.name = utils.NormalizeGuitarName(
+                    price.name = utils.NormalizeString(
                         strings.ReplaceAll(flatData[backIdx], "text:", ""),
                     )
                     break
                 }
             } else {
-                price.name = utils.NormalizeGuitarName(flatData[backIdx])
+                price.name = utils.NormalizeString(flatData[backIdx])
                 break
             }
         }
@@ -262,7 +262,7 @@ func (g *guitarScraperPRS) Scrape(provider  PageProvider,
 
 func mergePrice(guitars []*model.Guitar, priceSet map[string]string) {
     for _, guitar := range guitars {
-        guitarName     := utils.NormalizeGuitarName(guitar.Name)
+        guitarName     := utils.NormalizeString(guitar.Name)
         price          := priceSet[guitarName]
         guitar.Price, _ = utils.ParsePrice(price)
     }

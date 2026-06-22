@@ -565,7 +565,7 @@ func GetAttr(node *cdp.Node, attrName string) string {
 }
 
 // 文字列の様式を統一する
-func NormalizeGuitarName(str string) string {
+func NormalizeString(str string) string {
     normalized := width.Narrow.String(str)
     normalized  = strings.ToLower(normalized)
     normalized  = strings.TrimSpace(normalized)

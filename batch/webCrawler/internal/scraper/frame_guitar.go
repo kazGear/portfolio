@@ -369,9 +369,11 @@ var specFieldMap = map[string]string{
 
 	"Controls":                C.Controls,
 	"CONTROLS":                C.Controls,
+    "CONTROL":                 C.Controls,
 
 	"Fingerboard Material":    C.Fingerboard,
 	"FINGERBOARD":             C.Fingerboard,
+    "FINGER BOARD":            C.Fingerboard,
 	"Fretboard Wood":          C.Fingerboard,
 
 	"FRET":                    C.FretCount,
@@ -385,6 +387,7 @@ var specFieldMap = map[string]string{
 
 	"CONSTRUCTION":            C.Joint,
 	"Joint":                   C.Joint,
+    "JOINT":                   C.Joint,
 	"Neck/Body Assembly Type": C.Joint,
 
 	"Material":                C.NeckMaterial,
@@ -397,6 +400,7 @@ var specFieldMap = map[string]string{
 	"Treble Pickup":           C.BridgePickup,
 
 	"Price":                   C.Price,
+    "PRICE":                   C.Price,
 
 	"SCALE":                   C.ScaleLengthMM,
 	"Scale Length":            C.ScaleLengthMM,

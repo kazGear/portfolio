@@ -231,10 +231,10 @@ func (c *callBacksIbanez) CollectSpec() func(doc *goquery.Document) []map[string
 
         spec[C.Price]            = doc.Find(`.rt_cf_p_cm_price`).Text()
         src, _                  := doc.Find(`.products-detail-main-modal-img`).Attr(`src`)
-        spec[C.Src]              = strings.TrimSpace(src)
-        spec[C.Series]           = strings.TrimSpace(doc.Find(
+        spec[C.Src]              = src
+        spec[C.Series]           = doc.Find(
                                     `ul a:contains("` + spec[C.Name] + `")`,
-                                         ).Parent().Parent().Prev().Children().Text())
+                                         ).Parent().Parent().Prev().Children().Text()
         spec[C.ScaleLengthMM]    = doc.Find(`.rt_cf_p_data_scale_mm`).Text()
         spec[C.Weight]           = strconv.Itoa(C.InvalidNumber)
 

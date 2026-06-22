@@ -98,55 +98,65 @@ func makersFactory() map[string]*Maker {
         logger,
     )
 
-    // makerName = "ESP_sig"
-    // logger    = utils.NewLogger(makerName)
-    // makers[makerName] = NewMaker(
-    //     makerName,
-    //     scraper.NewScraperEspSig(logger),
-    //     scraper.NewCallBacksEspSig(logger),
-    //     scraper.NewCallBacksEspSig(logger),
-    //     logger,
-    // )
+    makerName = "ESP_sig"
+    logger    = utils.NewLogger(makerName)
+    makers[makerName] = NewMaker(
+        makerName,
+        scraper.NewScraperEspSig(logger),
+        scraper.NewCallBacksEspSig(logger),
+        scraper.NewCallBacksEspSig(logger),
+        logger,
+    )
 
-    // makerName = ".strandberg"
-    // logger    = utils.NewLogger(makerName)
-    // makers[makerName] = NewMaker(
-    //     makerName,
-    //     scraper.NewScraperStrandberg(logger),
-    //     scraper.NewCallBacksStrandberg(logger),
-    //     scraper.NewCallBacksStrandberg(logger),
-    //     logger,
-    // )
+    makerName = "Gibson"
+    logger    = utils.NewLogger(makerName)
+    makers[makerName] = NewMaker(
+        makerName,
+        scraper.NewScraperGibson(logger),
+        scraper.NewCallBacksGibson(logger),
+        scraper.NewCallBacksGibson(logger),
+        logger,
+    )
 
-    // makerName = "Gibson"
-    // logger    = utils.NewLogger(makerName)
-    // makers[makerName] = NewMaker(
-    //     makerName,
-    //     scraper.NewScraperGibson(logger),
-    //     scraper.NewCallBacksGibson(logger),
-    //     scraper.NewCallBacksGibson(logger),
-    //     logger,
-    // )
+    makerName = ".strandberg"
+    logger    = utils.NewLogger(makerName)
+    makers[makerName] = NewMaker(
+        makerName,
+        scraper.NewScraperStrandberg(logger),
+        scraper.NewCallBacksStrandberg(logger),
+        scraper.NewCallBacksStrandberg(logger),
+        logger,
+    )
 
-    // makerName = "Ibanez"
-    // logger    = utils.NewLogger(makerName)
-    // makers[makerName] = NewMaker(
-    //     makerName,
-    //     scraper.NewScraperIbanez(logger),
-    //     scraper.NewCallBacksIbanez(logger),
-    //     scraper.NewCallBacksIbanez(logger),
-    //     logger,
-    // )
+    makerName = "Ibanez"
+    logger    = utils.NewLogger(makerName)
+    makers[makerName] = NewMaker(
+        makerName,
+        scraper.NewScraperIbanez(logger),
+        scraper.NewCallBacksIbanez(logger),
+        scraper.NewCallBacksIbanez(logger),
+        logger,
+    )
 
-    // makerName = "PRS"
-    // logger    = utils.NewLogger(makerName)
-    // makers[makerName] = NewMaker(
-    //     makerName,
-    //     scraper.NewScraperPRS(logger),
-    //     scraper.NewCallBacksPRS(logger),
-    //     scraper.NewCallBacksPRS(logger),
-    //     logger,
-    // )
+    makerName = "PRS"
+    logger    = utils.NewLogger(makerName)
+    makers[makerName] = NewMaker(
+        makerName,
+        scraper.NewScraperPRS(logger),
+        scraper.NewCallBacksPRS(logger),
+        scraper.NewCallBacksPRS(logger),
+        logger,
+    )
+
+    makerName = "Schecter"
+    logger    = utils.NewLogger(makerName)
+    makers[makerName] = NewMaker(
+        makerName,
+        scraper.NewScraperSchecter(logger),
+        scraper.NewCallBacksSchecter(logger),
+        scraper.NewCallBacksSchecter(logger),
+        logger,
+    )
 
     return makers
 }

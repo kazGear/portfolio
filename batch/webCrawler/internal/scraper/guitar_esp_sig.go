@@ -53,11 +53,16 @@ func NewCallBacksEspSig(logger *log.Logger) *callBacksEspSig {
 }
 
 func (g *guitarScraperEspSig) CollectLinks(parentCtx context.Context) ([]string, error) {
-    c       := g.gScraper.collector
+    c := g.gScraper.collector
+
+	// クロールログ収集
+    crawlStats := &crawlStats{}
+    statsCrawlLogs(c ,crawlStats, g.gScraper.logger)
+
+    // URL収集、クロール
     mutex   := &sync.Mutex{}
     visited := make(map[string]struct{}, 100)
 
-    // URL収集、クロール
     c.OnHTML(`.searchResultBlock.gallery_item .searchResultBlock_item a[href*="/artists/"]`,
 			 func(html *colly.HTMLElement,
 	) {
@@ -68,6 +73,8 @@ func (g *guitarScraperEspSig) CollectLinks(parentCtx context.Context) ([]string,
     })
     c.Visit("https://espguitars.co.jp/signatureseries/")
     c.Wait()
+
+	loggingCrawlStats(crawlStats, g.gScraper.logger)
 
     g.gScraper.urls = utils.MapToSliceUrl(visited)
     return g.gScraper.urls, nil

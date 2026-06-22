@@ -55,11 +55,16 @@ func NewCallBacksEsp(logger *log.Logger) *callBacksEsp {
 }
 
 func (g *guitarScraperEsp) CollectLinks(parentCtx context.Context) ([]string, error) {
-    c       := g.gScraper.collector
+    c := g.gScraper.collector
+
+    // クロールログ収集
+    crawlStats := &crawlStats{}
+    statsCrawlLogs(c ,crawlStats, g.gScraper.logger)
+
+    // URL収集、クロール
     visited := make(map[string]struct{}, 500)
     mutex   := &sync.Mutex{}
 
-    // URL収集、クロール
     c.OnHTML("#item .figcap a", func(html *colly.HTMLElement) {
         link := html.Request.AbsoluteURL(html.Attr("href"))
         if g.gScraper.isFirstVisit(mutex, link, visited) {
@@ -80,6 +85,8 @@ func (g *guitarScraperEsp) CollectLinks(parentCtx context.Context) ([]string, er
     })
     c.Visit("https://espguitars.co.jp/products/esp")
     c.Wait()
+
+    loggingCrawlStats(crawlStats, g.gScraper.logger)
 
     g.gScraper.urls = utils.MapToSliceUrl(visited)
     return g.gScraper.urls, nil

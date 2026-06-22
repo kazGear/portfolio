@@ -225,7 +225,13 @@ func searchGuitarPrices(flatData []string) map[string]string {
 var regNotNeed = regexp.MustCompile(`(privatestock|amplifiers|pedals|accessories|contents/color)`)
 
 func (g *guitarScraperPRS) CollectLinks(parentCtx context.Context) ([]string, error) {
-    c       := g.gScraper.collector
+    c := g.gScraper.collector
+
+    // クロールログ収集
+    crawlStats := &crawlStats{}
+    statsCrawlLogs(c ,crawlStats, g.gScraper.logger)
+
+    // URL収集、クロール
     visited := make(map[string]struct{}, 150)
     mutex   := &sync.Mutex{}
 
@@ -237,6 +243,8 @@ func (g *guitarScraperPRS) CollectLinks(parentCtx context.Context) ([]string, er
     })
     c.Visit("https://www.prsguitars.jp/products")
     c.Wait()
+
+    loggingCrawlStats(crawlStats, g.gScraper.logger)
 
     g.gScraper.urls = utils.MapToSliceUrl(visited)
     g.gScraper.urls = utils.RemoveNotNeedLinks(g.gScraper.urls, regNotNeed)

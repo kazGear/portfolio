@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/PuerkitoBio/goquery"
@@ -307,4 +308,43 @@ func autoScroll() chromedp.Action {
         }
         return nil
     })
+}
+
+type crawlStats struct {
+    requests  atomic.Int64
+    responses atomic.Int64
+    errors    atomic.Int64
+}
+
+// クロールの req,res,err の数を集計する
+func statsCrawlLogs (c *colly.Collector,
+                     stats *crawlStats,
+                     logger *log.Logger,
+) {
+    c.OnRequest(func(c *colly.Request) {
+        stats.requests.Add(1)
+    })
+    c.OnResponse(func(c *colly.Response) {
+        stats.responses.Add(1)
+    })
+    c.OnError(func(c *colly.Response, err error) {
+        stats.errors.Add(1)
+
+        logger.Printf(
+            "[Crawl error]: status=%d url=%s err=%v\n",
+            c.StatusCode,
+            c.Request.URL,
+            err,
+        )
+    })
+}
+
+// クロールのロギング
+func loggingCrawlStats(stats *crawlStats, logger *log.Logger) {
+    logger.Printf(
+        "[Crawl stats]: requests=%d responses=%d errors=%d\n",
+        stats.requests.Load(),
+        stats.responses.Load(),
+        stats.errors.Load(),
+    )
 }

@@ -55,7 +55,13 @@ func NewCallBacksGibson(logger *log.Logger) *callBacksGibson {
 }
 
 func (g *guitarScraperGibson) CollectLinks(parentCtx context.Context) ([]string, error) {
-    c       := g.gScraper.collector
+    c := g.gScraper.collector
+
+    // クロールログ収集
+    crawlStats := &crawlStats{}
+    statsCrawlLogs(c ,crawlStats, g.gScraper.logger)
+
+    // URL収集、クロール
     visited := make(map[string]struct{}, 600)
     mutex   := &sync.Mutex{}
 
@@ -73,6 +79,8 @@ func (g *guitarScraperGibson) CollectLinks(parentCtx context.Context) ([]string,
     })
     c.Visit("https://gibson.jp/")
     c.Wait()
+
+    loggingCrawlStats(crawlStats, g.gScraper.logger)
 
     g.gScraper.urls = utils.MapToSliceUrl(visited)
     return g.gScraper.urls, nil

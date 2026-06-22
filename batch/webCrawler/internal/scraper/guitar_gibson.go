@@ -54,6 +54,8 @@ func NewCallBacksGibson(logger *log.Logger) *callBacksGibson {
     }
 }
 
+var regNeedPatterGibson = regexp.MustCompile(`https://gibson.jp/(electric|acoustic)/`)
+
 func (g *guitarScraperGibson) CollectLinks(parentCtx context.Context) ([]string, error) {
     c := g.gScraper.collector
 
@@ -83,6 +85,7 @@ func (g *guitarScraperGibson) CollectLinks(parentCtx context.Context) ([]string,
     loggingCrawlStats(crawlStats, g.gScraper.logger)
 
     g.gScraper.urls = utils.MapToSliceUrl(visited)
+    g.gScraper.urls = utils.GetNeedLinks(g.gScraper.urls, regNeedPatterGibson, 490)
     return g.gScraper.urls, nil
 }
 

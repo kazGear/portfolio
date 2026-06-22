@@ -54,6 +54,9 @@ func NewCallBacksEsp(logger *log.Logger) *callBacksEsp {
     }
 }
 
+
+var regNeedPatterEsp = regexp.MustCompile(`https://espguitars.co.jp/product/\d+/`)
+
 func (g *guitarScraperEsp) CollectLinks(parentCtx context.Context) ([]string, error) {
     c := g.gScraper.collector
 
@@ -88,7 +91,9 @@ func (g *guitarScraperEsp) CollectLinks(parentCtx context.Context) ([]string, er
 
     loggingCrawlStats(crawlStats, g.gScraper.logger)
 
+
     g.gScraper.urls = utils.MapToSliceUrl(visited)
+    g.gScraper.urls = utils.GetNeedLinks(g.gScraper.urls, regNeedPatterEsp, 400)
     return g.gScraper.urls, nil
 }
 

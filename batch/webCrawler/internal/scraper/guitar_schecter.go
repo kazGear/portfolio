@@ -53,6 +53,8 @@ func NewCallBacksSchecter(logger *log.Logger) *callBacksSchecter {
     }
 }
 
+var regNeedPatterSchecter = regexp.MustCompile(`\?variation=`)
+
 func (g *guitarScraperSchecter) CollectLinks(parentCtx context.Context) ([]string, error) {
     c := g.gScraper.collector
 
@@ -61,7 +63,7 @@ func (g *guitarScraperSchecter) CollectLinks(parentCtx context.Context) ([]strin
     statsCrawlLogs(c ,crawlStats, g.gScraper.logger)
 
     // URL収集、クロール
-    visited := make(map[string]struct{}, 500)
+    visited := make(map[string]struct{}, 130)
     mutex   := &sync.Mutex{}
 
     c.OnHTML("#guitar a", func(html *colly.HTMLElement) {
@@ -89,8 +91,7 @@ func (g *guitarScraperSchecter) CollectLinks(parentCtx context.Context) ([]strin
     loggingCrawlStats(crawlStats, g.gScraper.logger)
 
     g.gScraper.urls = utils.MapToSliceUrl(visited)
-    g.gScraper.urls = utils.GetNeedLinks(g.gScraper.urls, `?variation=`, 130)
-
+    g.gScraper.urls = utils.GetNeedLinks(g.gScraper.urls, regNeedPatterSchecter, 130)
     return g.gScraper.urls, nil
 }
 

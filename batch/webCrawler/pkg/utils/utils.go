@@ -506,23 +506,11 @@ func MapToSliceUrl(visited map[string]struct{}) []string {
 }
 
 // 必要なリンクだけ取得
-func GetNeedLinks(links []string, needPattern string, cap int) []string {
+func GetNeedLinks(links []string, needPattern *regexp.Regexp, cap int) []string {
     needLinks := make([]string, 0, cap)
 
     for _, link := range links {
-        if strings.Contains(link, needPattern) {
-            needLinks = append(needLinks, link)
-        }
-    }
-    return needLinks
-}
-
-// 不要なリンクを除外する。reg: 不要なパターンを予めMustCompileして渡す。
-func RemoveNotNeedLinks(links []string, notNeedPattern *regexp.Regexp) []string {
-    needLinks := make([]string, 0, 150)
-
-    for _, link := range links {
-        if !notNeedPattern.MatchString(link) {
+        if needPattern.MatchString(link) {
             needLinks = append(needLinks, link)
         }
     }

@@ -65,7 +65,7 @@ func parseSinglePrice(s string) (int, error) {
 }
 
 // 税込み金額（数値）へ変換
-// 250,000円（税別） ／ 275,000円（税込）＞＞ 275000
+// 250,000円（税別） ／ 275,000円（税込）＞＞ 250000
 func parseMultiPrice(s string) (int, error) {
 	// 全分割
 	prices := _regPriceSpliter.Split(s, -1)

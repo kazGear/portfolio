@@ -336,7 +336,7 @@ func (c *callBacksPRS) CollectSpec() func(doc *goquery.Document) []map[string]st
 
         trim := utils.TrimSpace()
         spec[C.Pickups] = fmt.Sprintf(
-            "%v / %v / %v", trim(spec["BassPickup"]), trim(spec["MiddlePickup"]), trim(spec["TreblePickup"]),
+            "%v / %v / %v", trim(spec[C.NeckPickup]), trim(spec[C.CenterPickup]), trim(spec[C.BridgePickup]),
         )
 
         // 画像、カラー取得

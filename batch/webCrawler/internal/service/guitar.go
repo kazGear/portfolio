@@ -88,23 +88,23 @@ func (g *guitarCrawlerService) RunCrawler() {
 func makersFactory() map[string]*Maker {
     makers := map[string]*Maker{}
 
-    makerName := "ESP"
+    makerName := "ESP_sig"
     logger    := utils.NewLogger(makerName)
     makers[makerName] = NewMaker(
         makerName,
-        scraper.NewScraperEsp(logger),
-        scraper.NewCallBacksEsp(logger), // callbacksは複数のインターフェイスを実装
-        scraper.NewCallBacksEsp(logger),
+        scraper.NewScraperEspSig(logger),
+        scraper.NewCallBacksEspSig(logger), // callbacksは複数のインターフェイスを実装
+        scraper.NewCallBacksEspSig(logger),
         logger,
     )
 
-    makerName = "ESP_sig"
+    makerName = "ESP"
     logger    = utils.NewLogger(makerName)
     makers[makerName] = NewMaker(
         makerName,
-        scraper.NewScraperEspSig(logger),
-        scraper.NewCallBacksEspSig(logger),
-        scraper.NewCallBacksEspSig(logger),
+        scraper.NewScraperEsp(logger),
+        scraper.NewCallBacksEsp(logger),
+        scraper.NewCallBacksEsp(logger),
         logger,
     )
 
@@ -155,6 +155,16 @@ func makersFactory() map[string]*Maker {
         scraper.NewScraperSchecter(logger),
         scraper.NewCallBacksSchecter(logger),
         scraper.NewCallBacksSchecter(logger),
+        logger,
+    )
+
+    makerName = "Momose"
+    logger    = utils.NewLogger(makerName)
+    makers[makerName] = NewMaker(
+        makerName,
+        scraper.NewScraperMomose(logger),
+        scraper.NewCallBacksMomose(logger),
+        scraper.NewCallBacksMomose(logger),
         logger,
     )
 

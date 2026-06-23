@@ -192,126 +192,6 @@ func LockedAppend[T any](mutex *sync.Mutex, slice []T, elem ...T) []T {
 	return slice
 }
 
-// color > colorCd 変換用
-type colorKeyword struct {
-    Cd       int
-    Keywords []string
-}
-
-var colorKeywords = []colorKeyword{
-    {
-        Cd: C.Red,
-        Keywords: []string{
-            "red", "cherry", "apple", "fiesta", "burgundy", "cranberry",
-            "garnet", "cardinal", "tomato", "ember", "lava",
-            "vermillion", "rose",
-        },
-    },
-    {
-        Cd: C.Pink,
-        Keywords: []string{
-            "pink", "coral", "sakura", "rose", "twinkle",
-        },
-    },
-    {
-        Cd: C.Orange,
-        Keywords: []string{
-            "orange", "sunset", "sunrise", "autumn", "coral",
-            "tangerine", "poppy",
-        },
-    },
-    {
-        Cd: C.Yellow,
-        Keywords: []string{
-            "yellow", "honey", "amber", "mustard", "lemon", "blond",
-        },
-    },
-    {
-        Cd: C.Green,
-        Keywords: []string{
-            "green", "citron", "ivy", "forest", "olive", "mint",
-            "snake", "iguana", "malachite",
-        },
-    },
-    {
-        Cd: C.SkyBlue,
-        Keywords: []string{
-            "skyblue", "sky", "frost",
-        },
-    },
-    {
-        Cd: C.Blue,
-        Keywords: []string{
-            "blue", "marine", "supreme", "nebula", "peacock", "mercury",
-            "aqua", "turquoise", "azure", "navy", "bonnet",
-        },
-    },
-    {
-        Cd: C.Purple,
-        Keywords: []string{
-            "purple", "indigo", "violet", "lavender", "plum", "amethyst", "sugilite", "tanzanite",
-        },
-    },
-    {
-        Cd: C.Gray,
-        Keywords: []string{
-            "gray", "granite", "pewter", "slate", "ash", "graphite",
-            "charcoal", "stone", "meteorite", "rusty", "iron",
-        },
-    },
-	{
-		Cd: C.Brown,
-		Keywords: []string{
-			"brown", "walnut", "mahogany", "chocolate", "bourbon", "tobacco",
-		},
-	},
-	{
-		Cd: C.Natural,
-		Keywords: []string{
-			"natural", "raw", "naked", "plain", "wood", "driftwood", "burnt",
-		},
-	},
-	{
-		Cd: C.Gold,
-		Keywords: []string{
-			"gold", "champagne", "brass",
-		},
-	},
-	{
-		Cd: C.Silver,
-		Keywords: []string{
-			"silver", "chrome",
-		},
-	},
-	{
-		Cd: C.Black,
-		Keywords: []string{
-			"black", "obsidian", "onyx", "ebony", "jet", "pitch",
-		},
-	},
-	{
-		Cd: C.White,
-		Keywords: []string{
-			"white", "snow", "ivory", "cream", "pearl", "fox",
-		},
-	},
-}
-
-// カラー名を抽象化してカラーコードに変換する
-func ConvertColorCd(colorName string) int {
-	lowerColorName := strings.ToLower(colorName)
-
-	for _, colors := range colorKeywords {
-		cd := colors.Cd
-		for _, color := range colors.Keywords {
-			if strings.Contains(lowerColorName, strings.ToLower(color)) {
-				return cd
-			}
-		}
-	}
-	return C.OthersColor
-}
-
 // URLを使用できる形式に変換（next.jsの謎パス等
 func ConvertRealUrl(proxyUrl string) (string, error) {
 	u, err := url.Parse(proxyUrl)
@@ -569,4 +449,139 @@ func NormalizeString(str string) string {
     normalized  = strings.ReplaceAll(normalized, "'", "")
     normalized  = strings.ReplaceAll(normalized, "-", "")
     return normalized
+}
+
+// カラー名を抽象化してカラーコードに変換する
+func ConvertColorCd(colorName string) int {
+	lowerColorName := strings.ToLower(colorName)
+
+	for _, colors := range colorKeywords {
+		cd := colors.Cd
+		for _, color := range colors.Keywords {
+			if strings.Contains(lowerColorName, strings.ToLower(color)) {
+				return cd
+			}
+		}
+	}
+	return C.OthersColor
+}
+
+// color > colorCd 変換用
+type colorKeyword struct {
+    Cd       int
+    Keywords []string
+}
+
+var colorKeywords = []colorKeyword{
+    {
+        Cd: C.Red,
+        Keywords: []string{
+            "red", "cherry", "apple", "fiesta", "burgundy", "cranberry",
+            "garnet", "cardinal", "tomato", "ember", "lava",
+            "vermillion", "rose",
+			"SFFR", "RRD", "SRD", "FDRD", "OCAR",
+        },
+    },
+    {
+        Cd: C.Pink,
+        Keywords: []string{
+            "pink", "coral", "sakura", "rose", "twinkle",
+            "PNK", "LPK", "SKP",
+        },
+    },
+    {
+        Cd: C.Orange,
+        Keywords: []string{
+            "orange", "sunset", "sunrise", "autumn", "coral",
+            "tangerine", "poppy",
+            "ORG", "ORGD",
+        },
+    },
+    {
+        Cd: C.Yellow,
+        Keywords: []string{
+            "yellow", "honey", "amber", "mustard", "lemon", "blond",
+            "YLW", "LY",
+        },
+    },
+    {
+        Cd: C.Green,
+        Keywords: []string{
+            "green", "citron", "ivy", "forest", "olive", "mint",
+            "snake", "iguana", "malachite",
+            "GRN",
+        },
+    },
+    {
+        Cd: C.SkyBlue,
+        Keywords: []string{
+            "skyblue", "sky", "frost",
+            "SBBD", "SOB", "AQB", "AQA", "ASB", "OTB", "TQS", "TRQ",
+        },
+    },
+    {
+        Cd: C.Blue,
+        Keywords: []string{
+            "blue", "marine", "supreme", "nebula", "peacock", "mercury",
+            "aqua", "turquoise", "azure", "navy", "bonnet",
+            "BLU", "BLUE", "FBL", "DBL", "DOBL", "RBL", "VBL", "NBL", "LBL",
+            "MBL", "PBL", "DLPB", "SPBD", "STB", "OBL", "CHBL", "IBM",
+        },
+    },
+    {
+        Cd: C.Purple,
+        Keywords: []string{
+            "purple", "indigo", "violet", "lavender", "plum",
+            "amethyst", "sugilite", "tanzanite",
+            "PPL", "VLT", "LVD", "LAV", "LPP", "BPL", "YZP",
+        },
+    },
+    {
+        Cd: C.Gray,
+        Keywords: []string{
+            "gray", "granite", "pewter", "slate", "ash", "graphite",
+            "charcoal", "stone", "meteorite", "rusty", "iron",
+            "CHG", "GBL", "CGR",
+        },
+    },
+    {
+        Cd: C.Brown,
+        Keywords: []string{
+            "brown", "walnut", "mahogany", "chocolate", "bourbon", "tobacco",
+            "BR", "BROWN", "BRW", "LBR", "HB", "TEB", "TBS", "ITB",
+        },
+    },
+    {
+        Cd: C.Natural,
+        Keywords: []string{
+            "natural", "raw", "naked", "plain", "wood", "driftwood", "burnt",
+            "NA", "CN", "MNA", "NAMT", "NAMAT", "ANA", "NAOIL",
+        },
+    },
+    {
+        Cd: C.Gold,
+        Keywords: []string{
+            "gold", "champagne", "brass",
+        },
+    },
+    {
+        Cd: C.Silver,
+        Keywords: []string{
+            "silver", "chrome",
+        },
+    },
+    {
+        Cd: C.Black,
+        Keywords: []string{
+            "black", "obsidian", "onyx", "ebony", "jet", "pitch",
+            "BLK", "TBK",
+        },
+    },
+    {
+        Cd: C.White,
+        Keywords: []string{
+            "white", "snow", "ivory", "cream", "pearl", "fox",
+            "WBD", "OWH", "AWH", "SWH",
+        },
+    },
 }

@@ -6,13 +6,13 @@ const (
     Fender
     Gibson
     Strandberg
-    Schecter
+    SCHECTER
     EspSignature
     Ibanez
     PRS
     Suhr
     MusicMan
-    Zemaitis
+    ZEMAITIS
     Momose
 )
 

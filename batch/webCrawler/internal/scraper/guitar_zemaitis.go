@@ -138,7 +138,7 @@ func (c *callBacksZemaitis) CollectSpec() func(doc *goquery.Document) []map[stri
 
         spec := map[string]string{}
 
-        spec[C.Maker]      = strconv.Itoa(C.Zemaitis)
+        spec[C.Maker]      = strconv.Itoa(C.ZEMAITIS)
         spec[C.Name]       = doc.Find(`h1.name.order`).Text()
         spec[C.BodyFinish] = ""
         spec[C.Comment]    = ""

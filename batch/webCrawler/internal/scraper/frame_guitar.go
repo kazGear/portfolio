@@ -395,6 +395,7 @@ var specFieldMap = map[string]string{
 
 	"Material":                C.NeckMaterial,
 	"NECK":                    C.NeckMaterial,
+    "Neck":                    C.NeckMaterial,
 	"Neck Wood":               C.NeckMaterial,
 
 	"PICKUPS":                 C.Pickups,

@@ -359,6 +359,8 @@ var specFieldMap = map[string]string{
 	"BODY":                    C.BodyMaterialBack,
 	"Body Material":           C.BodyMaterialBack,
 	"Body Wood":               C.BodyMaterialBack,
+    "Body Back":               C.BodyMaterialBack,
+    "Back & Sides":            C.BodyMaterialBack,
 
 	"Finish":                  C.BodyFinish,
 	"Finish Type":             C.BodyFinish,
@@ -367,6 +369,7 @@ var specFieldMap = map[string]string{
 	"BRIDGE":                  C.Bridge,
 
 	"COLOR":                   C.Color,
+    "Color":                   C.Color,
 
 	"Controls":                C.Controls,
 	"CONTROLS":                C.Controls,
@@ -377,6 +380,7 @@ var specFieldMap = map[string]string{
     "FINGER BOARD":            C.Fingerboard,
 	"Fretboard Wood":          C.Fingerboard,
     "Fingerboard":             C.Fingerboard,
+    "Fingerboard & Bridge":    C.Fingerboard,
 
 	"FRET":                    C.FretCount,
 	"FRETS":                   C.FretCount,
@@ -387,9 +391,11 @@ var specFieldMap = map[string]string{
 	"INLAY":                   C.Inlays,
 	"Inlays":                  C.Inlays,
 	"Fretboard Inlay":         C.Inlays,
+    "Position Inlays":         C.Inlays,
 
 	"CONSTRUCTION":            C.Joint,
-	"Joint":                   C.Joint,
+	"Neck Joint":              C.Joint,
+    "Joint":                   C.Joint,
     "JOINT":                   C.Joint,
 	"Neck/Body Assembly Type": C.Joint,
 
@@ -400,9 +406,14 @@ var specFieldMap = map[string]string{
 
 	"PICKUPS":                 C.Pickups,
     "Pickups":                 C.Pickups,
+    "Pickup":                  C.Pickups,
+    "Pickup(Neck, Middle, Bridge)":C.Pickups,
 	"Bass Pickup":             C.NeckPickup,
+    "Neck Pickup":             C.NeckPickup,
+    "Neck P ickup":            C.NeckPickup,
 	"Middle Pickup":           C.CenterPickup,
 	"Treble Pickup":           C.BridgePickup,
+    "Bridge Pickup":           C.BridgePickup,
 
 	"Price":                   C.Price,
     "PRICE":                   C.Price,

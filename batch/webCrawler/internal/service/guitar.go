@@ -148,7 +148,7 @@ func makersFactory() map[string]*Maker {
         logger,
     )
 
-    makerName = "Schecter"
+    makerName = "SCHECTER"
     logger    = utils.NewLogger(makerName)
     makers[makerName] = NewMaker(
         makerName,
@@ -165,6 +165,16 @@ func makersFactory() map[string]*Maker {
         scraper.NewScraperMomose(logger),
         scraper.NewCallBacksMomose(logger),
         scraper.NewCallBacksMomose(logger),
+        logger,
+    )
+
+    makerName = "ZEMAITIS"
+    logger    = utils.NewLogger(makerName)
+    makers[makerName] = NewMaker(
+        makerName,
+        scraper.NewScraperZemaitis(logger),
+        scraper.NewCallBacksZemaitis(logger),
+        scraper.NewCallBacksZemaitis(logger),
         logger,
     )
 

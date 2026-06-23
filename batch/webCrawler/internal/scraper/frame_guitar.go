@@ -352,8 +352,9 @@ func loggingCrawlStats(stats *crawlStats, logger *log.Logger) {
 var specFieldMap = map[string]string{
 	"Top":                     C.BodyMaterialTop,
 	"Top Wood":                C.BodyMaterialTop,
+    "Body Top":                C.BodyMaterialTop,
 
-	"Back Wood":               C.BodyMaterialBack,
+    "Back Wood":               C.BodyMaterialBack,
 	"Body":                    C.BodyMaterialBack,
 	"BODY":                    C.BodyMaterialBack,
 	"Body Material":           C.BodyMaterialBack,
@@ -375,9 +376,11 @@ var specFieldMap = map[string]string{
 	"FINGERBOARD":             C.Fingerboard,
     "FINGER BOARD":            C.Fingerboard,
 	"Fretboard Wood":          C.Fingerboard,
+    "Fingerboard":             C.Fingerboard,
 
 	"FRET":                    C.FretCount,
 	"FRETS":                   C.FretCount,
+    "Frets":                   C.FretCount,
 	"Number Of Frets":         C.FretCount,
 	"Number of Frets":         C.FretCount,
 
@@ -395,6 +398,7 @@ var specFieldMap = map[string]string{
 	"Neck Wood":               C.NeckMaterial,
 
 	"PICKUPS":                 C.Pickups,
+    "Pickups":                 C.Pickups,
 	"Bass Pickup":             C.NeckPickup,
 	"Middle Pickup":           C.CenterPickup,
 	"Treble Pickup":           C.BridgePickup,
@@ -403,6 +407,7 @@ var specFieldMap = map[string]string{
     "PRICE":                   C.Price,
 
 	"SCALE":                   C.ScaleLengthMM,
+    "Scale":                   C.ScaleLengthMM,
 	"Scale Length":            C.ScaleLengthMM,
 
 }

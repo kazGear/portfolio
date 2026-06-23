@@ -110,14 +110,14 @@ func buildGuitarFrame(spec map[string]string, url string, logger *log.Logger) (*
 	}
 	guitar.BodyFinish        = trim(spec[C.BodyFinish])
 	guitar.BodyMaterial      = trim(spec[C.BodyMaterialTop]) + " / " + trim(spec[C.BodyMaterialBack])
-    guitar.BodyMaterialBack  = utils.SearchWoodCode(spec[C.BodyMaterialBack])
-	guitar.BodyMaterialTop   = utils.SearchWoodCode(spec[C.BodyMaterialTop])
+    guitar.BodyMaterialBack  = searchWoodCode(spec[C.BodyMaterialBack])
+	guitar.BodyMaterialTop   = searchWoodCode(spec[C.BodyMaterialTop])
     guitar.Bridge            = trim(spec[C.Bridge])
 	guitar.Color             = trim(spec[C.Color])
     guitar.ColorCd           = utils.ConvertColorCd(guitar.Color)
 	guitar.Comment           = trim(spec[C.Comment])
 	guitar.Controls          = trim(spec[C.Controls])
-    guitar.Fingerboard       = utils.SearchWoodCode(spec[C.Fingerboard])
+    guitar.Fingerboard       = searchWoodCode(spec[C.Fingerboard])
 
 	var errFretCount error
 	fretCount                     := trim(spec[C.FretCount])
@@ -127,7 +127,7 @@ func buildGuitarFrame(spec map[string]string, url string, logger *log.Logger) (*
     }
 	guitar.Inlays       = trim(spec[C.Inlays])
 	guitar.Joint        = trim(spec[C.Joint])
-    guitar.NeckMaterial = utils.SearchWoodCode(spec[C.NeckMaterial])
+    guitar.NeckMaterial = searchWoodCode(spec[C.NeckMaterial])
     guitar.Pickups      = trim(spec[C.Pickups])
 
     var errPrice error
@@ -410,4 +410,67 @@ var specFieldMap = map[string]string{
 	"SCALE":                   C.ScaleLengthMM,
     "Scale":                   C.ScaleLengthMM,
 	"Scale Length":            C.ScaleLengthMM,
+}
+
+var regWood = regexp.MustCompile(`\s+`)
+// 木材コードを探しだす
+func searchWoodCode(s string) int {
+	trimed := regWood.ReplaceAllString(s, "")
+
+	for _, wood := range GetWoods() {
+		if strings.Contains(strings.ToLower(trimed), strings.ToLower(wood.Name)) {
+			return wood.Code
+		}
+	}
+	return 0 // 該当なし
+}
+type wood struct {
+	Name string
+	Code int
+}
+
+// wood materials
+func GetWoods() []wood {
+	woods := []wood{
+		{"Unknown", 0},
+		{"HardMaple", 1},
+		{"FlameMaple", 2},
+		{"FlamedMaple", 2},
+		{"QuiltedMaple", 3},
+		{"BirdseyeMaple", 4},
+		{"RoastedMaple", 5},
+		{"Maple", 6},
+		{"HonduranMahogany", 7},
+		{"Mahogany", 8},
+		{"Sapele", 9},
+		{"Korina", 10},
+		{"WhiteKorina", 11},
+		{"Alder", 12},
+		{"Ash", 13},
+		{"Basswood", 14},
+		{"Linden", 14},
+		{"Poplar", 15},
+		{"Spruce", 16},
+		{"Cedar", 17},
+		{"IndianRosewood", 18},
+		{"BrazilianRosewood", 19},
+		{"Rosewood", 20},
+		{"PauFerro", 21},
+		{"Ovangkol", 22},
+		{"Ebony", 23},
+		{"Walnut", 24},
+		{"Padauk", 25},
+		{"Koa", 26},
+		{"Nato", 27},
+		{"Agathis", 28},
+		{"Bubinga", 29},
+		{"Wenge", 30},
+		{"Purpleheart", 31},
+		{"Zebrawood", 32},
+		{"Okoume", 33},
+		{"Meranti", 34},
+		{"Sakura", 35},
+		{"Tochi", 36},
+	}
+	return woods
 }

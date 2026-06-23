@@ -89,3 +89,22 @@ func TestIsFirstVisit(t *testing.T) {
 		assert.True(t, url.want == actual)
 	}
 }
+
+func TestSearchWoodCode(t *testing.T) {
+	var maple int = 6
+	var hardMaple int = 1
+
+	woods := []string{
+		"hardMaple Paduak 7P",
+		"HardMaple, Walnut, Paduak 7P",
+		"Maple, Paduak 7P HardMaple", // 具体名が拾われる（マスタ順サーチ）
+		"HardMaple Maple",
+		"Hard Maple Maple",
+	}
+
+	assert.Equal(t, hardMaple, searchWoodCode(woods[0]))
+	assert.Equal(t, hardMaple, searchWoodCode(woods[1]))
+	assert.Equal(t, hardMaple, searchWoodCode(woods[2]))
+	assert.Equal(t, hardMaple, searchWoodCode(woods[3]))
+	assert.Equal(t, maple, searchWoodCode(woods[4]))
+}

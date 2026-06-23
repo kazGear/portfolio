@@ -95,19 +95,6 @@ func parseMultiPrice(s string) (int, error) {
 	return minPrice, nil
 }
 
-var regWood = regexp.MustCompile(`\s+`)
-// 木材コードを探しだす
-func SearchWoodCode(s string) int {
-	trimed := regWood.ReplaceAllString(s, "")
-
-	for _, wood := range C.GetWoods() {
-		if strings.Contains(strings.ToLower(trimed), strings.ToLower(wood.Name)) {
-			return wood.Code
-		}
-	}
-	return 0 // 該当なし
-}
-
 // フレット数は１５～３０であると思われる
 var _regFretStr   = regexp.MustCompile(`(1[5-9]|[2-3][0-9])\s*[Ff]+`)
 var _refNotNumber = regexp.MustCompile(`\D`)

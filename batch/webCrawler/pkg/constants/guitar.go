@@ -44,57 +44,6 @@ const (
     OthersColor int = 99
 )
 
-type wood struct {
-	Name string
-	Code int
-}
-
-// wood materials
-func GetWoods() []wood {
-	woods := []wood{
-		{"Unknown", 0},
-		{"HardMaple", 1},
-		{"FlameMaple", 2},
-		{"FlamedMaple", 2},
-		{"QuiltedMaple", 3},
-		{"BirdseyeMaple", 4},
-		{"RoastedMaple", 5},
-		{"Maple", 6},
-		{"HonduranMahogany", 7},
-		{"Mahogany", 8},
-		{"Sapele", 9},
-		{"Korina", 10},
-		{"WhiteKorina", 11},
-		{"Alder", 12},
-		{"Ash", 13},
-		{"Basswood", 14},
-		{"Linden", 14},
-		{"Poplar", 15},
-		{"Spruce", 16},
-		{"Cedar", 17},
-		{"IndianRosewood", 18},
-		{"BrazilianRosewood", 19},
-		{"Rosewood", 20},
-		{"PauFerro", 21},
-		{"Ovangkol", 22},
-		{"Ebony", 23},
-		{"Walnut", 24},
-		{"Padauk", 25},
-		{"Koa", 26},
-		{"Nato", 27},
-		{"Agathis", 28},
-		{"Bubinga", 29},
-		{"Wenge", 30},
-		{"Purpleheart", 31},
-		{"Zebrawood", 32},
-		{"Okoume", 33},
-		{"Meranti", 34},
-		{"Sakura", 35},
-		{"Tochi", 36},
-	}
-	return woods
-}
-
 // Guitar Spec Keys
 const (
     Maker            = "Maker"

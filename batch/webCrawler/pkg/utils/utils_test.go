@@ -5,6 +5,7 @@ import (
 	"strings"
 	"testing"
 
+	C "github.com/kazGear/portfolio/webCrawler/pkg/constants"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -39,13 +40,7 @@ func TestParsePrice(t *testing.T) {
 			want: 660000,
 		},
 		{
-			price: "ASK", want: -1,
-		},
-		{
-			price: "open", want: -1,
-		},
-		{
-			price: "999999999", want: -1,
+			price: "999999999", want: C.ParseErrorPrice,
 		},
 		{
 			price: "$ 1 149", want: 1149,
@@ -54,7 +49,13 @@ func TestParsePrice(t *testing.T) {
 			price: "￥1,320,000（本体価格￥1,200,000）", want: 1200000,
 		},
 		{
-			price: "", want: -1,
+			price: "", want: C.UndefinedPrice,
+		},
+		{
+			price: "OPEN", want: C.OpenPrice,
+		},
+		{
+			price: "ask", want: C.OpenPrice,
 		},
 
 	}

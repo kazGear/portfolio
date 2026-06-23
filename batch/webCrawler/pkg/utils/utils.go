@@ -32,8 +32,11 @@ var _regUndefinedPrice = regexp.MustCompile(`(?i)(ask|open|オープン)`)
 const _initPrice int   = 999999999
 // 金額表記を数値に変換 "¥128,000" → 128000
 func ParsePrice(price string) (int, error) {
+	if len(price) <= 0 {
+		return C.UndefinedPrice, nil
+	}
 	if _regUndefinedPrice.MatchString(price) {
-		return -1, nil
+		return C.OpenPrice, nil
 	}
 	var result int = _initPrice
 	var err error
@@ -45,8 +48,8 @@ func ParsePrice(price string) (int, error) {
 	} else {
 		result, err = parseSinglePrice(price)
 	}
-	if err != nil { return -1, err }
-	if result == _initPrice { result = -1 }
+	if err != nil { return C.ParseErrorPrice, err }
+	if result == _initPrice { return C.ParseErrorPrice, err }
 	return result, nil
 }
 
@@ -58,7 +61,7 @@ func parseSinglePrice(s string) (int, error) {
 	cleaned := _regNotNumber.ReplaceAllString(price, "")
 
 	if cleaned == "" {
-		return -1, fmt.Errorf("[ParseSinglePrice parse error]: %v\n", s)
+		return C.ParseErrorPrice, fmt.Errorf("[ParseSinglePrice parse error]: %v\n", s)
 	}
 	result, _ := strconv.Atoi(cleaned)
 	return result, nil
@@ -71,7 +74,7 @@ func parseMultiPrice(s string) (int, error) {
 	prices := _regPriceSpliter.Split(s, -1)
 
 	if len(prices) < 2 {
-		return -1, fmt.Errorf("[ParseMultiPrice parse error]: %v\n", s)
+		return C.ParseErrorPrice, fmt.Errorf("[ParseMultiPrice parse error]: %v\n", s)
 	}
 
 	var minPrice int = _initPrice

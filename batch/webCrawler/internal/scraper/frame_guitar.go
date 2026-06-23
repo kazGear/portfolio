@@ -56,7 +56,7 @@ func (g *guitarScraper) scrapeFrame(provider PageProvider,
         g.logger.Println("None URL for crawling...")
         return []*model.Guitar{}
     }
-    utils.LogCollectedLinks(g.urls, g.logger)
+    utils.LoggingCollectedLinks(g.urls, g.logger)
     g.logger.Printf("[Urls count]: %v 件\n", len(g.urls))
 
     wg := &sync.WaitGroup{}

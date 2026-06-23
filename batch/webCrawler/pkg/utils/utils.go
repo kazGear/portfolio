@@ -164,7 +164,7 @@ func NewLogger(makerName string) *log.Logger {
 }
 
 // 取得したリンクを表示
-func LogCollectedLinks(links []string, logger *log.Logger) {
+func LoggingCollectedLinks(links []string, logger *log.Logger) {
 	for _, link := range links {
 		logger.Printf("[Collected link]: %v\n", link)
 	}

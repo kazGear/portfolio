@@ -89,6 +89,8 @@ func GetWoods() []wood {
 		{"Zebrawood", 32},
 		{"Okoume", 33},
 		{"Meranti", 34},
+		{"Sakura", 35},
+		{"Tochi", 36},
 	}
 	return woods
 }

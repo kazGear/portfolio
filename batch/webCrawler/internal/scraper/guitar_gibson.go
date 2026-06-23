@@ -151,7 +151,7 @@ func (c *callBacksGibson) CollectSpec() func(doc *goquery.Document) []map[string
         neckPickup              := doc.Find(`.spec-item div:contains("Neck pickup")`).Next().Text()
         bridgePickup            := doc.Find(`.spec-item div:contains("Bridge pickup")`).Next().Text()
         spec[C.Pickups]          = fmt.Sprintf("%v / %v", neckPickup, bridgePickup)
-        spec[C.Price]            = strconv.Itoa(C.InvalidNumber)
+        spec[C.Price]            = ""
         src, _                  := doc.Find(`img#gallery-front`).Attr(`src`)
         spec[C.Src]              = src
         spec[C.Series]           = regSeriesGibson.FindString(spec[C.Name])

@@ -3,7 +3,6 @@ package scraper
 import (
 	"context"
 	"fmt"
-	"regexp"
 	"strconv"
 	"strings"
 	"sync"
@@ -54,9 +53,6 @@ func NewCallBacksMomose(logger *log.Logger) *callBacksMomose {
     }
 }
 
-
-var regNeedPatterMomose = regexp.MustCompile(`https://Momoseguitars.co.jp/product/\d+/`)
-
 func (g *guitarScraperMomose) CollectLinks(parentCtx context.Context) ([]string, error) {
     c := g.gScraper.collector
 
@@ -68,38 +64,54 @@ func (g *guitarScraperMomose) CollectLinks(parentCtx context.Context) ([]string,
     visited := make(map[string]struct{}, 500)
     mutex   := &sync.Mutex{}
 
-    c.OnHTML("#item .figcap a", func(html *colly.HTMLElement) {
+    // product >>> guitars, base, accessory
+    c.OnHTML("ul.c-gnav__items #menu-item-39605 .sub-menu a", func(html *colly.HTMLElement) {
         link := html.Request.AbsoluteURL(html.Attr("href"))
         if g.gScraper.isFirstVisit(mutex, link, visited) {
             c.Visit(link)
         }
     })
-    c.OnHTML("#inner_content .figcap a", func(html *colly.HTMLElement) {
+    // special model >>> limited, premium
+    c.OnHTML("ul.c-gnav__items #menu-item-142109 .sub-menu a", func(html *colly.HTMLElement) {
         link := html.Request.AbsoluteURL(html.Attr("href"))
         if g.gScraper.isFirstVisit(mutex, link, visited) {
             c.Visit(link)
         }
     })
-    c.OnHTML("section.color_variation a", func(html *colly.HTMLElement) {
+    // ページネーション
+    c.OnHTML("div.pagination a", func(html *colly.HTMLElement) {
         link := html.Request.AbsoluteURL(html.Attr("href"))
         if g.gScraper.isFirstVisit(mutex, link, visited) {
             c.Visit(link)
         }
     })
-    c.Visit("https://Momoseguitars.co.jp/products/Momose")
+    // 商品カード custom guitars
+    c.OnHTML("div.p-product-list .p-product-list__item a", func(html *colly.HTMLElement) {
+        link := html.Request.AbsoluteURL(html.Attr("href"))
+        if g.gScraper.isFirstVisit(mutex, link, visited) {
+            c.Visit(link)
+        }
+    })
+    // 商品カード limited, premium  guitars
+    c.OnHTML("article div.p-product-list a", func(html *colly.HTMLElement) {
+        link := html.Request.AbsoluteURL(html.Attr("href"))
+        if g.gScraper.isFirstVisit(mutex, link, visited) {
+            c.Visit(link)
+        }
+    })
+
+    c.Visit("https://www.deviser.co.jp/momose")
     c.Wait()
 
     loggingCrawlStats(crawlStats, g.gScraper.logger)
 
-
     g.gScraper.urls = utils.MapToSliceUrl(visited)
-    g.gScraper.urls = utils.GetNeedLinks(g.gScraper.urls, regNeedPatterMomose, 400)
     return g.gScraper.urls, nil
 }
 
 func (g *guitarScraperMomose) Scrape(provider  PageProvider,
-                                  parser    GuitarParser,
-                                  parentCtx context.Context,
+                                     parser    GuitarParser,
+                                     parentCtx context.Context,
 ) []*model.Guitar {
     guitars := g.gScraper.scrapeFrame(provider, parser, parentCtx)
     return guitars
@@ -108,7 +120,7 @@ func (g *guitarScraperMomose) Scrape(provider  PageProvider,
 // 必要に応じて、基盤のTryWaitReadyを組み込む
 func (c *callBacksMomose) FetchDynamicPage(parentCtx context.Context) func(url string) (string, error) {
     return func(url string) (string, error) {
-        if !isDetailPage(`^https://Momoseguitars\.co\.jp/product/\d{4,}/?$`, url) {
+        if !isDetailPage(`^https://www.deviser.co.jp/products/.+`, url) {
             return "", nil
         }
         // タブごとに独立した context を作る
@@ -122,11 +134,8 @@ func (c *callBacksMomose) FetchDynamicPage(parentCtx context.Context) func(url s
 
         err := chromedp.Run(ctx,
                chromedp.Navigate(url),
-               chromedp.WaitVisible("#main", chromedp.ByQuery), // 求める要素が出るまで待つ
+               chromedp.WaitVisible("main", chromedp.ByQuery), // 求める要素が出るまで待つ
                chromedp.Sleep(300 * time.Millisecond), // JSが動く猶予を与える
-               tryWaitReady("h1.header_title"), // 必要な要素が生成されるのを待つ
-               tryWaitReady(".tbl_spec"),
-               tryWaitReady("p.detail_price"),
                chromedp.OuterHTML("html", &html, chromedp.ByQuery), // 最終的なHTML出力
         )
         if err != nil {
@@ -143,33 +152,27 @@ func (c *callBacksMomose) CollectSpec() func(doc *goquery.Document) []map[string
 
         spec := map[string]string{}
 
-        spec[C.Maker]   = strconv.Itoa(C.Momose)
-        spec[C.Name]    = doc.Find("h1.header_title").Text()
-        spec[C.Color]   = doc.Find(".header_content h3.clr_name").Text()
-        spec[C.Comment] = doc.Find("#specialfeatures .container_small p").Text()
-        spec[C.Price]   = doc.Find("p.detail_price").Text()
-        src, _         := doc.Find("#main .header_content img.transform-5").Attr("src")
-        spec[C.Src]     = src
-        spec[C.Series]  = regSeries.FindString(spec[C.Name])
+        doc.Find(`.p-color-list__jan`).Remove() // colorからノイズを除去
 
-        doc.Find("#specifications table.tbl_spec tr").Each(func(idx int, selector *goquery.Selection) {
-            th      := selector.Find("th").Text()
-            td      := selector.Find("td").Text()
-            th, _    = utils.ConvertLabel(th, specFieldMap)
-            spec[th] = td
+        spec[C.Maker]     = strconv.Itoa(C.Momose)
+        spec[C.Name]      = doc.Find("h1.p-product__title").Text()
+        spec[C.Color]     = doc.Find(`h2:contains("COLOR")`).Next().Children().Children().Next().Text()
+        spec[C.Comment]   = ""
+        spec[C.FretCount] = strconv.Itoa(C.InvalidNumber)
+        spec[C.Inlays]    = ""
+        spec[C.Joint]     = ""
+        spec[C.Price]     = doc.Find(`.p-product__price strong`).Text()
+        spec[C.Series]    = strings.Split(spec[C.Name], "/")[0]
+        src, _           := doc.Find(`.p-product__content div div div div img`).Attr(`src`)
+        spec[C.Src]       = src
+        spec[C.Weight]    = strconv.Itoa(C.InvalidNumber)
+
+        doc.Find("div.p-spec div div div:nth-child(2) dl").Each(func(idx int, selector *goquery.Selection) {
+            label      := selector.Find("dt").Text()
+            elem       := selector.Find("dd").Text()
+            field, _   := utils.ConvertLabel(label, specFieldMap)
+            spec[field] = elem
         })
-
-        bodyMaterial := spec[C.BodyMaterialBack]
-        materials    := strings.Split(bodyMaterial, ",")
-
-        if len(materials) == 1 {
-            spec[C.BodyMaterialBack] = materials[0]
-        } else if len(materials) == 2 {
-            spec[C.BodyMaterialTop]  = materials[0]
-            spec[C.BodyMaterialBack] = materials[1]
-        } else {
-            spec[C.BodyMaterialBack] = materials[0]
-        }
 
         specs = utils.LockedAppend(mutex, specs, spec)
         return specs
@@ -184,6 +187,6 @@ func (c *callBacksMomose) BuildGuitar(url string) func(spec map[string]string) *
 
 func (c *callBacksMomose) IsStaticPage() func(html string) bool {
     return func(html string) bool {
-        return strings.Contains(html, "tbl_spec")
+        return strings.Contains(html, "Finish")
     }
 }

@@ -120,6 +120,13 @@ const (
     Weight           = "Weight"
 )
 
+// price
+const (
+	ParseErrorPrice int = -1
+	OpenPrice 		int = -2
+	UndefinedPrice  int = -3
+)
+
 // others
 const (
 	InvalidNumber int = -1

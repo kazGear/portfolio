@@ -409,5 +409,4 @@ var specFieldMap = map[string]string{
 	"SCALE":                   C.ScaleLengthMM,
     "Scale":                   C.ScaleLengthMM,
 	"Scale Length":            C.ScaleLengthMM,
-
 }

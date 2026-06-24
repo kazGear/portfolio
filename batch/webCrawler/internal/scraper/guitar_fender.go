@@ -53,35 +53,56 @@ func NewCallBacksFender(logger *log.Logger) *callBacksFender {
 }
 
 func (g *guitarScraperFender) CollectLinks(parentCtx context.Context) ([]string, error) {
-    c := g.gScraper.collector
+    // タブごとに独立した context を作る
+    tabCtx, tabCancel := chromedp.NewContext(parentCtx)
+    defer tabCancel()
+    // タブにだけ timeout を付ける
+    ctx, cancel := context.WithTimeout(tabCtx, 300 * time.Second)
+    defer cancel()
 
-    // クロールログ収集
-    crawlStats := &crawlStats{}
-    statsCrawlLogs(c ,crawlStats, g.gScraper.logger)
+    startLinks := []string{
+        `/collections/electric-guitars`,
+        `/collections/electric-basses`,
+        `/collections/artist`,
+        `/collections/acoustic-guitars`,
+    }
 
-    // URL収集、クロール
-    visited := make(map[string]struct{}, 130)
-    mutex   := &sync.Mutex{}
+    // var prevHtml = ""
+    var html     = ""
 
-    c.OnHTML("ol.product-items li a", func(html *colly.HTMLElement) {
-        link := html.Request.AbsoluteURL(html.Attr("href"))
-        if g.gScraper.isFirstVisit(mutex, link, visited) {
-            c.Visit(link)
+    // for _, link := range startLinks {
+log.Println("navigate start")
+        err := chromedp.Run(ctx,
+            chromedp.Navigate(fmt.Sprintf("https://jp.fender.com%v", startLinks[0])),
+        )
+log.Println("navigate end", err)
+log.Println("wait start")
+        err = chromedp.Run(ctx,
+            autoScroll(),
+            chromedp.Sleep(10 * time.Second),
+            // chromedp.WaitReady(`.SearchspringPLP__ProductsContainer-sc-15dyhu-3`),
+            chromedp.WaitReady(`#MainContent #react-searchspring-plp`),
+            // chromedp.WaitVisible(`#MainContent`),
+            // chromedp.WaitVisible(`body`),
+            // tryClick(`.SearchspringPLP__ListFooter-sc-15dyhu-4 button`),
+            // chromedp.OuterHTML(`#MainContent #react-searchspring-plp`, &html, chromedp.ByQuery),
+            chromedp.OuterHTML(`html`, &html, chromedp.ByQuery),
+        )
+log.Println("wait end", err)
+g.gScraper.logger.Printf("[chromedp error]: %v\n", err)
+        if err != nil {
+            return []string{}, fmt.Errorf("[Chromedp error]: %w\n", err)
         }
-    })
+g.gScraper.logger.Printf("[html]: len %v\n%v\n", len(html), html)
+    // }
 
-    c.Visit("https://shop.music-man.com/instruments.html")
-    c.Wait()
-
-    loggingCrawlStats(crawlStats, g.gScraper.logger)
-
-    g.gScraper.urls = utils.MapToSliceUrl(visited)
+// utils.LoggingCollectedLinks(g.gScraper.urls, g.gScraper.logger)
     return g.gScraper.urls, nil
 }
 
 func (g *guitarScraperFender) Scrape(provider  PageProvider,
-                                       parser    GuitarParser,
-                                       parentCtx context.Context,
+                                     parser    GuitarParser,
+                                     parentCtx context.Context,
 ) []*model.Guitar {
     guitars := g.gScraper.scrapeFrame(provider, parser, parentCtx)
     return guitars
@@ -125,32 +146,20 @@ func (c *callBacksFender) CollectSpec() func(doc *goquery.Document) []map[string
         spec := map[string]string{}
 
         spec[C.Maker]   = strconv.Itoa(C.Fender)
-        spec[C.Name]    = doc.Find(`h1.page-title span`).Text()
-        spec[C.Comment] = doc.Find(`div.product.attribute.overview div p`).Text()
-        spec[C.Joint]   = doc.Find(`h3:contains("Neck Construction")`).Text()
-        spec[C.Price]   = doc.Find(`div[data-role="priceBox"]`).Text()
-        spec[C.Series]  = ""
-        src, _         := doc.Find(`div.fotorama__stage__shaft img`).Attr(`src`)
+        spec[C.Name]    = doc.Find(`h1.product-title`).Text()
+        spec[C.Comment] = doc.Find(`.product-content-description__text p`).Text()
+        spec[C.Joint]   = ""
+        spec[C.Price]   = doc.Find(`.price__regular .price-item`).Text()
+        src, _         := doc.Find(`#fender-react div div img`).Attr(`src`)
         spec[C.Src]     = src
         spec[C.Weight]  = strconv.Itoa(C.InvalidNumber)
 
-        doc.Find(`table#product-attribute-specs-table tbody tr`).Each(func(idx int, selector *goquery.Selection) {
-            label      := selector.Find(`th`).Text()
-            elem       := selector.Find(`td`).Text()
+        doc.Find(`.product-specs-wrap .product-specs-lists .product-specs-props`).Each(func(idx int, selector *goquery.Selection) {
+            label      := selector.Find(`h4`).Text()
+            elem       := selector.Find(`p`).Text()
             field, _   := utils.ConvertLabel(label, specFieldMap)
             spec[field] = elem
         })
-
-        // 木材 整形
-        if strings.Contains(spec[C.BodyMaterialBack], "and") {
-            topAndBack := strings.Split(spec[C.BodyMaterialBack], "and")
-            spec[C.BodyMaterialTop]  = topAndBack[0]
-            spec[C.BodyMaterialBack] = topAndBack[1]
-        } else if strings.Contains(spec[C.BodyMaterialBack], "with") {
-            backAndTop := strings.Split(spec[C.BodyMaterialBack], "with")
-            spec[C.BodyMaterialBack] = backAndTop[0]
-            spec[C.BodyMaterialTop]  = backAndTop[1]
-        }
 
         specs = utils.LockedAppend(mutex, specs, spec)
         return specs
@@ -165,6 +174,6 @@ func (c *callBacksFender) BuildGuitar(url string) func(spec map[string]string) *
 
 func (c *callBacksFender) IsStaticPage() func(html string) bool {
     return func(html string) bool {
-        return strings.Contains(html, "fotorama__stage__shaft")
+        return strings.Contains(html, "product-specs-wrap")
     }
 }

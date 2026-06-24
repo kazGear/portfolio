@@ -178,6 +178,17 @@ func makersFactory() map[string]*Maker {
         logger,
     )
 
+    makerName = "MusicMan"
+    logger    = utils.NewLogger(makerName)
+    makers[makerName] = NewMaker(
+        makerName,
+        scraper.NewScraperMusicMan(logger),
+        scraper.NewCallBacksMusicMan(logger),
+        scraper.NewCallBacksMusicMan(logger),
+        logger,
+    )
+
+
     return makers
 }
 

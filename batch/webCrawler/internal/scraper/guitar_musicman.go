@@ -141,7 +141,7 @@ func (c *callBacksMusicMan) CollectSpec() func(doc *goquery.Document) []map[stri
             spec[field] = elem
         })
 
-        // 木材整理
+        // 木材 整形
         if strings.Contains(spec[C.BodyMaterialBack], "and") {
             topAndBack := strings.Split(spec[C.BodyMaterialBack], "and")
             spec[C.BodyMaterialTop]  = topAndBack[0]

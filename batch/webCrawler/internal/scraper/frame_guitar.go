@@ -364,12 +364,14 @@ var specFieldMap = map[string]string{
 
 	"Finish":                  C.BodyFinish,
 	"Finish Type":             C.BodyFinish,
+    "Body Finish":             C.BodyFinish,
 
 	"Bridge":                  C.Bridge,
 	"BRIDGE":                  C.Bridge,
 
 	"COLOR":                   C.Color,
     "Color":                   C.Color,
+    "Body Color":              C.Color,
 
 	"Controls":                C.Controls,
 	"CONTROLS":                C.Controls,
@@ -392,6 +394,7 @@ var specFieldMap = map[string]string{
 	"Inlays":                  C.Inlays,
 	"Fretboard Inlay":         C.Inlays,
     "Position Inlays":         C.Inlays,
+    "Fret Markers":            C.Inlays,
 
 	"CONSTRUCTION":            C.Joint,
 	"Neck Joint":              C.Joint,

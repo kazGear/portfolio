@@ -304,7 +304,7 @@ func autoScroll() chromedp.Action {
             if scrollY + innerHeight >= lastHeight - 50 {
                 break // 最後までスクロール済
             }
-            time.Sleep(1 * time.Second)
+            time.Sleep(5 * time.Second)
         }
         return nil
     })
@@ -406,6 +406,7 @@ var specFieldMap = map[string]string{
 	"NECK":                    C.NeckMaterial,
     "Neck":                    C.NeckMaterial,
 	"Neck Wood":               C.NeckMaterial,
+    "Neck Material":           C.NeckMaterial,
 
 	"PICKUPS":                 C.Pickups,
     "Pickups":                 C.Pickups,
@@ -424,6 +425,8 @@ var specFieldMap = map[string]string{
 	"SCALE":                   C.ScaleLengthMM,
     "Scale":                   C.ScaleLengthMM,
 	"Scale Length":            C.ScaleLengthMM,
+
+    "Series":                  C.Series,
 }
 
 var regWood = regexp.MustCompile(`\s+`)

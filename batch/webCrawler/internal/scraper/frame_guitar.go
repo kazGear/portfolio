@@ -151,10 +151,6 @@ func buildGuitarFrame(spec map[string]string, url string, logger *log.Logger) (*
         guitar.Src = fullPass
     }
 
-    if len(guitar.Src) <= 0 {
-        logger.Println("Guitar image none ...")
-        return &model.Guitar{}
-    }
     var errWeight error
     guitar.Weight, errWeight = utils.ParseWight(trim(spec[C.Weight]))
 

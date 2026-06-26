@@ -5,6 +5,7 @@ import (
 	"github.com/kazGear/portfolio/webCrawler/internal/repository"
 	"github.com/kazGear/portfolio/webCrawler/internal/service"
 	"github.com/kazGear/portfolio/webCrawler/pkg/db"
+	"github.com/kazGear/portfolio/webCrawler/pkg/utils"
 )
 
 func init() {
@@ -19,4 +20,6 @@ func main() {
 	// // クローラー起動
 	service := service.NewGuitarCrawlerService(repository)
 	service.RunCrawler()
+
+	utils.CleanupLogs(`../../logs/`, 5)
 }

@@ -12,6 +12,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"sort"
 	"strconv"
 	"strings"
 	"sync"
@@ -580,4 +581,59 @@ var colorKeywords = []colorKeyword{
             "WBD", "OWH", "AWH", "SWH",
         },
     },
+}
+
+// ログを最新版だけ維持する
+func CleanupLogs(dir string, keep int) {
+	entries, err := os.ReadDir(dir)
+
+	if err != nil {
+		log.Printf("[WARN] failed to read log directory: %v", err)
+		return
+	}
+	// 各種ログ
+	groups := make(map[string][]string)
+
+	for _, entry := range entries {
+		if entry.IsDir() {
+			continue
+		}
+		name := entry.Name()
+
+		if filepath.Ext(name) != ".log" {
+			continue
+		}
+
+		// ログ種ごとにグルーピング
+		idx := strings.Index(name, "_")
+		if idx < 0 {
+			continue
+		}
+		logType := name[:idx]
+		groups[logType] = append(groups[logType], name)
+	}
+
+	for logType, files := range groups {
+		// 必要な数は残す
+		if len(files) <= keep {
+			continue
+		}
+
+		// 新しい順
+		sort.Sort(sort.Reverse(sort.StringSlice(files)))
+
+		for _, file := range files[keep:] { // ファイルが在る分だけループ
+			path := filepath.Join(dir, file)
+
+			if err := os.Remove(path); err != nil {
+				log.Printf(
+					"[WARN] failed to remove old log file: type=%s file=%s err=%v",
+					logType,
+					file,
+					err,
+				)
+				continue
+			}
+		}
+	}
 }

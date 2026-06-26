@@ -122,13 +122,7 @@ func (g *guitarScraperFender) CollectLinks(parentCtx context.Context) ([]string,
             maps.Copy(productsFender, product)
         }
     }
-
-tmpUrls := make([]string, 0, 50)
-for i := 0; i < 10; i++ {
-    tmpUrls = append(tmpUrls, productLinks[i])
-}
-g.gScraper.urls = tmpUrls
-    // g.gScraper.urls = productLinks
+    g.gScraper.urls = productLinks
     return g.gScraper.urls, nil
 }
 

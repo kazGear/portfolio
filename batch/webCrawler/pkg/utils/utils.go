@@ -604,7 +604,7 @@ func CleanupLogs(dir string, keep int) {
 			continue
 		}
 
-		// ログ種ごとにグルーピング
+		// ログ種ごとにグルーピング。アンダーバーより前の文字列をグループとみなす
 		idx := strings.Index(name, "_")
 		if idx < 0 {
 			continue
@@ -618,11 +618,10 @@ func CleanupLogs(dir string, keep int) {
 		if len(files) <= keep {
 			continue
 		}
-
 		// 新しい順
 		sort.Sort(sort.Reverse(sort.StringSlice(files)))
 
-		for _, file := range files[keep:] { // ファイルが在る分だけループ
+		for _, file := range files[keep:] { // 不要なファイルが在る分だけループ
 			path := filepath.Join(dir, file)
 
 			if err := os.Remove(path); err != nil {

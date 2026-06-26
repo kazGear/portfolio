@@ -144,8 +144,40 @@ func TestGetFretCount(t *testing.T) {
 func TestTrimScaleUnit(t *testing.T) {
 	scales := []struct {
 		scale string
-		want  int
+		want  float64
 	}{
+		{
+			scale: `635mm (25")`,
+			want:  635,
+		},
+		{
+			scale: `25-1/2" (64.8 cm)`,
+			want:  25,
+		},
+		{
+			scale: `25"`,
+			want:  25,
+		},
+		{
+			scale: `648mm/25.5"`,
+			want:  648,
+		},
+		{
+			scale: `25 1/2"`,
+			want:  25,
+		},
+		{
+			scale: `628.65mm / 24.75in`,
+			want:  628.65,
+		},
+		{
+			scale: `24.75" / 628.65mm`,
+			want:  24.75,
+		},
+		{
+			scale: `24.594”`,
+			want:  24.594,
+		},
 		{
 			scale: "648mm",
 			want:  648,
@@ -174,19 +206,37 @@ func TestTrimScaleUnit(t *testing.T) {
 			scale: "820.00 mm",
 			want:  820,
 		},
+	}
+
+	for _, s := range scales {
+		s := s
+		actual := ParseScale(s.scale)
+		assert.Equal(t, s.want, actual)
+	}
+}
+
+func TestInchToMM(t *testing.T) {
+	scales := []struct {
+		scale float64
+		want  float64
+	}{
 		{
-			scale: `24.75" / 628.65mm`,
-			want:  24,
+			scale: 25,
+			want:  635,
 		},
 		{
-			scale: `24.594”`,
-			want:  24,
+			scale: 25.5,
+			want:  647,
+		},
+		{
+			scale: 25.55,
+			want:  648,
 		},
 	}
 
 	for _, s := range scales {
 		s := s
-		actual := TrimScaleUnit(s.scale)
+		actual := InchToMM(s.scale)
 		assert.Equal(t, s.want, actual)
 	}
 }

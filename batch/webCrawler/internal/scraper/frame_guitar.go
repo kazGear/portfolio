@@ -137,7 +137,7 @@ func buildGuitarFrame(spec map[string]string, url string, logger *log.Logger) (*
         // logger.Println(errPrice)
     }
     scaleLengthMM       := trim(spec[C.ScaleLengthMM])
-    guitar.ScaleLengthMM = utils.TrimScaleUnit(scaleLengthMM)
+    guitar.ScaleLengthMM = int(utils.ParseScale(scaleLengthMM))
 	guitar.Series        = trim(spec[C.Series])
 
     guitar.Src           = trim(spec[C.Src])

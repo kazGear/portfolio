@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"math"
 	"net/http"
 	"net/url"
 	"os"
@@ -113,17 +114,25 @@ func GetFretCount(s string) (int, error) {
 	return result, nil
 }
 
-var regScale = regexp.MustCompile(`(\..*|\s)*(mm|”)`)
-// ギタースケールの単位を除去
-func TrimScaleUnit(s string) int {
+var regScale = regexp.MustCompile(`(\d{3}\.\d{1,3})|(\d{2}\.\d{1,5})|(\d{2,3})`)
+// ギタースケールを抽出、変換
+func ParseScale(s string) float64 {
 	halfed := width.Narrow.String(s)
 
-	scale 	  := regScale.ReplaceAllString(halfed, "")
-	result, _ := strconv.Atoi(scale)
+	scale 	  := regScale.FindString(halfed)
+	result, _ := strconv.ParseFloat(scale, 64)
 
-	if result == 0 { return -1 }
+	if result == 0 || result == -1 { return -1 }
 
+	// 小さい数値ならinch表記 >> mmへ
+	if result < 50 {
+		result = float64(InchToMM(result))
+	}
 	return result
+}
+
+func InchToMM(inch float64) float64 {
+	return math.Floor((inch * 25.4))
 }
 
 // ログ設定(グローバル設定)

@@ -21,5 +21,5 @@ func main() {
 	service := service.NewGuitarCrawlerService(repository)
 	service.RunCrawler()
 
-	utils.CleanupLogs(`../../logs/`, 5)
+	utils.CleanupLogs(`./logs`, 5)
 }

@@ -599,10 +599,6 @@ func CleanupLogs(dir string, keep int) {
 			continue
 		}
 		name := entry.Name()
-		// TODO 様子見。無くても問題ない？
-		// if filepath.Ext(name) != ".log" {
-		// 	continue
-		// }
 
 		// ログ種ごとにグルーピング。アンダーバーより前の文字列をグループとみなす
 		idx := strings.Index(name, "_")

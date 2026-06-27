@@ -157,7 +157,7 @@ func (c *callBacksMomose) CollectSpec() func(doc *goquery.Document) []map[string
         spec[C.Maker]     = strconv.Itoa(C.Momose)
         spec[C.Name]      = doc.Find("h1.p-product__title").Text()
         spec[C.Color]     = doc.Find(`h2:contains("COLOR")`).Next().Children().Children().Next().Text()
-        spec[C.Comment]   = ""
+        spec[C.Comment]   = doc.Find(".wp-block-group__inner-container .wp-block-group__inner-container p").Text()
         spec[C.FretCount] = strconv.Itoa(C.InvalidNumber)
         spec[C.Inlays]    = ""
         spec[C.Joint]     = ""

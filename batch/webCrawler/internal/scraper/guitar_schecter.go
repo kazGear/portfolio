@@ -162,7 +162,16 @@ func (c *callBacksSchecter) CollectSpec() func(doc *goquery.Document) []map[stri
             return []map[string]string{}
         }
 
-        // ボディ材 整形
+        // コメント収集
+        var comment = strings.Builder{}
+        doc.Find(`div.content`).Each(func(idx int, selector *goquery.Selection) {
+            title      := selector.Find(`.title`).Text()
+            detail     := selector.Find(`.text`).Text()
+            comment.WriteString(fmt.Sprintf("%v\n%v\n", title, detail))
+        })
+        spec[C.Comment] = comment.String()
+
+        // ボデ.Children()ィ材 整形
         bodyMaterial := spec[C.BodyMaterialBack]
         if strings.Contains(bodyMaterial, "&") { // top / back の形式
             topAndBack := strings.Split(bodyMaterial, "&")

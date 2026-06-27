@@ -26,7 +26,6 @@ import (
 
 type guitarScraperPRS struct {
     gScraper guitarScraper
-    priceSet map[string]string
 }
 
 type callBacksPRS struct {
@@ -34,21 +33,6 @@ type callBacksPRS struct {
 }
 
 func NewScraperPRS(logger *log.Logger) *guitarScraperPRS {
-    allocCtx, allocCancel := chromedp.NewExecAllocator(
-        context.Background(),
-        chromedp.DefaultExecAllocatorOptions[:]...,
-    )
-    parentCtx, parentCancel := chromedp.NewContext(allocCtx)
-    ctx, cancel := context.WithTimeout(parentCtx, 30 * time.Second)
-    defer allocCancel()
-    defer parentCancel()
-    defer cancel()
-
-    mutex := &sync.Mutex{}
-    mutex.Lock()
-    defer mutex.Unlock()
-    priceSet := getPrices(ctx)
-
     collector := colly.NewCollector(
 		colly.Async(true),
 		colly.MaxDepth(3),
@@ -63,7 +47,6 @@ func NewScraperPRS(logger *log.Logger) *guitarScraperPRS {
             mutex:     &sync.Mutex{},
             logger:    logger,
         },
-        priceSet,
     }
 }
 
@@ -256,7 +239,13 @@ func (g *guitarScraperPRS) Scrape(provider  PageProvider,
                                   parentCtx context.Context,
 ) []*model.Guitar {
     guitars := g.gScraper.scrapeFrame(provider, parser, parentCtx)
-    mergePrice(guitars, g.priceSet)
+
+    ctx, cancel := context.WithTimeout(parentCtx, 60 * time.Second)
+    defer cancel()
+
+    priceSet := getPrices(ctx)
+
+    mergePrice(guitars, priceSet)
     return guitars
 }
 
@@ -305,9 +294,8 @@ func (c *callBacksPRS) CollectSpec() func(doc *goquery.Document) []map[string]st
 
         spec[C.Maker]   = strconv.Itoa(C.PRS)
         spec[C.Name]    = doc.Find(`h1 span span span span span`).First().Text()
-        spec[C.Comment] = ""
         spec[C.Series]  = strings.SplitN(spec[C.Name], " ", 2)[0]
-
+        spec[C.Comment] = doc.Find(`main section:nth-of-type(2)`).Text()
         /*
         スペック表の構造例
         <span>

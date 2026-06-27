@@ -171,7 +171,7 @@ func (c *callBacksStrandberg) CollectSpec() func(doc *goquery.Document) []map[st
         spec[C.BodyMaterialTop]  = doc.Find(`h3:contains("Body Top Material")`).Next().Text()
         spec[C.Bridge]           = doc.Find(`h3:contains("Bridge")`).Next().Text()
         spec[C.Controls]         = doc.Find(`h3:contains("Control Set")`).Next().Text()
-        spec[C.Comment]          = ""
+        spec[C.Comment]          = doc.Find(`p[data-sentry-component="AffirmWidget"]`).Parent().Next().Text()
         spec[C.Fingerboard]      = doc.Find(`h3:contains("Fretboard Material")`).Next().Text()
         spec[C.FretCount]        = doc.Find(`h3:contains("Number of Frets")`).Next().Text()
         spec[C.Inlays]           = doc.Find(`h3:contains("Fretboard Inlays")`).Next().Text()

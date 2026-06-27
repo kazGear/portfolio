@@ -134,7 +134,7 @@ func (c *callBacksEspSig) CollectSpec() func(doc *goquery.Document) []map[string
 			spec[C.Name]    = selector1.Find(".product_series_logo_name").Text()
 			src, _         := selector1.Find("img.main_image").Attr("src")
 			spec[C.Src]     = src
-			spec[C.Comment] = selector1.Find(".content_spec-detail em strong").Text()
+			spec[C.Comment] = strings.ReplaceAll(selector1.Find(".content_spec-detail > p").Text(), " ", "")
 			spec[C.Price]   = selector1.Find(
 				".content_borderline.text-center p, .content_spec-detail div p.text-center",
 			).Text()

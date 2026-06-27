@@ -210,7 +210,17 @@ func (c *callBacksIbanez) CollectSpec() func(doc *goquery.Document) []map[string
         spec[C.BodyMaterialTop]  = doc.Find(`.rt_cf_p_data_body_top_material`).Text()
         spec[C.Bridge]           = doc.Find(`.rt_cf_p_data_bridge`).Text()
         spec[C.Controls]         = ""
-        spec[C.Comment]          = ""
+
+        // コメント収集
+        var comment = strings.Builder{}
+        doc.Find(`#products_detail_features section section .fl_left`).Each(func(idx int, selector *goquery.Selection) {
+            title  := selector.Find(`h3`).Text()
+            detail := selector.Find(`p`).Text()
+            comment.WriteString(fmt.Sprintf("%v\n%v\n", title, detail))
+        })
+        spec[C.Comment] = comment.String()
+        // spec[C.Comment]          = ""
+
         spec[C.Fingerboard]      = doc.Find(`.rt_cf_p_data_fretboard`).Text()
         spec[C.FretCount]        = doc.Find(`.rt_cf_p_data_number_fret`).Text()
 

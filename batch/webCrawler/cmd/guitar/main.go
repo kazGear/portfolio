@@ -1,6 +1,9 @@
 package main
 
 import (
+	"os"
+	"strconv"
+
 	"github.com/joho/godotenv"
 	"github.com/kazGear/portfolio/webCrawler/internal/repository"
 	"github.com/kazGear/portfolio/webCrawler/internal/service"
@@ -21,5 +24,10 @@ func main() {
 	service := service.NewGuitarCrawlerService(repository)
 	service.RunCrawler()
 
-	utils.CleanupLogs(`./logs`, 5)
+	logPath 		 := os.Getenv("LOGS_PATH")
+	logsKeepCount, _ := strconv.Atoi(os.Getenv("LOGS_KEEP_COUNT"))
+	utils.CleanupLogs(
+		logPath,
+		logsKeepCount,
+	)
 }

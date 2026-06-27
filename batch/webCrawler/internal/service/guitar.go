@@ -3,6 +3,8 @@ package service
 import (
 	"context"
 	"log"
+	"os"
+	"strconv"
 	"sync"
 	"time"
 
@@ -43,10 +45,11 @@ func NewMaker(name string,
 }
 
 func (g *guitarCrawlerService) RunCrawler() {
-    makers := makersFactory()
+    parallelCount, _ := strconv.Atoi(os.Getenv("PARALLEL_COUNT"))
+    queue := make(chan struct{}, parallelCount) // 並列数制御
 
-    wg := &sync.WaitGroup{}
-    queue := make(chan struct{}, 11) // 並列数制御
+    makers := makersFactory()
+    wg     := &sync.WaitGroup{}
 
     // クロール + スクレイピング + DB保存
     for _, maker := range makers {

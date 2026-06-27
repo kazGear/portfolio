@@ -140,6 +140,7 @@ func (c *callBacksMusicMan) CollectSpec() func(doc *goquery.Document) []map[stri
             field, _   := utils.ConvertLabel(label, specFieldMap)
             spec[field] = elem
         })
+        spec[C.BridgePickup] = spec[C.Pickups]
 
         // 木材 整形
         if strings.Contains(spec[C.BodyMaterialBack], "and") {

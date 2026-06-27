@@ -183,7 +183,7 @@ func (c *callBacksSchecter) CollectSpec() func(doc *goquery.Document) []map[stri
             spec[C.BodyMaterialBack] = topAndBack[1]
         } else if strings.Contains(bodyMaterial, "/") { // back / top の形式
             backAndTop := strings.Split(bodyMaterial, "/")
-            spec[ C.BodyMaterialBack] = backAndTop[0]
+            spec[C.BodyMaterialBack] = backAndTop[0]
             spec[C.BodyMaterialTop]  = backAndTop[1]
         }
 
@@ -195,11 +195,14 @@ func (c *callBacksSchecter) CollectSpec() func(doc *goquery.Document) []map[stri
         pickups := strings.Split(pickup, "\n")
 
         if len(pickups) <= 1 {
-            spec[C.Pickups] = pickups[0]
+            spec[C.BridgePickup] = pickups[0]
         } else if len(pickups) == 2 {
-            spec[C.Pickups] = pickups[0] + " / " + pickups[1]
+            spec[C.NeckPickup]   = pickups[0]
+            spec[C.BridgePickup] = pickups[1]
         } else {
-            spec[C.Pickups] = pickups[0] + " / " + pickups[1] + " / " + pickups[2]
+            spec[C.NeckPickup]   = pickups[0]
+            spec[C.CenterPickup] = pickups[1]
+            spec[C.BridgePickup] = pickups[2]
         }
 
         specs = utils.LockedAppend(mutex, specs, spec)

@@ -174,6 +174,18 @@ func (c *callBacksMomose) CollectSpec() func(doc *goquery.Document) []map[string
             spec[field] = elem
         })
 
+        pickups := strings.Split(spec[C.Pickups], ",")
+
+        if len(pickups) <= 1 {
+            spec[C.BridgePickup] = pickups[0]
+        } else if len(pickups) == 2 {
+            spec[C.NeckPickup]   = pickups[0]
+            spec[C.BridgePickup] = pickups[1]
+        } else {
+            spec[C.NeckPickup]   = pickups[0]
+            spec[C.CenterPickup] = pickups[1]
+            spec[C.BridgePickup] = pickups[2]
+        }
         specs = utils.LockedAppend(mutex, specs, spec)
         return specs
     }

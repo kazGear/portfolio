@@ -148,8 +148,7 @@ func (c *callBacksEspSig) CollectSpec() func(doc *goquery.Document) []map[string
 				spec[th] = td
 			})
 
-			bodyMaterial := spec[C.BodyMaterialBack]
-			materials    := strings.Split(bodyMaterial, ",")
+			materials := strings.Split(spec[C.BodyMaterialBack], ",")
 
 			if len(materials) == 1 {
 				spec[C.BodyMaterialBack] = materials[0]
@@ -158,6 +157,19 @@ func (c *callBacksEspSig) CollectSpec() func(doc *goquery.Document) []map[string
 				spec[C.BodyMaterialBack] = materials[1]
 			} else {
 				spec[C.BodyMaterialBack] = materials[0]
+			}
+
+			pickups := strings.Split(spec[C.Pickups], "\n")
+
+			if len(pickups) <= 1 {
+				spec[C.BridgePickup] = pickups[0]
+			} else if len(pickups) == 2 {
+				spec[C.NeckPickup]   = pickups[0]
+				spec[C.BridgePickup] = pickups[1]
+			} else {
+				spec[C.NeckPickup]   = pickups[0]
+				spec[C.CenterPickup] = pickups[1]
+				spec[C.BridgePickup] = pickups[2]
 			}
 
 			specs = utils.LockedAppend(mutex, specs, spec)

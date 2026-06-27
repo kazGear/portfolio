@@ -91,7 +91,6 @@ func (g *guitarScraperEsp) CollectLinks(parentCtx context.Context) ([]string, er
 
     loggingCrawlStats(crawlStats, g.gScraper.logger)
 
-
     g.gScraper.urls = utils.MapToSliceUrl(visited)
     g.gScraper.urls = utils.GetNeedLinks(g.gScraper.urls, regNeedPatterEsp, 400)
     return g.gScraper.urls, nil
@@ -161,8 +160,7 @@ func (c *callBacksEsp) CollectSpec() func(doc *goquery.Document) []map[string]st
             spec[th] = td
         })
 
-        bodyMaterial := spec[C.BodyMaterialBack]
-        materials    := strings.Split(bodyMaterial, ",")
+        materials    := strings.Split(spec[C.BodyMaterialBack], ",")
 
         if len(materials) == 1 {
             spec[C.BodyMaterialBack] = materials[0]
@@ -171,6 +169,19 @@ func (c *callBacksEsp) CollectSpec() func(doc *goquery.Document) []map[string]st
             spec[C.BodyMaterialBack] = materials[1]
         } else {
             spec[C.BodyMaterialBack] = materials[0]
+        }
+
+        pickups := strings.Split(spec[C.Pickups], ",")
+
+        if len(pickups) <= 1 {
+            spec[C.BridgePickup] = pickups[0]
+        } else if len(pickups) == 2 {
+            spec[C.NeckPickup]   = pickups[0]
+            spec[C.BridgePickup] = pickups[1]
+        } else {
+            spec[C.NeckPickup]   = pickups[0]
+            spec[C.CenterPickup] = pickups[1]
+            spec[C.BridgePickup] = pickups[2]
         }
 
         specs = utils.LockedAppend(mutex, specs, spec)

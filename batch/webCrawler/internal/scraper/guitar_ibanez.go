@@ -221,32 +221,30 @@ func (c *callBacksIbanez) CollectSpec() func(doc *goquery.Document) []map[string
         spec[C.Comment] = comment.String()
         // spec[C.Comment]          = ""
 
-        spec[C.Fingerboard]      = doc.Find(`.rt_cf_p_data_fretboard`).Text()
-        spec[C.FretCount]        = doc.Find(`.rt_cf_p_data_number_fret`).Text()
+        spec[C.Fingerboard] = doc.Find(`.rt_cf_p_data_fretboard`).Text()
+        spec[C.FretCount]   = doc.Find(`.rt_cf_p_data_number_fret`).Text()
 
-        inlays                  := doc.Find(`.rt_cf_p_ag_face_inlay`).Text()
+        inlays             := doc.Find(`.rt_cf_p_ag_face_inlay`).Text()
+
         if len(inlays) > 0 {
             spec[C.Inlays] = inlays
         } else {
             spec[C.Inlays] = doc.Find(`.rt_cf_p_data_in`).Text()
         }
 
-        spec[C.Joint]            = ""
-        spec[C.NeckMaterial]     = doc.Find(`.rt_cf_p_data_neck_material`).Text()
+        spec[C.Joint]        = ""
+        spec[C.NeckMaterial] = doc.Find(`.rt_cf_p_data_neck_material`).Text()
+        spec[C.NeckPickup]   = doc.Find(`.rt_cf_p_data_neck_pickup`).Text()
+        spec[C.CenterPickup] = doc.Find(`.rt_cf_p_data_middle_pickup`).Text()
+        spec[C.BridgePickup] = doc.Find(`.rt_cf_p_data_bridge_pickup`).Text()
+        spec[C.Price]  = doc.Find(`.rt_cf_p_cm_price`).Text()
+        src, _        := doc.Find(`.products-detail-main-modal-img`).Attr(`src`)
+        spec[C.Src]    = src
+        spec[C.Series] = doc.Find(`ul a:contains("` + spec[C.Name] + `")`).
+                            Parent().Parent().Prev().Children().Text()
 
-        neckPickup              := doc.Find(`.rt_cf_p_data_neck_pickup`).Text()
-        middlePickup            := doc.Find(`.rt_cf_p_data_middle_pickup`).Text()
-        bridgePickup            := doc.Find(`.rt_cf_p_data_bridge_pickup`).Text()
-        spec[C.Pickups]          = fmt.Sprintf(`%v / %v / %v `, neckPickup, middlePickup, bridgePickup)
-
-        spec[C.Price]            = doc.Find(`.rt_cf_p_cm_price`).Text()
-        src, _                  := doc.Find(`.products-detail-main-modal-img`).Attr(`src`)
-        spec[C.Src]              = src
-        spec[C.Series]           = doc.Find(
-                                    `ul a:contains("` + spec[C.Name] + `")`,
-                                         ).Parent().Parent().Prev().Children().Text()
-        spec[C.ScaleLengthMM]    = doc.Find(`.rt_cf_p_data_scale_mm`).Text()
-        spec[C.Weight]           = strconv.Itoa(C.InvalidNumber)
+        spec[C.ScaleLengthMM] = doc.Find(`.rt_cf_p_data_scale_mm`).Text()
+        spec[C.Weight]        = strconv.Itoa(C.InvalidNumber)
 
         specs = utils.LockedAppend(mutex, specs, spec)
         return specs

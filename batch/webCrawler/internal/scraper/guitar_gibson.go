@@ -144,17 +144,17 @@ func (c *callBacksGibson) CollectSpec() func(doc *goquery.Document) []map[string
 
         doc.Find(`#cart-options h2.marketing-headline small`).Remove() // Nameからノイズを除去
 
-        spec[C.Maker]            = strconv.Itoa(C.Gibson)
-        spec[C.Name]             = doc.Find(`h2.marketing-headline`).Text()
-        spec[C.Color]            = doc.Find(`div#displayed-finish`).Text()
-        spec[C.Comment]          = doc.Find(`#cart-options .marketing-copy p`).Text()
-        neckPickup              := doc.Find(`.spec-item div:contains("Neck pickup")`).Next().Text()
-        bridgePickup            := doc.Find(`.spec-item div:contains("Bridge pickup")`).Next().Text()
-        spec[C.Pickups]          = fmt.Sprintf("%v / %v", neckPickup, bridgePickup)
-        src, _                  := doc.Find(`img#gallery-front`).Attr(`src`)
-        spec[C.Src]              = src
-        spec[C.Series]           = regSeriesGibson.FindString(spec[C.Name])
-        spec[C.Weight]           = strconv.Itoa(C.InvalidNumber)
+        spec[C.Maker]        = strconv.Itoa(C.Gibson)
+        spec[C.Name]         = doc.Find(`h2.marketing-headline`).Text()
+        spec[C.Color]        = doc.Find(`div#displayed-finish`).Text()
+        spec[C.Comment]      = doc.Find(`#cart-options .marketing-copy p`).Text()
+        spec[C.NeckPickup]   = doc.Find(`.spec-item div:contains("Neck pickup")`).Next().Text()
+        spec[C.CenterPickup] = doc.Find(`.spec-item div:contains("Middle Pickup")`).Next().Text()
+        spec[C.BridgePickup] = doc.Find(`.spec-item div:contains("Bridge pickup")`).Next().Text()
+        src, _              := doc.Find(`img#gallery-front`).Attr(`src`)
+        spec[C.Src]          = src
+        spec[C.Series]       = regSeriesGibson.FindString(spec[C.Name])
+        spec[C.Weight]       = strconv.Itoa(C.InvalidNumber)
 
         doc.Find(`#product-overview .spec-section .spec-item`).Each(func(idx int, selector *goquery.Selection) {
             label      := selector.Find(`div:nth-child(1)`).Text()

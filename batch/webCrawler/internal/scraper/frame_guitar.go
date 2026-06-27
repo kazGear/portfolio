@@ -108,8 +108,17 @@ func buildGuitarFrame(spec map[string]string, url string, logger *log.Logger) (*
         logger.Printf("[Maker convert error]: %v", errMaker)
         return &model.Guitar{}
 	}
-	guitar.BodyFinish        = trim(spec[C.BodyFinish])
-	guitar.BodyMaterial      = trim(spec[C.BodyMaterialTop]) + " / " + trim(spec[C.BodyMaterialBack])
+	guitar.BodyFinish = trim(spec[C.BodyFinish])
+
+	// ボディ材構築
+    if len(spec[C.BodyMaterialBack]) <= 0 { // バック材がない
+        guitar.BodyMaterial = trim(spec[C.BodyMaterialTop])
+    } else if len(spec[C.BodyMaterialTop]) <= 0 { // トップ材が無い
+        guitar.BodyMaterial = trim(spec[C.BodyMaterialBack])
+    } else {
+        guitar.BodyMaterial = trim(spec[C.BodyMaterialTop]) + " / " + trim(spec[C.BodyMaterialBack])
+    }
+
     guitar.BodyMaterialBack  = searchWoodCode(spec[C.BodyMaterialBack])
 	guitar.BodyMaterialTop   = searchWoodCode(spec[C.BodyMaterialTop])
     guitar.Bridge            = trim(spec[C.Bridge])
@@ -128,7 +137,17 @@ func buildGuitarFrame(spec map[string]string, url string, logger *log.Logger) (*
 	guitar.Inlays       = trim(spec[C.Inlays])
 	guitar.Joint        = trim(spec[C.Joint])
     guitar.NeckMaterial = searchWoodCode(spec[C.NeckMaterial])
-    guitar.Pickups      = trim(spec[C.Pickups])
+
+    // ピックアップ構築
+    if len(spec[C.CenterPickup]) > 0 { // センターピックアップあり
+        guitar.Pickups = trim(spec[C.NeckPickup])   + " / " +
+                         trim(spec[C.CenterPickup]) + " / " +
+                         trim(spec[C.BridgePickup])
+    } else if len(spec[C.NeckPickup]) <= 0 && len(spec[C.CenterPickup]) <= 0 { // ブリッジピックアップのみ
+        guitar.Pickups = trim(spec[C.BridgePickup])
+    } else {
+        guitar.Pickups = trim(spec[C.NeckPickup]) + " / " + trim(spec[C.BridgePickup])
+    }
 
     var errPrice error
 	guitar.Price, errPrice = utils.ParsePrice(spec[C.Price])

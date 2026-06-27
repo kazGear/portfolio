@@ -192,10 +192,6 @@ func (c *callBacksFender) CollectSpec() func(doc *goquery.Document) []map[string
             field, _   := utils.ConvertLabel(label, specFieldMap)
             spec[field] = elem
         })
-        spec[C.Pickups] = strings.TrimSpace(spec[C.NeckPickup]) + " / " +
-                          strings.TrimSpace(spec[C.CenterPickup]) + " / " +
-                          strings.TrimSpace(spec[C.BridgePickup])
-
         specs = utils.LockedAppend(mutex, specs, spec)
         return specs
     }

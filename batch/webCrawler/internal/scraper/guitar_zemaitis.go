@@ -166,11 +166,6 @@ func (c *callBacksZemaitis) CollectSpec() func(doc *goquery.Document) []map[stri
         if len(spec[C.Color]) <= 0 {
             spec[C.Color] = "undefined" // アコギは色の定義がない
         }
-
-        if len(spec[C.Pickups]) <= 0 {
-            spec[C.Pickups] = spec[C.NeckPickup] + " / " + spec[C.BridgePickup]
-        }
-
         specs = utils.LockedAppend(mutex, specs, spec)
         return specs
     }

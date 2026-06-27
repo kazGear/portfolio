@@ -322,11 +322,6 @@ func (c *callBacksPRS) CollectSpec() func(doc *goquery.Document) []map[string]st
             spec["TreblePickup"] = spec["BassPickup"]
         }
 
-        trim := utils.TrimSpace()
-        spec[C.Pickups] = fmt.Sprintf(
-            "%v / %v / %v", trim(spec[C.NeckPickup]), trim(spec[C.CenterPickup]), trim(spec[C.BridgePickup]),
-        )
-
         // 画像、カラー取得
         doc.Find(`span:contains("COLORS")`).
             Closest("div").Parent(). // 直近の親divの親

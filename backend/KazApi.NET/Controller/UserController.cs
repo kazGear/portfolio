@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using KazApi.Repository;
-using KazApi.Repository.sql;
 using KazApi.Domain.DTO;
 using System.Transactions;
 using KazApi.Service;
 using CSLib.Lib;
 using KazApi.Common;
 using KazApi.Common._Filter;
+using Repository.Repository.sql;
+using Repository.Repository;
 
 namespace KazApi.Controller
 {
@@ -21,7 +21,7 @@ namespace KazApi.Controller
         {
             _service = new UserService(configuration);
             _shopService = new ShopService(configuration);
-            _posgre = new PostgreSQL(configuration);
+            _posgre = new PostgreSQL(ConnectionString.Get(configuration));
         }
 
         /// <summary>

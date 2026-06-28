@@ -1,6 +1,6 @@
-﻿using KazApi.Domain._Const;
+﻿using CSLib.Const;
 
-namespace KazApi.Repository.sql
+namespace Repository.Repository.sql
 {
     /// <summary>
     /// SQL文格納クラス

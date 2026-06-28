@@ -1,5 +1,5 @@
-﻿using KazApi.Common._Filter;
-using KazApi.Domain._Const;
+﻿using CSLib.Const;
+using KazApi.Common._Filter;
 using KazApi.Domain._Monster._State;
 using System.Text.Json.Serialization;
 

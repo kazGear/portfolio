@@ -1,9 +1,4 @@
-﻿using KazApi.Domain.DTO;
-using Microsoft.CodeAnalysis.Elfie.Serialization;
-using Mono.TextTemplating;
-using System.Security.Policy;
-
-namespace KazApi.Domain._Const
+﻿namespace CSLib.Const
 {
     /// <summary>
     /// 状態定数
@@ -76,19 +71,6 @@ namespace KazApi.Domain._Const
                 DEADLY_POISON.Value
             };
             return values;
-        }
-
-        /// <summary>
-        /// 状態名の詰め合わせを取得
-        /// </summary>
-        public static IEnumerable<string> ConvertTypeToName(IEnumerable<StateDTO> status)
-        {
-            IList<string> result = [];
-            foreach (StateDTO state in status)
-            {
-                result.Add(state.ShortName);
-            }
-            return result;
         }
     }
 }

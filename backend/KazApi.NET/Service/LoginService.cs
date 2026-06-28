@@ -1,5 +1,6 @@
-﻿using KazApi.Domain._User;
-using KazApi.Repository;
+﻿using CSLib.Lib;
+using KazApi.Domain._User;
+using Repository.Repository;
 
 namespace KazApi.Service
 {
@@ -9,7 +10,7 @@ namespace KazApi.Service
 
         public LoginService(IConfiguration configuration)
         {
-            _posgre = new PostgreSQL(configuration);
+            _posgre = new PostgreSQL(ConnectionString.Get(configuration));
         }
 
         // ユーザの一覧を取得

@@ -1,6 +1,7 @@
-﻿using KazApi.Domain.DTO;
-using KazApi.Repository;
-using KazApi.Repository.sql;
+﻿using CSLib.Lib;
+using KazApi.Domain.DTO;
+using Repository.Repository;
+using Repository.Repository.sql;
 
 namespace KazApi.Service
 {
@@ -13,7 +14,7 @@ namespace KazApi.Service
         /// </summary>
         public CommonService(IConfiguration configuration)
         {
-            _posgre = new PostgreSQL(configuration);
+            _posgre = new PostgreSQL(ConnectionString.Get(configuration));
         }
 
         public void UpdateImage(string loginId, string image)

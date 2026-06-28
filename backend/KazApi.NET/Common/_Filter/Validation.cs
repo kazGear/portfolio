@@ -1,4 +1,4 @@
-﻿using KazApi.Domain._Const;
+﻿using CSLib.Const;
 using System.Text.RegularExpressions;
 
 namespace KazApi.Common._Filter
@@ -163,7 +163,7 @@ namespace KazApi.Common._Filter
 
         public static string Name(string name)
         {
-            int maxLength = 15;
+            int maxLength = 30;
 
             if (maxLength < name.Length)
                 throw new Exception($"名称は{maxLength}文字以内で設定してください。");

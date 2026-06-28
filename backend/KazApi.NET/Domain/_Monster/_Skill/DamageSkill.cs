@@ -1,6 +1,6 @@
-﻿using CSLib.Lib;
+﻿using CSLib.Const;
+using CSLib.Lib;
 using KazApi.Common._Log;
-using KazApi.Domain._Const;
 using KazApi.Domain._GameSystem;
 using KazApi.Domain.DTO;
 

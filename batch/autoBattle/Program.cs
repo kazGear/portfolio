@@ -1,22 +1,29 @@
-﻿using KazApi.Repository;
-using System.Text;
+﻿using CSLib.Const;
 using CSLib.Lib;
+using KazApi.Common._Log;
 using KazApi.Domain._Factory;
 using KazApi.Domain._GameSystem;
 using KazApi.Domain._Monster;
 using KazApi.Domain._Monster._State;
-using KazApi.Domain._Const;
 using KazApi.Domain.DTO;
 using KazApi.Service;
-using KazApi.Common._Log;
+using Microsoft.Extensions.Configuration;
+using Repository.Repository;
+using System.Text;
 
 Console.WriteLine("Auto battle start...");
 
-IDatabase _posgre = new PostgreSQL();
-BattleService _service = new BattleService();
+// 接続先情報
+var configuration = new ConfigurationBuilder()
+    .SetBasePath(AppContext.BaseDirectory)
+    .AddJsonFile("appsettings.json", optional: false)
+    .Build();
+
+IDatabase _posgre              = new PostgreSQL(ConnectionString.Get(configuration));
+BattleService _service         = new BattleService(configuration);
 MonsterFactory _monsterFactory = new MonsterFactory();
-URandom _random = new URandom();
-ILog<BattleMetaData> logger = new BattleLogger();
+Randoms _random                = new Randoms();
+ILog<BattleMetaData> logger    = new BattleLogger();
 
 int battleTimes = 5; // 戦闘回数
 
@@ -31,8 +38,8 @@ for (int i = 0; i < battleTimes; i++)
          */
 
         // モンスターデータ等の読込み
-        IEnumerable<MonsterDTO> monstersFromDB = _service.SelectMonsters("admin");
-        IEnumerable<SkillDTO> skillsFromDB = _service.SelectSkills();
+        IEnumerable<MonsterDTO> monstersFromDB          = _service.SelectMonsters("admin");
+        IEnumerable<SkillDTO> skillsFromDB              = _service.SelectSkills();
         IEnumerable<MonsterSkillDTO> monsterSkillFromDB = _service.SelectMonsterSkills();
 
         // モンスターDTO構築

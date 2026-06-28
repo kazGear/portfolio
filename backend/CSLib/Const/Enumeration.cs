@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace KazApi.Domain._Const
+namespace CSLib.Const
 {
     /// <summary>
     /// 定数値基底クラス

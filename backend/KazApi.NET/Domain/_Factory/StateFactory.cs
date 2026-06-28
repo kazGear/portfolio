@@ -1,4 +1,4 @@
-﻿using KazApi.Domain._Const;
+﻿using CSLib.Const;
 using KazApi.Domain._Monster._State;
 using KazApi.Domain.DTO;
 

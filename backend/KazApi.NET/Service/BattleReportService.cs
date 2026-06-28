@@ -1,7 +1,8 @@
-﻿using KazApi.Domain._Const;
+﻿using CSLib.Const;
+using CSLib.Lib;
 using KazApi.Domain.DTO;
-using KazApi.Repository;
-using KazApi.Repository.sql;
+using Repository.Repository;
+using Repository.Repository.sql;
 
 namespace KazApi.Service
 {
@@ -13,7 +14,7 @@ namespace KazApi.Service
         /// </summary>
         public BattleReportService(IConfiguration configuration)
         {
-            _posgre = new PostgreSQL(configuration);
+            _posgre = new PostgreSQL(ConnectionString.Get(configuration));
         }
 
         /// <summary>

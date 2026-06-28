@@ -1,67 +1,22 @@
 ﻿using Dapper;
 using Npgsql;
 using System.Data;
-using System.Text.Json;
 
-namespace KazApi.Repository
+namespace Repository.Repository
 {
     public class PostgreSQL : IDisposable, IDatabase
     {
-        private string _dbUser { get; set; }
-        private string _dbPassword { get; set; }
-        private string _dbName { get; set; }
-        private string _dbHost { get; set; }
-        private string _dbPort { get; set; }
-
         private IDbConnection Connection { get; set; }
-        private IDbTransaction Transaction { get; set; }
+        private IDbTransaction? Transaction { get; set; }
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public PostgreSQL(IConfiguration configuration)
+        public PostgreSQL(string connectionString)
         {
-            Connection = CreateConnection();
+            Connection = new NpgsqlConnection(connectionString);
         }
         
-        /// <summary>
-        /// コンストラクタ autoBattle batch 用
-        /// </summary>
-        public PostgreSQL()
-        {
-            Connection = CreateConnection();
-        }
-
-        /// <summary>
-        /// 接続文字列の作成
-        /// </summary>
-        private IDbConnection CreateConnection()
-        {
-            string connectionString = string.Empty;
-            bool onTheDocker = Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true";
-
-            if (onTheDocker)
-            {
-                _dbUser     = Environment.GetEnvironmentVariable("DB_USER")!;
-                _dbPassword = Environment.GetEnvironmentVariable("DB_PASSWORD")!;
-                _dbName     = Environment.GetEnvironmentVariable("DB_NAME")!;
-                _dbHost     = Environment.GetEnvironmentVariable("DB_HOST")!;
-                _dbPort     = Environment.GetEnvironmentVariable("DB_PORT")!;
-
-                connectionString = $"Server={_dbHost};Port={_dbPort};User Id={_dbUser};Password={_dbPassword};Database={_dbName}";
-            }
-            else // windowsデバック
-            {
-                string json      = File.ReadAllText("appsettings.Development.json");
-                JsonDocument doc = JsonDocument.Parse(json);
-                connectionString = doc.RootElement
-                                      .GetProperty("ConnectionStrings")
-                                      .GetProperty("DefaultConnection")
-                                      .GetString()!;
-            }
-            return new NpgsqlConnection(connectionString);
-        }
-
         /// <summary>
         /// 接続状態
         /// </summary>

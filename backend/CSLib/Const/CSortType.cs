@@ -1,4 +1,4 @@
-﻿namespace KazApi.Domain._Const
+﻿namespace CSLib.Const
 {
     public class CSortType
     {

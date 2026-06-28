@@ -1,4 +1,4 @@
-﻿namespace KazApi.Repository
+﻿namespace Repository.Repository
 {
     /// <summary>
     /// DBインターフェイス

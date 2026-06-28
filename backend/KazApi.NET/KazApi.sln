@@ -7,6 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KazApi", "KazApi.csproj", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSLib", "..\CSLib\CSLib.csproj", "{B407CC40-95BA-4921-B327-B5519B43444C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Repository", "..\Repository\Repository.csproj", "{14DD0EAA-E42C-48D0-A419-7EEE85AE241A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "autoBattle", "..\..\batch\autoBattle\autoBattle.csproj", "{C662E1D8-C3BC-BB5B-54BE-99D4E91DD2C7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,10 @@ Global
 		{B407CC40-95BA-4921-B327-B5519B43444C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B407CC40-95BA-4921-B327-B5519B43444C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B407CC40-95BA-4921-B327-B5519B43444C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{14DD0EAA-E42C-48D0-A419-7EEE85AE241A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{14DD0EAA-E42C-48D0-A419-7EEE85AE241A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{14DD0EAA-E42C-48D0-A419-7EEE85AE241A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{14DD0EAA-E42C-48D0-A419-7EEE85AE241A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C662E1D8-C3BC-BB5B-54BE-99D4E91DD2C7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C662E1D8-C3BC-BB5B-54BE-99D4E91DD2C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C662E1D8-C3BC-BB5B-54BE-99D4E91DD2C7}.Release|Any CPU.ActiveCfg = Release|Any CPU

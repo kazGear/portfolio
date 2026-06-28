@@ -1,4 +1,4 @@
-﻿namespace KazApi.Domain._Const
+﻿namespace CSLib.Const
 {
     /// <summary>
     /// 環境独自の設定クラス

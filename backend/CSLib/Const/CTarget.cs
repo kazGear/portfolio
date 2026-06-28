@@ -1,6 +1,4 @@
-﻿using KazApi.Domain._Monster._State;
-
-namespace KazApi.Domain._Const
+﻿namespace CSLib.Const
 {
     public class CTarget : Enumeration<int>
     {

@@ -1,5 +1,5 @@
-﻿using KazApi.Common._Log;
-using KazApi.Domain._Const;
+﻿using CSLib.Const;
+using KazApi.Common._Log;
 using KazApi.Domain.DTO;
 
 namespace KazApi.Domain._Monster._State

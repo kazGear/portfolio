@@ -1,8 +1,9 @@
-﻿using KazApi.Domain._Const;
+﻿using CSLib.Const;
+using CSLib.Lib;
 using KazApi.Domain._Monster;
 using KazApi.Domain.DTO;
-using KazApi.Repository;
-using KazApi.Repository.sql;
+using Repository.Repository;
+using Repository.Repository.sql;
 using System.Transactions;
 
 
@@ -17,17 +18,8 @@ namespace KazApi.Service
         /// </summary>
         public BattleService(IConfiguration configuration)
         {
-            _posgre = new PostgreSQL(configuration!);
+            _posgre = new PostgreSQL(ConnectionString.Get(configuration));
         }
-       
-        /// <summary>
-        /// コンストラクタ autoBattle batch 用
-        /// </summary>
-        public BattleService()
-        {
-            _posgre = new PostgreSQL();
-        }
-
 
         /// <summary>
         /// モンスターデータ取得

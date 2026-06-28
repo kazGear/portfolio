@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using KazApi.Repository;
+using Repository.Repository;
 using KazApi.Domain.DTO;
 using KazApi.Service;
 using CSLib.Lib;
@@ -14,13 +13,11 @@ namespace KazApi.Controller
     {
         private readonly ShopService _service;
         private readonly UserService _userService;
-        private readonly IDatabase _posgre;
 
         public ShopController(IConfiguration configuration)
         {
             _service = new ShopService(configuration);
             _userService = new UserService(configuration);
-            _posgre = new PostgreSQL(configuration);
         }
 
         [HttpPost("api/shop/itemInfo")]

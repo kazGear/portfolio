@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Repository", "..\Repository
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "autoBattle", "..\..\batch\autoBattle\autoBattle.csproj", "{C662E1D8-C3BC-BB5B-54BE-99D4E91DD2C7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PublicApi", "..\PublicApi\PublicApi.csproj", "{38B775F5-BBB4-4E6C-AC46-21170A14C8D5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{C662E1D8-C3BC-BB5B-54BE-99D4E91DD2C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C662E1D8-C3BC-BB5B-54BE-99D4E91DD2C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C662E1D8-C3BC-BB5B-54BE-99D4E91DD2C7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{38B775F5-BBB4-4E6C-AC46-21170A14C8D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{38B775F5-BBB4-4E6C-AC46-21170A14C8D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{38B775F5-BBB4-4E6C-AC46-21170A14C8D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{38B775F5-BBB4-4E6C-AC46-21170A14C8D5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -2,7 +2,7 @@
 {
     public record GuitarsRequest
     {
-        public string? Maker { get; init; }
+        public string? MakerCd { get; init; }
  
         public string? Name { get; init; }
 
@@ -10,9 +10,9 @@
 
         public int? ColorCd { get; init; }
 
-        public int? BodyMaterialTop { get; init; }
+        public int? BodyMaterialTopCd { get; init; }
 
-        public int? BodyMaterialBack { get; init; }
+        public int? BodyMaterialBackCd { get; init; }
 
         public int? MinPrice { get; init; }
 

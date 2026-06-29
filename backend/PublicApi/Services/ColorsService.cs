@@ -5,19 +5,19 @@ using Repository.Repository.sql.publicApi;
 
 namespace PublicApi.Services
 {
-    public class MakersService
+    public class ColorsService
     {
         private readonly IDatabase _posgre;
 
-        public MakersService(IConfiguration Configuration)
+        public ColorsService(IConfiguration Configuration)
         {
             _posgre = new PostgreSQL(ConnectionString.Get(Configuration));
         }
 
         public IEnumerable<CodeResponse> Get()
         {
-            IEnumerable<CodeResponse> makers = _posgre.Select<CodeResponse>(MakersSQL.GetMakers());
-            return makers;
+            IEnumerable<CodeResponse> colors = _posgre.Select<CodeResponse>(ColorsSQL.GetColors());
+            return colors;
         }
     }
 }

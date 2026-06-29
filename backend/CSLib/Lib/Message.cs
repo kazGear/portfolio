@@ -1,11 +1,11 @@
-﻿namespace KazApi.Common
+﻿namespace CSLib.Lib
 {
     /// <summary>
     /// レスポンス用DTO
     /// </summary>
     public class ApiMessage
     {
-        public string Message { get; set; }
+        public string? Message { get; set; }
     }
     /// <summary>
     /// api response message

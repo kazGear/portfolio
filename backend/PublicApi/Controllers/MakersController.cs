@@ -25,9 +25,9 @@ namespace PublicApi.Controllers
                 IEnumerable<CodeResponse> makers = _service.Get();
                 return StatusCode(HttpStatus.OK, makers);
             }
-            catch
+            catch (Exception e)
             {
-                return StatusCode(HttpStatus.InternalServerError, ""/*Message.Create(e)*/);
+                return StatusCode(HttpStatus.InternalServerError, Message.Create(e));
             }
         }
     }

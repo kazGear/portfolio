@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -13,12 +13,6 @@
   <ItemGroup>
     <ProjectReference Include="..\CSLib\CSLib.csproj" />
     <ProjectReference Include="..\Repository\Repository.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="ResponseDtos\" />
-    <Folder Include="Services\" />
-    <Folder Include="RequestDtos\" />
   </ItemGroup>
 
 </Project>

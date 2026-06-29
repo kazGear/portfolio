@@ -2,7 +2,7 @@
 {
     public record CodeResponse
     {
-        public string Category { get; set; } = string.Empty;
+        public string Category { get; init; } = string.Empty;
 
         public int Code { get; init; }
 

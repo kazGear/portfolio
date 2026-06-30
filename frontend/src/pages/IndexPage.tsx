@@ -8,7 +8,7 @@ import ToBattlePageBlock from "../components/indexPage/ToBattlePageBlock";
 import ToBattleResultPageBlock from "../components/indexPage/ToBattleResultPageBlock";
 import ToShopPageBlock from "../components/indexPage/ToShopPageBlock";
 import ToEditPageBlock from "../components/indexPage/ToEditPageBlock";
-import { useCheckToken } from "../hooks/useHooksOfCommon";
+import ToGuitarGalleryBlock from "../components/indexPage/ToGuitarGallery";
 
 const SdivLinkFrame = styled.div`
     width: 90%;
@@ -51,10 +51,8 @@ const IndexPage = () => {
                 </SdivContentsFrame>
 
                 <SdivContentsFrame>
-                    {/* ユーザーページ */}
-                    <ToUserPageBlock validToken={validToken}
-                                     classOfAnime={classOfAnime}
-                                     titleStyle={titleStyle} />
+                    {/* ギターギャラリー */}
+                    <ToGuitarGalleryBlock />
                 </SdivContentsFrame>
             </div>
 
@@ -82,6 +80,15 @@ const IndexPage = () => {
                                      titleStyle={titleStyle}/>
                 </SdivContentsFrame>
 
+                <SdivContentsFrame>
+                    {/* ユーザーページ */}
+                    <ToUserPageBlock validToken={validToken}
+                                     classOfAnime={classOfAnime}
+                                     titleStyle={titleStyle} />
+                </SdivContentsFrame>
+            </div>
+
+            <div style={{display: "flex"}}>
                 <SdivContentsFrame>
                     {/* 設定ページ */}
                     <ToEditPageBlock isValid={validToken && usableSettings}

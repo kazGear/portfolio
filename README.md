@@ -125,3 +125,8 @@ scraper_guitar.go, scraper.goなど抽象的なファイル名には、抽象化
 3. XHR の中に “データ取得系” があるか？
 /api/... /json/... /graphql
 → SPA or 動的 → chromedp
+
+# react 起動
+
+npm run dev（開発モード）  
+プロジェクトルート（package.json がある場所）で実行。  

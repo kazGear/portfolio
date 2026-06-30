@@ -7,7 +7,7 @@ namespace PublicApi.RequestDtos
     {
         [Range(0, 50)]
         [FromQuery(Name = "makerCd")]
-        public string? MakerCd { get; init; }
+        public int? MakerCd { get; init; }
 
         [MaxLength(100)]
         [FromQuery(Name = "name")]
@@ -45,13 +45,13 @@ namespace PublicApi.RequestDtos
         public string? Sort { get; init; }
 
         [Required]
-        [Range(1, 20)]
+        [Range(1, 50)]
         [FromQuery(Name = "page")]
         public int Page { get; init; } = 1; // 大量取得防止
 
         [Required]
-        [Range(20, 100)]
+        [Range(10, 100)]
         [FromQuery(Name = "pageSize")]
-        public int PageSize { get; init; } = 50; // 大量取得防止
+        public int PageSize { get; init; } = 25; // 大量取得防止
     }
 }

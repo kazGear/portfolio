@@ -5,9 +5,9 @@
 /// </summary>
 public static class GuitarsSQL
 {
-    public static string GetGuitars()
+    public static string GetGuitars(string conditions, string sort)
     {
-        string SQL = @"
+        string SQL = @$"
             SELECT
                    maker              AS Maker,
                    name               AS Name,
@@ -35,23 +35,49 @@ public static class GuitarsSQL
                    t_guitars
              WHERE
                    TRUE
-    /* 動的検索条件
-               AND maker = :maker
-               AND name ilike '%' || :name || '%'
-               AND series ilike '%' || :series || '%'
-               AND color_cd = :color_cd
-               AND body_material_top = :body_material_top_cd
-               AND body_material_back = :body_material_back_cd
-               AND price >= :min_price
-               AND price <= :max_price */
-      /* 動的ソート
+                   {conditions}
+        /* 動的検索
+                   AND maker = @maker
+                   AND name ilike '%' || @name || '%'
+                   AND series ilike '%' || @series || '%'
+                   AND color_cd = @color_cd
+                   AND body_material_top = @body_material_top_cd
+                   AND body_material_back = @body_material_back_cd
+                   AND price >= @min_price
+                   AND price <= @max_price */
+
+                   {sort}
+      /* 動的ソート 
           ORDER BY
                    'columnName' ASC or DESC */
              LIMIT
-                   :page_size
+                   @page_size
             OFFSET
-                   (:page - 1) * :page_size -- ページネーション
+                   (@page - 1) * @page_size -- ページネーション
                  ;
+        ";
+        return SQL;
+    }
+
+    public static string GetTotalCount(string conditions)
+    {
+        string SQL = @$"
+            SELECT
+                   count(*)
+              FROM
+                   t_guitars
+             WHERE
+                   TRUE
+                   {conditions}
+        /* 動的検索
+                   AND maker = @maker
+                   AND name ilike '%' || @name || '%'
+                   AND series ilike '%' || @series || '%'
+                   AND color_cd = @color_cd
+                   AND body_material_top = @body_material_top_cd
+                   AND body_material_back = @body_material_back_cd
+                   AND price >= @min_price
+                   AND price <= @max_price */
         ";
         return SQL;
     }

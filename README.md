@@ -7,13 +7,13 @@
 
 特徴 -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
-メーカー・シリーズ・カラーなど複数条件検索
-部分一致検索（name / series）
-価格帯検索
-ソート機能
-ページネーション対応
-総件数取得
-検索条件なしでも一覧取得可能
+メーカー・シリーズ・カラーなど複数条件検索  
+部分一致検索（name / series）  
+価格帯検索  
+ソート機能  
+ページネーション対応  
+総件数取得  
+検索条件なしでも一覧取得可能  
 
 エンドポイント -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
@@ -23,18 +23,18 @@ GET /api/v1/guitars
 
 Parameter,Type,Description
 
-makerCd,int,メーカーコード
-name,string,ギター名（部分一致検索）
-series,string,シリーズ名（部分一致検索）
-colorCd,int,カラーコード
-bodyMaterialTopCd,int,ボディトップ材
-bodyMaterialBackCd,int,ボディバック材
-minPrice,int,最低価格
-maxPrice,int,最高価格
-sort,string,maker / name / price
-order,string,ASC / DESC（必須）
-page,int,ページ番号（必須）
-pageSize,int,1ページの件数（必須）
+makerCd,int,メーカーコード  
+name,string,ギター名（部分一致検索）  
+series,string,シリーズ名（部分一致検索）  
+colorCd,int,カラーコード  
+bodyMaterialTopCd,int,ボディトップ材  
+bodyMaterialBackCd,int,ボディバック材  
+minPrice,int,最低価格  
+maxPrice,int,最高価格  
+sort,string,maker / name / price  
+order,string,ASC / DESC（必須）  
+page,int,ページ番号（必須）  
+pageSize,int,1ページの件数（必須）  
 
 使用例 -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
@@ -42,24 +42,24 @@ GET /api/v1/guitars?makerCd=1&series=Strat&page=1&pageSize=25
 
 レスポンス例 -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
-{
-  "totalCount": 283,
-  "page": 1,
-  "pageSize": 25,
-  "totalPages": 12,
-  "hasPrev": false,
-  "hasNext": true,
-  "guitars": [
-    {
-      "maker": "Fender",
-      "name": "American Professional II Stratocaster",
-      ...
-    },
-    {
-        ...
-    },
-  ]
-}
+{  
+  "totalCount": 283,  
+  "page": 1,  
+  "pageSize": 25,  
+  "totalPages": 12,  
+  "hasPrev": false,  
+  "hasNext": true,  
+  "guitars": [  
+    {  
+      "maker": "Fender",  
+      "name": "American Professional II Stratocaster",  
+      ...  
+    },  
+    {  
+        ...  
+    },  
+  ]  
+}  
 
 検索仕様 -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 

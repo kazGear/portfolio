@@ -37,7 +37,6 @@ namespace PublicApi.RequestDtos
         [FromQuery(Name = "maxPrice")]
         public int? MaxPrice { get; init; }
 
-        [Required]
         [FromQuery(Name = "order")]
         public string Order { get; init; } = "ASC";
 

@@ -27,8 +27,8 @@ namespace PublicApi.Services
             DynamicParameters param = CreateParams(req);
 
             // ギター情報取得
-            IEnumerable<GuitarResponse> guitars =
-                _posgre.Select<GuitarResponse>(GuitarsSQL.GetGuitars(conditions, sort), param);
+            IReadOnlyList<GuitarResponse> guitars =
+                _posgre.Select<GuitarResponse>(GuitarsSQL.GetGuitars(conditions, sort), param).ToList();
             
             // 検索総件数
             int totalCount = _posgre.Select<int>(GuitarsSQL.GetTotalCount(conditions), param).First();

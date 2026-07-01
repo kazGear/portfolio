@@ -8,7 +8,7 @@ import ToBattlePageBlock from "../components/indexPage/ToBattlePageBlock";
 import ToBattleResultPageBlock from "../components/indexPage/ToBattleResultPageBlock";
 import ToShopPageBlock from "../components/indexPage/ToShopPageBlock";
 import ToEditPageBlock from "../components/indexPage/ToEditPageBlock";
-import ToGuitarGalleryBlock from "../components/indexPage/ToGuitarGallery";
+import ToGuitarGalleryBlock from "../components/indexPage/ToGuitarGalleryBlock";
 
 const SdivLinkFrame = styled.div`
     width: 90%;

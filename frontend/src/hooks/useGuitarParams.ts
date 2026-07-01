@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { GuitarParams } from "../types/Guitar";
 
 export const useGuitarParams = () => {
     const [makerCd, setMakerCd]                       = useState<number>(0);
@@ -43,31 +44,3 @@ export const useGuitarParams = () => {
     };
     return params;
 }
-
-type GuitarParams = {
-    makerCd:            number;
-    name:               string;
-    colorCd:            number;
-    series:             string;
-    bodyMaterialTopCd:  number;
-    bodyMaterialBackCd: number;
-    minPrice:           number;
-    maxPrice:           number;
-    order:              string;
-    sort:               string;
-    page:               number;
-    pageSize:           number;
-
-    setMakerCd:            React.Dispatch<React.SetStateAction<number>>;
-    setName:               React.Dispatch<React.SetStateAction<string>>;
-    setColorCd:            React.Dispatch<React.SetStateAction<number>>;
-    setSeries:             React.Dispatch<React.SetStateAction<string>>
-    setBodyMaterialTopCd:  React.Dispatch<React.SetStateAction<number>>;
-    setBodyMaterialBackCd: React.Dispatch<React.SetStateAction<number>>;
-    setMinPrice:           React.Dispatch<React.SetStateAction<number>>;
-    setMaxPrice:           React.Dispatch<React.SetStateAction<number>>;
-    setOrder:              React.Dispatch<React.SetStateAction<string>>;
-    setSort:               React.Dispatch<React.SetStateAction<string>>;
-    setPage:               React.Dispatch<React.SetStateAction<number>>;
-    setPageSize:           React.Dispatch<React.SetStateAction<number>>;
-};

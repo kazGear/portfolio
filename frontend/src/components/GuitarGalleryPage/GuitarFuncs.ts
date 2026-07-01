@@ -16,18 +16,19 @@ export const createQueryParams = (gParams: GuitarParams): URLSearchParams => {
     if (!isEmpty(gParams.series))
         uParams.append("series", gParams.series);
 
-    // 設計ミスにより０に意味を持たせてしまっている
-    // コード設計を見直し、0は空ける。
+    // 設計ミスにより０に意味を持たせてしまった
+    // TODO: コード設計を見直し、0は空ける。
     if (gParams.bodyMaterialTopCd > -1)
         uParams.append("bodyMaterialTopCd", gParams.bodyMaterialTopCd.toString());
 
-    // 設計ミスにより０に意味を持たせてしまっている
-    // コード設計を見直し、0は空ける。
+    // 設計ミスにより０に意味を持たせてしまった
+    // TODO: コード設計を見直し、0は空ける。
     if (gParams.bodyMaterialBackCd > -1)
         uParams.append("bodyMaterialBackCd", gParams.bodyMaterialBackCd.toString());
 
-    // 例外対策で、マイナス値に意味を持たせてしまっている
+    // 例外対策で、マイナス値に意味を持たせている
     // -1: price parse error, -2: open price -3: 未定義
+    // TODO: -1: open price, -2: 未定義 -3: price parse error に修正
     if (gParams.minPrice >= -3)
         uParams.append("minPrice", gParams.minPrice.toString());
 

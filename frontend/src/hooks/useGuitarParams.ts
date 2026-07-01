@@ -3,8 +3,8 @@ import { useState } from "react";
 export const useGuitarParams = () => {
     const [makerCd, setMakerCd]                       = useState<number>(0);
     const [name, setName]                             = useState<string>("");
-    const [series, setSeries]                         = useState<string>("");
     const [colorCd, setColorCd]                       = useState<number>(0);
+    const [series, setSeries]                         = useState<string>("");
     const [bodyMaterialTopCd, setBodyMaterialTopCd]   = useState<number>(0);
     const [bodyMaterialBackCd, setBodyMaterialBackCd] = useState<number>(0);
     const [minPrice, setMinPrice]                     = useState<number>(0);
@@ -17,8 +17,8 @@ export const useGuitarParams = () => {
     const params: GuitarParams = {
         makerCd:            makerCd,
         name:               name,
-        series:             series,
         colorCd:            colorCd,
+        series:             series,
         bodyMaterialTopCd:  bodyMaterialTopCd,
         bodyMaterialBackCd: bodyMaterialBackCd,
         minPrice:           minPrice,
@@ -30,8 +30,8 @@ export const useGuitarParams = () => {
 
         setMakerCd:            setMakerCd,
         setName:               setName,
-        setSeries:             setSeries,
         setColorCd:            setColorCd,
+        setSeries:             setSeries,
         setBodyMaterialTopCd:  setBodyMaterialTopCd,
         setBodyMaterialBackCd: setBodyMaterialBackCd,
         setMinPrice:           setMinPrice,
@@ -47,8 +47,8 @@ export const useGuitarParams = () => {
 type GuitarParams = {
     makerCd:            number;
     name:               string;
-    series:             string;
     colorCd:            number;
+    series:             string;
     bodyMaterialTopCd:  number;
     bodyMaterialBackCd: number;
     minPrice:           number;
@@ -60,8 +60,8 @@ type GuitarParams = {
 
     setMakerCd:            React.Dispatch<React.SetStateAction<number>>;
     setName:               React.Dispatch<React.SetStateAction<string>>;
-    setSeries:             React.Dispatch<React.SetStateAction<string>>
     setColorCd:            React.Dispatch<React.SetStateAction<number>>;
+    setSeries:             React.Dispatch<React.SetStateAction<string>>
     setBodyMaterialTopCd:  React.Dispatch<React.SetStateAction<number>>;
     setBodyMaterialBackCd: React.Dispatch<React.SetStateAction<number>>;
     setMinPrice:           React.Dispatch<React.SetStateAction<number>>;

@@ -14,6 +14,6 @@
 
         public bool HasNext { get; init; }
 
-        public IEnumerable<GuitarResponse> Guitars { get; init; } = [];
+        public IReadOnlyList<GuitarResponse> Guitars { get; init; } = [];
     }
 }

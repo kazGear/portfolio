@@ -1,5 +1,5 @@
 export interface Code {
-    Category: string;
-    Code:     number;
-    Name:     string;
+    category: string;
+    code:     number;
+    name:     string;
 };

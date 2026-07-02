@@ -6,12 +6,12 @@ export const useGuitarParams = () => {
     const [name, setName]                             = useState<string>("");
     const [colorCd, setColorCd]                       = useState<number>(0);
     const [series, setSeries]                         = useState<string>("");
-    const [bodyMaterialTopCd, setBodyMaterialTopCd]   = useState<number>(0);
-    const [bodyMaterialBackCd, setBodyMaterialBackCd] = useState<number>(0);
-    const [minPrice, setMinPrice]                     = useState<number>(0);
-    const [maxPrice, setMaxPrice]                     = useState<number>(0);
+    const [bodyMaterialTopCd, setBodyMaterialTopCd]   = useState<number>(-1);
+    const [bodyMaterialBackCd, setBodyMaterialBackCd] = useState<number>(-1);
+    const [minPrice, setMinPrice]                     = useState<number>(-3);
+    const [maxPrice, setMaxPrice]                     = useState<number>(100000000);
     const [order, setOrder]                           = useState<string>("ASC");
-    const [sort, setSort]                             = useState<string>("");
+    const [sort, setSort]                             = useState<string>("price");
     const [page, setPage]                             = useState<number>(1);
     const [pageSize, setPageSize]                     = useState<number>(25);
 

@@ -29,19 +29,20 @@ const GuitarGalleryPage = () => {
     useEffect(() => {
         if (gParams.makerCd === 0) {
             setSeries([]);
+            gParams.setSeries("")
             return;
         }
         api.GET<Code[]>(
             `https://localhost:7170/api/v1/series?makerCd=${gParams.makerCd}`
         ).then(result => setSeries(result));
 
-        gParams.setSeries("0") // シリーズを未選択に戻す
+        gParams.setSeries("") // シリーズを未選択に戻す
     }, [gParams.makerCd])
 
     // ギターデータ取得
     const guitarSearchHandler = useCallback( async (gParams: GuitarParams) => {
         const queryParams = createQueryParams(gParams);
-        const resGuitars = await api.GET<GuitarsResponse>(
+        const resGuitars  = await api.GET<GuitarsResponse>(
             `https://localhost:7170/api/v1/guitars?${queryParams.toString()}`
         );
         setGuitars(resGuitars);

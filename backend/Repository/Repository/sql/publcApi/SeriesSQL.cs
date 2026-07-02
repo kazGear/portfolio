@@ -16,6 +16,7 @@ public static class SeriesSQL
                        t_guitars
                  WHERE
                        maker = @maker
+                   AND series <> ''
               GROUP BY
                        series
               ORDER BY

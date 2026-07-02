@@ -15,7 +15,7 @@ const SelectorPage = ({guitarParams}: ArgProps) => {
     return (
         <Input inputType="number"
                onBlur={changePageHandler}
-               placeholder="（1 ~ 50）"
+               placeholder=" (1 ~ 50) default 1"
                min="1"
                max="50"/>
     );

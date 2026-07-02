@@ -15,7 +15,7 @@ const SelectorPageSize = ({guitarParams}: ArgProps) => {
     return (
         <Input inputType="number"
                onBlur={changePageSizeHandler}
-               placeholder="（10 ~ 100）"
+               placeholder=" (10 ~ 100) default 25"
                min="10"
                max="100"/>
     );

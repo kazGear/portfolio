@@ -7,6 +7,7 @@ import { createQueryParams } from "../components/GuitarGalleryPage/GuitarFuncs";
 import OutSideFrame from "../components/common/OutSideFrame";
 import GuitarCards from "../components/GuitarGalleryPage/GuitarCards";
 import SearchConditions from "../components/GuitarGalleryPage/SearchConditions";
+import DetailModal from "../components/GuitarGalleryPage/DetailModal";
 
 const GuitarGalleryPage = () => {
     const [makers, setMakers]               = useState<Code[] | null>([]);
@@ -62,9 +63,8 @@ const GuitarGalleryPage = () => {
             <OutSideFrame styleObj={{width: "80%", minWidth: "280px",height: "85vh", marginLeft: "5px"}}>
                 <GuitarCards guitarsRes={guitars}></GuitarCards>
             </OutSideFrame>
-            <OutSideFrame styleObj={{width: "85vh", height: "85vh", display: "none"}}>
-                <h1>モーダル部</h1>
-            </OutSideFrame>
+
+            <DetailModal></DetailModal>
         </div>
     );
 }

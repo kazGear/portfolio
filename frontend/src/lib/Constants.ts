@@ -33,6 +33,7 @@ export const COLORS = {
 } as const;
 
 export const SIZE = {
+    INPUT_WIDTH: "150px",
     INPUT_HEIGHT: "22px"
 } as const;
 

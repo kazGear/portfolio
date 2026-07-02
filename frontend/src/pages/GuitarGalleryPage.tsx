@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useState } from "react";
-import styled from "styled-components";
 import { Code } from "../types/Code";
 import { api } from "../lib/apiClient";
 import { GuitarParams, GuitarsResponse } from "../types/Guitar";
@@ -7,11 +6,7 @@ import { useGuitarParams } from "../hooks/useGuitarParams";
 import { createQueryParams } from "../components/GuitarGalleryPage/GuitarFuncs";
 import OutSideFrame from "../components/common/OutSideFrame";
 import GuitarCards from "../components/GuitarGalleryPage/GuitarCards";
-
-const SdivEditFrame = styled.div`
-    width: 100%;
-    margin-top: 80px;
-`;
+import SearchConditions from "../components/GuitarGalleryPage/SearchConditions";
 
 const GuitarGalleryPage = () => {
     const [makers, setMakers]               = useState<Code[] | null>([]);
@@ -50,19 +45,19 @@ const GuitarGalleryPage = () => {
         );
         setGuitars(resGuitars);
     }, []);
-    // TODO: tmp
-    console.log(makers);
-    console.log(series);
-    console.log(colors);
-    console.log(bodyMaterials);
-    console.log(guitars);
 
     return (
         <div style={{display: "flex"}}>
-            <OutSideFrame styleObj={{width: "20%", minWidth: "240px", height: "85vh"}}>
-                <h1>検索部</h1>
+            <OutSideFrame styleObj={{width: "20%", minWidth: "280px", height: "85vh"}}>
+                <SearchConditions guitarParams={gParams}
+                                  makers={makers}
+                                  colors={colors}
+                                  series={series}
+                                  bodyMaterials={bodyMaterials}
+                                  guitarSearchHandler={guitarSearchHandler}
+                                  />
             </OutSideFrame>
-            <OutSideFrame styleObj={{width: "80%", minWidth: "280px",height: "85vh"}}>
+            <OutSideFrame styleObj={{width: "80%", minWidth: "280px",height: "85vh", marginLeft: "5px"}}>
                 <GuitarCards guitarsRes={guitars}></GuitarCards>
             </OutSideFrame>
             <OutSideFrame styleObj={{width: "85vh", height: "85vh", display: "none"}}>

@@ -26,10 +26,11 @@ interface ArgProps {
 const Select = ({title, children, onChange, styleObj, defaultValue}: ArgProps) => {
     return (
         <SdivFrame>
-            <label>{title}</label>
-            <Sselect onChange={onChange} style={styleObj} defaultValue={defaultValue}>
-                {children}
-            </Sselect>
+            <label>{title}
+                <Sselect onChange={onChange} style={styleObj} defaultValue={defaultValue}>
+                    {children}
+                </Sselect>
+            </label>
         </SdivFrame>
     );
 }

@@ -84,11 +84,13 @@ namespace PublicApi.Services
             {
                 conditions.AppendLine("AND color_cd = @color_cd");
             }
-            if (req.BodyMaterialTopCd != null)
+            // TODO: 木材コードの見直し。０に意味を持たせてはいけない
+            if (req.BodyMaterialTopCd != null && req.BodyMaterialTopCd >= 0)
             {
                 conditions.AppendLine("AND body_material_top = @body_material_top_cd");
             }
-            if (req.BodyMaterialBackCd != null)
+            // TODO: 木材コードの見直し。０に意味を持たせてはいけない
+            if (req.BodyMaterialBackCd != null && req.BodyMaterialBackCd >= 0)
             {
                 conditions.AppendLine("AND body_material_back = @body_material_back_cd");
             }

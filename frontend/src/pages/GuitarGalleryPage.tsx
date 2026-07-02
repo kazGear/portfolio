@@ -31,10 +31,11 @@ const GuitarGalleryPage = () => {
             setSeries([]);
             return;
         }
-
         api.GET<Code[]>(
             `https://localhost:7170/api/v1/series?makerCd=${gParams.makerCd}`
         ).then(result => setSeries(result));
+
+        gParams.setSeries("0") // シリーズを未選択に戻す
     }, [gParams.makerCd])
 
     // ギターデータ取得

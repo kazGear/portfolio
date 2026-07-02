@@ -22,7 +22,7 @@ const GuitarCard = ({guitar}: ArgProps) => {
     return (
         <ScardFrame>
             <div style={{textAlign: "center", margin: "10px"}}>
-                <img style={{width:"200px", height:"100px"}}
+                <img style={{width:"200px", height:"100px", objectFit: "contain"}}
                         src={guitar?.src}
                         alt={guitar?.name + " " + guitar?.color}
                         />

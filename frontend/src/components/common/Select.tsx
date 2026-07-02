@@ -7,7 +7,7 @@ const SdivFrame = styled.div`
 `;
 
 const Sselect = styled.select`
-    width: 150px;
+    width: ${SIZE.INPUT_WIDTH};
     margin: 0 10px 0 10px;
     height: ${SIZE.INPUT_HEIGHT};
     border: 1px solid ${COLORS.BORDER_COLOR};

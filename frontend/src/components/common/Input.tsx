@@ -2,8 +2,8 @@ import React, { forwardRef, useEffect, useState } from "react";
 import styled from "styled-components";
 import { COLORS, SIZE } from "../../lib/Constants";
 
-
 const Sinput = styled.input`
+    width: ${SIZE.INPUT_WIDTH};
     height: ${SIZE.INPUT_HEIGHT};
     padding: 0;
     border: ${COLORS.BORDER_COLOR} 1px solid;
@@ -31,6 +31,8 @@ interface ArgProps {
     onClick?: React.MouseEventHandler<HTMLInputElement>;
     value?: string;
     defaultValue?: string | number;
+    min?: string;
+    max?: string;
 }
 
 // forwardRef: 親から参照されるため
@@ -49,7 +51,9 @@ const Input = forwardRef<HTMLInputElement, ArgProps>(({
     onBlur,
     onClick,
     value,
-    defaultValue
+    defaultValue,
+    min,
+    max,
 }, ref) => {
     const [show, setShow] = useState(false);
 
@@ -74,6 +78,8 @@ const Input = forwardRef<HTMLInputElement, ArgProps>(({
                         ref={ref}
                         value={value}
                         defaultValue={defaultValue}
+                        min={min}
+                        max={max}
                         />
             </label>
             {

@@ -16,7 +16,7 @@ const Sspan = styled.span`
 `;
 
 interface ArgProps {
-    labelTitle: string;
+    labelTitle?: string;
     inputType: string;
     accept?: string;
     placeholder?: string;
@@ -26,8 +26,9 @@ interface ArgProps {
     showMessage?: boolean;
     disabled?: boolean;
     styleObj?: React.CSSProperties;
-    onChange?: React.ChangeEventHandler<HTMLInputElement> | undefined;
-    onClick?: React.MouseEventHandler<HTMLInputElement> | undefined;
+    onChange?: React.ChangeEventHandler<HTMLInputElement>;
+    onBlur?: React.FocusEventHandler<HTMLInputElement>;
+    onClick?: React.MouseEventHandler<HTMLInputElement>;
     value?: string;
     defaultValue?: string | number;
 }
@@ -45,6 +46,7 @@ const Input = forwardRef<HTMLInputElement, ArgProps>(({
     disabled = false,
     styleObj = {},
     onChange,
+    onBlur,
     onClick,
     value,
     defaultValue
@@ -59,20 +61,21 @@ const Input = forwardRef<HTMLInputElement, ArgProps>(({
         <div style={{margin: "5px 0 5px 0"}}>
             <label style={{marginRight: "10px"}}>
                 {labelTitle}
+                <Sinput type={inputType}
+                        accept={accept}
+                        style={styleObj}
+                        id={id}
+                        name={name}
+                        placeholder={placeholder}
+                        onChange={onChange}
+                        onBlur={onBlur}
+                        onClick={onClick}
+                        disabled={disabled}
+                        ref={ref}
+                        value={value}
+                        defaultValue={defaultValue}
+                        />
             </label>
-            <Sinput type={inputType}
-                    accept={accept}
-                    style={styleObj}
-                    id={id}
-                    name={name}
-                    placeholder={placeholder}
-                    onChange={onChange}
-                    onClick={onClick}
-                    disabled={disabled}
-                    ref={ref}
-                    value={value}
-                    defaultValue={defaultValue}
-                    />
             {
                 show ? <Sspan>{alertMessage}</Sspan> : ""
             }

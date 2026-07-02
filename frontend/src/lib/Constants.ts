@@ -24,6 +24,7 @@ export const COLORS = {
 
     THEME_COLOR: "#7fffd4",
     BASE_BACKGROUND: "white",
+    MODAL_BACKGROUND: "black",
 
     MENU_DISABLED: "darkgray",
 

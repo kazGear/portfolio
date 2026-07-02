@@ -5,6 +5,8 @@ import { api } from "../lib/apiClient";
 import { GuitarParams, GuitarsResponse } from "../types/Guitar";
 import { useGuitarParams } from "../hooks/useGuitarParams";
 import { createQueryParams } from "../components/GuitarGalleryPage/GuitarFuncs";
+import OutSideFrame from "../components/common/OutSideFrame";
+import GuitarCards from "../components/GuitarGalleryPage/GuitarCards";
 
 const SdivEditFrame = styled.div`
     width: 100%;
@@ -20,11 +22,12 @@ const GuitarGalleryPage = () => {
 
     const gParams: GuitarParams = useGuitarParams();
 
-    // プルダウンデータ取得
+    // プルダウンデータ等取得
     useEffect(() => {
         api.GET<Code[]>("https://localhost:7170/api/v1/makers").then(result => setMakers(result));
         api.GET<Code[]>("https://localhost:7170/api/v1/Colors").then(result => setColors(result));
         api.GET<Code[]>("https://localhost:7170/api/v1/bodyMaterials").then(result => setBodyMaterials(result));
+        api.GET<GuitarsResponse>("https://localhost:7170/api/v1/guitars?").then(result => setGuitars(result));
     }, [])
 
     // 変動プルダウンデータ取得
@@ -47,20 +50,25 @@ const GuitarGalleryPage = () => {
         );
         setGuitars(resGuitars);
     }, []);
+    // TODO: tmp
     console.log(makers);
     console.log(series);
-    console.log(guitars);
     console.log(colors);
     console.log(bodyMaterials);
+    console.log(guitars);
 
     return (
-        <>
-            <h1>ギターページ</h1>
-            <h1>工事中</h1>
-            {
-                guitars?.guitars.map(g => (<span key={g.maker + g.name + g.color}>{g.name}, {g.price}. </span>))
-            }
-        </>
+        <div style={{display: "flex"}}>
+            <OutSideFrame styleObj={{width: "20%", minWidth: "240px", height: "85vh"}}>
+                <h1>検索部</h1>
+            </OutSideFrame>
+            <OutSideFrame styleObj={{width: "80%", minWidth: "280px",height: "85vh"}}>
+                <GuitarCards guitarsRes={guitars}></GuitarCards>
+            </OutSideFrame>
+            <OutSideFrame styleObj={{width: "85vh", height: "85vh", display: "none"}}>
+                <h1>モーダル部</h1>
+            </OutSideFrame>
+        </div>
     );
 }
 

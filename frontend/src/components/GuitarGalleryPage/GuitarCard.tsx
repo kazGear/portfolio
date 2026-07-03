@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { COLORS } from "../../lib/Constants";
 import { Guitar } from "../../types/Guitar";
 
-const ScardFrame = styled.span`
+const ScardFrame = styled.div`
     font-weight: 900;
     width: 220px;
     height: 250px;
@@ -14,27 +14,38 @@ const ScardFrame = styled.span`
         inset 0 -2px 10px rgba(0,0,0,0.4);
 `;
 
+const Sbutton = styled.button`
+    padding: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+`
+
 interface ArgProps {
-    guitar: Guitar | null;
+    guitar:  Guitar | null;
+    onClick: (guitar: Guitar | null) => void;
 }
 
-const GuitarCard = ({guitar}: ArgProps) => {
+const GuitarCard = ({guitar, onClick: callback}: ArgProps) => {
     return (
-        <ScardFrame>
-            <div style={{textAlign: "center", margin: "10px"}}>
-                <img style={{width:"200px", height:"100px", objectFit: "contain"}}
-                        src={guitar?.src}
-                        alt={guitar?.name + " " + guitar?.color}
-                        />
-            </div>
-            <div style={{textAlign: "center"}}>
-                <h3 style={{marginBottom: "0", color: COLORS.ACCENT_FONT_PINK}}>
-                    {guitar?.name}
-                </h3>
-                <p style={{marginTop: "0"}}>{guitar?.color}</p>
-                <p>{guitar?.price} 円</p>
-            </div>
-        </ScardFrame>
+        <Sbutton onClick={() => callback(guitar)}>
+            <ScardFrame>
+                <div style={{textAlign: "center", margin: "10px"}}>
+                    {/* モーダルにギター情報を渡す */}
+                    <img style={{width:"200px", height:"100px", objectFit: "contain"}}
+                            src={guitar?.src}
+                            alt={guitar?.name + " " + guitar?.color}
+                            />
+                </div>
+                <div style={{textAlign: "center"}}>
+                    <h3 style={{marginBottom: "0", color: COLORS.ACCENT_FONT_PINK}}>
+                        {guitar?.name}
+                    </h3>
+                    <p style={{marginTop: "0"}}>{guitar?.color}</p>
+                    <p>{guitar?.price} 円</p>
+                </div>
+            </ScardFrame>
+        </Sbutton>
     );
 }
 export default GuitarCard;

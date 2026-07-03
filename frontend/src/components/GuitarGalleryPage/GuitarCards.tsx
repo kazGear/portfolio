@@ -1,12 +1,12 @@
-import { GuitarsResponse } from "../../types/Guitar";
+import { Guitar, GuitarsResponse } from "../../types/Guitar";
 import GuitarCard from "./GuitarCard";
 
 interface ArgProps {
-    // children: React.ReactNode;
     guitarsRes: GuitarsResponse | null;
+    onClick: (guitar: Guitar | null) => void;
 }
 
-const GuitarCards = ({guitarsRes: res}: ArgProps) => {
+const GuitarCards = ({guitarsRes: res, onClick: callBack}: ArgProps) => {
     return (
         <>
             <p style={{marginLeft: "15px", fontWeight: "bolder"}}>
@@ -17,7 +17,8 @@ const GuitarCards = ({guitarsRes: res}: ArgProps) => {
                 {
                     res?.guitars.map(guitar => (
                         <GuitarCard guitar={guitar}
-                                    key={guitar.maker + guitar.name + guitar.color} />
+                                    key={guitar.maker + guitar.name + guitar.color}
+                                    onClick={callBack} />
                     )
                 )}
             </div>

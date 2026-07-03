@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { Code } from "../types/Code";
 import { api } from "../lib/apiClient";
-import { GuitarParams, GuitarsResponse } from "../types/Guitar";
+import { Guitar, GuitarParams, GuitarsResponse } from "../types/Guitar";
 import { useGuitarParams } from "../hooks/useGuitarParams";
 import { createQueryParams } from "../components/GuitarGalleryPage/GuitarFuncs";
 import OutSideFrame from "../components/common/OutSideFrame";
@@ -10,11 +10,14 @@ import SearchConditions from "../components/GuitarGalleryPage/SearchConditions";
 import DetailModal from "../components/GuitarGalleryPage/DetailModal";
 
 const GuitarGalleryPage = () => {
+    // プルダウン用 params
     const [makers, setMakers]               = useState<Code[] | null>([]);
     const [series, setSeries]               = useState<Code[] | null>([]);
     const [colors, setColors]               = useState<Code[] | null>([]);
     const [bodyMaterials, setBodyMaterials] = useState<Code[] | null>([]);
-    const [guitars, setGuitars]             = useState<GuitarsResponse | null>(null);
+
+    const [selectedGuitar, setSelectedGuitar] = useState<Guitar | null>(null);
+    const [guitars, setGuitars]               = useState<GuitarsResponse | null>(null);
 
     const gParams: GuitarParams = useGuitarParams();
 
@@ -23,6 +26,7 @@ const GuitarGalleryPage = () => {
         api.GET<Code[]>("https://localhost:7170/api/v1/makers").then(result => setMakers(result));
         api.GET<Code[]>("https://localhost:7170/api/v1/Colors").then(result => setColors(result));
         api.GET<Code[]>("https://localhost:7170/api/v1/bodyMaterials").then(result => setBodyMaterials(result));
+        // 初期画面用、条件なし検索
         api.GET<GuitarsResponse>("https://localhost:7170/api/v1/guitars?").then(result => setGuitars(result));
     }, [])
 
@@ -49,6 +53,11 @@ const GuitarGalleryPage = () => {
         setGuitars(resGuitars);
     }, []);
 
+    // 選択ギターpk取得
+    const getSelectedGuitarHandler = useCallback((guitar: Guitar | null) => {
+        setSelectedGuitar(guitar)
+    }, []);
+
     return (
         <div style={{display: "flex"}}>
             <OutSideFrame styleObj={{width: "20%", minWidth: "280px", height: "85vh"}}>
@@ -61,10 +70,12 @@ const GuitarGalleryPage = () => {
                                   />
             </OutSideFrame>
             <OutSideFrame styleObj={{width: "80%", minWidth: "280px",height: "85vh", marginLeft: "5px"}}>
-                <GuitarCards guitarsRes={guitars}></GuitarCards>
+                <GuitarCards guitarsRes={guitars}
+                             onClick={getSelectedGuitarHandler}>
+                </GuitarCards>
             </OutSideFrame>
 
-            <DetailModal></DetailModal>
+            <DetailModal selectedGuitars={selectedGuitar}></DetailModal>
         </div>
     );
 }

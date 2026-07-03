@@ -5,7 +5,7 @@ import { COLORS } from "../../lib/Constants";
 const Sbackground = styled.div`
     width: 100%;
     height: 100%;
-    display: ;
+    display: none;
     position: absolute;
     z-index: 1000;
     top: 50%;
@@ -31,10 +31,10 @@ const Smodal = styled.div`
 `;
 
 interface ArgProps {
-    guitar: Guitar | null;
+    selectedGuitars: Guitar | null;
 }
 
-const DetailModal = (/*{guitar}: ArgProps*/) => {
+const DetailModal = ({selectedGuitars}: ArgProps) => {
     return (
         <Sbackground>
             <Smodal>

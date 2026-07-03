@@ -59,3 +59,33 @@ scraper_guitar.go, scraper.goなど抽象的なファイル名には、抽象化
 
 npm run dev（開発モード）
 プロジェクトルート（package.json がある場所）で実行。
+
+# README スクショ
+
+htmlで書く。
+<p align="center">
+  <img src="./docs/images/top.png" width="45%">
+  <img src="./docs/images/search.png" width="45%">
+</p>
+のように。
+
+GIFは意外と簡単らしい。
+
+一番おすすめ（Windows）ScreenToGif
+無料で神ソフト。
+
+できることは
+
+録画、不要部分を削除、フレーム削除、速度変更、GIF保存
+
+例えば
+
+検索条件を入力
+↓
+検索ボタン
+↓
+カード一覧表示
+↓
+詳細を開く
+
+これを5秒くらい録画するだけ。

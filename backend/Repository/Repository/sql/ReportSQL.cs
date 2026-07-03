@@ -23,10 +23,12 @@ namespace Repository.Repository.sql
             return SQL;
         }
 
-        public static string SelectMonsterReport(dynamic param)
+        public static string SelectMonsterReport(int  monsterTypeId,
+                                                 int  sortType,
+                                                 bool isAscOrder)
         {
-            string WHERE = PartialWhereMonsterReport(param.monster_type);
-            string ORDER_BY = PartialOrderByMonsterReport(param.sort_type , param.is_asc_order);
+            string WHERE = PartialWhereMonsterReport(monsterTypeId);
+            string ORDER_BY = PartialOrderByMonsterReport(sortType, isAscOrder);
 
             string SQL = $@"
                 SELECT

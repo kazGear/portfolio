@@ -1,5 +1,6 @@
 ﻿using CSLib.Const;
 using CSLib.Lib;
+using Dapper;
 using KazApi.Domain.DTO;
 using Repository.Repository;
 using Repository.Repository.sql;
@@ -43,22 +44,21 @@ namespace KazApi.Service
         /// モンスター毎のレポートを取得
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<MonsterReportDTO> SelectMonsterReport(
-            int monsterTypeId,
-            int sortType,
-            bool isAscOrder)
+        public IEnumerable<MonsterReportDTO> SelectMonsterReport(int monsterTypeId,
+                                                                 int sortType,
+                                                                 bool isAscOrder)
         {
             try
             {
-                var param = new
-                {
-                    monster_type = monsterTypeId,
-                    sort_type = sortType,
-                    is_asc_order = isAscOrder
-                };
-                IEnumerable<MonsterReportDTO> report
-                    = _posgre.Select<MonsterReportDTO>(
-                        ReportSQL.SelectMonsterReport(param), param);
+                DynamicParameters param = new DynamicParameters();
+                param.Add("monster_type", monsterTypeId);
+                param.Add("sort_type", sortType);
+                param.Add("is_asc_order", isAscOrder);
+
+                string SQL = ReportSQL.SelectMonsterReport(monsterTypeId, sortType, isAscOrder);
+
+                IEnumerable<MonsterReportDTO> report =
+                    _posgre.Select<MonsterReportDTO>(SQL, param);
 
                 return report;
             }

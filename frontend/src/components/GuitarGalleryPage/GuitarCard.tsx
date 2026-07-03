@@ -22,11 +22,11 @@ const Sbutton = styled.button`
 `
 
 interface ArgProps {
-    guitar:  Guitar | null;
-    onClick: (guitar: Guitar | null) => void;
+    guitar:   Guitar | null;
+    callback: (guitar: Guitar | null) => void;
 }
 
-const GuitarCard = ({guitar, onClick: callback}: ArgProps) => {
+const GuitarCard = ({guitar, callback}: ArgProps) => {
     return (
         <Sbutton onClick={() => callback(guitar)}>
             <ScardFrame>

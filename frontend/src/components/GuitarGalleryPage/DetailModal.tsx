@@ -33,7 +33,7 @@ const Smodal = styled.div`
 interface ArgProps {
     selectedGuitars: Guitar | null;
     isShow         : boolean;
-    callback        : React.Dispatch<React.SetStateAction<boolean>>
+    callback       : React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const DetailModal = ({selectedGuitars, isShow, callback}: ArgProps) => {

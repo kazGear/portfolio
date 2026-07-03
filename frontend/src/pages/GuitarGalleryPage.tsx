@@ -74,7 +74,7 @@ const GuitarGalleryPage = () => {
             </OutSideFrame>
             <OutSideFrame styleObj={{width: "80%", minWidth: "280px",height: "85vh", marginLeft: "5px"}}>
                 <GuitarCards guitarsRes={guitars}
-                             onClick={getSelectedGuitarHandler}>
+                             callback={getSelectedGuitarHandler}>
                 </GuitarCards>
             </OutSideFrame>
 

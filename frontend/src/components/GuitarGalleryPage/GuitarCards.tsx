@@ -3,10 +3,10 @@ import GuitarCard from "./GuitarCard";
 
 interface ArgProps {
     guitarsRes: GuitarsResponse | null;
-    onClick: (guitar: Guitar | null) => void;
+    callback:   (guitar: Guitar | null) => void;
 }
 
-const GuitarCards = ({guitarsRes: res, onClick: callBack}: ArgProps) => {
+const GuitarCards = ({guitarsRes: res, callback: callBack}: ArgProps) => {
     return (
         <>
             <p style={{marginLeft: "15px", fontWeight: "bolder"}}>
@@ -18,7 +18,7 @@ const GuitarCards = ({guitarsRes: res, onClick: callBack}: ArgProps) => {
                     res?.guitars.map(guitar => (
                         <GuitarCard guitar={guitar}
                                     key={guitar.maker + guitar.name + guitar.color}
-                                    onClick={callBack} />
+                                    callback={callBack} />
                     )
                 )}
             </div>

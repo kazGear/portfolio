@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { Guitar } from "../../types/Guitar";
 import { COLORS } from "../../lib/Constants";
+import Button from "../common/Button";
 
 const Sbackground = styled.div`
     width: 100%;
@@ -17,7 +18,6 @@ const Sbackground = styled.div`
 const Smodal = styled.div`
     width: 80%;
     height: 80%;
-    display: ;
     border-radius: 20px;
     position: absolute;
     z-index: 2000;
@@ -32,13 +32,17 @@ const Smodal = styled.div`
 
 interface ArgProps {
     selectedGuitars: Guitar | null;
+    isShow         : boolean;
+    callback        : React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const DetailModal = ({selectedGuitars}: ArgProps) => {
-    return (
-        <Sbackground>
-            <Smodal>
+const DetailModal = ({selectedGuitars, isShow, callback}: ArgProps) => {
+    let isShowDetail = isShow ? "block" : "none"; // 詳細画面の表示制御
 
+    return (
+        <Sbackground style={{display: isShowDetail}}>
+            <Smodal>
+                <Button text="閉じる" onClick={() => callback(false)}/>
             </Smodal>
         </Sbackground>
     );

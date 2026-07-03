@@ -19,6 +19,8 @@ const GuitarGalleryPage = () => {
     const [selectedGuitar, setSelectedGuitar] = useState<Guitar | null>(null);
     const [guitars, setGuitars]               = useState<GuitarsResponse | null>(null);
 
+    const [isShowDetail, setIsShowDetail] = useState<boolean>(false);
+
     const gParams: GuitarParams = useGuitarParams();
 
     // プルダウンデータ等取得
@@ -56,6 +58,7 @@ const GuitarGalleryPage = () => {
     // 選択ギターpk取得
     const getSelectedGuitarHandler = useCallback((guitar: Guitar | null) => {
         setSelectedGuitar(guitar)
+        setIsShowDetail(true)
     }, []);
 
     return (
@@ -75,7 +78,10 @@ const GuitarGalleryPage = () => {
                 </GuitarCards>
             </OutSideFrame>
 
-            <DetailModal selectedGuitars={selectedGuitar}></DetailModal>
+            <DetailModal selectedGuitars={selectedGuitar}
+                         isShow={isShowDetail}
+                         callback={setIsShowDetail}>
+            </DetailModal>
         </div>
     );
 }

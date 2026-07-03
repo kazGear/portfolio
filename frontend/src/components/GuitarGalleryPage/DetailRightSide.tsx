@@ -1,5 +1,12 @@
+import styled from "styled-components";
 import { Guitar } from "../../types/Guitar";
 
+const Sdiv = styled.div`
+    width: 50%;
+    height: 85%;
+    margin: 20px 40px 40px 40px;
+    overflow-y: auto;
+`;
 interface ArgProps {
     selectedGuitars: Guitar | null;
 }
@@ -8,9 +15,9 @@ const DetailRightSide = ({selectedGuitars}: ArgProps) => {
     const guitar = selectedGuitars;
 
     return (
-        <div style={{width: "50%", margin: "0px 40px"}}>
+        <Sdiv>
             <h2>Guitars spec</h2>
-            <table style={{overflowY: "scroll"}}>
+            <table>
                 <tbody>
                     <tr>
                         <th>Name:&emsp;</th>
@@ -74,7 +81,7 @@ const DetailRightSide = ({selectedGuitars}: ArgProps) => {
                     </tr>
                 </tbody>
             </table>
-        </div>
+        </Sdiv>
     );
 }
 export default DetailRightSide;

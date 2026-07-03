@@ -49,7 +49,7 @@ const DetailRightSide = ({selectedGuitars}: ArgProps) => {
                     </tr>
                     <tr>
                         <th>FretCount:&emsp;</th>
-                        <td>{guitar?.fretCount} frets</td>
+                        <td>{guitar?.fretCount! < 0 ? "" : guitar?.fretCount! + " frets"}</td>
                     </tr>
                     <tr>
                         <th>Pickups:&emsp;</th>
@@ -73,7 +73,7 @@ const DetailRightSide = ({selectedGuitars}: ArgProps) => {
                     </tr>
                     <tr>
                         <th>ScaleLength:&emsp;</th>
-                        <td>{guitar?.scaleLengthMm} mm</td>
+                        <td>{guitar?.scaleLengthMm! < 0 ? "" : guitar?.scaleLengthMm! + " mm"}</td>
                     </tr>
                     <tr>
                         <th>Weight:&emsp;</th>

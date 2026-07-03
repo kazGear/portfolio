@@ -33,9 +33,9 @@ const GuitarCard = ({guitar, callback}: ArgProps) => {
                 <div style={{textAlign: "center", margin: "10px"}}>
                     {/* モーダルにギター情報を渡す */}
                     <img style={{width:"200px", height:"100px", objectFit: "contain"}}
-                            src={guitar?.src}
-                            alt={guitar?.name + " " + guitar?.color}
-                            />
+                         src={guitar?.src}
+                         alt={guitar?.name + " " + guitar?.color}
+                         />
                 </div>
                 <div style={{textAlign: "center"}}>
                     <h3 style={{marginBottom: "0", color: COLORS.ACCENT_FONT_PINK}}>

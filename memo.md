@@ -63,19 +63,13 @@ npm run dev（開発モード）
 # README スクショ
 
 htmlで書く。
-<p align="center">
-  <img src="./docs/images/top.png" width="45%">
-  <img src="./docs/images/search.png" width="45%">
-</p>
-のように。
+画像を保存しておき、img src=... で読み込む。
 
 GIFは意外と簡単らしい。
-
 一番おすすめ（Windows）ScreenToGif
 無料で神ソフト。
 
 できることは
-
 録画、不要部分を削除、フレーム削除、速度変更、GIF保存
 
 例えば

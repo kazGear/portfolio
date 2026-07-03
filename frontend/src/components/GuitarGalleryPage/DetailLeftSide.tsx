@@ -22,7 +22,7 @@ const DetailLeftSide = ({selectedGuitars}: ArgProps) => {
             </h2>
             <p>comment.</p>
             <p style={{
-                overflowY: "scroll",
+                overflowY: "auto",
                 fontSize: "14px",
                 height: "30%"
                 }}>

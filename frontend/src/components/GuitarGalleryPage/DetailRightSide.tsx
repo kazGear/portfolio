@@ -1,0 +1,80 @@
+import { Guitar } from "../../types/Guitar";
+
+interface ArgProps {
+    selectedGuitars: Guitar | null;
+}
+
+const DetailRightSide = ({selectedGuitars}: ArgProps) => {
+    const guitar = selectedGuitars;
+
+    return (
+        <div style={{width: "50%", margin: "0px 40px"}}>
+            <h2>Guitars spec</h2>
+            <table style={{overflowY: "scroll"}}>
+                <tbody>
+                    <tr>
+                        <th>Name:&emsp;</th>
+                        <td>{guitar?.name}</td>
+                    </tr>
+                    <tr>
+                        <th>Color:&emsp;</th>
+                        <td>{guitar?.color}</td>
+                    </tr>
+                    <tr>
+                        <th>Series:&emsp;</th>
+                        <td>{guitar?.series}</td>
+                    </tr>
+                    <tr>
+                        <th>BodyMaterial:&emsp;</th>
+                        <td>{guitar?.bodyMaterial}</td>
+                    </tr>
+                    <tr>
+                        <th>BodyFinish:&emsp;</th>
+                        <td>{guitar?.bodyFinish}</td>
+                    </tr>
+                    <tr>
+                        <th>NeckMaterial:&emsp;</th>
+                        <td>{guitar?.neckMaterial}</td>
+                    </tr>
+                    <tr>
+                        <th>Fingerboard:&emsp;</th>
+                        <td>{guitar?.fingerboard}</td>
+                    </tr>
+                    <tr>
+                        <th>FretCount:&emsp;</th>
+                        <td>{guitar?.fretCount} frets</td>
+                    </tr>
+                    <tr>
+                        <th>Pickups:&emsp;</th>
+                        <td>{guitar?.pickups}</td>
+                    </tr>
+                    <tr>
+                        <th>Bridge:&emsp;</th>
+                        <td>{guitar?.bridge}</td>
+                    </tr>
+                    <tr>
+                        <th>Controls:&emsp;</th>
+                        <td>{guitar?.controls}</td>
+                    </tr>
+                    <tr>
+                        <th>Inlays:&emsp;</th>
+                        <td>{guitar?.inlays}</td>
+                    </tr>
+                    <tr>
+                        <th>Joint:&emsp;</th>
+                        <td>{guitar?.joint}</td>
+                    </tr>
+                    <tr>
+                        <th>ScaleLength:&emsp;</th>
+                        <td>{guitar?.scaleLengthMm} mm</td>
+                    </tr>
+                    <tr>
+                        <th>Weight:&emsp;</th>
+                        <td>{guitar?.weight} mm</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    );
+}
+export default DetailRightSide;

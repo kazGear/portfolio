@@ -70,7 +70,7 @@ const DetailRightSide = ({selectedGuitars}: ArgProps) => {
                     </tr>
                     <tr>
                         <th>Weight:&emsp;</th>
-                        <td>{guitar?.weight} mm</td>
+                        <td>{guitar?.weight! < 0 ? "" : guitar?.weight! + " kg"}</td>
                     </tr>
                 </tbody>
             </table>

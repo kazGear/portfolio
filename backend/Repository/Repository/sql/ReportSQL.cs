@@ -105,13 +105,13 @@ namespace Repository.Repository.sql
                 SELECT
                        DENSE_RANK() OVER (
                            ORDER BY battle_end_date ASC, battle_end_time ASC
-                       )                 AS BattleId
-                     , b.battle_end_date AS BattleEndDate 
-                     , b.battle_end_time AS BattleEndTime
-                     , b.serial          AS Serial
-                     , b.monster_id      AS MonsterId
-                     , m.monster_name    AS MonsterName 
-                     , b.is_win          AS IsWin
+                       )                            AS BattleId
+                     , b.battle_end_date::timestamp AS BattleEndDate 
+                     , b.battle_end_time::interval  AS BattleEndTime
+                     , b.serial                     AS Serial
+                     , b.monster_id                 AS MonsterId
+                     , m.monster_name               AS MonsterName 
+                     , b.is_win                     AS IsWin
                   FROM
                        t_battle_result AS b
             INNER JOIN

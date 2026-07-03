@@ -68,26 +68,21 @@ namespace KazApi.Service
             }
         }
 
-        public IEnumerable<BattleReportDTO> SelectBattleReport(
-            int battleScale, DateTime? dateFrom, DateTime? dateTo
-        )
+        public IEnumerable<BattleReportDTO> SelectBattleReport(int battleScale,
+                                                               DateTime? dateFrom,
+                                                               DateTime? dateTo)
         {
             try
             {
-                var param = new
-                {
-                    battle_scale = battleScale,
-                    from = dateFrom,
-                    to = dateTo
-                };
+                DynamicParameters param = new DynamicParameters();
+                param.Add("battle_scale", battleScale);
+                param.Add("from", dateFrom);
+                param.Add("to", dateTo);
 
-                IEnumerable<BattleReportDTO> report
-                    = _posgre.Select<BattleReportDTO>(
-                        ReportSQL.SelectBattleReport(
-                            param.battle_scale,
-                            param.from,
-                            param.to
-                            ), param);
+                string SQL = ReportSQL.SelectBattleReport(battleScale, dateFrom, dateTo);
+
+                IEnumerable <BattleReportDTO> report
+                    = _posgre.Select<BattleReportDTO>(SQL, param);
 
                 return report;
             }

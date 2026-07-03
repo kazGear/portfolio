@@ -91,6 +91,10 @@ const AppHeader = ({title}: ArgProps) => {
                         width={125}
                         onClick={() => navigate("/BattlePage")}
                         disabled={!validToken}/>
+                <Button text="Guitar gallery"
+                        width={120}
+                        onClick={() => navigate("/GuitarGalleryPage")}
+                        disabled={false}/>
                 <Button text="闘技場戦績"
                         width={90}
                         onClick={() => navigate("/BattleResultPage")}
@@ -110,7 +114,7 @@ const AppHeader = ({title}: ArgProps) => {
                 <Button text="ログイン"
                         width={80}
                         onClick={() => navigate("/LoginPage")}
-                        disabled={!validToken}/>
+                        disabled={false}/>
             </SdivButtonFrame>
 
             <div style={{display: "flex", alignItems: "center"}}>

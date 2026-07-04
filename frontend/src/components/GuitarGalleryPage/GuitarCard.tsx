@@ -31,18 +31,18 @@ const GuitarCard = ({guitar, callback}: ArgProps) => {
     return (
         <Sbutton onClick={() => callback(guitar)}>
             <ScardFrame>
-                <div style={{textAlign: "center", margin: "10px"}}>
+                <div style={{textAlign: "center", margin: "10px", height: "50%"}}>
                     {/* モーダルにギター情報を渡す */}
-                    <img style={{width:"200px", height:"100px", objectFit: "contain"}}
+                    <img style={{width:"90%", height:"90%", objectFit: "contain"}}
                          src={guitar?.src}
                          alt={guitar?.name + " " + guitar?.color}
                          />
                 </div>
-                <div style={{textAlign: "center"}}>
-                    <h3 style={{marginBottom: "0", color: COLORS.ACCENT_FONT_PINK}}>
+                <div style={{textAlign: "center", height: "50%"}}>
+                    <h3 style={{margin: "0px 20px", color: COLORS.ACCENT_FONT_PINK}}>
                         {guitar?.name}
                     </h3>
-                    <p style={{marginTop: "0"}}>{guitar?.color}</p>
+                    <p style={{margin: "0px 20px"}}>{guitar?.color}</p>
                     <p>{parsePrice(guitar?.price)}</p>
                 </div>
             </ScardFrame>

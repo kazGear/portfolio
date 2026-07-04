@@ -25,6 +25,7 @@ export interface GuitarsResponse {
 
 export interface Guitar {
     maker:            number;
+    makerName:        string;
     name:             string;
     color:            string;
     colorCd:          number;

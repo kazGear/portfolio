@@ -10,6 +10,7 @@ public static class GuitarsSQL
         string SQL = @$"
             SELECT
                    guitars.maker              AS Maker,
+                   maker.name                 AS MakerName,
                    guitars.name               AS Name,
                    guitars.color              AS Color,
                    guitars.color_cd           AS ColorCd,
@@ -35,6 +36,10 @@ public static class GuitarsSQL
                    guitars.weight             AS Weight
               FROM
                    t_guitars AS guitars
+        INNER JOIN
+                   m_code AS maker
+                ON guitars.maker = maker.VALUE
+               AND maker.code_id = 'code009'
         INNER JOIN
                    m_code AS neck
                 ON guitars.neck_material = neck.VALUE
@@ -76,7 +81,7 @@ public static class GuitarsSQL
             SELECT
                    count(*)
               FROM
-                   t_guitars
+                   t_guitars AS guitars
              WHERE
                    TRUE
                    {conditions}

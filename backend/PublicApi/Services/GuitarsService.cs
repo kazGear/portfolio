@@ -74,7 +74,7 @@ namespace PublicApi.Services
             }
             if (!string.IsNullOrWhiteSpace(req.Name))
             {
-                conditions.AppendLine($"AND name ilike @name");
+                conditions.AppendLine($"AND guitars.name ilike @name");
             }
             if (!string.IsNullOrWhiteSpace(req.Series))
             {

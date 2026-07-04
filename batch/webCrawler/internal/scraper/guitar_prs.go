@@ -318,8 +318,8 @@ func (c *callBacksPRS) CollectSpec() func(doc *goquery.Document) []map[string]st
         spec = parseSpec(hardwareSection, spec)
         spec = parseSpec(electronicsSection, spec)
 
-        if len(spec["TreblePickup"]) <= 0 {
-            spec["TreblePickup"] = spec["BassPickup"]
+        if len(spec[C.BridgePickup]) <= 0 {
+            spec[C.BridgePickup] = spec[C.NeckPickup]
         }
 
         // 画像、カラー取得

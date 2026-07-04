@@ -49,7 +49,14 @@ const DetailModal = ({selectedGuitars, isShow, callback}: ArgProps) => {
             <Smodal>
                 <DetailLeftSide selectedGuitars={guitar}/>
                 <DetailRightSide selectedGuitars={guitar}/>
-                <Button text="閉じる" onClick={() => callback(false)} styleObj={{position: "absolute", right: "0", bottom: "0", margin: "0px 40px 40px 0px"}}/>
+                <Button text="閉じる"
+                        onClick={() => callback(false)}
+                        styleObj={{
+                            position: "absolute",
+                            right: "0",
+                            bottom: "0",
+                            margin: "0px 40px 40px 0px"}}
+                            />
             </Smodal>
         </Sbackground>
     );

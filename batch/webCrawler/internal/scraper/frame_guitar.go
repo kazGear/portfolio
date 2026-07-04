@@ -454,7 +454,7 @@ func searchWoodCode(s string) int {
 			return wood.Code
 		}
 	}
-	return 0 // 該当なし
+	return 99 // unknown
 }
 type wood struct {
 	Name string
@@ -464,7 +464,6 @@ type wood struct {
 // wood materials
 func GetWoods() []wood {
 	woods := []wood{
-		{"Unknown", 0},
 		{"HardMaple", 1},
 		{"FlameMaple", 2},
 		{"FlamedMaple", 2},

@@ -125,7 +125,7 @@ func ParseScale(s string) float64 {
 
 	if result == 0 || result == -1 { return -1 }
 
-	// 小さい数値ならinch表記 >> mmへ
+	// 小さい数値ならinch >> mmへ変換
 	if result < 50 {
 		result = float64(InchToMM(result))
 	}

@@ -3,6 +3,7 @@ package scraper
 import (
 	"context"
 	"fmt"
+	"regexp"
 	"strconv"
 	"strings"
 	"sync"
@@ -145,6 +146,8 @@ func (c *callBacksMomose) FetchDynamicPage(parentCtx context.Context) func(url s
     }
 }
 
+var regSplitMomose = regexp.MustCompile(`(/| |’)`)
+
 func (c *callBacksMomose) CollectSpec() func(doc *goquery.Document) []map[string]string {
     return func(doc *goquery.Document) []map[string]string {
         specs := make([]map[string]string, 0, 1)
@@ -162,7 +165,7 @@ func (c *callBacksMomose) CollectSpec() func(doc *goquery.Document) []map[string
         spec[C.Inlays]    = ""
         spec[C.Joint]     = ""
         spec[C.Price]     = doc.Find(`.p-product__price strong`).Text()
-        spec[C.Series]    = strings.Split(spec[C.Name], "/")[0]
+        spec[C.Series]    = regSplitMomose.Split(spec[C.Name], 2)[0]
         src, _           := doc.Find(`.p-product__content div div div div img`).Attr(`src`)
         spec[C.Src]       = src
         spec[C.Weight]    = strconv.Itoa(C.InvalidNumber)

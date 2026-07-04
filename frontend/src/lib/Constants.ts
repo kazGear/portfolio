@@ -45,7 +45,7 @@ export const GUITAR_COLORS = {
     9: "Gray",
     10: "Black",
     11: "White",
-    12: "#d3bd83", // natural
+    12: "#ceb46c", // natural
     13: "Brown",
     14: "Gold",
     15: "Silver",

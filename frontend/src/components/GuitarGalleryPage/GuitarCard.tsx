@@ -5,8 +5,8 @@ import { getColorString, parsePrice } from "./GuitarFuncs";
 
 const ScardFrame = styled.div`
     font-weight: 900;
-    width: 220px;
-    height: 250px;
+    width: 240px;
+    height: 280px;
     overflow-y: hidden;
     margin: 10px 10px 20px 5px;
     background: ${COLORS.BASE_BACKGROUND};
@@ -21,6 +21,20 @@ const Sbutton = styled.button`
     background: none;
     border: none;
     cursor: pointer;
+`
+
+const Sh3 = styled.h3`
+    margin: 0px 20px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+`
+
+const Sp = styled.p`
+    margin: 0px 20px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 `
 
 interface ArgProps {
@@ -41,23 +55,19 @@ const GuitarCard = ({guitar, callback}: ArgProps) => {
     return (
         <Sbutton onClick={() => callback(guitar)}>
             <ScardFrame>
-                <div style={{textAlign: "center", margin: "10px", height: "40%"}}>
+                <div style={{textAlign: "center", margin: "20px 20px 0px 20px" ,height: "50%"}}>
                     {/* モーダルにギター情報を渡す */}
                     <img style={{width:"90%", height:"90%", objectFit: "contain"}}
                          src={guitar?.src}
                          alt={guitar?.name + " " + guitar?.color}
                          />
                 </div>
-                <div style={{textAlign: "center", height: "60%"}}>
+                <div style={{textAlign: "center", height: "50%"}}>
                     <p style={{margin: "0px 20px"}}>{guitar?.makerName}</p>
-                    <h3 style={{
-                        margin: "0px 20px",
-                        color: color,
-                        textShadow: fontShadow
-                        }}>
+                    <Sh3 style={{color: color, textShadow: fontShadow}}>
                         {guitar?.name}
-                    </h3>
-                    <p style={{margin: "0px 20px"}}>{guitar?.color}</p>
+                    </Sh3>
+                    <Sp>{guitar?.color}</Sp>
                     <p>{parsePrice(guitar?.price)}</p>
                 </div>
             </ScardFrame>

@@ -16,7 +16,7 @@ const DetailLeftSide = ({selectedGuitars}: ArgProps) => {
                     width:"100%",
                     height:"40%",
                     objectFit: "contain",
-                    marginTop: "20px"
+                    marginTop: "30px"
                 }}/>
             <h2 style={{margin: "0px"}}>
                 price:&emsp;{parsePrice(guitar?.price!)}

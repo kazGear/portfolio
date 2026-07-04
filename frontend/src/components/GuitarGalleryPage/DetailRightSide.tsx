@@ -8,6 +8,16 @@ const Sdiv = styled.div`
     margin: 20px 40px 40px 40px;
     overflow-y: auto;
 `;
+
+const Str = styled.tr`
+    border-top: gray 1px solid;
+    border-bottom: gray 1px solid;
+`;
+
+const Sth = styled.th`
+    text-align: left;
+`;
+
 interface ArgProps {
     selectedGuitars: Guitar | null;
 }
@@ -20,80 +30,80 @@ const DetailRightSide = ({selectedGuitars}: ArgProps) => {
             <h2>Guitars spec</h2>
             <table>
                 <tbody>
-                    <tr>
-                        <th>Maker:&emsp;</th>
+                    <Str>
+                        <Sth>Maker:&emsp;</Sth>
                         <td>{guitar?.makerName}</td>
-                    </tr>
-                    <tr>
-                        <th>Name:&emsp;</th>
+                    </Str>
+                    <Str>
+                        <Sth>Name:&emsp;</Sth>
                         <td>{guitar?.name}</td>
-                    </tr>
-                    <tr>
-                        <th>Color:&emsp;</th>
+                    </Str>
+                    <Str>
+                        <Sth>Color:&emsp;</Sth>
                         <td>{guitar?.color}</td>
-                    </tr>
-                    <tr>
-                        <th>Series:&emsp;</th>
+                    </Str>
+                    <Str>
+                        <Sth>Series:&emsp;</Sth>
                         <td>{guitar?.series}</td>
-                    </tr>
-                    <tr>
-                        <th>BodyMaterial:&emsp;</th>
+                    </Str>
+                    <Str>
+                        <Sth>BodyMaterial:&emsp;</Sth>
                         <td>{guitar?.bodyMaterial}</td>
-                    </tr>
-                    <tr>
-                        <th>BodyFinish:&emsp;</th>
+                    </Str>
+                    <Str>
+                        <Sth>BodyFinish:&emsp;</Sth>
                         <td>{guitar?.bodyFinish}</td>
-                    </tr>
-                    <tr>
-                        <th>NeckMaterial:&emsp;</th>
+                    </Str>
+                    <Str>
+                        <Sth>NeckMaterial:&emsp;</Sth>
                         <td>{guitar?.neckMaterial === GUITAR.UNkNOWN ? ""
                                                                      : guitar?.neckMaterialName}
                         </td>
-                    </tr>
-                    <tr>
-                        <th>Fingerboard:&emsp;</th>
+                    </Str>
+                    <Str>
+                        <Sth>Fingerboard:&emsp;</Sth>
                         <td>{guitar?.fingerboard === GUITAR.UNkNOWN ? ""
                                                                     : guitar?.fingerboardName}
                         </td>
-                    </tr>
-                    <tr>
-                        <th>FretCount:&emsp;</th>
+                    </Str>
+                    <Str>
+                        <Sth>FretCount:&emsp;</Sth>
                         <td>{guitar?.fretCount! <= GUITAR.INVALID_NUMBER ? ""
                                                                          : guitar?.fretCount! + " frets"}
                         </td>
-                    </tr>
-                    <tr>
-                        <th>Pickups:&emsp;</th>
+                    </Str>
+                    <Str>
+                        <Sth>Pickups:&emsp;</Sth>
                         <td>{guitar?.pickups}</td>
-                    </tr>
-                    <tr>
-                        <th>Bridge:&emsp;</th>
+                    </Str>
+                    <Str>
+                        <Sth>Bridge:&emsp;</Sth>
                         <td>{guitar?.bridge}</td>
-                    </tr>
-                    <tr>
-                        <th>Controls:&emsp;</th>
+                    </Str>
+                    <Str>
+                        <Sth>Controls:&emsp;</Sth>
                         <td>{guitar?.controls}</td>
-                    </tr>
-                    <tr>
-                        <th>Inlays:&emsp;</th>
+                    </Str>
+                    <Str>
+                        <Sth>Inlays:&emsp;</Sth>
                         <td>{guitar?.inlays}</td>
-                    </tr>
-                    <tr>
-                        <th>Joint:&emsp;</th>
+                    </Str>
+                    <Str>
+                        <Sth>Joint:&emsp;</Sth>
                         <td>{guitar?.joint}</td>
-                    </tr>
-                    <tr>
-                        <th>ScaleLength:&emsp;</th>
+                    </Str>
+                    <Str>
+                        <Sth>ScaleLength:&emsp;</Sth>
                         <td>{guitar?.scaleLengthMm! <= GUITAR.INVALID_NUMBER ? ""
                                                                              : guitar?.scaleLengthMm! + " mm"}
                         </td>
-                    </tr>
-                    <tr>
-                        <th>Weight:&emsp;</th>
+                    </Str>
+                    <Str>
+                        <Sth>Weight:&emsp;</Sth>
                         <td>{guitar?.weight! <= GUITAR.INVALID_NUMBER ? ""
                                                                       : guitar?.weight! + " kg"}
                         </td>
-                    </tr>
+                    </Str>
                 </tbody>
             </table>
         </Sdiv>

@@ -1,19 +1,25 @@
 import { GuitarParams } from "../../types/Guitar";
 import { Code } from "../../types/Code";
 import Select from "../common/Select";
-import { ChangeEvent } from "react";
+import { ChangeEvent, useEffect } from "react";
 
 interface ArgProps {
-    guitarParams:  GuitarParams;
-    materials:  Code[] | null;
+    guitarParams: GuitarParams;
+    materials:    Code[] | null;
+    callback:     (gParams: GuitarParams) => Promise<void>;
 }
 
-const SearchMaterialTop = ({guitarParams, materials}: ArgProps) => {
+const SearchMaterialTop = ({guitarParams, materials, callback}: ArgProps) => {
     const gParams = guitarParams;
 
     const changeMaterialTopHandler = (e: ChangeEvent<HTMLSelectElement>) => {
         gParams.setBodyMaterialTopCd(Number(e.target.value));
     }
+
+    // 木材を選択した時点で検索実行
+    useEffect(() => {
+        callback(gParams)
+    }, [gParams.bodyMaterialTopCd])
 
     return (
         <Select onChange={changeMaterialTopHandler} >

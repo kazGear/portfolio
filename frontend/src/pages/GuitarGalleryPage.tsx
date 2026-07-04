@@ -69,7 +69,7 @@ const GuitarGalleryPage = () => {
                                   colors={colors}
                                   series={series}
                                   bodyMaterials={bodyMaterials}
-                                  guitarSearchHandler={guitarSearchHandler}
+                                  callback={guitarSearchHandler}
                                   />
             </OutSideFrame>
             <OutSideFrame styleObj={{width: "80%", minWidth: "280px",height: "85vh", marginLeft: "5px"}}>

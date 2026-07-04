@@ -1,20 +1,29 @@
+import { useEffect } from "react";
+import { GUITAR } from "../../lib/Constants";
 import { GuitarParams } from "../../types/Guitar";
 import Input from "../common/Input";
 
 interface ArgProps {
     guitarParams: GuitarParams;
+    callback:     (gParams: GuitarParams) => Promise<void>;
 }
 
-const SearchMinPrice = ({guitarParams}: ArgProps) => {
+const SearchMinPrice = ({guitarParams, callback}: ArgProps) => {
     const gParams = guitarParams;
 
     const changeMinPriceHandler = (e: React.FocusEvent<HTMLInputElement>) => {
         if (e.currentTarget.value === "") {
-            gParams.setMinPrice(-3); // 0で更新すると全件検索されなくなる
+            // 0で更新すると全件検索されなくなる
+            gParams.setMinPrice(GUITAR.PARSE_ERROR_PRICE);
         } else {
             gParams.setMinPrice(Number(e.currentTarget.value));
         }
     }
+
+    // 価格を設定した時点で検索実行
+    useEffect(() => {
+        callback(gParams)
+    }, [gParams.minPrice])
 
     return (
         <Input inputType="number"

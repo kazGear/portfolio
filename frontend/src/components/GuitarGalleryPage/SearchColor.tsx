@@ -1,19 +1,25 @@
 import { GuitarParams } from "../../types/Guitar";
 import { Code } from "../../types/Code";
 import Select from "../common/Select";
-import { ChangeEvent } from "react";
+import { ChangeEvent, useEffect } from "react";
 
 interface ArgProps {
-    guitarParams:        GuitarParams;
-    colors:              Code[] | null;
+    guitarParams: GuitarParams;
+    colors:       Code[] | null;
+    callback:     (gParams: GuitarParams) => Promise<void>;
 }
 
-const SearchColor = ({guitarParams, colors}: ArgProps) => {
+const SearchColor = ({guitarParams, colors, callback}: ArgProps) => {
     const gParams = guitarParams;
 
     const changeColorHandler = (e: ChangeEvent<HTMLSelectElement>) => {
         gParams.setColorCd(Number(e.target.value));
     }
+
+    // カラーを選択した時点で検索実行
+    useEffect(() => {
+        callback(gParams)
+    }, [gParams.colorCd])
 
     return (
         <Select onChange={changeColorHandler} >

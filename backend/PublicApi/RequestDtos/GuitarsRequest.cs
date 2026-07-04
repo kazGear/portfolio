@@ -49,6 +49,6 @@ namespace PublicApi.RequestDtos
 
         [Range(10, 100)]
         [FromQuery(Name = "pageSize")]
-        public int PageSize { get; init; } = 25; // 大量取得防止
+        public int PageSize { get; init; } = 50; // 大量取得防止
     }
 }

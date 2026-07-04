@@ -80,6 +80,12 @@ const Input = forwardRef<HTMLInputElement, ArgProps>(({
                         defaultValue={defaultValue}
                         min={min}
                         max={max}
+                        onKeyDown={(e) => {
+                            // Enter入力でフォーカスアウト = 入力済扱い
+                            if (e.key === "Enter") {
+                                e.currentTarget.blur();
+                            }
+                        }}
                         />
             </label>
             {

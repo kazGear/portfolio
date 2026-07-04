@@ -1,19 +1,25 @@
 import { GuitarParams } from "../../types/Guitar";
 import { Code } from "../../types/Code";
 import Select from "../common/Select";
-import { ChangeEvent } from "react";
+import { ChangeEvent, useEffect } from "react";
 
 interface ArgProps {
-    guitarParams:        GuitarParams;
-    series:              Code[] | null;
+    guitarParams: GuitarParams;
+    series:       Code[] | null;
+    callback:     (gParams: GuitarParams) => Promise<void>;
 }
 
-const SearchSeries = ({guitarParams, series}: ArgProps) => {
+const SearchSeries = ({guitarParams, series, callback}: ArgProps) => {
     const gParams = guitarParams;
 
     const changeSeriesHandler = (e: ChangeEvent<HTMLSelectElement>) => {
         gParams.setSeries(e.target.value);
     }
+
+    // シリーズを選択した時点で検索実行
+    useEffect(() => {
+        callback(gParams)
+    }, [gParams.series])
 
     return (
         <Select onChange={changeSeriesHandler} >

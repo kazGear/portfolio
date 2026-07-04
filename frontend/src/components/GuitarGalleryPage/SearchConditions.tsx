@@ -22,12 +22,12 @@ const Sp = styled.p`
 `;
 
 interface ArgProps {
-    guitarParams:        GuitarParams;
-    makers:              Code[] | null;
-    series:              Code[] | null;
-    colors:              Code[] | null;
-    bodyMaterials:       Code[] | null;
-    guitarSearchHandler: (gParams: GuitarParams) => Promise<void>;
+    guitarParams:  GuitarParams;
+    makers:        Code[] | null;
+    series:        Code[] | null;
+    colors:        Code[] | null;
+    bodyMaterials: Code[] | null;
+    callback: (gParams: GuitarParams) => Promise<void>;
 }
 
 const SearchConditions = ({guitarParams,
@@ -35,7 +35,7 @@ const SearchConditions = ({guitarParams,
                            series,
                            colors,
                            bodyMaterials,
-                           guitarSearchHandler}: ArgProps
+                           callback}: ArgProps
 ) => {
     const gParams = guitarParams;
 
@@ -58,30 +58,21 @@ const SearchConditions = ({guitarParams,
                 <Sp>並び順</Sp>
                 <Sp>選択ページ</Sp>
                 <Sp>ページサイズ</Sp>
+                <Sp>※自動検索&emsp;検索条件を変更すると自動的に検索されます。</Sp>
             </div>
             <div style={{marginTop: "10px", textAlign: "right"}}>
-                <SearchMaker guitarParams={gParams}
-                             makers={makers}/>
-                <SearchColor guitarParams={gParams}
-                             colors={colors}/>
-                <SearchSeries guitarParams={gParams}
-                              series={series}/>
-                <SearchName guitarParams={gParams}/>
-                <SearchMaterialTop guitarParams={gParams}
-                                   materials={bodyMaterials}/>
-                <SearchMaterialBack guitarParams={gParams}
-                                    materials={bodyMaterials}/>
-                <SearchMinPrice guitarParams={gParams}/>
-                <SearchMaxPrice guitarParams={gParams}/>
-                <SelectorSort guitarParams={gParams}/>
-                <SelectorOrder guitarParams={gParams}/>
-                <SelectorPage guitarParams={gParams}/>
-                <SelectorPageSize guitarParams={gParams}/>
-                <Button text="検索"
-                        onClick={() => guitarSearchHandler(gParams)}
-                        styleObj={{margin: "15px 20px 0px 0px"}}>
-
-                </Button>
+                <SearchMaker guitarParams={gParams} makers={makers} callback={callback}/>
+                <SearchColor guitarParams={gParams} colors={colors} callback={callback}/>
+                <SearchSeries guitarParams={gParams} series={series} callback={callback}/>
+                <SearchName guitarParams={gParams} callback={callback}/>
+                <SearchMaterialTop guitarParams={gParams} materials={bodyMaterials} callback={callback}/>
+                <SearchMaterialBack guitarParams={gParams} materials={bodyMaterials} callback={callback}/>
+                <SearchMinPrice guitarParams={gParams} callback={callback}/>
+                <SearchMaxPrice guitarParams={gParams} callback={callback}/>
+                <SelectorSort guitarParams={gParams} callback={callback}/>
+                <SelectorOrder guitarParams={gParams} callback={callback}/>
+                <SelectorPage guitarParams={gParams} callback={callback}/>
+                <SelectorPageSize guitarParams={gParams} callback={callback}/>
             </div>
         </div>
     );

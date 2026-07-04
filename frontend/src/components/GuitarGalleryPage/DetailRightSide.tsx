@@ -21,6 +21,10 @@ const DetailRightSide = ({selectedGuitars}: ArgProps) => {
             <table>
                 <tbody>
                     <tr>
+                        <th>Maker:&emsp;</th>
+                        <td>{guitar?.makerName}</td>
+                    </tr>
+                    <tr>
                         <th>Name:&emsp;</th>
                         <td>{guitar?.name}</td>
                     </tr>

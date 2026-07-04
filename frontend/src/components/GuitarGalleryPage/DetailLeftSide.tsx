@@ -1,4 +1,5 @@
 import { Guitar } from "../../types/Guitar";
+import { parsePrice } from "./GuitarFuncs";
 
 interface ArgProps {
     selectedGuitars: Guitar | null;
@@ -18,7 +19,7 @@ const DetailLeftSide = ({selectedGuitars}: ArgProps) => {
                     marginTop: "20px"
                 }}/>
             <h2 style={{margin: "0px"}}>
-                price:&emsp;{guitar?.price} 円
+                price:&emsp;{parsePrice(guitar?.price!)}
             </h2>
             <p>comment.</p>
             <p style={{

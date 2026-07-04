@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { COLORS } from "../../lib/Constants";
 import { Guitar } from "../../types/Guitar";
+import { parsePrice } from "./GuitarFuncs";
 
 const ScardFrame = styled.div`
     font-weight: 900;
@@ -42,7 +43,7 @@ const GuitarCard = ({guitar, callback}: ArgProps) => {
                         {guitar?.name}
                     </h3>
                     <p style={{marginTop: "0"}}>{guitar?.color}</p>
-                    <p>{guitar?.price} 円</p>
+                    <p>{parsePrice(guitar?.price)}</p>
                 </div>
             </ScardFrame>
         </Sbutton>

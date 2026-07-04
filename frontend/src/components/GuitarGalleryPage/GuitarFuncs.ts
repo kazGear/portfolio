@@ -54,9 +54,9 @@ export const parsePrice = (price: number | undefined): string => {
     if (price === GUITAR.OPEN_PRICE) {
         result = "OPEN PRICE";
     } else if (price <= GUITAR.UNDEFINED_PRICE) {
-        result = "?????? 円";
+        result = "???,??? 円";
     } else {
-        result = price.toLocaleString("ja-JP") + " 円";
+        result = price.toLocaleString("ja-JP") + " 円"; // 3桁区切り
     }
     return result;
 }

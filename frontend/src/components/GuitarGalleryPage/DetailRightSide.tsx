@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { Guitar } from "../../types/Guitar";
+import { GUITAR } from "../../lib/Constants";
 
 const Sdiv = styled.div`
     width: 50%;
@@ -41,15 +42,18 @@ const DetailRightSide = ({selectedGuitars}: ArgProps) => {
                     </tr>
                     <tr>
                         <th>NeckMaterial:&emsp;</th>
-                        <td>{guitar?.neckMaterial}</td>
+                        <td>{guitar?.neckMaterial === GUITAR.UNkNOWN ? ""
+                                                                     : guitar?.neckMaterialName}</td>
                     </tr>
                     <tr>
                         <th>Fingerboard:&emsp;</th>
-                        <td>{guitar?.fingerboard}</td>
+                        <td>{guitar?.fingerboard === GUITAR.UNkNOWN ? ""
+                                                                    : guitar?.fingerboardName}</td>
                     </tr>
                     <tr>
                         <th>FretCount:&emsp;</th>
-                        <td>{guitar?.fretCount! < 0 ? "" : guitar?.fretCount! + " frets"}</td>
+                        <td>{guitar?.fretCount! <= GUITAR.INVALID_NUMBER ? ""
+                                                                         : guitar?.fretCount! + " frets"}</td>
                     </tr>
                     <tr>
                         <th>Pickups:&emsp;</th>
@@ -73,11 +77,13 @@ const DetailRightSide = ({selectedGuitars}: ArgProps) => {
                     </tr>
                     <tr>
                         <th>ScaleLength:&emsp;</th>
-                        <td>{guitar?.scaleLengthMm! < 0 ? "" : guitar?.scaleLengthMm! + " mm"}</td>
+                        <td>{guitar?.scaleLengthMm! <= GUITAR.INVALID_NUMBER ? ""
+                                                                             : guitar?.scaleLengthMm! + " mm"}</td>
                     </tr>
                     <tr>
                         <th>Weight:&emsp;</th>
-                        <td>{guitar?.weight! < 0 ? "" : guitar?.weight! + " kg"}</td>
+                        <td>{guitar?.weight! <= GUITAR.INVALID_NUMBER ? ""
+                                                                      : guitar?.weight! + " kg"}</td>
                     </tr>
                 </tbody>
             </table>

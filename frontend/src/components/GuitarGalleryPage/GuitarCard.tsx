@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { COLORS } from "../../lib/Constants";
 import { Guitar } from "../../types/Guitar";
-import { parsePrice } from "./GuitarFuncs";
+import { getColorString, parsePrice } from "./GuitarFuncs";
 
 const ScardFrame = styled.div`
     font-weight: 900;
@@ -29,6 +29,8 @@ interface ArgProps {
 }
 
 const GuitarCard = ({guitar, callback}: ArgProps) => {
+    const color = getColorString(guitar?.colorCd);
+
     return (
         <Sbutton onClick={() => callback(guitar)}>
             <ScardFrame>
@@ -41,7 +43,12 @@ const GuitarCard = ({guitar, callback}: ArgProps) => {
                 </div>
                 <div style={{textAlign: "center", height: "60%"}}>
                     <p style={{margin: "0px 20px"}}>{guitar?.makerName}</p>
-                    <h3 style={{margin: "0px 20px", color: COLORS.ACCENT_FONT_PINK}}>
+                    <h3 style={{
+                        margin: "0px 20px",
+                        color: color,
+                        textShadow:
+                            "-1px -1px 0 black, 1px -1px 0 black, -1px  1px 0 black, 1px  1px 0 black"
+                        }}>
                         {guitar?.name}
                     </h3>
                     <p style={{margin: "0px 20px"}}>{guitar?.color}</p>

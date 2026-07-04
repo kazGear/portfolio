@@ -1,5 +1,5 @@
 import { isEmpty } from "../../lib/CommonLogic";
-import { GUITAR } from "../../lib/Constants";
+import { GUITAR, GUITAR_COLORS } from "../../lib/Constants";
 import { GuitarParams } from "../../types/Guitar";
 
 export const createQueryParams = (gParams: GuitarParams): URLSearchParams => {
@@ -57,6 +57,20 @@ export const parsePrice = (price: number | undefined): string => {
         result = "???,??? 円";
     } else {
         result = price.toLocaleString("ja-JP") + " 円"; // 3桁区切り
+    }
+    return result;
+}
+
+export const getColorString = (color: number | undefined): string => {
+    if (color === undefined) return String(color);
+
+    let result: string = "";
+
+    for (const [key, value] of Object.entries(GUITAR_COLORS)) {
+        if (color === Number(key)) {
+            result = value;
+            break;
+        }
     }
     return result;
 }

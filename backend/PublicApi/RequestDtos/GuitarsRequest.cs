@@ -17,7 +17,7 @@ namespace PublicApi.RequestDtos
         [FromQuery(Name = "series")]
         public string? Series { get; init; }
 
-        [Range(0, 20)]
+        [Range(0, 99)]
         [FromQuery(Name = "colorCd")]
         public int? ColorCd { get; init; }
 

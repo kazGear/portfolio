@@ -33,6 +33,26 @@ export const COLORS = {
     LOGINED_COLOR: `${ACCENT_COLOR}`
 } as const;
 
+export const GUITAR_COLORS = {
+    1: "Red",
+    2: "Pink",
+    3: "Orange",
+    4: "Yellow",
+    5: "Green",
+    6: "SkyBlue",
+    7: "Blue",
+    8: "Purple",
+    9: "Gray",
+    10: "Black",
+    11: "White",
+    12: "Natural",
+    13: "Brown",
+    14: "Gold",
+    15: "Silver",
+    99: "Black", // 例外は黒で表示する
+} as const;
+
+
 export const SIZE = {
     INPUT_WIDTH: "150px",
     INPUT_HEIGHT: "22px"

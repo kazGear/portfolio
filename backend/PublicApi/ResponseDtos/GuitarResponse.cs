@@ -26,6 +26,8 @@
 
         public int Fingerboard { get; init; }
 
+        public string FingerboardName { get; init; } = string.Empty;
+
         public int FretCount { get; init; }
 
         public string Inlays { get; init; } = string.Empty;
@@ -33,6 +35,8 @@
         public string Joint { get; init; } = string.Empty;
 
         public int NeckMaterial { get; init; }
+
+        public string NeckMaterialName { get; init; } = string.Empty;
 
         public string Pickups { get; init; } = string.Empty;
 

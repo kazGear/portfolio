@@ -9,30 +9,41 @@ public static class GuitarsSQL
     {
         string SQL = @$"
             SELECT
-                   maker              AS Maker,
-                   name               AS Name,
-                   color              AS Color,
-                   color_cd           AS ColorCd,
-                   body_finish        AS BodyFinish,
-                   body_material      AS BodyMaterial,
-                   body_material_top  AS BodyMaterialTop,
-                   body_material_back AS BodyMaterialBack,
-                   bridge             AS Bridge,
-                   controls           AS Controls,
-                   comment            AS Comment,
-                   fingerboard        AS Fingerboard,
-                   fret_count         AS FretCount,
-                   inlays             AS Inlays,
-                   joint              AS Joint,
-                   neck_material      AS NeckMaterial,
-                   pickups            AS Pickups,
-                   price              AS Price,
-                   scale_length_mm    AS ScaleLengthMm,
-                   series             AS Series,
-                   src                AS Src,
-                   weight             AS Weight
+                   guitars.maker              AS Maker,
+                   guitars.name               AS Name,
+                   guitars.color              AS Color,
+                   guitars.color_cd           AS ColorCd,
+                   guitars.body_finish        AS BodyFinish,
+                   guitars.body_material      AS BodyMaterial,
+                   guitars.body_material_top  AS BodyMaterialTop,
+                   guitars.body_material_back AS BodyMaterialBack,
+                   guitars.bridge             AS Bridge,
+                   guitars.controls           AS Controls,
+                   guitars.comment            AS Comment,
+                   guitars.fingerboard        AS Fingerboard,
+                   fingerboard.name           AS FingerboardName,
+                   guitars.fret_count         AS FretCount,
+                   guitars.inlays             AS Inlays,
+                   guitars.joint              AS Joint,
+                   guitars.neck_material      AS NeckMaterial,
+                   neck.name                  AS NeckMaterialName,
+                   guitars.pickups            AS Pickups,
+                   guitars.price              AS Price,
+                   guitars.scale_length_mm    AS ScaleLengthMm,
+                   guitars.series             AS Series,
+                   guitars.src                AS Src,
+                   guitars.weight             AS Weight
               FROM
-                   t_guitars
+                   t_guitars AS guitars
+        INNER JOIN
+                   m_code AS neck
+                ON guitars.neck_material = neck.VALUE
+               AND neck.code_id          = 'code010'
+        INNER JOIN
+                   m_code AS fingerboard
+                ON guitars.fingerboard = fingerboard.VALUE
+               AND fingerboard.code_id = 'code010'
+
              WHERE
                    TRUE
                    {conditions}

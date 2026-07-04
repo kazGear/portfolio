@@ -155,9 +155,9 @@ export const USER_ROLE = {
 } as const;
 
 export const GUITAR = {
-    OPEN_PRICE: 1,
-    UNDEFINED_PRICE: 2,
-    PARSE_ERROR_PRICE: 3,
+    OPEN_PRICE: -1,
+    UNDEFINED_PRICE: -2,
+    PARSE_ERROR_PRICE: -3,
 
     INVALID_NUMBER: -1,
     UNkNOWN: 99,

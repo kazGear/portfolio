@@ -7,6 +7,7 @@ const ScardFrame = styled.div`
     font-weight: 900;
     width: 220px;
     height: 250px;
+    overflow-y: hidden;
     margin: 10px 10px 20px 5px;
     background: ${COLORS.BASE_BACKGROUND};
     border-radius: 15px;
@@ -31,14 +32,15 @@ const GuitarCard = ({guitar, callback}: ArgProps) => {
     return (
         <Sbutton onClick={() => callback(guitar)}>
             <ScardFrame>
-                <div style={{textAlign: "center", margin: "10px", height: "50%"}}>
+                <div style={{textAlign: "center", margin: "10px", height: "40%"}}>
                     {/* モーダルにギター情報を渡す */}
                     <img style={{width:"90%", height:"90%", objectFit: "contain"}}
                          src={guitar?.src}
                          alt={guitar?.name + " " + guitar?.color}
                          />
                 </div>
-                <div style={{textAlign: "center", height: "50%"}}>
+                <div style={{textAlign: "center", height: "60%"}}>
+                    <p style={{margin: "0px 20px"}}>{guitar?.makerName}</p>
                     <h3 style={{margin: "0px 20px", color: COLORS.ACCENT_FONT_PINK}}>
                         {guitar?.name}
                     </h3>

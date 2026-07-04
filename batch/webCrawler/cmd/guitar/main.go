@@ -20,10 +20,12 @@ func main() {
 	database := db.Connect()
 	defer database.Close()
 	repository := repository.NewGuitarRepository(database)
-	// // クローラー起動
+
+	// クローラー起動
 	service := service.NewGuitarCrawlerService(repository)
 	service.RunCrawler()
 
+	// 過去ログの整理
 	logPath 		 := os.Getenv("LOGS_PATH")
 	logsKeepCount, _ := strconv.Atoi(os.Getenv("LOGS_KEEP_COUNT"))
 	utils.CleanupLogs(

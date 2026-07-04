@@ -47,17 +47,20 @@ const DetailRightSide = ({selectedGuitars}: ArgProps) => {
                     <tr>
                         <th>NeckMaterial:&emsp;</th>
                         <td>{guitar?.neckMaterial === GUITAR.UNkNOWN ? ""
-                                                                     : guitar?.neckMaterialName}</td>
+                                                                     : guitar?.neckMaterialName}
+                        </td>
                     </tr>
                     <tr>
                         <th>Fingerboard:&emsp;</th>
                         <td>{guitar?.fingerboard === GUITAR.UNkNOWN ? ""
-                                                                    : guitar?.fingerboardName}</td>
+                                                                    : guitar?.fingerboardName}
+                        </td>
                     </tr>
                     <tr>
                         <th>FretCount:&emsp;</th>
                         <td>{guitar?.fretCount! <= GUITAR.INVALID_NUMBER ? ""
-                                                                         : guitar?.fretCount! + " frets"}</td>
+                                                                         : guitar?.fretCount! + " frets"}
+                        </td>
                     </tr>
                     <tr>
                         <th>Pickups:&emsp;</th>
@@ -82,12 +85,14 @@ const DetailRightSide = ({selectedGuitars}: ArgProps) => {
                     <tr>
                         <th>ScaleLength:&emsp;</th>
                         <td>{guitar?.scaleLengthMm! <= GUITAR.INVALID_NUMBER ? ""
-                                                                             : guitar?.scaleLengthMm! + " mm"}</td>
+                                                                             : guitar?.scaleLengthMm! + " mm"}
+                        </td>
                     </tr>
                     <tr>
                         <th>Weight:&emsp;</th>
                         <td>{guitar?.weight! <= GUITAR.INVALID_NUMBER ? ""
-                                                                      : guitar?.weight! + " kg"}</td>
+                                                                      : guitar?.weight! + " kg"}
+                        </td>
                     </tr>
                 </tbody>
             </table>

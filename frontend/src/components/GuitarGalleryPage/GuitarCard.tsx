@@ -31,6 +31,13 @@ interface ArgProps {
 const GuitarCard = ({guitar, callback}: ArgProps) => {
     const color = getColorString(guitar?.colorCd);
 
+    let fontShadow = "";
+    if (color === "Black") {
+        fontShadow = "none"
+    } else {
+        fontShadow = "-1px -1px 0 #999999, 1px -1px 0 #999999, -1px  1px 0 #999999, 1px  1px 0 #999999"
+    }
+
     return (
         <Sbutton onClick={() => callback(guitar)}>
             <ScardFrame>
@@ -46,8 +53,7 @@ const GuitarCard = ({guitar, callback}: ArgProps) => {
                     <h3 style={{
                         margin: "0px 20px",
                         color: color,
-                        textShadow:
-                            "-1px -1px 0 black, 1px -1px 0 black, -1px  1px 0 black, 1px  1px 0 black"
+                        textShadow: fontShadow
                         }}>
                         {guitar?.name}
                     </h3>

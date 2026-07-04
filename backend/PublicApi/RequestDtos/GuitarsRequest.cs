@@ -29,11 +29,11 @@ namespace PublicApi.RequestDtos
         [FromQuery(Name = "bodyMaterialBackCd")]
         public int? BodyMaterialBackCd { get; init; }
 
-        [Range(-3, int.MaxValue)] // 1: parse error, 2: open price, 3: undefined
+        [Range(-3, int.MaxValue)] // -1: parse error, -2: open price, -3: undefined
         [FromQuery(Name = "minPrice")]
         public int? MinPrice { get; init; }
 
-        [Range(0, int.MaxValue)]
+        [Range(-3, int.MaxValue)]
         [FromQuery(Name = "maxPrice")]
         public int? MaxPrice { get; init; }
 

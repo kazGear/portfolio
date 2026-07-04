@@ -1,4 +1,5 @@
 import { isEmpty } from "../../lib/CommonLogic";
+import { GUITAR } from "../../lib/Constants";
 import { GuitarParams } from "../../types/Guitar";
 
 export const createQueryParams = (gParams: GuitarParams): URLSearchParams => {
@@ -16,23 +17,18 @@ export const createQueryParams = (gParams: GuitarParams): URLSearchParams => {
     if (!isEmpty(gParams.series))
         uParams.append("series", gParams.series);
 
-    // 設計ミスにより０に意味を持たせてしまった
-    // TODO: コード設計を見直し、0は空ける。
-    if (gParams.bodyMaterialTopCd > -1)
+    if (gParams.bodyMaterialTopCd > 0)
         uParams.append("bodyMaterialTopCd", gParams.bodyMaterialTopCd.toString());
 
-    // 設計ミスにより０に意味を持たせてしまった
-    // TODO: コード設計を見直し、0は空ける。
-    if (gParams.bodyMaterialBackCd > -1)
+    if (gParams.bodyMaterialBackCd > 0)
         uParams.append("bodyMaterialBackCd", gParams.bodyMaterialBackCd.toString());
 
     // 例外対策で、マイナス値に意味を持たせている
-    // -1: price parse error, -2: open price -3: 未定義
-    // TODO: -1: open price, -2: 未定義 -3: price parse error に修正
+    // -1: open price, -2: 未定義 -3: price parse error
     if (gParams.minPrice >= -3)
         uParams.append("minPrice", gParams.minPrice.toString());
 
-    if (gParams.maxPrice > 0)
+    if (gParams.maxPrice >= -3)
         uParams.append("maxPrice", gParams.maxPrice.toString());
 
     if (!isEmpty(gParams.order))
@@ -48,4 +44,19 @@ export const createQueryParams = (gParams: GuitarParams): URLSearchParams => {
         uParams.append("pageSize", gParams.pageSize.toString());
 
     return uParams;
+}
+
+export const parsePrice = (price: number | undefined): string => {
+    if (price === undefined) return String(price);
+
+    let result: string;
+
+    if (price === GUITAR.OPEN_PRICE) {
+        result = "OPEN PRICE";
+    } else if (price <= GUITAR.UNDEFINED_PRICE) {
+        result = "?????? 円";
+    } else {
+        result = price.toLocaleString("ja-JP") + " 円";
+    }
+    return result;
 }

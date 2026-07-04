@@ -73,9 +73,9 @@ const (
 
 // price
 const (
-	ParseErrorPrice int = -1
-	OpenPrice 		int = -2
-	UndefinedPrice  int = -3
+	OpenPrice 		int = -1
+	UndefinedPrice  int = -2
+	ParseErrorPrice int = -3
 )
 
 // others

@@ -136,13 +136,13 @@ export const PREFIX = {
 export const DECO = {
     BLOCK_LINE: "■＋■＋■＋■＋■＋■＋■＋■＋■＋■＋■＋■＋■＋■＋■＋■＋■＋■＋■＋",
     BLOCK_LINE_R: "＋■＋■＋■＋■＋■＋■＋■＋■＋■＋■＋■＋■＋■＋■＋■＋■＋■＋■＋■"
-}
+} as const;
 
 export const EDIT_TYPE = {
     MONSTER_STATUS: 1,
     MONSTER_SKILL: 2,
     USE_MONSTER: 3
-}
+} as const;
 
 export const USER_ROLE = {
     NORMAL: 1,
@@ -152,4 +152,13 @@ export const USER_ROLE = {
     BLACK_LIST: 5,
     ADMIN: 90,
     SUPER_ADMIN: 91
-}
+} as const;
+
+export const GUITAR = {
+    OPEN_PRICE: 1,
+    UNDEFINED_PRICE: 2,
+    PARSE_ERROR_PRICE: 3,
+
+    INVALID_NUMBER: -1,
+    UNkNOWN: 99,
+} as const;

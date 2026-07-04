@@ -36,10 +36,12 @@ export interface Guitar {
     controls:         string;
     comment:          string;
     fingerboard:      number;
+    fingerboardName:  string;
     fretCount:        number;
     inlays:           string;
     joint:            string;
     neckMaterial:     number;
+    neckMaterialName: number;
     pickups:          string;
     price:            number;
     scaleLengthMm:    number;

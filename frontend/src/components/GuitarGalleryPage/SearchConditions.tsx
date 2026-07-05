@@ -13,7 +13,6 @@ import SelectorOrder from "./SelectorOrder";
 import SelectorSort from "./SelectorSort";
 import SelectorPage from "./SelectorPage";
 import SelectorPageSize from "./SelectorPageSize";
-import Button from "../common/Button";
 
 const Sp = styled.p`
     font-size: 13px;

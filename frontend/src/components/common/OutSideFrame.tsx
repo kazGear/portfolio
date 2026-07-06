@@ -3,7 +3,7 @@ import { COLORS } from "../../lib/Constants";
 
 
 const Sdiv = styled.div`
-    margin: 20px;
+    margin: 20px 0px;
     border: solid 1px ${COLORS.BORDER_COLOR};
     box-shadow: 4px 4px ${COLORS.SHADOW};
     overflow: overlay;

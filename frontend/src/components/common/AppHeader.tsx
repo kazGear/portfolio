@@ -32,7 +32,7 @@ const Sheader = styled.header`
 const SdivButtonFrame = styled.div`
     display: flex;
     margin-right: auto;
-    margin-left: 10px;
+    margin-left: 0px;
 `;
 const Sh1 = styled.h1`
     margin: 20px;
@@ -99,6 +99,10 @@ const AppHeader = ({title}: ArgProps) => {
                         width={90}
                         onClick={() => navigate("/BattleResultPage")}
                         disabled={!validToken}/>
+                <Button text="経歴書"
+                        width={60}
+                        onClick={() => navigate("/CareerPage")}
+                        disabled={false}/>
                 <Button text="ユーザーページ"
                         width={120}
                         onClick={() => navigate("/UserPage")}
@@ -107,14 +111,10 @@ const AppHeader = ({title}: ArgProps) => {
                         width={80}
                         onClick={() => navigate("/ShopPage")}
                         disabled={!validToken}/>
-                <Button text="設定"
+                {/* <Button text="設定"
                         width={60}
                         onClick={() => navigate("/EditPage")}
-                        disabled={!validToken || !isAdmin}/>
-                <Button text="ログイン"
-                        width={80}
-                        onClick={() => navigate("/LoginPage")}
-                        disabled={false}/>
+                        disabled={!validToken || !isAdmin}/> */}
             </SdivButtonFrame>
 
             <div style={{display: "flex", alignItems: "center"}}>

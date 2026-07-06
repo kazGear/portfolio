@@ -62,7 +62,7 @@ const Input = forwardRef<HTMLInputElement, ArgProps>(({
     }, [showMessage]);
 
     return (
-        <div style={{margin: "5px 0 5px 0"}}>
+        <>
             <label style={{marginRight: "10px"}}>
                 {labelTitle}
                 <Sinput type={inputType}
@@ -91,7 +91,7 @@ const Input = forwardRef<HTMLInputElement, ArgProps>(({
             {
                 show ? <Sspan>{alertMessage}</Sspan> : ""
             }
-        </div>
+        </>
     );
 });
 

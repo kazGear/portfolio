@@ -15,8 +15,18 @@ const PrPoint = ({prPoint}: ArgProps) => {
                 prPoint.map((pr, idx) => {
                     return (
                         <>
-                            <p key={pr.point}>◆ {pr.point}</p>
-                            <p key={pr.point + "comment"}>{pr.comment}</p>
+                            <p key={idx + pr.point}>◆ {pr.point} ◆</p>
+                            {
+                                // 改行文字列が機能しないのでHTML<br/>に変換
+                                pr.comment.split("<br/>").map(elem => {
+                                    return (
+                                        <>
+                                            <span key={idx + elem}>{elem}</span>
+                                            <br/>
+                                        </>
+                                    )
+                                })
+                            }
                         </>
                     )
                 })

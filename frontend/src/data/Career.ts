@@ -112,7 +112,7 @@ export const portfolio = {
     "sourceURLCaption": "ソース（React, TypeScript, C#/ASP.NET CORE, Go言語, PostgreSQL, docker）",
     "sourceURL": "https://github.com/kazGear/portfolio",
     "comment": [
-        "[ メインコンテンツ ]",
+        "--- メインコンテンツ ---",
         "◆ Guitar Gallery（観賞用、自動検索）",
         "◆ Guitar REST API（ギターデータ取得API）",
         "◆ Monster Battle Arena（とある複数のミニゲームをブラウザ上で表現）",

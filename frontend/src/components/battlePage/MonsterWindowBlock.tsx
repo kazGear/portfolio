@@ -6,8 +6,8 @@ import MonsterSkillsBlock from "./MonsterSkillsBlock";
 
 const SdivMonsterWindowFrame = styled.div`
     text-align: center;
-    margin: 0 10px 0 10px;
-    min-width: 180px;
+    margin: 0 5px 0 5px;
+    min-width: 155px;
 `;
 
 interface ArgProps {

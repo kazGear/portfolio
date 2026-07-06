@@ -12,7 +12,7 @@ const SdivDialogFrame = styled.div`
     max-width: 70%;
     min-height: 20%;
     max-height: 70%;
-    border-radius: 20px;
+    border-radius: 10px;
     z-index: 3000;
 `;
 

@@ -10,6 +10,10 @@ const SdivMonsterSkillsFrame = styled.div`
 `;
 const Slist = styled.li`
     list-style: none;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 `;
 const Sol = styled.ol`
     padding: 0 5px 0 5px;

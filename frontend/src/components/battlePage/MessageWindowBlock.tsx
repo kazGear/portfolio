@@ -4,7 +4,7 @@ import React from "react";
 import { MetaDataDTO } from "../../types/MonsterBattle";
 
 const SdivMessageWindowFrame = styled.div`
-    height: 45%;
+    min-height: 30vh;
     border: inset 4px ${COLORS.BORDER_COLOR};
     overflow-y: scroll;
     background: rgba(255, 255, 255, 0.8);
@@ -22,7 +22,7 @@ const MessageWindowBlock = ({shortLog}: ArgProps) => {
                 {
                     shortLog.map((log, index) => {
                         return (
-                            <React.Fragment key={index}>
+                            <React.Fragment key={index + log.Message}>
                                 {log.Message}<br />
                             </React.Fragment>
                         )

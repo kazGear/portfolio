@@ -47,21 +47,21 @@ const CommandButtonBlock = ({
             <Button
                 id={"nextTurn"}
                 text={"戦闘開始！"}
-                styleObj={{width: "30%"}}
+                styleObj={{width: "30%", height: "30px"}}
                 onClick={battleStartHandler}
                 disabled={battleBtnDisabled}
                 />
             <Button
                 id={"nextMessage>"}
                 text={"次のターン！"}
-                styleObj={{width: "30%"}}
+                styleObj={{width: "30%", height: "30px"}}
                 onClick={nextTurnHandler}
                 disabled={nextBtnDisabled}
                 />
             <Button
                 id={"nextMessage>"}
                 text={"リセット"}
-                styleObj={{width: "30%"}}
+                styleObj={{width: "30%", height: "30px"}}
                 onClick={resetHandler}
                 />
         </SdivButtonFrame>

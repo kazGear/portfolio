@@ -16,7 +16,7 @@ import { useCheckToken } from "../hooks/useHooksOfCommon";
 
 const SdivOutSideFrame = styled.div`
     position: relative;
-    margin: 80px 20px 20px 20px;
+    margin: 20px 20px 20px 20px;
     height: 100%;
 `;
 const SdivMonsterWindowFrame = styled.div`
@@ -162,6 +162,7 @@ const BattlePage = () => {
                     monsterCount={monsterCount}
                     battleStarted={battleStarted}
                     />
+                {/* メッセージ部 */}
                 <MessageWindowBlock
                     shortLog={shortLog}
                     />

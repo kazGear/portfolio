@@ -105,7 +105,14 @@ const IndexPage = () => {
 
             </div>
 
-            <h3 style={{color: `${COLORS.ALERT_MESSAGE_COLOR}`}}>※スマホ非対応、Chrome, edge推奨。</h3>
+            <h3 style={{
+                color: `${COLORS.ACCENT_FONT_PINK}`,
+                background: "white",
+                height: "30px",
+                borderRadius: "15px",
+                }}>
+                &emsp;※対応環境：PC(Chrome, edge推奨) ~ iPad mini(横画面1024px)
+            </h3>
         </SdivLinkFrame>
     );
 };

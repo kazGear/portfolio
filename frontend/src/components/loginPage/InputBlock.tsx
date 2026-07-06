@@ -9,14 +9,15 @@ const InputBlock = ({setInputLoginId, setInputPassword}: ArgProps) => {
     return (
         <div>
             <Input
-                labelTitle="ログインID"
+                labelTitle="ログインID："
                 inputType="text"
                 id="loginId"
                 name="loginId"
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setInputLoginId(e.target.value)}
                 />
+            <br/>
             <Input
-                labelTitle="パスワード"
+                labelTitle="パスワード："
                 inputType="password"
                 id="password"
                 name="password"

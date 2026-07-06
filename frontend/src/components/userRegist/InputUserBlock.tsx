@@ -39,42 +39,43 @@ const InputUserBlock = ({
         <div>
             <Input
                 id="registLoginId"
-                labelTitle="ログインID"
+                labelTitle="ログインID："
                 inputType="text"
                 onChange={inputHandlerLoginId}
                 showMessage={usableLoginId}
                 alertMessage="既に使用されています。"
                 ref={refLoginId}
             />
-
+            <br/>
             <Input
                 id="registPassword"
-                labelTitle="パスワード"
+                labelTitle="パスワード："
                 inputType="password"
                 onChange={inputHandlerPassword}
                 showMessage={usablePassword}
                 alertMessage="任意の４文字以上で設定してください。"
                 ref={refPassword}
             />
-
+            <br/>
             <Input
                 id="registDispName"
-                labelTitle="ユーザー名"
+                labelTitle="ユーザー名："
                 inputType="text"
                 onChange={inputHandlerDispName}
                 showMessage={usableDispName}
                 alertMessage="既に使用されている名称です。"
                 ref={refDispName}
             />
-
+            <br/>
             <Input
                 id="registDispShortName"
-                labelTitle="ユーザー略称"
+                labelTitle="ユーザー略称："
                 inputType="text"
                 onChange={inputHandlerDispShortName}
                 showMessage={usableDispShortName}
                 alertMessage="既に使用されている略称です。"
                 ref={refDispShortName}
+                styleObj={{width: "135px"}}
             />
         </div>
     );

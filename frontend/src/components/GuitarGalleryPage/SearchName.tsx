@@ -20,7 +20,10 @@ const SearchName = ({guitarParams, callback}: ArgProps) => {
     }, [gParams.name])
 
     return (
-        <Input inputType="text" onBlur={changeNameHandler} placeholder="（部分一致検索）"/>
+        <Input inputType="text"
+               onBlur={changeNameHandler}
+               placeholder="（部分一致検索）"
+               styleObj={{marginTop: "2px"}}/>
     );
 }
 export default SearchName;

@@ -28,7 +28,8 @@ const SearchMaxPrice = ({guitarParams, callback}: ArgProps) => {
         <Input inputType="number"
                onBlur={changeMaxPriceHandler}
                min="-3"
-               placeholder="（金額を入力）"/>
+               placeholder="（金額を入力）"
+               styleObj={{marginTop: "8px"}}/>
     );
 }
 export default SearchMaxPrice;

@@ -63,7 +63,7 @@ const GuitarGalleryPage = () => {
 
     return (
         <div style={{display: "flex"}}>
-            <OutSideFrame styleObj={{width: "20%", minWidth: "280px", height: "85vh"}}>
+            <OutSideFrame styleObj={{width: "20%", minWidth: "280px", height: "85vh", marginLeft: "20px"}}>
                 <SearchConditions guitarParams={gParams}
                                   makers={makers}
                                   colors={colors}
@@ -72,7 +72,7 @@ const GuitarGalleryPage = () => {
                                   callback={guitarSearchHandler}
                                   />
             </OutSideFrame>
-            <OutSideFrame styleObj={{width: "80%", minWidth: "280px",height: "85vh", marginLeft: "5px"}}>
+            <OutSideFrame styleObj={{width: "80%", minWidth: "280px",height: "85vh", margin: "20px 20px 0px 10px"}}>
                 <GuitarCards guitarsRes={guitars}
                              callback={getSelectedGuitarHandler}>
                 </GuitarCards>

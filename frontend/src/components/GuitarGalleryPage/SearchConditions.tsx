@@ -57,7 +57,6 @@ const SearchConditions = ({guitarParams,
                 <Sp>並び順</Sp>
                 <Sp>選択ページ</Sp>
                 <Sp>ページサイズ</Sp>
-                <Sp>※自動検索&emsp;検索条件を変更すると自動的に検索されます。</Sp>
             </div>
             <div style={{marginTop: "10px", textAlign: "right"}}>
                 <SearchMaker guitarParams={gParams} makers={makers} callback={callback}/>
@@ -72,6 +71,9 @@ const SearchConditions = ({guitarParams,
                 <SelectorOrder guitarParams={gParams} callback={callback}/>
                 <SelectorPage guitarParams={gParams} callback={callback}/>
                 <SelectorPageSize guitarParams={gParams} callback={callback}/>
+                <p style={{marginRight: "20px", textAlign: "left"}}>
+                    ※自動検索<br/>検索条件を変更すると自動的に検索されます。
+                </p>
             </div>
         </div>
     );

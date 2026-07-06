@@ -24,7 +24,8 @@ const SelectorPageSize = ({guitarParams, callback}: ArgProps) => {
                onBlur={changePageSizeHandler}
                placeholder=" (10 ~ 100) default 50"
                min="10"
-               max="100"/>
+               max="100"
+               styleObj={{marginTop: "8px"}}/>
     );
 }
 export default SelectorPageSize;

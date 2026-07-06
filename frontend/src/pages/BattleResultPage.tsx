@@ -10,7 +10,6 @@ import { useCheckToken } from "../hooks/useHooksOfCommon";
 
 const SdivOutsideFrame = styled.div`
     height: 100%;
-    margin-top: 70px;
 `;
 const SdivOptionFrame = styled.div`
     display: flex;
@@ -36,15 +35,14 @@ const BattleResultPage = () => {
         <SdivOutsideFrame>
             <SdivOptionFrame>
                 {/* 検索条件部 */}
-
-                <OutSideFrame styleObj={{width: "55%", marginBottom: 0}}>
+                <OutSideFrame styleObj={{width: "55%", margin: "20px 5px 0px 0px"}}>
                     <BattleReportControllerBlock setMonsterReport={setMonsterReport}
                                                  sortType={sortType}
                                                  setIsNowLoadingMonsterReport={setIsNowLoadingMonsterReport}/>
                 </OutSideFrame>
 
                 {/* 検索条件部 */}
-                <OutSideFrame styleObj={{width: "35%", marginBottom: 0}}>
+                <OutSideFrame styleObj={{width: "35%", margin: "20px 0px 0px 5px"}}>
                     <MonsterReportControllerBlock setBattleReport={setBattleReport}
                                                   setIsNowLoadingBattleReport={setIsNowLoadingBattleReport}/>
                 </OutSideFrame>
@@ -52,13 +50,13 @@ const BattleResultPage = () => {
 
             <SdivReportFrame>
                 {/* レポート部 */}
-                <OutSideFrame styleObj={{width: "55%"}}>
+                <OutSideFrame styleObj={{width: "55%", height: "60vh", margin: "20px 5px 0px 0px"}}>
                     <MonsterReport monsterReport={monsterReport}
                                    setSortType={setSortType}
                                    isNowLoadingMonsterReport={isNowLoadingMonsterReport}/>
                  </OutSideFrame>
                 {/* レポート部 */}
-                <OutSideFrame styleObj={{width: "35%"}}>
+                <OutSideFrame styleObj={{width: "35%", height: "60vh", margin: "20px 0px 0px 5px"}}>
                     <BattleReportBlock battleReport={battleReport}
                                        isNowLoadingBattleReport={isNowLoadingBattleReport} />
                 </OutSideFrame>

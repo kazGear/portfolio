@@ -3,11 +3,11 @@ import { Code } from "../types/Code";
 import { api } from "../lib/apiClient";
 import { Guitar, GuitarParams, GuitarsResponse } from "../types/Guitar";
 import { useGuitarParams } from "../hooks/useGuitarParams";
-import { createQueryParams } from "../components/GuitarGalleryPage/GuitarFuncs";
+import { createQueryParams } from "../components/guitarGalleryPage/GuitarFuncs";
 import OutSideFrame from "../components/common/OutSideFrame";
-import GuitarCards from "../components/GuitarGalleryPage/GuitarCards";
-import SearchConditions from "../components/GuitarGalleryPage/SearchConditions";
-import DetailModal from "../components/GuitarGalleryPage/DetailModal";
+import GuitarCards from "../components/guitarGalleryPage/GuitarCards";
+import SearchConditions from "../components/guitarGalleryPage/SearchConditions";
+import DetailModal from "../components/guitarGalleryPage/DetailModal";
 
 const GuitarGalleryPage = () => {
     // プルダウン用 params

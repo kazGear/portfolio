@@ -23,7 +23,7 @@ const ToUserPageBlock = ({validToken, classOfAnime, titleStyle}: ArgProps) => {
         <div>
             <Slink to={validToken ? "/UserPage" : ""}>
                 <MenuTitle
-                    title={"ユーザーページ"}
+                    title={"👦ユーザーページ"}
                     className={validToken ? classOfAnime : ""}
                     styleObj={validToken ? {} : titleStyle}
                 />

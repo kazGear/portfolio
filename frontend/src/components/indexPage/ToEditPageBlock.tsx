@@ -22,7 +22,7 @@ const ToEditPageBlock = ({isValid, classOfAnime, titleStyle}: ArgProps) => {
     return (
         <div>
             <Slink to={isValid ? "/EditPage" : ""} >
-                <MenuTitle title={"各種設定"}
+                <MenuTitle title={"⚙各種設定"}
                            className={isValid ? classOfAnime : ""}
                            styleObj={isValid ? {} : titleStyle}/>
             </Slink>

@@ -13,7 +13,7 @@ import ToCareerPageBlock from "../components/indexPage/ToCareerPageBlock";
 
 const SdivLinkFrame = styled.div`
     width: 90%;
-    margin: 80px auto 0;
+    margin: 0px auto 0px;
 `;
 const SdivContentsFrame = styled.div`
     width: 50%;
@@ -65,12 +65,6 @@ const IndexPage = () => {
                                        titleStyle={titleStyle}/>
                 </SdivContentsFrame>
 
-                <SdivContentsFrame>
-                    {/* 戦闘レポートページ */}
-                    <ToBattleResultPageBlock validToken={validToken}
-                                             classOfAnime={classOfAnime}
-                                             titleStyle={titleStyle}/>
-                </SdivContentsFrame>
 
                 <SdivContentsFrame>
                     {/* 経歴書ページ */}
@@ -80,21 +74,30 @@ const IndexPage = () => {
 
             <div style={{display: "flex"}}>
                 <SdivContentsFrame>
+                    {/* 戦闘レポートページ */}
+                    <ToBattleResultPageBlock validToken={validToken}
+                                             classOfAnime={classOfAnime}
+                                             titleStyle={titleStyle}/>
+                </SdivContentsFrame>
+
+                <SdivContentsFrame>
                     {/* ショップページ */}
                     <ToShopPageBlock validToken={validToken}
                                      classOfAnime={classOfAnime}
                                      titleStyle={titleStyle}/>
                 </SdivContentsFrame>
 
+
+            </div>
+
+            <div style={{display: "flex"}}>
                 <SdivContentsFrame>
                     {/* ユーザーページ */}
                     <ToUserPageBlock validToken={validToken}
                                      classOfAnime={classOfAnime}
                                      titleStyle={titleStyle} />
                 </SdivContentsFrame>
-            </div>
 
-            <div style={{display: "flex"}}>
                 <SdivContentsFrame>
                     {/* 設定ページ */}
                     <ToEditPageBlock isValid={validToken && usableSettings}

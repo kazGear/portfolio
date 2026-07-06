@@ -4,8 +4,8 @@ import { COLORS } from "../../lib/Constants";
 const SmenuTitle = styled.h2`
     height: 40px;
     display: flex;
+    justify-content: center;
     align-items: center;
-    padding-left: 60px;
     border-radius: 10px;
     border-collapse: collapse;
     background: ${COLORS.LOGINED_COLOR};

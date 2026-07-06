@@ -22,7 +22,7 @@ const ToShopPageBlock = ({validToken, classOfAnime, titleStyle}: ArgProps) => {
     return (
         <div>
             <Slink to={validToken ? "/ShopPage" : ""} >
-                <MenuTitle title={"ショップ"}
+                <MenuTitle title={"🏠ショップ"}
                         className={validToken ? classOfAnime : ""}
                         styleObj={validToken ? {} : titleStyle}/>
             </Slink>

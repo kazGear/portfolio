@@ -18,7 +18,7 @@ const ToLoginPageBlock = () => {
     return (
         <div>
             <Slink to={"/LoginPage"}>
-                <MenuTitle title={"ログイン"} className={classOfAnime} />
+                <MenuTitle title={"🔓ログイン"} className={classOfAnime} />
             </Slink>
 
             <OutSideFrame>

@@ -8,9 +8,10 @@ export const COLORS = {
     ACCENT_FONT_GREEN: `${ACCENT_COLOR}`,
     ACCENT_FONT_PINK: `${ACCENT_COLOR2}`,
     LOSER_FONT_COLOR: "#EC008C",
-    ALERT_MESSAGE_COLOR: `${ALERT_COLOR}`,
     CAPTION_FONT_COLOR: "#33cc99",
     BUTTON_FONT_COLOR: "gray",
+
+    ALERT_MESSAGE_COLOR: `${ALERT_COLOR}`,
 
     BORDER_COLOR: "darkgray",
     LINE_COLOR: "blue",
@@ -24,13 +25,16 @@ export const COLORS = {
 
     THEME_COLOR: "#7fffd4",
     BASE_BACKGROUND: "white",
+    DARK_BACKGROUND: "#454545",
     MODAL_BACKGROUND: "black",
 
     MENU_DISABLED: "darkgray",
 
     DIALOG_FRAME: `${ACCENT_COLOR}`,
 
-    LOGINED_COLOR: `${ACCENT_COLOR}`
+    LOGINED_COLOR: `${ACCENT_COLOR}`,
+
+    URL: "skyblue"
 } as const;
 
 export const GUITAR_COLORS = {

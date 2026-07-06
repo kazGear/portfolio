@@ -9,6 +9,7 @@ import ToBattleResultPageBlock from "../components/indexPage/ToBattleResultPageB
 import ToShopPageBlock from "../components/indexPage/ToShopPageBlock";
 import ToEditPageBlock from "../components/indexPage/ToEditPageBlock";
 import ToGuitarGalleryBlock from "../components/indexPage/ToGuitarGalleryBlock";
+import ToCareerPageBlock from "../components/indexPage/ToCareerPageBlock";
 
 const SdivLinkFrame = styled.div`
     width: 90%;
@@ -70,6 +71,11 @@ const IndexPage = () => {
                                              classOfAnime={classOfAnime}
                                              titleStyle={titleStyle}/>
                 </SdivContentsFrame>
+
+                <SdivContentsFrame>
+                    {/* 経歴書ページ */}
+                    <ToCareerPageBlock/>
+                </SdivContentsFrame>
             </div>
 
             <div style={{display: "flex"}}>
@@ -95,6 +101,8 @@ const IndexPage = () => {
                                      classOfAnime={classOfAnime}
                                      titleStyle={titleStyle}/>
                 </SdivContentsFrame>
+
+
             </div>
 
             <h3 style={{color: `${COLORS.ALERT_MESSAGE_COLOR}`}}>※スマホ非対応、Chrome, edge推奨。</h3>

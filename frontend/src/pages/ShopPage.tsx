@@ -12,15 +12,14 @@ import { useCheckToken } from "../hooks/useHooksOfCommon";
 const SshopPageFrame = styled.div`
     display: flex;
     height: 90%;
-    margin-top: 60px;
 `;
 const SdivControllerFrame = styled.div`
     width:25%;
-    margin: 20px;
+    margin: 0px 20px;
 `;
 const SdivItemFrame = styled.div`
     width: 75%;
-    margin: 20px;
+    margin: 0px 20px 0px 0px;
     overflow: overlay;
 `;
 

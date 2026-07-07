@@ -10,6 +10,7 @@ import EditMonsterSpeed from "./EditMonsterSpeedBlock";
 import EditMonsterWeek from "./EditMonsterWeekBlock";
 import { useState } from "react";
 import NowLoading from "../../common/NowLoading";
+import Strong from "../../common/Strong";
 
 const Simg = styled.img`
     vertical-align: middle;
@@ -39,10 +40,22 @@ const MonsterTableBody = ({editMonsters, isNowLoading}: ArgProps) => {
 
     return (
         <table style={{width: "100%"}}>
+            <thead>
+                <tr style={{textAlign: "center"}}>
+                    <th><Strong>ID</Strong></th>
+                    <td><Strong>イメージ</Strong></td>
+                    <td><Strong>モンスター名</Strong></td>
+                    <td><Strong>HP</Strong></td>
+                    <td><Strong>攻撃力</Strong></td>
+                    <td><Strong>速さ</Strong></td>
+                    <td><Strong>弱点</Strong></td>
+                    <td>⇒変更後</td>
+                </tr>
+            </thead>
             <tbody>
             {
                 editMonsters.map((monster, index) => (
-                    <tr key={index}>
+                    <tr key={index + monster.MonsterName} style={{textAlign: "center"}}>
                         {/* ID */}
                         <BorderTd>{monster.MonsterId}</BorderTd>
                         {/* イメージ */}

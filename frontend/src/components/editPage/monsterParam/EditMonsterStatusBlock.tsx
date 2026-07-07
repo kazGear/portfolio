@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
 import { KEYS, URLS } from "../../../lib/Constants";
-import MonsterTableHeader from "./MonsterTableHeader";
 import MonsterTableBody from "./MonsterTableBody";
 import styled from "styled-components";
 import { EditMonsterDTO } from "../../../types/Edit";
@@ -53,7 +52,6 @@ const MonsterStatusEditBlock = ({editMonsters, setEditMonsters}: ArgProps) => {
                           callback={updateStatusHandler}/>
             {/* ステータス編集部 */}
             <Stable>
-                <MonsterTableHeader />
                 <MonsterTableBody editMonsters={editMonsters}
                                   isNowLoading={isNowLoading}/>
             </Stable>

@@ -29,7 +29,7 @@ services:
       DB_NAME: ${DB_NAME}
       DB_HOST: ${DB_HOST}
       DB_PORT: ${POSTGRES_PORT}
-      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT}
+      ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: http://0.0.0.0:5000
       DOTNET_USE_POLLING_FILE_WATCHER: true
 
@@ -50,7 +50,7 @@ services:
       DB_NAME: ${DB_NAME}
       DB_HOST: ${DB_HOST}
       DB_PORT: ${POSTGRES_PORT}
-      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT}
+      ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: http://0.0.0.0:5000
       DOTNET_USE_POLLING_FILE_WATCHER: true
 
@@ -90,3 +90,5 @@ services:
     restart: "no"
     volumes:
      - ./batch/webCrawler/logs:/app/logs
+    environment:
+      ENV_FILE: .env.dev

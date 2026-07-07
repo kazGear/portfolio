@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"os"
 	"strconv"
 
@@ -12,7 +13,19 @@ import (
 )
 
 func init() {
-	_ = godotenv.Load()
+	envFile := os.Getenv("ENV_FILE")
+
+	if envFile == "" {
+		envFile = ".env.dev"
+
+	}
+	err := godotenv.Load(envFile)
+
+	if err != nil {
+		log.Fatalf(`godotenv load error: %v`, err)
+	}
+	log.Println("godotenv load OK.")
+	log.Printf("loaded env file: %v\n", envFile)
 }
 
 func main() {

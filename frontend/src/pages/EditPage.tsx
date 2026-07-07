@@ -43,7 +43,7 @@ const EditPage = () => {
                 {/* 設定部 */}
                 { selectEditType === 1 ? <EditMonsterStatusBlock editMonsters={editMonsters} setEditMonsters={setEditMonsters} /> : ""}
                 { selectEditType === 2 ? <EditMonsterSkillsBlock editMonsterSkills={editMonsterSkills} setEditMonsterSkills={setEditMonsterSkills}/> : ""}
-                { selectEditType === 3 ? <h1>使用モンスター（工事中）</h1> : ""}
+                { selectEditType === 3 ? <h1 style={{marginLeft: "40px"}}>使用可能モンスター（工事予定）</h1> : ""}
             </OutSideFrame>
         </SdivEditFrame>
     );

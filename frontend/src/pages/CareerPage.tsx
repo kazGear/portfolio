@@ -1,4 +1,4 @@
-import meImage from "../../../_docs/images/me.png";
+import meImage from "../images/me.png";
 import {
     career,
     littleSkills,

@@ -18,7 +18,7 @@ namespace PublicApi.Controllers
             _service = new GuitarsService(configuration);
         }
 
-        [HttpGet("/api/v1/guitars")]
+        [HttpGet("/public/v1/guitars")]
         public IActionResult Get([FromQuery] GuitarsRequest req)
         {
             try

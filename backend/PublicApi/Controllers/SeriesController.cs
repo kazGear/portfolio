@@ -18,7 +18,7 @@ namespace PublicApi.Controllers
             _service = new SeriesService(configuration);
         }
 
-        [HttpGet("/api/v1/series")]
+        [HttpGet("/public/v1/series")]
         public IActionResult Get([FromQuery] SeriesRequest req)
         {
             try

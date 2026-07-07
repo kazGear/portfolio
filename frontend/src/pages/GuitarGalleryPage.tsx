@@ -25,11 +25,11 @@ const GuitarGalleryPage = () => {
 
     // プルダウンデータ等取得
     useEffect(() => {
-        api.GET<Code[]>("https://localhost:7170/api/v1/makers").then(result => setMakers(result));
-        api.GET<Code[]>("https://localhost:7170/api/v1/Colors").then(result => setColors(result));
-        api.GET<Code[]>("https://localhost:7170/api/v1/bodyMaterials").then(result => setBodyMaterials(result));
+        api.GET<Code[]>("https://localhost:7170/public/v1/makers").then(result => setMakers(result));
+        api.GET<Code[]>("https://localhost:7170/public/v1/Colors").then(result => setColors(result));
+        api.GET<Code[]>("https://localhost:7170/public/v1/bodyMaterials").then(result => setBodyMaterials(result));
         // 初期画面用、条件なし検索
-        api.GET<GuitarsResponse>("https://localhost:7170/api/v1/guitars?").then(result => setGuitars(result));
+        api.GET<GuitarsResponse>("https://localhost:7170/public/v1/guitars?").then(result => setGuitars(result));
     }, [])
 
     // 変動プルダウンデータ取得

@@ -17,7 +17,7 @@ namespace PublicApi.Controllers
             _service = new BodyMaterialsService(configuration);
         }
 
-        [HttpGet("/api/v1/bodyMaterials")]
+        [HttpGet("/public/v1/bodyMaterials")]
         public IActionResult Get()
         {
             try

@@ -17,7 +17,7 @@ namespace PublicApi.Controllers
             _service = new ColorsService(configuration);
         }
 
-        [HttpGet("/api/v1/Colors")]
+        [HttpGet("/public/v1/Colors")]
         public IActionResult Get()
         {
             try

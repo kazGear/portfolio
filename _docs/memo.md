@@ -1,13 +1,17 @@
 # docker 起動
 # 開発（ローカル）
 
-docker compose --env-file .env.dev -f compose.base.yaml -f compose.dev.yaml up --detach
+docker compose --env-file .env.dev -f compose.base.yaml -f compose.dev.yaml up --build --detach
+
+docker compose --env-file .env.dev -f compose.base.yaml -f compose.dev.yaml ps(生存確認用)
 
 docker compose --env-file .env.dev -f compose.base.yaml -f compose.dev.yaml down
 
 # 本番（VPS）
 
 docker compose --env-file .env.prod -f compose.base.yaml -f compose.prod.yaml up --detach
+
+docker compose --env-file .env.prod -f compose.base.yaml -f compose.prod.yaml ps(生存確認用)
 
 docker compose --env-file .env.prod -f compose.base.yaml -f compose.prod.yaml down
 

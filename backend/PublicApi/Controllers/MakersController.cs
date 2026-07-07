@@ -17,7 +17,7 @@ namespace PublicApi.Controllers
             _service = new MakersService(configuration);
         }
 
-        [HttpGet("/api/v1/makers")]
+        [HttpGet("/public/v1/makers")]
         public IActionResult Get()
         {
             try

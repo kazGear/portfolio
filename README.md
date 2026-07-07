@@ -165,7 +165,7 @@ react > vue と切り替えても、C#側は修正不要です。
 
 エンドポイント -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
-GET /api/v1/guitars
+GET /public/v1/guitars
 
 クエリパラメータ -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
@@ -186,7 +186,7 @@ Parameter,Type,Description
 
 使用例 -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
-GET /api/v1/guitars?makerCd=1&series=Strat&page=1&pageSize=25
+GET /public/v1/guitars?makerCd=1&series=Strat&page=1&pageSize=25
 
 レスポンス例 -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 

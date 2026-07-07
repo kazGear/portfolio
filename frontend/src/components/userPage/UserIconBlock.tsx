@@ -9,7 +9,7 @@ import NowLoading from "../common/NowLoading";
 const SdivImageFrame = styled.div`
     height: 150px;
     min-width: 120px;
-    margin: 20px 0px 20px 0px;
+    margin: 20px;
     align-content: center;
 `;
 const Simg = styled.img`

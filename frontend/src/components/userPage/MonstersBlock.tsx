@@ -22,23 +22,25 @@ const Stable = styled.table`
     height: 100%;
 `;
 const Std1 = styled.td`
-    width: 180px;
-    min-width: 90px;
+    min-width: 150px;
 `;
 const Std2 = styled.td`
-    width: 80px;
+    min-width: 80px;
 `;
 const Std3 = styled.td`
-    width: 80px;
-    min-width: 60px;
+    width: 100px;
+    min-width: 80px;
 `;
 const Std4 = styled.td`
-    width: 90px;
-    min-width: 70px;
+    width: 110px;
+    min-width: 100px;
 `;
 const Std5 = styled.td`
-    width: 90px;
-    min-width: 80px;
+    width: 120px;
+    min-width: 110px;
+`;
+const Std6 = styled.td`
+    min-width: 110px;
 `;
 
 interface ArgProps {
@@ -88,6 +90,7 @@ const MonstersBlock = ({monsters, loginId}: ArgProps) => {
                                 <Std3>HP：{monster.Hp}</Std3>
                                 <Std4>攻撃力：{monster.Attack}</Std4>
                                 <Std5>スピード：{monster.Speed}</Std5>
+                                <Std6>回避力：{monster.Dodge}</Std6>
                             </tr>
                         ))
                         : ""

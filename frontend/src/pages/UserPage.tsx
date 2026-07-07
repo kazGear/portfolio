@@ -17,17 +17,15 @@ import { useCheckToken } from "../hooks/useHooksOfCommon";
 const SdivPageFrame = styled.div`
     display: flex;
     height: 100%;
-    margin-top: 60px;
 `;
 const SdivPageL = styled.div`
-    width: 50%;
+    width: 40%;
     height: 100%;
-    min-width: 400px;
+    min-width: 440px;
 `;
 const SdivPageR = styled.div`
-    width: 50%;
-    height: 85%;
-    overflow: hidden;
+    width: 57%;
+    height: 85vh;
 `;
 const cashStyle: React.CSSProperties = {
     margin: "20px",
@@ -36,7 +34,7 @@ const cashStyle: React.CSSProperties = {
     overflow: "hidden"
 }
 const monstersStyle: React.CSSProperties = {
-    margin: "20px",
+    margin: "20px 20px 20px 0px",
     height: "100%",
     minWidth: "100px",
 }

@@ -51,7 +51,7 @@ const ImgUpload = ({styleObj}: ArgProps) => {
 
     return (
         <div>
-            <Input labelTitle="画像登録"
+            <Input labelTitle="画像登録："
                    inputType="file"
                    accept="image/*"
                    styleObj={{marginBottom: "6px", width: "108px"}}

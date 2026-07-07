@@ -1,7 +1,6 @@
 using KazApi.Common._Filter;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using System.Net;
 using System.Text;
 
 
@@ -19,16 +18,7 @@ public class Program
             {
                 webBuilder.UseStartup<Startup>();
                 webBuilder.ConfigureKestrel((context, options) => {
-                    //options.Listen(IPAddress.Any, 5000); // HTTP
-                    if (context.HostingEnvironment.IsProduction())
-                    {
-                        options.Listen(IPAddress.Any, 5001, listenOptions =>
-                        {
-                            listenOptions.UseHttps(
-                                "/etc/letsencrypt/live/kazapp-trial.com/kazapp-trial.pfx",
-                                "kaz_5050");
-                        });
-                    }
+
                 });
             });
 }
@@ -122,7 +112,7 @@ public class Startup
         {
             //app.UseExceptionHandler("/Home/Error");
             app.UseHsts();
-            //app.UseHttpsRedirection();
+            //app.UseHttpsRedirection(); // Docker + nginx構成では使用しない。HTTPSはnginxで終端するため不要
         }
 
         app.UseRouting();

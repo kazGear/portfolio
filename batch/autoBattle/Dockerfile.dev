@@ -18,12 +18,15 @@ RUN dotnet restore batch/autoBattle/autoBattle.csproj
 COPY backend backend
 COPY batch/autoBattle batch/autoBattle
 
+# --- publish ---
+RUN dotnet publish batch/autoBattle/autoBattle.csproj \
+    -c Release \
+    -o /app/publish
+
 # --- cron 設定 ---
 COPY batch/autoBattle/crontab.txt /etc/cron.d/autobattle-cron
 RUN chmod 0644 /etc/cron.d/autobattle-cron
 RUN crontab /etc/cron.d/autobattle-cron
 RUN touch /var/log/cron.log
-
-WORKDIR /src/batch/autoBattle
 
 CMD ["cron", "-f"]

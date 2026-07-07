@@ -1,0 +1,15 @@
+FROM mcr.microsoft.com/dotnet/sdk:8.0
+
+WORKDIR /src
+
+# restore用
+COPY ./backend/CSLib/CSLib.csproj ./backend/CSLib/
+COPY ./backend/Repository/Repository.csproj ./backend/Repository/
+COPY ./backend/PublicApi/PublicApi.csproj ./backend/PublicApi/
+
+RUN dotnet restore ./backend/PublicApi/PublicApi.csproj
+
+# ソースはComposeでマウントするためCOPYしない
+WORKDIR /src/backend/PublicApi
+
+ENTRYPOINT ["dotnet", "watch", "--non-interactive", "run", "--urls", "http://0.0.0.0:5000"]

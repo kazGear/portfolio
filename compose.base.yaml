@@ -1,34 +1,43 @@
 name: portfolio
-version: "3.9"
 
 services:
-  app:
+  frontend:
     networks:
-      - dev-net
+      - portfolio-net
 
-  api:
+  public-api:
     networks:
-      - dev-net
+      - portfolio-net
+
+  kaz-api:
+    networks:
+      - portfolio-net
 
   db:
     networks:
-      - dev-net
+      - portfolio-net
 
   nginx:
     networks:
-      - dev-net
+      - portfolio-net
 
-  batch-autobattle:
+  batch-auto-battle:
     depends_on:
       - db
     networks:
-      - dev-net
+      - portfolio-net
+
+  batch-guitar-crawler:
+    depends_on:
+      - db
+    networks:
+      - portfolio-net
 
   # 新しいジョブを追加する場合はここに追記
   # batch_xxx:
 
 volumes:
-  pgdata:
+  pg-data:
 
 networks:
-  dev-net:
+  portfolio-net:

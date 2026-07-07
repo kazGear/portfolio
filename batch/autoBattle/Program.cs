@@ -125,7 +125,7 @@ for (int i = 0; i < battleTimes; i++)
 
         Console.WriteLine($"{i + 1}戦目 終了.");
 
-        // 間隔を空け再選（1分ごと、最終回は待たない）
+        // 間隔を空け再選（10秒ごと、最終回は待たない）
         if (i < battleTimes - 1)
         {
             // 再戦待ち...(10秒)");

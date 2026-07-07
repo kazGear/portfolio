@@ -9,7 +9,7 @@ docker compose --env-file .env.dev -f compose.base.yaml -f compose.dev.yaml down
 
 # 本番（VPS）
 
-docker compose --env-file .env.prod -f compose.base.yaml -f compose.prod.yaml up --detach
+docker compose --env-file .env.prod -f compose.base.yaml -f compose.prod.yaml up --build --detach
 
 docker compose --env-file .env.prod -f compose.base.yaml -f compose.prod.yaml ps(生存確認用)
 
@@ -87,3 +87,14 @@ GIFは意外と簡単らしい。
 詳細を開く
 
 これを5秒くらい録画するだけ。
+
+# crontab
+
+最後は改行で終了すること。.....\nで終わる必要がある。
+分   時   日   月   曜日
+0    20   *    *    *    <- 20時に一回実行
+* * * * * は1分ごとに実行。
+
+# docker DB 初期化ファイル作成
+powerShellで、
+pg_dump -U postgres -h localhost -p 5432 -d kaz_app --no-owner --no-privileges -f C:\repository\portfolio\infrastructure\db\init\init.sql

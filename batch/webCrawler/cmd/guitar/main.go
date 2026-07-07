@@ -15,7 +15,7 @@ import (
 func init() {
 	envFile := os.Getenv("ENV_FILE")
 
-	if envFile == "" {
+	if envFile == "" { // ローカル環境
 		envFile = ".env.dev"
 
 	}

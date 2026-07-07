@@ -61,8 +61,12 @@ scraper_guitar.go, scraper.goなど抽象的なファイル名には、抽象化
 
 # react 起動
 
-npm run dev（開発モード）
+npm run dev -- --mode dev（開発モード、.env.devが在る前提）
 プロジェクトルート（package.json がある場所）で実行。
+
+npm run build -- --mode prod（本番、.env.prodが在る前提）
+
+package.json の script に "dev": "vite --mode dev", "build": "vite build --mode prod" の設定していれば、-- --mode dev 等のコマンド入力は不要。
 
 # README スクショ
 
@@ -96,5 +100,30 @@ GIFは意外と簡単らしい。
 * * * * * は1分ごとに実行。
 
 # docker DB 初期化ファイル作成
+
 powerShellで、
 pg_dump -U postgres -h localhost -p 5432 -d kaz_app --no-owner --no-privileges -f C:\repository\portfolio\infrastructure\db\init\init.sql
+
+# docker コンテナ内の確認
+
+コンテナ一覧を見る
+docker compose ps
+NAME（コンテナ名） を見る。
+
+コンテナに入る
+docker exec -it コンテナ名 bash
+
+ログ確認
+docker logs コンテナ名
+
+# docker 基本操作
+
+docker compose up -d
+docker compose down
+docker compose ps
+docker compose logs
+docker compose exec
+docker compose build
+docker images
+docker volume ls
+docker volume prune

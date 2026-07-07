@@ -94,7 +94,7 @@ export const DAMAGE_VIEW = {
 } as const;
 
 export const DOMAIN = {
-    LOCAL_HOST_API: `http://localhost:5000`,
+    LOCAL_HOST_API: `http://localhost:5001`,
     DOTNET_API: `http://localhost:5000/api`,
     XSERVER_API: `https://kazapp-trial.com`,
 } as const;

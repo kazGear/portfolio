@@ -9,6 +9,8 @@ services:
       - /app/node_modules
     ports:
       - "${REACT_PORT}:5173"
+    env_file:
+      - .env.dev
 
   public-api:
     build:
@@ -28,6 +30,7 @@ services:
       DB_HOST: ${DB_HOST}
       DB_PORT: ${POSTGRES_PORT}
       ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT}
+      ASPNETCORE_URLS: http://0.0.0.0:5000
       DOTNET_USE_POLLING_FILE_WATCHER: true
 
   kaz-api:
@@ -48,8 +51,8 @@ services:
       DB_HOST: ${DB_HOST}
       DB_PORT: ${POSTGRES_PORT}
       ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT}
+      ASPNETCORE_URLS: http://0.0.0.0:5000
       DOTNET_USE_POLLING_FILE_WATCHER: true
-
 
   db:
     image: postgres:17

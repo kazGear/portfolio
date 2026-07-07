@@ -18,8 +18,8 @@
     "vite": "^5.2.0"
   },
   "scripts": {
-    "dev": "vite --host",
-    "build": "vite build",
+    "dev": "vite --mode dev",
+    "build": "vite build --mode prod",
     "preview": "vite preview"
   }
 }

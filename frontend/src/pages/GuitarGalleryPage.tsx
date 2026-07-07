@@ -8,6 +8,7 @@ import OutSideFrame from "../components/common/OutSideFrame";
 import GuitarCards from "../components/guitarGalleryPage/GuitarCards";
 import SearchConditions from "../components/guitarGalleryPage/SearchConditions";
 import DetailModal from "../components/guitarGalleryPage/DetailModal";
+import { API_BASE_URL } from "../config/env"
 
 const GuitarGalleryPage = () => {
     // プルダウン用 params
@@ -25,11 +26,11 @@ const GuitarGalleryPage = () => {
 
     // プルダウンデータ等取得
     useEffect(() => {
-        api.GET<Code[]>("https://localhost:7170/public/v1/makers").then(result => setMakers(result));
-        api.GET<Code[]>("https://localhost:7170/public/v1/Colors").then(result => setColors(result));
-        api.GET<Code[]>("https://localhost:7170/public/v1/bodyMaterials").then(result => setBodyMaterials(result));
+        api.GET<Code[]>(`${API_BASE_URL}/public/v1/makers`).then(result => setMakers(result));
+        api.GET<Code[]>(`${API_BASE_URL}/public/v1/Colors`).then(result => setColors(result));
+        api.GET<Code[]>(`${API_BASE_URL}/public/v1/bodyMaterials`).then(result => setBodyMaterials(result));
         // 初期画面用、条件なし検索
-        api.GET<GuitarsResponse>("https://localhost:7170/public/v1/guitars?").then(result => setGuitars(result));
+        api.GET<GuitarsResponse>(`${API_BASE_URL}/public/v1/guitars?`).then(result => setGuitars(result));
     }, [])
 
     // 変動プルダウンデータ取得
@@ -40,7 +41,7 @@ const GuitarGalleryPage = () => {
             return;
         }
         api.GET<Code[]>(
-            `https://localhost:7170/api/v1/series?makerCd=${gParams.makerCd}`
+            `${API_BASE_URL}/public/v1/series?makerCd=${gParams.makerCd}`
         ).then(result => setSeries(result));
 
         gParams.setSeries("") // シリーズを未選択に戻す
@@ -50,7 +51,7 @@ const GuitarGalleryPage = () => {
     const guitarSearchHandler = useCallback( async (gParams: GuitarParams) => {
         const queryParams = createQueryParams(gParams);
         const resGuitars  = await api.GET<GuitarsResponse>(
-            `https://localhost:7170/api/v1/guitars?${queryParams.toString()}`
+            `${API_BASE_URL}/public/v1/guitars?${queryParams.toString()}`
         );
         setGuitars(resGuitars);
     }, []);

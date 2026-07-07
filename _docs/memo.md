@@ -106,6 +106,11 @@ pg_dump -U postgres -h localhost -p 5432 -d kaz_app --no-owner --no-privileges -
 
 # docker コンテナ内の確認
 
+「Failed to fetch ＝ fetchの問題とは限らない」
+「まずAPIが本当に起動しているか確認する」
+「docker logs は最初に見る」
+「コンテナ内から curl すると切り分けが速い」
+
 コンテナ一覧を見る
 docker compose ps
 NAME（コンテナ名） を見る。
@@ -127,3 +132,14 @@ docker compose build
 docker images
 docker volume ls
 docker volume prune
+
+# linux 基本操作
+
+ls
+cd
+pwd
+cat
+grep
+find
+tail
+less

@@ -10,11 +10,11 @@ import EditMonsterSkillsBlock from "../components/editPage/monsterSkills/EditMon
 import { useCheckToken } from "../hooks/useHooksOfCommon";
 
 const SdivEditFrame = styled.div`
-    width: 100%;
-    margin-top: 80px;
+    width: 90%;
+    margin: auto;
 `;
 const styleForController = {
-    width: "95%",
+    width: "100%",
     marginBottom: "0",
     display: "flex",
     justifyContent: "space-between",

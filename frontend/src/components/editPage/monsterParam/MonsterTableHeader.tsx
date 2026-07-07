@@ -2,12 +2,12 @@ import Strong from "../../common/Strong";
 
 const MonsterTableHeader = () => {
     return (
-        <table style={{width: "620px"}}>
+        <table style={{width: "100%"}}>
             <thead>
                 <tr style={{textAlign: "center"}}>
-                    <td style={{width: "18px", paddingLeft: "35px"}}>
+                    <th style={{width: "18px", paddingLeft: "35px"}}>
                         <Strong>ID</Strong>
-                    </td>
+                    </th>
                     <td style={{width: "64px", paddingLeft: "30px"}}>
                         <Strong>イメージ</Strong>
                     </td>

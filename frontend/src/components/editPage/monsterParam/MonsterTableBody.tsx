@@ -38,7 +38,7 @@ const MonsterTableBody = ({editMonsters, isNowLoading}: ArgProps) => {
     }
 
     return (
-        <table>
+        <table style={{width: "100%"}}>
             <tbody>
             {
                 editMonsters.map((monster, index) => (
@@ -48,7 +48,7 @@ const MonsterTableBody = ({editMonsters, isNowLoading}: ArgProps) => {
                         {/* イメージ */}
                         <BorderTd>
                             <Simg src={monsterImages(monster.MonsterId)}
-                                alt="モンスター" />
+                                  alt="モンスター" />
                         </BorderTd>
                         {/* 名称 */}
                         <EditMonsterName monster={monster}/>

@@ -5,11 +5,11 @@ WORKDIR /src
 # restore用
 COPY ./backend/CSLib/CSLib.csproj ./backend/CSLib/
 COPY ./backend/Repository/Repository.csproj ./backend/Repository/
-COPY ./backend/KazApi.NET/KazApi.csproj ./backend/KazApi.NET/
+COPY ./backend/PrivateApi/PrivateApi.csproj ./backend/PrivateApi/
 
-RUN dotnet restore ./backend/KazApi.NET/KazApi.csproj
+RUN dotnet restore ./backend/PrivateApi/PrivateApi.csproj
 
 # ソースはComposeでマウントするためCOPYしない
-WORKDIR /src/backend/KazApi.NET
+WORKDIR /src/backend/PrivateApi
 
-ENTRYPOINT ["dotnet", "run", "--project", "KazApi.csproj", "--urls", "http://0.0.0.0:5000"]
+ENTRYPOINT ["dotnet", "run", "--project", "PrivateApi.csproj", "--urls", "http://0.0.0.0:5000"]

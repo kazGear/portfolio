@@ -2,7 +2,6 @@ import styled from "styled-components";
 import { useEffect, useState } from "react";
 import { UserDTO } from "../../types/UserManage";
 import { PREFIX } from "../../lib/Constants";
-import nowLoading from "../../images/background/nowLoading.gif";
 import { isEmpty } from "../../lib/CommonLogic";
 import CommonNowLoading from "../common/CommonNowLoading";
 

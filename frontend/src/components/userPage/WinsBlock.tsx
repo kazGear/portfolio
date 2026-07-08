@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { UserDTO } from "../../types/UserManage";
 import CommonStrong from "../common/CommonStrong";
 
-const SdivWinFrame = styled.div`
+const Frame = styled.div`
     height: 50%;
     margin: 20px;
 `;
@@ -13,14 +13,14 @@ interface ArgProps {
 
 const WinsBlock = ({user}: ArgProps) => {
     return (
-        <SdivWinFrame>
+        <Frame>
             <p style={{margin: 0}}><CommonStrong>的中数</CommonStrong>
                 &nbsp;:&nbsp;{user != null ? user!.Wins : ""} 回
             </p>
             <p style={{margin: 0}}><CommonStrong>配当金</CommonStrong>
                 &nbsp;:&nbsp;{user != null ? user!.WinsGetCash : ""} Gil
             </p>
-        </SdivWinFrame>
+        </Frame>
     );
 }
 

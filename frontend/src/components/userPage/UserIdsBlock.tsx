@@ -2,7 +2,7 @@ import { UserDTO } from "../../types/UserManage";
 import CommonStrong from "../common/CommonStrong";
 import styled from "styled-components";
 
-const SdivIDFrame = styled.div`
+const IDFrame = styled.div`
     height: 100px;
     min-width: 100px;
     margin-bottom: 30px;
@@ -14,7 +14,7 @@ interface ArgProps {
 
 const UserImageBlock = ({user}: ArgProps) => {
     return (
-        <SdivIDFrame>
+        <IDFrame>
             <p>
                 <CommonStrong>ログインID</CommonStrong>
                 <br/>
@@ -25,7 +25,7 @@ const UserImageBlock = ({user}: ArgProps) => {
                 <br/>
                 {user != null ? user.RoleName : ""}
             </p>
-        </SdivIDFrame>
+        </IDFrame>
     );
 }
 

@@ -53,7 +53,7 @@ scraper_guitar.go, scraper.goなど抽象的なファイル名には、抽象化
 
 2. Elements（F12）にだけデータがあるか？
 ソースには無いのに Elements にはある
-→ JS で生成 → chromedp 必須 or networkタブ分析
+→ JS で生成 → chromedp 必須? or networkタブ分析
 
 3. XHR の中に “データ取得系” があるか？
 /api/... /json/... /graphql, xhr, fetch

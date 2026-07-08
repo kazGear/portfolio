@@ -33,6 +33,7 @@ func (r *guitarRepository) Upsert(guitar *model.Guitar) error {
     if len(guitar.Src) <= 0 {
         return fmt.Errorf("画像URLは必須項目です。")
     }
+
     // 1. UPDATE（存在すれば更新）
     res, err := r.db.NamedExec(`
         UPDATE t_guitars
@@ -55,7 +56,8 @@ func (r *guitarRepository) Upsert(guitar *model.Guitar) error {
                scale_length_mm     = :scale_length_mm,
                series              = :series,
                src                 = :src,
-               weight              = :weight
+               weight              = :weight,
+               updated             = NOW()
          WHERE maker = :maker
            AND name  = :name
            AND color = :color
@@ -95,7 +97,8 @@ func (r *guitarRepository) Upsert(guitar *model.Guitar) error {
                 scale_length_mm,
                 series,
                 src,
-                weight
+                weight,
+                updated
             )
                 VALUES
             (
@@ -120,7 +123,8 @@ func (r *guitarRepository) Upsert(guitar *model.Guitar) error {
                 :scale_length_mm,
                 :series,
                 :src,
-                :weight
+                :weight,
+                NOW()
             )
         `, guitar)
         return err

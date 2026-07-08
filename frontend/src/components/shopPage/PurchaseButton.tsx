@@ -1,5 +1,5 @@
 import { ItemDTO } from "../../types/Shop";
-import BorderTd from "../common/CommonBorderTd";
+import CommonBorderTd from "../common/CommonBorderTd";
 import React, { useCallback } from "react";
 import CommonButton from "../common/CommonButton";
 import { KEYS, URLS } from "../../lib/Constants";
@@ -43,7 +43,7 @@ const PurchaseCommonButton = ({
         }, [item]);
 
     return (
-        <BorderTd>
+        <CommonBorderTd>
         {
             item.IsPurchased ? <CommonButton text="購入済"
                                        onClick={() => {}}
@@ -57,7 +57,7 @@ const PurchaseCommonButton = ({
                                        disabled={myCash! < item.ItemPrice}/>
         }
             <input type="hidden" value={item.ItemId}/>
-        </BorderTd>
+        </CommonBorderTd>
     );
 }
 

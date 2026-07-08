@@ -1,5 +1,5 @@
 import { ItemDTO } from "../../types/Shop";
-import BorderTd from "../common/CommonBorderTd";
+import CommonBorderTd from "../common/CommonBorderTd";
 import React from "react";
 
 interface ArgProps {
@@ -9,15 +9,15 @@ interface ArgProps {
 const ItemRemarks = ({item}: ArgProps) => {
 
     return (
-        <BorderTd>
+        <CommonBorderTd>
         {
             item.Remarks.split("\n").map((line, index) => (
-                <React.Fragment key={index}>
+                <React.Fragment key={line + index}>
                     {line}<br/>
                 </React.Fragment>
             ))
         }
-        </BorderTd>
+        </CommonBorderTd>
     );
 }
 

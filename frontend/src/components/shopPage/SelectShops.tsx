@@ -4,7 +4,7 @@ import CommonSelect from "../common/CommonSelect";
 import { ShopDTO } from "../../types/Shop";
 import { KEYS, URLS } from "../../lib/Constants";
 import { UserDTO } from "../../types/UserManage";
-import Accent from "../common/CommonAccent";
+import CommonAccent from "../common/CommonAccent";
 import { api } from "../../lib/apiClient";
 
 interface ArgProps {
@@ -37,12 +37,14 @@ const SelectShops = ({setSelectedShop, user, myCash}: ArgProps) => {
     return (
         <CommonFrame>
             <h3 style={{margin: "10px"}}>
-                所持金：<Accent>{myCash?.toLocaleString()}</Accent> Gil
+                所持金：<CommonAccent>{myCash?.toLocaleString()}</CommonAccent> Gil
             </h3>
             <CommonSelect title="店舗" onChange={changeShopHandler}>
                 {
                     shopsOfSelectBox.map((shop, index) => (
-                        <option value={shop.ShopId} key={index}>{shop.ShopName}</option>
+                        <option value={shop.ShopId} key={shop.ShopName + index}>
+                            {shop.ShopName}
+                        </option>
                     ))
                 }
             </CommonSelect>

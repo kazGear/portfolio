@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { ItemDTO } from "../../types/Shop";
 import CommonFrame from "../common/CommonOutSideFrame";
-import BorderTd from "../common/CommonBorderTd";
+import CommonBorderTd from "../common/CommonBorderTd";
 import React from "react";
 import { UserDTO } from "../../types/UserManage";
 import ShopTableHeader from "./ShopTableHeader";
@@ -47,7 +47,7 @@ const ShopItemTable = ({
                         return (
                             <tr key={index} style={{height: "60px"}}>
                                 <ItemImage item={item}/>
-                                <BorderTd>{item.ItemName}</BorderTd>
+                                <CommonBorderTd>{item.ItemName}</CommonBorderTd>
                                 <ItemRemarks item={item}/>
                                 <ItemPrice item={item} myCash={myCash}/>
                                 <PurchaseButton item={item}

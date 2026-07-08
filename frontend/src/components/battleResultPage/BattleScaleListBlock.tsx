@@ -1,9 +1,4 @@
-import styled from "styled-components";
 import CommonSelect from "../common/CommonSelect";
-
-const SdivFrame = styled.div`
-    margin: 10px;
-`;
 
 interface ArgProps {
     changeBattleScaleHandler: React.ChangeEventHandler<HTMLSelectElement>;

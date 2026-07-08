@@ -1,4 +1,4 @@
-using KazApi.Common._Filter;
+using PrivateApi.Common._Filter;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -39,7 +39,7 @@ public class Startup
         {
             c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
             {
-                Title = "KazApi",
+                Title = "PrivateApi",
                 Version = "v1"
             });
         });

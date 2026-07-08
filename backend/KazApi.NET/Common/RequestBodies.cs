@@ -1,4 +1,4 @@
-﻿namespace KazApi.Common
+﻿namespace PrivateApi.Common
 {
     public record ReqMonsterReport(int monsterTypeId, int sortType, bool isAscOrder);
 

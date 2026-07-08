@@ -1,8 +1,8 @@
 ﻿using CSLib.Lib;
-using KazApi.Domain._User;
+using PrivateApi.Domain._User;
 using Repository.Repository;
 
-namespace KazApi.Service
+namespace PrivateApi.Service
 {
     public class LoginService
     {

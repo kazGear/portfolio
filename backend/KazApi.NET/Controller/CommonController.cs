@@ -1,10 +1,10 @@
 ﻿using CSLib.Lib;
-using KazApi.Common;
-using KazApi.Domain.DTO;
-using KazApi.Service;
+using PrivateApi.Common;
+using PrivateApi.Domain.DTO;
+using PrivateApi.Service;
 using Microsoft.AspNetCore.Mvc;
 
-namespace KazApi.Controller
+namespace PrivateApi.Controller
 {
     [ApiController]
     public class CommonController : ControllerBase

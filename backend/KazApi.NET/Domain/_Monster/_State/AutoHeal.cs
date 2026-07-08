@@ -1,8 +1,8 @@
 ﻿using CSLib.Lib;
-using KazApi.Common._Log;
-using KazApi.Domain.DTO;
+using PrivateApi.Common._Log;
+using PrivateApi.Domain.DTO;
 
-namespace KazApi.Domain._Monster._State
+namespace PrivateApi.Domain._Monster._State
 {
     /// <summary>
     /// 自動回復状態クラス

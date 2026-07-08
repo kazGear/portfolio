@@ -1,4 +1,4 @@
-﻿namespace KazApi.Domain._Monster._State
+﻿namespace PrivateApi.Domain._Monster._State
 {
     /// <summary>
     /// マーカーインタフェース

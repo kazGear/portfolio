@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using KazApi.Common._Filter;
-using KazApi.Domain.DTO;
-using KazApi.Service;
+using PrivateApi.Common._Filter;
+using PrivateApi.Domain.DTO;
+using PrivateApi.Service;
 using CSLib.Lib;
-using KazApi.Common;
+using PrivateApi.Common;
 
-namespace KazApi.Controller
+namespace PrivateApi.Controller
 {
     [SkipAuthActionFilter]
     [ApiController]

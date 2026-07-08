@@ -1,11 +1,11 @@
 ﻿using CSLib.Const;
 using CSLib.Lib;
-using KazApi.Common._Log;
-using KazApi.Domain._Monster._Skill;
-using KazApi.Domain._Monster._State;
-using KazApi.Domain.DTO;
+using PrivateApi.Common._Log;
+using PrivateApi.Domain._Monster._Skill;
+using PrivateApi.Domain._Monster._State;
+using PrivateApi.Domain.DTO;
 
-namespace KazApi.Domain._Monster
+namespace PrivateApi.Domain._Monster
 {
     /// <summary>
     /// モンスタークラス

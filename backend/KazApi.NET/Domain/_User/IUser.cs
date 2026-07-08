@@ -1,4 +1,4 @@
-﻿namespace KazApi.Domain._User;
+﻿namespace PrivateApi.Domain._User;
 
 public abstract class IUser
 {

@@ -1,6 +1,6 @@
-﻿using KazApi.Domain._Monster;
+﻿using PrivateApi.Domain._Monster;
 
-namespace KazApi.Common._Log
+namespace PrivateApi.Common._Log
 {
     public class MessageInfo
     {

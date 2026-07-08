@@ -1,12 +1,12 @@
 ﻿using CSLib.Lib;
-using KazApi.Common;
-using KazApi.Domain._Factory;
-using KazApi.Domain.DTO;
-using KazApi.Service;
+using PrivateApi.Common;
+using PrivateApi.Domain._Factory;
+using PrivateApi.Domain.DTO;
+using PrivateApi.Service;
 using Microsoft.AspNetCore.Mvc;
 using System.Transactions;
 
-namespace KazApi.Controller
+namespace PrivateApi.Controller
 {
     [ApiController]
     public class EditController : ControllerBase

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.IdentityModel.Tokens;
 using System.Net;
 
-namespace KazApi.Common._Filter
+namespace PrivateApi.Common._Filter
 {
     /// <summary>
     /// 例外フィルター

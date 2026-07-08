@@ -1,8 +1,8 @@
 ﻿using CSLib.Const;
-using KazApi.Domain._Monster._Skill;
-using KazApi.Domain.DTO;
+using PrivateApi.Domain._Monster._Skill;
+using PrivateApi.Domain.DTO;
 
-namespace KazApi.Domain._Factory
+namespace PrivateApi.Domain._Factory
 {
     /// <summary>
     /// スキル生成クラス

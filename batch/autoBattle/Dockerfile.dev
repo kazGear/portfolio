@@ -6,7 +6,7 @@ WORKDIR /src
 
 # --- backend の csproj を先にコピー ---
 COPY backend/CSLib/CSLib.csproj backend/CSLib/
-COPY backend/KazApi.NET/KazApi.csproj backend/KazApi.NET/
+COPY backend/PrivateApi.NET/PrivateApi.csproj backend/PrivateApi.NET/
 
 # --- batch の csproj もコピー ---
 COPY batch/autoBattle/autoBattle.csproj batch/autoBattle/

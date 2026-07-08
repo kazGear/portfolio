@@ -1,7 +1,7 @@
 ﻿using CSLib.Const;
 using System.Text.RegularExpressions;
 
-namespace KazApi.Common._Filter
+namespace PrivateApi.Common._Filter
 {
     public static class Validation
     {

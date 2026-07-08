@@ -1,7 +1,7 @@
-﻿using KazApi.Domain._Monster;
+﻿using PrivateApi.Domain._Monster;
 using System.Text.Json.Serialization;
 
-namespace KazApi.Common._Log
+namespace PrivateApi.Common._Log
 {
     /// <summary>
     /// 戦闘ログクラス

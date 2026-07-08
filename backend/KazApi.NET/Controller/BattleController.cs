@@ -1,19 +1,18 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using KazApi.Common._Log;
-using KazApi.Domain._ViewModel;
-using KazApi.Domain._Factory;
-using KazApi.Domain._GameSystem;
-using KazApi.Domain._Monster;
-using KazApi.Domain.DTO;
+using PrivateApi.Common._Log;
+using PrivateApi.Domain._ViewModel;
+using PrivateApi.Domain._Factory;
+using PrivateApi.Domain._GameSystem;
+using PrivateApi.Domain._Monster;
+using PrivateApi.Domain.DTO;
 using Microsoft.CodeAnalysis;
-using KazApi.Service;
+using PrivateApi.Service;
 using CSLib.Lib;
-using KazApi.Common;
+using PrivateApi.Common;
 using System.Transactions;
 using CSLib.Const;
 
-namespace KazApi.Controller
+namespace PrivateApi.Controller
 {
     [ApiController]
     public class BattleController : ControllerBase

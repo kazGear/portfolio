@@ -1,14 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using KazApi.Domain.DTO;
+using PrivateApi.Domain.DTO;
 using System.Transactions;
-using KazApi.Service;
+using PrivateApi.Service;
 using CSLib.Lib;
-using KazApi.Common;
-using KazApi.Common._Filter;
+using PrivateApi.Common;
+using PrivateApi.Common._Filter;
 using Repository.Repository.sql;
 using Repository.Repository;
 
-namespace KazApi.Controller
+namespace PrivateApi.Controller
 {
     [ApiController]
     public class UserController : ControllerBase

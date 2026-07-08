@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace KazApi.Domain._User
+namespace PrivateApi.Domain._User
 {
     public class User
     {

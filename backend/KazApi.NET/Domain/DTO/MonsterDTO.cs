@@ -1,8 +1,8 @@
-﻿using KazApi.Common._Filter;
-using KazApi.Domain._Monster;
+﻿using PrivateApi.Common._Filter;
+using PrivateApi.Domain._Monster;
 using System.Text.Json.Serialization;
 
-namespace KazApi.Domain.DTO
+namespace PrivateApi.Domain.DTO
 {
     /// <summary>
     /// モンスターパラメータクラス

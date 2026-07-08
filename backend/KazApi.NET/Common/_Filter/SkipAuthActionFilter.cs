@@ -1,4 +1,4 @@
-﻿namespace KazApi.Common._Filter
+﻿namespace PrivateApi.Common._Filter
 {
     /// <summary>
     /// 認証フィルター スキップマーカー

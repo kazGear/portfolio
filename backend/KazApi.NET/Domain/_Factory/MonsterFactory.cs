@@ -1,9 +1,9 @@
-﻿using KazApi.Domain._Monster;
-using KazApi.Domain._Monster._Skill;
-using KazApi.Domain._Monster._State;
-using KazApi.Domain.DTO;
+﻿using PrivateApi.Domain._Monster;
+using PrivateApi.Domain._Monster._Skill;
+using PrivateApi.Domain._Monster._State;
+using PrivateApi.Domain.DTO;
 
-namespace KazApi.Domain._Factory
+namespace PrivateApi.Domain._Factory
 {
     /// <summary>
     /// モンスター生成クラス

@@ -1,4 +1,4 @@
-﻿namespace KazApi.Domain.DTO
+﻿namespace PrivateApi.Domain.DTO
 {
     public class LittleDTO<T>
     {

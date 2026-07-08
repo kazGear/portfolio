@@ -1,7 +1,7 @@
-﻿using KazApi.Common._Log;
-using KazApi.Domain.DTO;
+﻿using PrivateApi.Common._Log;
+using PrivateApi.Domain.DTO;
 
-namespace KazApi.Domain._ViewModel
+namespace PrivateApi.Domain._ViewModel
 {
     public class BattleViewModel
     {

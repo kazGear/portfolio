@@ -1,7 +1,7 @@
 ﻿using System.Text.Json.Serialization;
-using KazApi.Common._Log;
+using PrivateApi.Common._Log;
 
-namespace KazApi.Domain.DTO
+namespace PrivateApi.Domain.DTO
 {
     public class LogDTO
     {

@@ -1,9 +1,9 @@
 ﻿using CSLib.Lib;
-using KazApi.Domain.DTO;
+using PrivateApi.Domain.DTO;
 using Repository.Repository;
 using Repository.Repository.sql;
 
-namespace KazApi.Service
+namespace PrivateApi.Service
 {
     public class CommonService
     {

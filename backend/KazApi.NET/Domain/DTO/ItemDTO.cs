@@ -1,6 +1,6 @@
-﻿using KazApi.Common._Filter;
+﻿using PrivateApi.Common._Filter;
 
-namespace KazApi.Domain.DTO
+namespace PrivateApi.Domain.DTO
 {
     /// <summary>
     /// コードパラメータ for DB

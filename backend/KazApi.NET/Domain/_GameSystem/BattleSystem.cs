@@ -1,9 +1,9 @@
 ﻿using CSLib.Lib;
-using KazApi.Domain._Monster;
-using KazApi.Domain._Monster._State;
-using KazApi.Domain.DTO;
+using PrivateApi.Domain._Monster;
+using PrivateApi.Domain._Monster._State;
+using PrivateApi.Domain.DTO;
 
-namespace KazApi.Domain._GameSystem
+namespace PrivateApi.Domain._GameSystem
 {
     /// <summary>
     /// 戦闘システムクラス

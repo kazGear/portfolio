@@ -1,10 +1,10 @@
 ﻿using CSLib.Lib;
-using KazApi.Common;
-using KazApi.Domain._User;
-using KazApi.Service;
+using PrivateApi.Common;
+using PrivateApi.Domain._User;
+using PrivateApi.Service;
 using Microsoft.AspNetCore.Mvc;
 
-namespace KazApi.Controller
+namespace PrivateApi.Controller
 {
     [Route("api/[controller]")]
     [ApiController]

@@ -1,10 +1,10 @@
 ﻿using CSLib.Const;
 using CSLib.Lib;
-using KazApi.Common._Log;
-using KazApi.Domain._GameSystem;
-using KazApi.Domain.DTO;
+using PrivateApi.Common._Log;
+using PrivateApi.Domain._GameSystem;
+using PrivateApi.Domain.DTO;
 
-namespace KazApi.Domain._Monster._Skill
+namespace PrivateApi.Domain._Monster._Skill
 {
     /// <summary>
     /// ダメージ付与クラス

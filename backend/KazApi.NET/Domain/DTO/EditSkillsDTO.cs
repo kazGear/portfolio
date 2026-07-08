@@ -1,7 +1,7 @@
-﻿using KazApi.Common._Filter;
+﻿using PrivateApi.Common._Filter;
 using System.Text.Json.Serialization;
 
-namespace KazApi.Domain.DTO
+namespace PrivateApi.Domain.DTO
 {
     public class EditSkillsDTO
     {

@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Repository.Repository;
-using KazApi.Domain.DTO;
-using KazApi.Service;
+using PrivateApi.Domain.DTO;
+using PrivateApi.Service;
 using CSLib.Lib;
-using KazApi.Common;
+using PrivateApi.Common;
 using System.Transactions;
 
-namespace KazApi.Controller
+namespace PrivateApi.Controller
 {
     [ApiController]
     public class ShopController : ControllerBase

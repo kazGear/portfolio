@@ -1,4 +1,4 @@
-﻿namespace KazApi.Common._Log
+﻿namespace PrivateApi.Common._Log
 {
     /// <summary>
     /// ログインターフェイス

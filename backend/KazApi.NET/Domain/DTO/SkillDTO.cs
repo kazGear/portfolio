@@ -1,8 +1,8 @@
 ﻿using System.Text.Json.Serialization;
-using KazApi.Common._Filter;
-using KazApi.Domain._Monster._Skill;
+using PrivateApi.Common._Filter;
+using PrivateApi.Domain._Monster._Skill;
 
-namespace KazApi.Domain.DTO
+namespace PrivateApi.Domain.DTO
 {
     /// <summary>
     /// スキルパラメータクラス

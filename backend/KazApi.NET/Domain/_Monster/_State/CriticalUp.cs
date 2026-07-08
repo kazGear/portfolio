@@ -1,8 +1,8 @@
-﻿using KazApi.Common._Log;
-using KazApi.Domain._Monster._Skill;
-using KazApi.Domain.DTO;
+﻿using PrivateApi.Common._Log;
+using PrivateApi.Domain._Monster._Skill;
+using PrivateApi.Domain.DTO;
 
-namespace KazApi.Domain._Monster._State
+namespace PrivateApi.Domain._Monster._State
 {
     /// <summary>
     /// クリティカル率アップ状態クラス

@@ -1,4 +1,4 @@
-﻿namespace KazApi.Domain._Monster
+﻿namespace PrivateApi.Domain._Monster
 {
     public class MonsterSkillDTO
     {

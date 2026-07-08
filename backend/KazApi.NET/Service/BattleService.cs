@@ -1,13 +1,13 @@
 ﻿using CSLib.Const;
 using CSLib.Lib;
-using KazApi.Domain._Monster;
-using KazApi.Domain.DTO;
+using PrivateApi.Domain._Monster;
+using PrivateApi.Domain.DTO;
 using Repository.Repository;
 using Repository.Repository.sql;
 using System.Transactions;
 
 
-namespace KazApi.Service
+namespace PrivateApi.Service
 {
     public class BattleService
     {

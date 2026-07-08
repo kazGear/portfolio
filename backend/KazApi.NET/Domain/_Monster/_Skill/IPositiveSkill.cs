@@ -1,4 +1,4 @@
-﻿namespace KazApi.Domain._Monster._Skill
+﻿namespace PrivateApi.Domain._Monster._Skill
 {
     /// <summary>
     /// マーカーインターフェイス

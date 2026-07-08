@@ -1,9 +1,9 @@
 ﻿using CSLib.Const;
-using KazApi.Common._Filter;
-using KazApi.Domain._Monster._State;
+using PrivateApi.Common._Filter;
+using PrivateApi.Domain._Monster._State;
 using System.Text.Json.Serialization;
 
-namespace KazApi.Domain.DTO
+namespace PrivateApi.Domain.DTO
 {
     public class StateDTO
     {

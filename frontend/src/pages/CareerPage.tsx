@@ -106,7 +106,7 @@ const CareerPage = () => {
 
                     {/* 基本情報 */}
                     <div>
-                        <h3 >プロフィール</h3>
+                        <h3 >プロフィール<br/>（下部にポートフォリオがあります）</h3>
                         <table>
                             <tbody>
                                 <Name name={profile.myName}/>

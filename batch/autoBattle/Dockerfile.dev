@@ -6,25 +6,27 @@ WORKDIR /src
 
 # --- backend の csproj を先にコピー ---
 COPY backend/CSLib/CSLib.csproj backend/CSLib/
-COPY backend/PrivateApi.NET/PrivateApi.csproj backend/PrivateApi.NET/
+COPY backend/PrivateApi/PrivateApi.csproj backend/PrivateApi/
+COPY backend/Repository/Repository.csproj backend/Repository/
 
 # --- batch の csproj もコピー ---
-COPY batch/autoBattle/autoBattle.csproj batch/autoBattle/
+COPY batch/AutoBattle/AutoBattle.csproj batch/AutoBattle/
 
+RUN ls -R /src
 # --- restore ---
-RUN dotnet restore batch/autoBattle/autoBattle.csproj
+RUN dotnet restore batch/AutoBattle/AutoBattle.csproj
 
 # --- 残りのソースをコピー ---
 COPY backend backend
-COPY batch/autoBattle batch/autoBattle
+COPY batch/AutoBattle batch/AutoBattle
 
 # --- publish ---
-RUN dotnet publish batch/autoBattle/autoBattle.csproj \
+RUN dotnet publish batch/AutoBattle/AutoBattle.csproj \
     -c Release \
     -o /app/publish
 
 # --- cron 設定 ---
-COPY batch/autoBattle/crontab.txt /etc/cron.d/autobattle-cron
+COPY batch/AutoBattle/crontab.txt /etc/cron.d/autobattle-cron
 RUN chmod 0644 /etc/cron.d/autobattle-cron
 RUN crontab /etc/cron.d/autobattle-cron
 RUN touch /var/log/cron.log

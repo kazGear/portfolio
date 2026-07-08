@@ -9,7 +9,7 @@ services:
     networks:
       - portfolio-net
 
-  kaz-api:
+  private-api:
     networks:
       - portfolio-net
 

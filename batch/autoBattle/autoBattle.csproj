@@ -10,7 +10,7 @@
 
   <ItemGroup>
     <ProjectReference Include="../../backend/CSLib/CSLib.csproj" />
-    <ProjectReference Include="..\..\backend\KazApi.NET\PrivateApi.csproj" />
+    <ProjectReference Include="..\..\backend\PrivateApi\PrivateApi.csproj" />
     <ProjectReference Include="..\..\backend\Repository\Repository.csproj" />
   </ItemGroup>
 

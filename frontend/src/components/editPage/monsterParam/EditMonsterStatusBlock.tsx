@@ -7,7 +7,7 @@ import EditStatusFinishedDialog from "./EditStatusFinishedDialog";
 import CommonHeaderOfBody from "../../common/CommonHeaderOfBody";
 import { api } from "../../../lib/apiClient";
 
-const Stable = styled.table`
+const Table = styled.table`
     margin: auto;
     width: 90%;
 `;
@@ -51,10 +51,10 @@ const MonsterStatusEditBlock = ({editMonsters, setEditMonsters}: ArgProps) => {
                                 buttonText="ステータス変更"
                                 callback={updateStatusHandler}/>
             {/* ステータス編集部 */}
-            <Stable>
+            <Table>
                 <MonsterTableBody editMonsters={editMonsters}
                                   isNowLoading={isNowLoading}/>
-            </Stable>
+            </Table>
             {/* 完了ダイアログ */}
             <EditStatusFinishedDialog isShow={showDialog}
                                       setShowDialog={setShowDialog}

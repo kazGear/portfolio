@@ -1,18 +1,18 @@
 import styled from "styled-components";
 import { COLORS } from "../../lib/Constants";
 
-const Sh3 = styled.h3`
+const H3 = styled.h3`
     color: ${COLORS.ACCENT_FONT_GREEN};
     padding: 15px 40px;
 `;
 
-const StitleFrame = styled.div`
+const TitleFrame = styled.div`
     background: ${COLORS.DARK_BACKGROUND};
     height: 100%;
     border-radius: 40px 0px 40px 0px;
 `;
 
-const Sspan = styled.span`
+const Span = styled.span`
     color: ${COLORS.CAPTION_FONT_COLOR};
     font-weight: bold;
 `;
@@ -36,12 +36,12 @@ const Career = ({career}: ArgProps) => {
                 career.map((c, idx) => {
                     return (
                         <div key={c.historyTitle}>
-                            <StitleFrame>
-                                <Sh3># {idx + 1}&emsp;{c.historyTitle}</Sh3>
-                            </StitleFrame>
-                            <p><Sspan>期間：</Sspan>{c.period}</p>
-                            <p><Sspan>業種：</Sspan>{c.industry}</p>
-                            <p><Sspan>規模：</Sspan>{c.scale}</p>
+                            <TitleFrame>
+                                <H3># {idx + 1}&emsp;{c.historyTitle}</H3>
+                            </TitleFrame>
+                            <p><Span>期間：</Span>{c.period}</p>
+                            <p><Span>業種：</Span>{c.industry}</p>
+                            <p><Span>規模：</Span>{c.scale}</p>
                             {
                                 c.jobContents.map(content => <p key={content}>{content}</p>)
                             }

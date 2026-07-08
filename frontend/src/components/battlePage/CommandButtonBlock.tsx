@@ -2,7 +2,7 @@ import styled from "styled-components";
 import CommonButton from "../common/CommonButton";
 import { useEffect, useState } from "react";
 
-const SdivCommonButtonFrame = styled.div`
+const ButtonFrame = styled.div`
     height: 40px;
     display: flex;
     justify-content: space-evenly;
@@ -43,7 +43,7 @@ const CommandCommonButtonBlock = ({
     }, [monsterCount, battleStarted]);
 
     return (
-        <SdivCommonButtonFrame>
+        <ButtonFrame>
             <CommonButton
                 id={"nextTurn"}
                 text={"戦闘開始！"}
@@ -64,7 +64,7 @@ const CommandCommonButtonBlock = ({
                 styleObj={{width: "30%", height: "30px"}}
                 onClick={resetHandler}
                 />
-        </SdivCommonButtonFrame>
+        </ButtonFrame>
     );
 }
 

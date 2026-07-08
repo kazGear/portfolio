@@ -8,11 +8,11 @@ import MonsterSelectorBlock from "./MonsterSelectorBlock";
 import { api } from "../../lib/apiClient";
 
 
-const SdivInputFrame = styled.div`
+const InputFrame = styled.div`
     display: flex;
     justify-content: space-between;
 `;
-const Sh1 = styled.h1`
+const H1 = styled.h1`
     margin: 0 0 5px 0;
     color: ${COLORS.CAPTION_FONT_COLOR};
 `;
@@ -70,7 +70,7 @@ const GameBetContentsBlock = (
 
     return (
         <>
-            <Sh1>どのモンスターに賭けますか？</Sh1>
+            <H1>どのモンスターに賭けますか？</H1>
 
             <MonsterSelectorBlock
                 monsters={monsters}
@@ -81,7 +81,7 @@ const GameBetContentsBlock = (
 
             <p style={{margin: "10px 0 0 0"}}>賭け金を入力してください</p>
             <span>所持金： {cash}&nbsp;Gil</span>
-            <SdivInputFrame>
+            <InputFrame>
                 <input
                     type="number"
                     style={{width: "100px", border: "1px solid black"}}
@@ -94,7 +94,7 @@ const GameBetContentsBlock = (
                     width={120}
                     onClick={() => setShowDialog(false)}
                     disabled={ betError || selectError} />
-            </SdivInputFrame>
+            </InputFrame>
 
             {
                 betError ? <span style={{color: "red"}}>

@@ -2,20 +2,20 @@ import styled from "styled-components";
 import { COLORS } from "../../lib/Constants";
 import { MonsterDTO } from "../../types/MonsterBattle";
 
-const SdivMonsterSkillsFrame = styled.div`
+const MonsterSkillsFrame = styled.div`
     border: solid 4px ${COLORS.BORDER_COLOR};
     border-radius: 10px;
     padding: 5px;
     background: rgba(255, 255, 255, 0.8);
 `;
-const Slist = styled.li`
+const List = styled.li`
     list-style: none;
 
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 `;
-const Sol = styled.ol`
+const Ol = styled.ol`
     padding: 0 5px 0 5px;
     margin: 0;
 `;
@@ -26,19 +26,19 @@ interface ArgProps {
 
 const MonsterSkillsBlock = ({monster}: ArgProps) => {
     return (
-        <SdivMonsterSkillsFrame>
-            <Sol>
+        <MonsterSkillsFrame>
+            <Ol>
                 {
                     monster.Skills !== undefined ? (
                     monster.Skills.map((skill, index) => (
-                        <Slist key={index}>{skill.SkillName}</Slist>
+                        <List key={index}>{skill.SkillName}</List>
                     ))
                     ) : (
                         <p>Loading ... </p>
                     )
                 }
-            </Sol>
-        </SdivMonsterSkillsFrame>
+            </Ol>
+        </MonsterSkillsFrame>
     );
 }
 

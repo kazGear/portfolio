@@ -3,7 +3,7 @@ import { COLORS, DAMAGE_VIEW, STATE_NAME } from "../../lib/Constants";
 import { useEffect, useState } from "react";
 import { MetaDataDTO, MonsterDTO } from "../../types/MonsterBattle";
 
-const SdivMonsterInfoFrame = styled.div`
+const MonsterInfoFrame = styled.div`
     border: solid 4px ${COLORS.BORDER_COLOR};
     margin-bottom: 10px;
     border-radius: 10px;
@@ -12,11 +12,11 @@ const SdivMonsterInfoFrame = styled.div`
     color: ${props => props.color};
     background: rgba(255, 255, 255, 0.8);
 `;
-const Stable = styled.table`
+const Table = styled.table`
     width: 100%;
     height: 100%;
 `;
-const StdStatus = styled.td`
+const TdStatus = styled.td`
     white-space: nowrap;
     max-width: 105px;
     text-overflow: ellipsis;
@@ -65,12 +65,12 @@ const MonsterInfoBlock = ({monster, shortLog}: ArgProps) => {
     const infoColor = hp <= 0 ? STATE_NAME.LOSER : "";
 
     return (
-        <SdivMonsterInfoFrame
+        <MonsterInfoFrame
             color={infoColor === STATE_NAME.LOSER ? COLORS.LOSER_FONT_COLOR
                                                   : COLORS.MAIN_FONT_COLOR}>
             {
                 monster.Hp !== undefined ? (
-                <Stable>
+                <Table>
                     <thead>
                         <tr>
                             <td colSpan={2}>{monster.MonsterName}</td>
@@ -81,15 +81,15 @@ const MonsterInfoBlock = ({monster, shortLog}: ArgProps) => {
                             <td>HP : </td><td>{hp <= 0 ? 0 : hp} / {monster.MaxHp}</td>
                         </tr>
                         <tr>
-                            <td>状態 : </td><StdStatus>{status.join(" ")}</StdStatus>
+                            <td>状態 : </td><TdStatus>{status.join(" ")}</TdStatus>
                         </tr>
                     </tbody>
-                </Stable>
+                </Table>
                 ) : (
                     <p>Loading ...</p>
                 )
             }
-        </SdivMonsterInfoFrame>
+        </MonsterInfoFrame>
     );
 }
 

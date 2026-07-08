@@ -6,21 +6,22 @@ import { DAMAGE_VIEW } from "../../lib/Constants";
 import { isEmpty } from "../../lib/CommonLogic";
 import { MetaDataDTO, MonsterDTO } from "../../types/MonsterBattle";
 
-const SdivMonsterImgFrame = styled.div`
+const MonsterImgFrame = styled.div`
     margin: 10px 0 5px 0;
 `;
-const SdivMonsterImg = styled.div`
+const MonsterImg = styled.div`
     position: relative;
 `;
-
-const SimgMonster = styled.img`
+const ImgMonster = styled.img`
     position: relative;
     width: 100px;
     height: 100px;
     border-radius: 100%;
 `;
+
 interface SimgEffectProp { display: string; }
-const SimgEffect = styled.img<SimgEffectProp>`
+
+const ImgEffect = styled.img<SimgEffectProp>`
     display: ${props => props.display};
     position: absolute;
     left: 0;
@@ -67,22 +68,22 @@ const MonsterImgBlock = ({monster, shortLog}: ArgProps) => {
     }, [shortLog]);
 
     return (
-        <SdivMonsterImgFrame>
-            <SdivMonsterImg>
-                <SimgMonster
+        <MonsterImgFrame>
+            <MonsterImg>
+                <ImgMonster
                     id={"monsterImage" + monster.MonsterId}
                     src={monsterImage}
                     alt="Loding ..."
                     ref={imgRef}
                     style={monsterMove}
                     />
-                <SimgEffect
+                <ImgEffect
                     src={effectImage}
                     alt="Loding ..."
                     display={showEffect ? "inline" : "none"}
                     />
-            </SdivMonsterImg>
-        </SdivMonsterImgFrame>
+            </MonsterImg>
+        </MonsterImgFrame>
     );
 }
 

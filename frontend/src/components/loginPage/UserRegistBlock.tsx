@@ -7,7 +7,7 @@ import InputUserContents from "../userRegist/InputUserBlock";
 import styled from "styled-components";
 import { api } from "../../lib/apiClient";
 
-const SbuttonFrame = styled.div`
+const ButtonFrame = styled.div`
     height: 20%;
     min-height: 60px;
     text-align: end;
@@ -155,7 +155,7 @@ const UserRegistBlock = ({setShowRegistForm}: ArgProps) => {
                                             </span>
             }
             </div>
-            <SbuttonFrame>
+            <ButtonFrame>
                 <CommonButton text="閉じる"
                         onClick={() => {
                             setShowRegistForm(false);
@@ -170,7 +170,7 @@ const UserRegistBlock = ({setShowRegistForm}: ArgProps) => {
                 <CommonButton text="登録"
                         disabled={canRegist}
                         onClick={exeUserInsert} />
-            </SbuttonFrame>
+            </ButtonFrame>
         </div>
     );
 }

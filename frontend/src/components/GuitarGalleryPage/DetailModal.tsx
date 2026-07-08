@@ -5,7 +5,7 @@ import CommonButton from "../common/CommonButton";
 import DetailLeftSide from "./DetailLeftSide";
 import DetailRightSide from "./DetailRightSide";
 
-const Sbackground = styled.div`
+const Background = styled.div`
     width: 100%;
     height: 100%;
     display: none;
@@ -17,7 +17,7 @@ const Sbackground = styled.div`
     background: rgba(0, 0, 0, 0.7);
 `;
 
-const Smodal = styled.div`
+const Modal = styled.div`
     width: 80%;
     height: 80%;
     display: flex;
@@ -45,8 +45,8 @@ const DetailModal = ({selectedGuitars, isShow, callback}: ArgProps) => {
     const guitar = selectedGuitars;
 
     return (
-        <Sbackground style={{display: isShowDetail}}>
-            <Smodal>
+        <Background style={{display: isShowDetail}}>
+            <Modal>
                 <DetailLeftSide selectedGuitars={guitar}/>
                 <DetailRightSide selectedGuitars={guitar}/>
                 <CommonButton text="閉じる"
@@ -57,8 +57,8 @@ const DetailModal = ({selectedGuitars, isShow, callback}: ArgProps) => {
                             bottom: "0",
                             margin: "0px 40px 40px 0px"}}
                             />
-            </Smodal>
-        </Sbackground>
+            </Modal>
+        </Background>
     );
 }
 export default DetailModal;

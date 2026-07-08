@@ -14,7 +14,7 @@ import SelectorSort from "./SelectorSort";
 import SelectorPage from "./SelectorPage";
 import SelectorPageSize from "./SelectorPageSize";
 
-const Sp = styled.p`
+const P = styled.p`
     font-size: 13px;
     font-weight: bolder;
     margin-top: 14.5px;
@@ -45,18 +45,18 @@ const SearchConditions = ({guitarParams,
                     TODO: スタイルで無理やりラベルとインプットの高さを揃えているため、綺麗に行として揃える。
                           Input, Selectコンポーネントは内部でdivで囲っているため使いづらい。これもリファクタ対象。
                 */}
-                <Sp>メーカー</Sp>
-                <Sp>カラー</Sp>
-                <Sp>シリーズ</Sp>
-                <Sp>ギター名</Sp>
-                <Sp>トップ材</Sp>
-                <Sp>ボディ材</Sp>
-                <Sp>最低価格</Sp>
-                <Sp>最大価格</Sp>
-                <Sp>ソート</Sp>
-                <Sp>並び順</Sp>
-                <Sp>選択ページ</Sp>
-                <Sp>ページサイズ</Sp>
+                <P>メーカー</P>
+                <P>カラー</P>
+                <P>シリーズ</P>
+                <P>ギター名</P>
+                <P>トップ材</P>
+                <P>ボディ材</P>
+                <P>最低価格</P>
+                <P>最大価格</P>
+                <P>ソート</P>
+                <P>並び順</P>
+                <P>選択ページ</P>
+                <P>ページサイズ</P>
             </div>
             <div style={{marginTop: "10px", textAlign: "right"}}>
                 <SearchMaker guitarParams={gParams} makers={makers} callback={callback}/>

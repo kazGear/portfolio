@@ -2,19 +2,19 @@ import styled from "styled-components";
 import { Guitar } from "../../types/Guitar";
 import { GUITAR } from "../../lib/Constants";
 
-const Sdiv = styled.div`
+const Div = styled.div`
     width: 50%;
     height: 85%;
     margin: 20px 40px 40px 40px;
     overflow-y: auto;
 `;
 
-const Str = styled.tr`
+const Tr = styled.tr`
     border-top: gray 1px solid;
     border-bottom: gray 1px solid;
 `;
 
-const Sth = styled.th`
+const Th = styled.th`
     text-align: left;
 `;
 
@@ -26,87 +26,87 @@ const DetailRightSide = ({selectedGuitars}: ArgProps) => {
     const guitar = selectedGuitars;
 
     return (
-        <Sdiv>
+        <Div>
             <h2>Guitars spec</h2>
             <table>
                 <tbody>
-                    <Str>
-                        <Sth>Maker:&emsp;</Sth>
+                    <Tr>
+                        <Th>Maker:&emsp;</Th>
                         <td>{guitar?.makerName}</td>
-                    </Str>
-                    <Str>
-                        <Sth>Name:&emsp;</Sth>
+                    </Tr>
+                    <Tr>
+                        <Th>Name:&emsp;</Th>
                         <td>{guitar?.name}</td>
-                    </Str>
-                    <Str>
-                        <Sth>Color:&emsp;</Sth>
+                    </Tr>
+                    <Tr>
+                        <Th>Color:&emsp;</Th>
                         <td>{guitar?.color}</td>
-                    </Str>
-                    <Str>
-                        <Sth>Series:&emsp;</Sth>
+                    </Tr>
+                    <Tr>
+                        <Th>Series:&emsp;</Th>
                         <td>{guitar?.series}</td>
-                    </Str>
-                    <Str>
-                        <Sth>BodyMaterial:&emsp;</Sth>
+                    </Tr>
+                    <Tr>
+                        <Th>BodyMaterial:&emsp;</Th>
                         <td>{guitar?.bodyMaterial}</td>
-                    </Str>
-                    <Str>
-                        <Sth>BodyFinish:&emsp;</Sth>
+                    </Tr>
+                    <Tr>
+                        <Th>BodyFinish:&emsp;</Th>
                         <td>{guitar?.bodyFinish}</td>
-                    </Str>
-                    <Str>
-                        <Sth>NeckMaterial:&emsp;</Sth>
+                    </Tr>
+                    <Tr>
+                        <Th>NeckMaterial:&emsp;</Th>
                         <td>{guitar?.neckMaterial === GUITAR.UNkNOWN ? ""
                                                                      : guitar?.neckMaterialName}
                         </td>
-                    </Str>
-                    <Str>
-                        <Sth>Fingerboard:&emsp;</Sth>
+                    </Tr>
+                    <Tr>
+                        <Th>Fingerboard:&emsp;</Th>
                         <td>{guitar?.fingerboard === GUITAR.UNkNOWN ? ""
                                                                     : guitar?.fingerboardName}
                         </td>
-                    </Str>
-                    <Str>
-                        <Sth>FretCount:&emsp;</Sth>
+                    </Tr>
+                    <Tr>
+                        <Th>FretCount:&emsp;</Th>
                         <td>{guitar?.fretCount! <= GUITAR.INVALID_NUMBER ? ""
                                                                          : guitar?.fretCount! + " frets"}
                         </td>
-                    </Str>
-                    <Str>
-                        <Sth>Pickups:&emsp;</Sth>
+                    </Tr>
+                    <Tr>
+                        <Th>Pickups:&emsp;</Th>
                         <td>{guitar?.pickups}</td>
-                    </Str>
-                    <Str>
-                        <Sth>Bridge:&emsp;</Sth>
+                    </Tr>
+                    <Tr>
+                        <Th>Bridge:&emsp;</Th>
                         <td>{guitar?.bridge}</td>
-                    </Str>
-                    <Str>
-                        <Sth>Controls:&emsp;</Sth>
+                    </Tr>
+                    <Tr>
+                        <Th>Controls:&emsp;</Th>
                         <td>{guitar?.controls}</td>
-                    </Str>
-                    <Str>
-                        <Sth>Inlays:&emsp;</Sth>
+                    </Tr>
+                    <Tr>
+                        <Th>Inlays:&emsp;</Th>
                         <td>{guitar?.inlays}</td>
-                    </Str>
-                    <Str>
-                        <Sth>Joint:&emsp;</Sth>
+                    </Tr>
+                    <Tr>
+                        <Th>Joint:&emsp;</Th>
                         <td>{guitar?.joint}</td>
-                    </Str>
-                    <Str>
-                        <Sth>ScaleLength:&emsp;</Sth>
+                    </Tr>
+                    <Tr>
+                        <Th>ScaleLength:&emsp;</Th>
                         <td>{guitar?.scaleLengthMm! <= GUITAR.INVALID_NUMBER ? ""
                                                                              : guitar?.scaleLengthMm! + " mm"}
                         </td>
-                    </Str>
-                    <Str>
-                        <Sth>Weight:&emsp;</Sth>
+                    </Tr>
+                    <Tr>
+                        <Th>Weight:&emsp;</Th>
                         <td>{guitar?.weight! <= GUITAR.INVALID_NUMBER ? ""
                                                                       : guitar?.weight! + " kg"}
                         </td>
-                    </Str>
+                    </Tr>
                 </tbody>
             </table>
-        </Sdiv>
+        </Div>
     );
 }
 export default DetailRightSide;

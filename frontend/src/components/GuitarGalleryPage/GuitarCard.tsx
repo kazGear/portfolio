@@ -3,7 +3,7 @@ import { COLORS } from "../../lib/Constants";
 import { Guitar } from "../../types/Guitar";
 import { getColorString, parsePrice } from "./GuitarFuncs";
 
-const ScardFrame = styled.div`
+const CardFrame = styled.div`
     font-weight: 900;
     width: 240px;
     height: 280px;
@@ -16,21 +16,21 @@ const ScardFrame = styled.div`
         inset 0 -2px 10px rgba(0,0,0,0.4);
 `;
 
-const Sbutton = styled.button`
+const Button = styled.button`
     padding: 0;
     background: none;
     border: none;
     cursor: pointer;
 `
 
-const Sh3 = styled.h3`
+const H3 = styled.h3`
     margin: 0px 20px;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
 `
 
-const Sp = styled.p`
+const P = styled.p`
     margin: 0px 20px;
     overflow: hidden;
     white-space: nowrap;
@@ -53,8 +53,8 @@ const GuitarCard = ({guitar, callback}: ArgProps) => {
     }
 
     return (
-        <Sbutton onClick={() => callback(guitar)}>
-            <ScardFrame>
+        <Button onClick={() => callback(guitar)}>
+            <CardFrame>
                 <div style={{textAlign: "center", margin: "20px 20px 0px 20px" ,height: "50%"}}>
                     {/* モーダルにギター情報を渡す */}
                     <img style={{width:"90%", height:"90%", objectFit: "contain"}}
@@ -65,14 +65,14 @@ const GuitarCard = ({guitar, callback}: ArgProps) => {
                 </div>
                 <div style={{textAlign: "center", height: "50%"}}>
                     <p style={{margin: "0px 20px"}}>{guitar?.makerName}</p>
-                    <Sh3 style={{color: color, textShadow: fontShadow}}>
+                    <H3 style={{color: color, textShadow: fontShadow}}>
                         {guitar?.name}
-                    </Sh3>
-                    <Sp>{guitar?.color}</Sp>
+                    </H3>
+                    <P>{guitar?.color}</P>
                     <p>{parsePrice(guitar?.price)}</p>
                 </div>
-            </ScardFrame>
-        </Sbutton>
+            </CardFrame>
+        </Button>
     );
 }
 export default GuitarCard;

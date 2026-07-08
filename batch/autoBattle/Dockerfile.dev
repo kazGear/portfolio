@@ -12,7 +12,6 @@ COPY backend/Repository/Repository.csproj backend/Repository/
 # --- batch の csproj もコピー ---
 COPY batch/AutoBattle/AutoBattle.csproj batch/AutoBattle/
 
-RUN ls -R /src
 # --- restore ---
 RUN dotnet restore batch/AutoBattle/AutoBattle.csproj
 

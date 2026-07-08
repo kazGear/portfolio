@@ -14,13 +14,14 @@ const ShopPageFrame = styled.div`
     height: 90%;
 `;
 const ControllerFrame = styled.div`
-    width:25%;
+    width: 25%;
     margin: 0px 20px;
 `;
 const ItemFrame = styled.div`
     width: 75%;
+    height: 90vh;
     margin: 0px 20px 0px 0px;
-    overflow: overlay;
+    overflow: scroll;
 `;
 
 const ShopPage = () => {

@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 import { CodeDTO } from "../../../types/Common";
 import { EditMonsterDTO } from "../../../types/Edit";
-import BorderTd from "../../common/BorderTd";
-import Select from "../../common/Select";
+import BorderTd from "../../common/CommonBorderTd";
+import Select from "../../common/CommonSelect";
 import { URLS } from "../../../lib/Constants";
 import { api } from "../../../lib/apiClient";
 

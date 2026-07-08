@@ -9,21 +9,21 @@ import WinsBlock from "../components/userPage/WinsBlock";
 import LossesBlock from "../components/userPage/LossesBlock";
 import MonstersBlock from "../components/userPage/MonstersBlock";
 import React, { useEffect, useState } from "react";
-import OutSideFrame from "../components/common/OutSideFrame";
-import ImgUpload from "../components/common/ImgUpload";
+import CommonFrame from "../components/common/CommonOutSideFrame";
+import CommonImgUpload from "../components/common/CommonImgUpload";
 import { api } from "../lib/apiClient";
 import { useCheckToken } from "../hooks/useHooksOfCommon";
 
-const SdivPageFrame = styled.div`
+const PageFrame = styled.div`
     display: flex;
     height: 100%;
 `;
-const SdivPageL = styled.div`
+const PageL = styled.div`
     width: 40%;
     height: 100%;
     min-width: 440px;
 `;
-const SdivPageR = styled.div`
+const PageR = styled.div`
     width: 57%;
     height: 85vh;
 `;
@@ -71,29 +71,29 @@ const UserPage = () => {
     }, []);
 
     return (
-        <SdivPageFrame>
-            <SdivPageL>
-                <OutSideFrame styleObj={iconStyle}>
+        <PageFrame>
+            <PageL>
+                <CommonFrame styleObj={iconStyle}>
                     <UserIconBlock user={user}  />
                     <UserIdsBlock user={user} />
-                    <ImgUpload styleObj={{width: "110px"}} />
-                </OutSideFrame>
-                <OutSideFrame styleObj={cashStyle}>
+                    <CommonImgUpload styleObj={{width: "110px"}} />
+                </CommonFrame>
+                <CommonFrame styleObj={cashStyle}>
                     <CashBlock user={user} />
-                </OutSideFrame>
-                <OutSideFrame styleObj={winAndLoseStyle}>
+                </CommonFrame>
+                <CommonFrame styleObj={winAndLoseStyle}>
                     <WinsBlock user={user} />
-                </OutSideFrame>
-                <OutSideFrame styleObj={winAndLoseStyle}>
+                </CommonFrame>
+                <CommonFrame styleObj={winAndLoseStyle}>
                     <LossesBlock user={user}/>
-                </OutSideFrame>
-            </SdivPageL>
-            <SdivPageR>
-                <OutSideFrame styleObj={monstersStyle}>
+                </CommonFrame>
+            </PageL>
+            <PageR>
+                <CommonFrame styleObj={monstersStyle}>
                     <MonstersBlock monsters={monsters} loginId={loginId} />
-                </OutSideFrame>
-            </SdivPageR>
-        </SdivPageFrame>
+                </CommonFrame>
+            </PageR>
+        </PageFrame>
 
     );
 }

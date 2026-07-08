@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { KEYS, URLS } from "../../../lib/Constants";
 import { EditSkillsDTO } from "../../../types/Edit";
 import EditSkillBlock from "./EditSkillBlock";
-import HeaderOfBody from "../../common/HeaderOfBody";
+import CommonHeaderOfBody from "../../common/CommonHeaderOfBody";
 import SkillUpdateDialog from "./SkillUpdateDialog"
 import { api } from "../../../lib/apiClient";
 
@@ -37,7 +37,7 @@ const EditMonsterSkillsBlock = ({editMonsterSkills, setEditMonsterSkills}: ArgPr
 
     return (
         <div>
-            <HeaderOfBody message="変更したいスキルを選択してください。"
+            <CommonHeaderOfBody message="変更したいスキルを選択してください。"
                           buttonText="スキル変更"
                           buttonWidth={120}
                           callback={() => {

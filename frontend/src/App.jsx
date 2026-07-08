@@ -5,19 +5,19 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import BattlePage from './pages/BattlePage';
 import ShopPage from './pages/ShopPage';
 import LoginPage from "./pages/LoginPage";
-import AppHeader from './components/common/AppHeader';
+import CommonAppHeader from './components/common/CommonAppHeader';
 import BattleResultPage from './pages/BattleResultPage';
 import UserPage from "./pages/UserPage";
 import EditPage from "./pages/EditPage";
 import GuitarGalleryPage from "./pages/GuitarGalleryPage";
 import CareerPage from "./pages/CareerPage";
-import ErrorBoundary from "./components/common/ErrorBoundary";
+import CommonErrorBoundary from "./components/common/CommonErrorBoundary";
 
 function App() {
     return (
         <BrowserRouter>
-            <ErrorBoundary>
-                <AppHeader title="KazApp" />
+            <CommonErrorBoundary>
+                <CommonAppHeader title="KazApp" />
                 <main style={{paddingTop:"60px"}}>
                     <Routes>
                         {/* 新しいページを作成したらここに追加（要:import） */}
@@ -33,7 +33,7 @@ function App() {
                         <Route path={"/CareerPage"} element={<CareerPage />} />
                     </Routes>
                 </main>
-            </ErrorBoundary>
+            </CommonErrorBoundary>
         </BrowserRouter>
     );
 }

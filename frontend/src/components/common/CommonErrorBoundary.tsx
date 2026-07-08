@@ -13,7 +13,7 @@ interface ErrorBoundaryState {
 /**
  * 包括的なエラー処理クラス
  */
-class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
+class CommonErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
     private eventHandler;
 
     constructor(props: ErrorBoundaryProps) {
@@ -58,4 +58,4 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
     }
 }
 
-export default ErrorBoundary;
+export default CommonErrorBoundary;

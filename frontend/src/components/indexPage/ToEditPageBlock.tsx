@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { COLORS } from "../../lib/Constants";
-import MenuTitle from "../common/MenuTitle";
-import OutSideFrame from "../common/OutSideFrame";
+import MenuTitle from "../common/CommonMenuTitle";
+import CommonFrame from "../common/CommonOutSideFrame";
 
 const Slink = styled(Link)`
     text-decoration: none;
@@ -27,12 +27,12 @@ const ToEditPageBlock = ({isValid, classOfAnime, titleStyle}: ArgProps) => {
                            styleObj={isValid ? {} : titleStyle}/>
             </Slink>
 
-            <OutSideFrame>
+            <CommonFrame>
                 <SpDescription>
                     モンスターステータス編集、モンスタースキル編集、使用モンスターの制限などが可能です。<br/>
                     ※管理ユーザのみ使用可能。
                 </SpDescription>
-            </OutSideFrame>
+            </CommonFrame>
         </div>
     );
 }

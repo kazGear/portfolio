@@ -2,15 +2,15 @@ import styled from "styled-components";
 import { MonsterReportDTO } from "../../types/BattleReport";
 import { COLORS } from "../../lib/Constants";
 import monsterImages from "../../lib/MonsterImages";
-import BorderTd from "../common/BorderTd";
-import NowLoading from "../common/NowLoading";
+import CommonBorderTd from "../common/CommonBorderTd";
+import CommonNowLoading from "../common/CommonNowLoading";
 
-const Stable = styled.table`
+const Table = styled.table`
     width: 100%;
     border-collapse: collapse;
     position: relative;
 `;
-const StHead = styled.thead`
+const Thead = styled.thead`
     height: 35px;
     max-height: 35px;
     color: ${COLORS.CAPTION_FONT_COLOR};
@@ -22,12 +22,12 @@ const StHead = styled.thead`
     font-weight: bold;
     background-color: white;
 `;
-const Simg = styled.img`
+const Img = styled.img`
     width: 30px;
     height: 30px;
     vertical-align: middle;
 `;
-const Sradio = styled.input`
+const Radio = styled.input`
     margin-left: 6px;
 `;
 
@@ -51,47 +51,47 @@ const MonsterReportBlock = (
     if (isNowLoadingMonsterReport) {
         return (
             <div style={{margin: "100px"}}>
-                <NowLoading alt="ローディング"/>
+                <CommonNowLoading alt="ローディング"/>
             </div>
         );
     }
 
    return (
         <div>
-            <Stable>
-                <StHead>
+            <Table>
+                <Thead>
                     <tr>
-                        <BorderTd>
+                        <CommonBorderTd>
                             <label style={{marginLeft: "40px"}}>
-                                モンスター名<Sradio type="radio" name="sortType" value="1" onChange={sortHandler}/>
+                                モンスター名<Radio type="radio" name="sortType" value="1" onChange={sortHandler}/>
                             </label>
-                        </BorderTd>
-                        <BorderTd> </BorderTd>
-                        <BorderTd><label>勝利数<Sradio type="radio" name="sortType" value="2" onChange={sortHandler}/></label></BorderTd>
-                        <BorderTd><label>対戦数<Sradio type="radio" name="sortType" value="3" onChange={sortHandler}/></label></BorderTd>
-                        <BorderTd><label>勝率<Sradio type="radio" name="sortType" value="4" onChange={sortHandler}/></label></BorderTd>
+                        </CommonBorderTd>
+                        <CommonBorderTd> </CommonBorderTd>
+                        <CommonBorderTd><label>勝利数<Radio type="radio" name="sortType" value="2" onChange={sortHandler}/></label></CommonBorderTd>
+                        <CommonBorderTd><label>対戦数<Radio type="radio" name="sortType" value="3" onChange={sortHandler}/></label></CommonBorderTd>
+                        <CommonBorderTd><label>勝率<Radio type="radio" name="sortType" value="4" onChange={sortHandler}/></label></CommonBorderTd>
                     </tr>
-                </StHead>
+                </Thead>
                 <tbody>
                 {
                     monsterReport.map((report) => {
                         return (
                             <tr key={report.MonsterId}>
-                                <BorderTd><span style={{marginLeft: "40px"}}>{report.MonsterName}</span></BorderTd>
-                                <BorderTd>
-                                    <Simg src={monsterImages(report.MonsterId)}
+                                <CommonBorderTd><span style={{marginLeft: "40px"}}>{report.MonsterName}</span></CommonBorderTd>
+                                <CommonBorderTd>
+                                    <Img src={monsterImages(report.MonsterId)}
                                           alt=""
                                           style={{height: "40px", width: "40px"}}/>
-                                </BorderTd>
-                                <BorderTd>{report.Wins} 勝</BorderTd>
-                                <BorderTd>{report.BattleCount} 戦</BorderTd>
-                                <BorderTd>{report.WinRate}</BorderTd>
+                                </CommonBorderTd>
+                                <CommonBorderTd>{report.Wins} 勝</CommonBorderTd>
+                                <CommonBorderTd>{report.BattleCount} 戦</CommonBorderTd>
+                                <CommonBorderTd>{report.WinRate}</CommonBorderTd>
                             </tr>
                         )
                     })
                 }
                 </tbody>
-            </Stable>
+            </Table>
         </div>
     );
 }

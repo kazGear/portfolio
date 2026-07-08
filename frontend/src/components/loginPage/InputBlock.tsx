@@ -1,4 +1,4 @@
-import Input from "../common/Input";
+import CommonInput from "../common/CommonInput";
 
 interface ArgProps {
     setInputLoginId: React.Dispatch<React.SetStateAction<string>>;
@@ -8,7 +8,7 @@ interface ArgProps {
 const InputBlock = ({setInputLoginId, setInputPassword}: ArgProps) => {
     return (
         <div>
-            <Input
+            <CommonInput
                 labelTitle="ログインID："
                 inputType="text"
                 id="loginId"
@@ -16,7 +16,7 @@ const InputBlock = ({setInputLoginId, setInputPassword}: ArgProps) => {
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setInputLoginId(e.target.value)}
                 />
             <br/>
-            <Input
+            <CommonInput
                 labelTitle="パスワード："
                 inputType="password"
                 id="password"

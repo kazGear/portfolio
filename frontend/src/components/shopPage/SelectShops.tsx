@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import OutSideFrame from "../common/OutSideFrame";
-import Select from "../common/Select";
+import CommonFrame from "../common/CommonOutSideFrame";
+import CommonSelect from "../common/CommonSelect";
 import { ShopDTO } from "../../types/Shop";
 import { KEYS, URLS } from "../../lib/Constants";
 import { UserDTO } from "../../types/UserManage";
-import Accent from "../common/Accent";
+import Accent from "../common/CommonAccent";
 import { api } from "../../lib/apiClient";
 
 interface ArgProps {
@@ -35,18 +35,18 @@ const SelectShops = ({setSelectedShop, user, myCash}: ArgProps) => {
     }
 
     return (
-        <OutSideFrame >
+        <CommonFrame>
             <h3 style={{margin: "10px"}}>
                 所持金：<Accent>{myCash?.toLocaleString()}</Accent> Gil
             </h3>
-            <Select title="店舗" onChange={changeShopHandler}>
+            <CommonSelect title="店舗" onChange={changeShopHandler}>
                 {
                     shopsOfSelectBox.map((shop, index) => (
                         <option value={shop.ShopId} key={index}>{shop.ShopName}</option>
                     ))
                 }
-            </Select>
-        </OutSideFrame>
+            </CommonSelect>
+        </CommonFrame>
     );
 }
 

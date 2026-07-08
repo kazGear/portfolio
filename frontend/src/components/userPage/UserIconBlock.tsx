@@ -4,15 +4,15 @@ import { UserDTO } from "../../types/UserManage";
 import { PREFIX } from "../../lib/Constants";
 import nowLoading from "../../images/background/nowLoading.gif";
 import { isEmpty } from "../../lib/CommonLogic";
-import NowLoading from "../common/NowLoading";
+import CommonNowLoading from "../common/CommonNowLoading";
 
-const SdivImageFrame = styled.div`
+const ImageFrame = styled.div`
     height: 150px;
     min-width: 120px;
     margin: 20px;
     align-content: center;
 `;
-const Simg = styled.img`
+const Img = styled.img`
     widht: 120px;
     height: 120px;
     border-radius: 100%;
@@ -35,14 +35,14 @@ const UserIconBlock = ({user}: ArgProps) => {
     }, [user, userImage]);
 
     return (
-        <SdivImageFrame>
+        <ImageFrame>
             { userImage.length < 50 ? ( // base64 prefixは30文字無い程度
-                    <NowLoading alt="ユーザーイメージ" size="80pxs"/>
+                    <CommonNowLoading alt="ユーザーイメージ" size="80pxs"/>
                 ) : (
-                    <Simg src={userImage} alt="ユーザーイメージ"/>
+                    <Img src={userImage} alt="ユーザーイメージ"/>
                 )
             }
-        </SdivImageFrame>
+        </ImageFrame>
     );
 }
 

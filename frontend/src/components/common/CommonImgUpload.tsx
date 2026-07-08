@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
-import Button from "./Button";
+import CommonButton from "./CommonButton";
 import { KEYS, URLS } from "../../lib/Constants";
-import Input from "./Input";
+import Input from "./CommonInput";
 import { api, apiClient } from "../../lib/apiClient";
 
 const prevImgStyle = {
@@ -14,7 +14,7 @@ interface ArgProps {
     styleObj?: React.CSSProperties;
 }
 
-const ImgUpload = ({styleObj}: ArgProps) => {
+const CommonImgUpload = ({styleObj}: ArgProps) => {
     const [selectImage, setSelectImage] = useState<string | null>(null);
     const [imageFile, setImagefile] = useState<File | null>(null);
 
@@ -61,7 +61,7 @@ const ImgUpload = ({styleObj}: ArgProps) => {
                     <div style={{textAlign: "center"}}>
                         <img src={selectImage} alt="prevImage" style={prevImgStyle} />
                         <div style={{textAlign: "end"}}>
-                            <Button text="upload"
+                            <CommonButton text="upload"
                                     onClick={uploadImageHandler}
                                     styleObj={{margin: "10px 10px 0 0"}} />
                         </div>
@@ -72,4 +72,4 @@ const ImgUpload = ({styleObj}: ArgProps) => {
     );
 }
 
-export default ImgUpload;
+export default CommonImgUpload;

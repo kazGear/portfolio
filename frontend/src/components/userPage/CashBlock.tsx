@@ -1,16 +1,16 @@
 import styled from "styled-components";
 import { UserDTO } from "../../types/UserManage";
-import Button from "../common/Button";
-import Strong from "../common/Strong";
+import CommonButton from "../common/CommonButton";
+import CommonStrong from "../common/CommonStrong";
 import { KEYS, URLS } from "../../lib/Constants";
 import { useCallback, useEffect, useState } from "react";
 import { api } from "../../lib/apiClient";
 
-const SdivCashFrame = styled.div`
+const CashFrame = styled.div`
     height: 100px;
     margin-left: 25px;
 `;
-const SspanDanger = styled.span`
+const SpanDanger = styled.span`
     color: red;
     font-weight: bold;
 `;
@@ -44,18 +44,19 @@ const CashBlock = ({user}: ArgProps) => {
     }, [loginId]);
 
     return (
-        <SdivCashFrame>
-            <p style={{margin:"20px 0 0 0"}}><Strong>
-                所持金</Strong> : {cash != null ? cash.toLocaleString() : ""} Gil
+        <CashFrame>
+            <p style={{margin:"20px 0 0 0"}}><CommonStrong>
+                所持金</CommonStrong> : {cash != null ? cash.toLocaleString() : ""} Gil
             </p>
             <p style={{margin:0}}>
-                <Strong>自己破産</Strong>（所持金初期化）
-                <Button text="自己破産 実行" width={120} onClick={restartAsPlayer} />
+                <CommonStrong>自己破産</CommonStrong>（所持金初期化）
+                <CommonButton text="自己破産 実行" width={120} onClick={restartAsPlayer} />
             </p>
             <p style={{margin:0}}>
-                <Strong>自己破産回数</Strong> : <SspanDanger>{bankruptcyCnt != null ? bankruptcyCnt : ""} 回</SspanDanger>
+                <CommonStrong>自己破産回数</CommonStrong>&nbsp;:&nbsp;
+                <SpanDanger>{bankruptcyCnt != null ? bankruptcyCnt : ""} 回</SpanDanger>
             </p>
-        </SdivCashFrame>
+        </CashFrame>
     );
 }
 

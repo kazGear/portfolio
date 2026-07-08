@@ -1,4 +1,4 @@
-import DialogFrame from "../common/DialogFrame";
+import CommonDialogFrame from "../common/CommonDialogFrame";
 import BattleStartContentsBlock from "./BattleStartContentsBlock";
 
 
@@ -12,10 +12,10 @@ const GameStartBlock = ({
     battleStartHandler, selectMonstersCountHandler, showResultDialog}: ArgProps
 ) => {
     return (
-        <DialogFrame showDialog={showResultDialog}>
+        <CommonDialogFrame showDialog={showResultDialog}>
             <BattleStartContentsBlock battleStartHandler={battleStartHandler}
                                       selectMonstersCountHandler={selectMonstersCountHandler}/>
-        </DialogFrame>
+        </CommonDialogFrame>
     );
 }
 

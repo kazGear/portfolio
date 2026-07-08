@@ -1,6 +1,6 @@
 import { COLORS } from "../../../lib/Constants";
-import Button from "../../common/Button";
-import DialogFrame from "../../common/DialogFrame";
+import CommonButton from "../../common/CommonButton";
+import CommonDialogFrame from "../../common/CommonDialogFrame";
 
 interface ArgProps {
     showDialog: boolean;
@@ -11,16 +11,16 @@ const SkillUpdateDialog = ({
     showDialog, setShowUpdateDialog}: ArgProps
 ) => {
     return (
-        <DialogFrame showDialog={showDialog}>
+        <CommonDialogFrame showDialog={showDialog}>
             <h2 style={{color: COLORS.MAIN_FONT_COLOR}}>
                 スキル更新が完了しました。
             </h2>
             <div style={{textAlign: "end"}}>
-                <Button text="閉じる"
+                <CommonButton text="閉じる"
                         onClick={() => setShowUpdateDialog(false)}
                         />
             </div>
-        </DialogFrame>
+        </CommonDialogFrame>
     );
 }
 

@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { ItemDTO } from "../../types/Shop";
-import OutSideFrame from "../common/OutSideFrame";
-import BorderTd from "../common/BorderTd";
+import CommonFrame from "../common/CommonOutSideFrame";
+import BorderTd from "../common/CommonBorderTd";
 import React from "react";
 import { UserDTO } from "../../types/UserManage";
 import ShopTableHeader from "./ShopTableHeader";
@@ -10,7 +10,7 @@ import ItemRemarks from "./ItemRemarks";
 import ItemPrice from "./ItemPrice";
 import PurchaseButton from "./PurchaseButton";
 
-const Stable = styled.table`
+const Table = styled.table`
     margin: auto;
     width: 95%;
     border-collapse: collapse;
@@ -36,10 +36,10 @@ const ShopItemTable = ({
 }: ArgProps) => {
 
     return (
-        <OutSideFrame>
+        <CommonFrame>
             <p style={{margin: "20px"}}>取り扱い商品</p>
 
-            <Stable>
+            <Table>
                 <ShopTableHeader/>
                 <tbody>
                 {
@@ -60,8 +60,8 @@ const ShopItemTable = ({
                     })
                 }
                 </tbody>
-            </Stable>
-        </OutSideFrame>
+            </Table>
+        </CommonFrame>
     );
 }
 

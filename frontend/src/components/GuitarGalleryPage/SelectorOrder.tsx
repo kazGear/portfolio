@@ -1,5 +1,5 @@
 import { GuitarParams } from "../../types/Guitar";
-import Select from "../common/Select";
+import CommonSelect from "../common/CommonSelect";
 import { ChangeEvent, useEffect } from "react";
 
 interface ArgProps {
@@ -20,10 +20,10 @@ const SelectorOrder = ({guitarParams, callback}: ArgProps) => {
     }, [gParams.order])
 
     return (
-        <Select onChange={changeOrderHandler} >
+        <CommonSelect onChange={changeOrderHandler} >
             <option value="ASC">昇順</option>
             <option value="DESC">降順</option>
-        </Select>
+        </CommonSelect>
     );
 }
 export default SelectorOrder;

@@ -1,6 +1,6 @@
 import { ItemDTO } from "../../types/Shop";
-import Accent from "../common/Accent";
-import BorderTd from "../common/BorderTd";
+import CommonAccent from "../common/CommonAccent";
+import BorderTd from "../common/CommonBorderTd";
 
 interface ArgProps {
     item: ItemDTO;
@@ -11,7 +11,7 @@ const ItemPrice = ({item, myCash}: ArgProps) => {
     return (
         <BorderTd>
         {
-            myCash! < item.ItemPrice ? <Accent>{item.ItemPrice}</Accent>
+            myCash! < item.ItemPrice ? <CommonAccent>{item.ItemPrice}</CommonAccent>
                                      : item.ItemPrice
         } Gil
         </BorderTd>

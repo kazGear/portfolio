@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import Button from "../common/Button";
+import CommonButton from "../common/CommonButton";
 import React, { useEffect, useState } from "react";
 import { MonsterDTO } from "../../types/MonsterBattle";
 import { COLORS, KEYS, URLS } from "../../lib/Constants";
@@ -89,7 +89,7 @@ const GameBetContentsBlock = (
                         validBet(e);
                         setBetGil(parseInt(e.target.value));
                     }}/ >
-                <Button
+                <CommonButton
                     text={"スタート"}
                     width={120}
                     onClick={() => setShowDialog(false)}

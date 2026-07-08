@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import Button from "./Button";
+import CommonButton from "./CommonButton";
 import { useNavigate } from "react-router-dom";
 import { COLORS, KEYS, PREFIX, URLS, USER_ROLE } from "../../lib/Constants";
 import { useEffect, useState } from "react";
@@ -8,13 +8,13 @@ import { useCheckLogin } from "../../hooks/useHooksOfIndex";
 import { UserDTO } from "../../types/UserManage";
 import { api } from "../../lib/apiClient";
 
-const Simg = styled.img`
+const Img = styled.img`
     width: 40px;
     height: 40px;
     margin-right: 10px;
     border-radius: 100%;
 `;
-const Sheader = styled.header`
+const Header = styled.header`
     width: 100%;
     height: 60px;
     margin-bottom: 20px;
@@ -29,24 +29,24 @@ const Sheader = styled.header`
     z-index: 2000;
     position: fixed;
 `;
-const SdivButtonFrame = styled.div`
+const CommonButtonFrame = styled.div`
     display: flex;
     margin-right: auto;
     margin-left: 0px;
 `;
-const Sh1 = styled.h1`
+const H1 = styled.h1`
     margin: 20px;
     color: ${COLORS.ACCENT_FONT_PINK};
 `;
 
-const Sspan = styled.span`
+const Span = styled.span`
     transform: translateY(3px);
     margin-right: 10px;
 `;
 
 interface ArgProps { title: string; }
 
-const AppHeader = ({title}: ArgProps) => {
+const CommonAppHeader = ({title}: ArgProps) => {
     // ユーザー関係
     const [loginId, setLoginId] = useState<string | null>("");
     const [loginUser, setLoginUser] = useState<UserDTO | null>();
@@ -82,57 +82,57 @@ const AppHeader = ({title}: ArgProps) => {
     }, [loginId]);
 
     return (
-        <Sheader>
-            <Sh1>{title}</Sh1>
-            <SdivButtonFrame style={{
+        <Header>
+            <H1>{title}</H1>
+            <CommonButtonFrame style={{
                 display: isRootPage || isRootPage2 ? "none" : ""
                 }}>
-                <Button text="モンスター闘技場"
+                <CommonButton text="モンスター闘技場"
                         width={125}
                         onClick={() => navigate("/BattlePage")}
                         disabled={!validToken}/>
-                <Button text="Guitar gallery"
+                <CommonButton text="Guitar gallery"
                         width={120}
                         onClick={() => navigate("/GuitarGalleryPage")}
                         disabled={false}/>
-                <Button text="闘技場戦績"
+                <CommonButton text="闘技場戦績"
                         width={90}
                         onClick={() => navigate("/BattleResultPage")}
                         disabled={!validToken}/>
-                <Button text="経歴書"
+                <CommonButton text="経歴書"
                         width={60}
                         onClick={() => navigate("/CareerPage")}
                         disabled={false}/>
-                <Button text="ユーザーページ"
+                <CommonButton text="ユーザーページ"
                         width={120}
                         onClick={() => navigate("/UserPage")}
                         disabled={!validToken}/>
-                <Button text="ショップ"
+                <CommonButton text="ショップ"
                         width={80}
                         onClick={() => navigate("/ShopPage")}
                         disabled={!validToken}/>
-                {/* <Button text="設定"
+                {/* <CommonButton text="設定"
                         width={60}
                         onClick={() => navigate("/EditPage")}
                         disabled={!validToken || !isAdmin}/> */}
-            </SdivButtonFrame>
+            </CommonButtonFrame>
 
             <div style={{display: "flex", alignItems: "center"}}>
                 {
-                    !isEmpty(loginUser) && loginUser!.UserImage.length > 50 ? <Simg src={userImage} alt="" /> : ""
+                    !isEmpty(loginUser) && loginUser!.UserImage.length > 50 ? <Img src={userImage} alt="" /> : ""
                 }
                 {
-                    !isEmpty(loginUser) ? <Sspan>ようこそ{loginUser?.DispName}さん</Sspan> : ""
+                    !isEmpty(loginUser) ? <Span>ようこそ{loginUser?.DispName}さん</Span> : ""
                 }
-                <Button text="メニューへ" onClick={() => navigate("/")} styleObj={{
+                <CommonButton text="メニューへ" onClick={() => navigate("/")} styleObj={{
                     marginRight: "20px",
                     position: "relative",
                     zIndex: 5000
                 }}
                 />
             </div>
-        </Sheader>
+        </Header>
     );
 };
 
-export default AppHeader;
+export default CommonAppHeader;

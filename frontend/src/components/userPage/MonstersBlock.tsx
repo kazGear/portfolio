@@ -1,45 +1,45 @@
 import styled from "styled-components";
-import Strong from "../common/Strong";
+import CommonStrong from "../common/CommonStrong";
 import monsterImages from "../../lib/MonsterImages";
 import { MonsterDTO } from "../../types/MonsterBattle";
 import { useEffect, useState } from "react";
 import { URLS } from "../../lib/Constants";
-import NowLoading from "../common/NowLoading";
+import CommonNowLoading from "../common/CommonNowLoading";
 import { api } from "../../lib/apiClient";
 
-const SdivMonsters = styled.div`
+const MonstersFrame = styled.div`
     height: 100%;
     margin: 20px;
 `;
-const SImg = styled.img`
+const Img = styled.img`
     width: 50px;
     height: 50px;
     vertical-align: middle;
     margin: 5px 0 5px 0;
 }
 `;
-const Stable = styled.table`
+const Table = styled.table`
     height: 100%;
 `;
-const Std1 = styled.td`
+const Td1 = styled.td`
     min-width: 150px;
 `;
-const Std2 = styled.td`
+const Td2 = styled.td`
     min-width: 80px;
 `;
-const Std3 = styled.td`
+const Td3 = styled.td`
     width: 100px;
     min-width: 80px;
 `;
-const Std4 = styled.td`
+const Td4 = styled.td`
     width: 110px;
     min-width: 100px;
 `;
-const Std5 = styled.td`
+const Td5 = styled.td`
     width: 120px;
     min-width: 110px;
 `;
-const Std6 = styled.td`
+const Td6 = styled.td`
     min-width: 110px;
 `;
 
@@ -71,33 +71,35 @@ const MonstersBlock = ({monsters, loginId}: ArgProps) => {
     if (isNowLoading) {
         return (
             <div style={{margin: "100px"}}>
-                <NowLoading alt="ローディング"/>
+                <CommonNowLoading alt="ローディング"/>
             </div>
         );
     }
 
     return (
-        <SdivMonsters>
-            <Strong>開放モンスター&emsp;{getMonsterCount}</Strong>
+        <MonstersFrame>
+            <CommonStrong>開放モンスター&emsp;{getMonsterCount}</CommonStrong>
 
-            <Stable>
+            <Table>
                 <tbody>
                     { monsters !== null ?
                         monsters.map((monster, index) => (
                             <tr key={index}>
-                                <Std1>{monster.MonsterName}</Std1>
-                                <Std2><SImg src={monsterImages(monster.MonsterId)} alt="アイコン"/>{}</Std2>
-                                <Std3>HP：{monster.Hp}</Std3>
-                                <Std4>攻撃力：{monster.Attack}</Std4>
-                                <Std5>スピード：{monster.Speed}</Std5>
-                                <Std6>回避力：{monster.Dodge}</Std6>
+                                <Td1>{monster.MonsterName}</Td1>
+                                <Td2>
+                                    <Img src={monsterImages(monster.MonsterId)} alt={monster.MonsterName}/>
+                                </Td2>
+                                <Td3>HP：{monster.Hp}</Td3>
+                                <Td4>攻撃力：{monster.Attack}</Td4>
+                                <Td5>スピード：{monster.Speed}</Td5>
+                                <Td6>回避力：{monster.Dodge}</Td6>
                             </tr>
                         ))
                         : ""
                     }
                 </tbody>
-            </Stable>
-        </SdivMonsters>
+            </Table>
+        </MonstersFrame>
     );
 }
 

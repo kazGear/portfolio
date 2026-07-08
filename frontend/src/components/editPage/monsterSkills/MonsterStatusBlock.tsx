@@ -1,12 +1,12 @@
 import styled from "styled-components";
 import monsterImages from "../../../lib/MonsterImages";
 import { EditSkillsDTO } from "../../../types/Edit";
-import Strong from "../../common/Strong";
+import CommonStrong from "../../common/CommonStrong";
 
-const Sh4 = styled.h4`
+const H4 = styled.h4`
     margin: 20px;
 `;
-const Simg = styled.img`
+const Img = styled.img`
     width: 50px;
     height: 50px;
     margin: 10px;
@@ -19,13 +19,13 @@ interface ArgProps {
 const MonsterStatusBlock = ({monster}: ArgProps) => {
     return (
         <div style={{display: "flex", alignItems: "center", height: "60px"}}>
-            <Sh4>{monster.MonsterId}</Sh4>
-            <Simg src={monsterImages(monster.MonsterId)} alt="モンスター" />
-            <Sh4><Strong>{monster.MonsterName}</Strong></Sh4>
-            <Sh4>HP：{monster.Hp}</Sh4>
-            <Sh4>攻撃力：{monster.MonsterAttack}</Sh4>
-            <Sh4>速さ：{monster.Speed}</Sh4>
-            <Sh4>弱点：{monster.WeekName}</Sh4>
+            <H4>{monster.MonsterId}</H4>
+            <Img src={monsterImages(monster.MonsterId)} alt={monster.MonsterName} />
+            <H4><CommonStrong>{monster.MonsterName}</CommonStrong></H4>
+            <H4>HP：{monster.Hp}</H4>
+            <H4>攻撃力：{monster.MonsterAttack}</H4>
+            <H4>速さ：{monster.Speed}</H4>
+            <H4>弱点：{monster.WeekName}</H4>
         </div>
     );
 }

@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { Guitar } from "../../types/Guitar";
 import { COLORS } from "../../lib/Constants";
-import Button from "../common/Button";
+import CommonButton from "../common/CommonButton";
 import DetailLeftSide from "./DetailLeftSide";
 import DetailRightSide from "./DetailRightSide";
 
@@ -49,7 +49,7 @@ const DetailModal = ({selectedGuitars, isShow, callback}: ArgProps) => {
             <Smodal>
                 <DetailLeftSide selectedGuitars={guitar}/>
                 <DetailRightSide selectedGuitars={guitar}/>
-                <Button text="閉じる"
+                <CommonButton text="閉じる"
                         onClick={() => callback(false)}
                         styleObj={{
                             position: "absolute",

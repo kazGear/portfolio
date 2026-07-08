@@ -1,6 +1,6 @@
 import { GuitarParams } from "../../types/Guitar";
 import { Code } from "../../types/Code";
-import Select from "../common/Select";
+import CommonSelect from "../common/CommonSelect";
 import { ChangeEvent, useEffect } from "react";
 
 interface ArgProps {
@@ -22,7 +22,7 @@ const SearchMaker = ({guitarParams, makers, callback}: ArgProps) => {
     }, [gParams.makerCd])
 
     return (
-        <Select onChange={changeMakerHandler} >
+        <CommonSelect onChange={changeMakerHandler} >
             <option value="0">未選択</option>
             {
                 makers?.map(maker =>
@@ -32,7 +32,7 @@ const SearchMaker = ({guitarParams, makers, callback}: ArgProps) => {
                         </option>
                         )
             }
-        </Select>
+        </CommonSelect>
     );
 }
 export default SearchMaker;

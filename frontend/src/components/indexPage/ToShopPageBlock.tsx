@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { COLORS } from "../../lib/Constants";
-import MenuTitle from "../common/MenuTitle";
-import OutSideFrame from "../common/OutSideFrame";
+import MenuTitle from "../common/CommonMenuTitle";
+import CommonFrame from "../common/CommonOutSideFrame";
 
 const Slink = styled(Link)`
     text-decoration: none;
@@ -27,12 +27,12 @@ const ToShopPageBlock = ({validToken, classOfAnime, titleStyle}: ArgProps) => {
                         styleObj={validToken ? {} : titleStyle}/>
             </Slink>
 
-            <OutSideFrame>
+            <CommonFrame>
                 <SpDescription>
                     闘技場でのモンスターの使用権を購入できます。<br/>
                     その他、戦闘用背景なども追加予定です。
                 </SpDescription>
-            </OutSideFrame>
+            </CommonFrame>
         </div>
     );
 }

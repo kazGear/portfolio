@@ -1,6 +1,6 @@
 import { GuitarParams } from "../../types/Guitar";
 import { Code } from "../../types/Code";
-import Select from "../common/Select";
+import CommonSelect from "../common/CommonSelect";
 import { ChangeEvent, useEffect } from "react";
 
 interface ArgProps {
@@ -22,7 +22,7 @@ const SearchSeries = ({guitarParams, series, callback}: ArgProps) => {
     }, [gParams.series])
 
     return (
-        <Select onChange={changeSeriesHandler} >
+        <CommonSelect onChange={changeSeriesHandler} >
             <option>未選択</option>
             {
                 series?.map(series =>
@@ -32,7 +32,7 @@ const SearchSeries = ({guitarParams, series, callback}: ArgProps) => {
                         </option>
                         )
             }
-        </Select>
+        </CommonSelect>
     );
 }
 export default SearchSeries;

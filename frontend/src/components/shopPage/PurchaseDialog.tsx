@@ -1,11 +1,11 @@
 import styled from "styled-components";
-import Accent from "../common/Accent";
-import Button from "../common/Button";
-import DialogFrame from "../common/DialogFrame";
+import CommonAccent from "../common/CommonAccent";
+import CommonButton from "../common/CommonButton";
+import CommonDialogFrame from "../common/CommonDialogFrame";
 import { DECO } from "../../lib/Constants";
-import Strong from "../common/Strong";
+import CommonStrong from "../common/CommonStrong";
 
-const SbuttonFrame = styled.div`
+const ButtonFrame = styled.div`
     height: 30%;
     text-align: end;
     align-content: end;
@@ -21,21 +21,23 @@ const PurchaseDialog = ({showDialog, purchaseItem, setShowPurchaseDialog}: ArgPr
 
 ) => {
     return (
-        <DialogFrame showDialog={showDialog}>
-            <Strong>{DECO.BLOCK_LINE}</Strong><br/>
-            <Strong>{DECO.BLOCK_LINE_R}</Strong>
+        <CommonDialogFrame showDialog={showDialog}>
+            <CommonStrong>{DECO.BLOCK_LINE}</CommonStrong><br/>
+            <CommonStrong>{DECO.BLOCK_LINE_R}</CommonStrong>
                 <h2 style={{margin: "5px 0 5px 0"}}>購入完了</h2>
-            <Strong>{DECO.BLOCK_LINE}</Strong><br/>
-            <Strong>{DECO.BLOCK_LINE_R}</Strong>
+            <CommonStrong>{DECO.BLOCK_LINE}</CommonStrong><br/>
+            <CommonStrong>{DECO.BLOCK_LINE_R}</CommonStrong>
 
-            <h2 style={{marginBottom: 0}}><Accent>{purchaseItem}</Accent>を獲得しました！</h2>
+            <h2 style={{marginBottom: 0}}>
+                <CommonAccent>{purchaseItem}</CommonAccent>を獲得しました！
+            </h2>
 
-            <SbuttonFrame>
-                <Button text="閉じる"
+            <ButtonFrame>
+                <CommonButton text="閉じる"
                         onClick={() => setShowPurchaseDialog(false)}
                         />
-            </SbuttonFrame>
-        </DialogFrame>
+            </ButtonFrame>
+        </CommonDialogFrame>
     );
 }
 

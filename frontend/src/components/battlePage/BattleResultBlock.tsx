@@ -1,6 +1,6 @@
-import { ReactNode } from "react";
+
 import { MetaDataDTO, MonsterDTO } from "../../types/MonsterBattle";
-import DialogFrame from "../common/DialogFrame";
+import CommonDialogFrame from "../common/CommonDialogFrame";
 import BattleResultContentsBlock from "./BattleResultContentsBlock";
 import { ShopDTO } from "../../types/Shop";
 
@@ -16,14 +16,14 @@ const BattleResultBlock = ({
     log, betMonster, betGil, showResultDialog, newShops }: ArgProps) => {
 
     return (
-        <DialogFrame showDialog={showResultDialog}
-                     showFilter={true}>
+        <CommonDialogFrame showDialog={showResultDialog}
+                           showFilter={true}>
             <BattleResultContentsBlock
                     log={log}
                     betMonster={betMonster}
                     betGil={betGil}
                     newShops={newShops} />
-        </DialogFrame>
+        </CommonDialogFrame>
     );
 }
 

@@ -4,7 +4,7 @@ import MonsterTableBody from "./MonsterTableBody";
 import styled from "styled-components";
 import { EditMonsterDTO } from "../../../types/Edit";
 import EditStatusFinishedDialog from "./EditStatusFinishedDialog";
-import HeaderOfBody from "../../common/HeaderOfBody";
+import CommonHeaderOfBody from "../../common/CommonHeaderOfBody";
 import { api } from "../../../lib/apiClient";
 
 const Stable = styled.table`
@@ -47,9 +47,9 @@ const MonsterStatusEditBlock = ({editMonsters, setEditMonsters}: ArgProps) => {
 
     return (
         <div>
-            <HeaderOfBody message="変更したいパラメータを入力してください。"
-                          buttonText="ステータス変更"
-                          callback={updateStatusHandler}/>
+            <CommonHeaderOfBody message="変更したいパラメータを入力してください。"
+                                buttonText="ステータス変更"
+                                callback={updateStatusHandler}/>
             {/* ステータス編集部 */}
             <Stable>
                 <MonsterTableBody editMonsters={editMonsters}

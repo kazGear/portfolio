@@ -1,6 +1,5 @@
 import { UserDTO } from "../../types/UserManage";
-import ImgUpload from "../common/ImgUpload";
-import Strong from "../common/Strong";
+import CommonStrong from "../common/CommonStrong";
 import styled from "styled-components";
 
 const SdivIDFrame = styled.div`
@@ -17,12 +16,12 @@ const UserImageBlock = ({user}: ArgProps) => {
     return (
         <SdivIDFrame>
             <p>
-                <Strong>ログインID</Strong>
+                <CommonStrong>ログインID</CommonStrong>
                 <br/>
                 {user != null ? user.LoginId : ""}
             </p>
             <p>
-                <Strong>ロール</Strong>
+                <CommonStrong>ロール</CommonStrong>
                 <br/>
                 {user != null ? user.RoleName : ""}
             </p>

@@ -1,14 +1,14 @@
 import { ChangeEvent, useCallback, useState } from "react";
 import { COLORS, URLS } from "../../lib/Constants";
-import Button from "../common/Button";
-import FromToDate from "../common/FromTo";
+import CommonButton from "../common/CommonButton";
+import CommonFromToDate from "../common/CommonFromTo";
 import { BattleReportDTO } from "../../types/BattleReport";
 import styled from "styled-components";
 import BattleScaleListBlock from "./BattleScaleListBlock";
 import { api } from "../../lib/apiClient";
 
 
-const Sh1Title = styled.h1`
+const Title = styled.h1`
     font-size: 16px;
     color: ${COLORS.CAPTION_FONT_COLOR};
     margin-top: 5px;
@@ -51,11 +51,11 @@ const MonsterReportControllerBlock = (
 
     return (
         <div style={{margin: "0 0 10px 20px"}}>
-            <Sh1Title>戦闘結果</Sh1Title>
+            <Title>戦闘結果</Title>
             <BattleScaleListBlock
                 changeBattleScaleHandler={changeBattleScaleHandler}
             />
-            <FromToDate
+            <CommonFromToDate
                 labelText="期間"
                 setDisable={setDisable}
                 from={from}
@@ -65,7 +65,7 @@ const MonsterReportControllerBlock = (
             />
             <br/>
             <div style={{textAlign: "end"}}>
-                <Button
+                <CommonButton
                     text="検索"
                     onClick={fetchBattleReportHandler}
                     disabled={disable}

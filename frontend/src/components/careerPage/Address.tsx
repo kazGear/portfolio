@@ -1,4 +1,4 @@
-import BorderTr from "../common/BorderTr";
+import CommonBorderTr from "../common/CommonBorderTr";
 
 interface ArgProps {
     address: string;
@@ -6,12 +6,12 @@ interface ArgProps {
 
 const Address = ({address}: ArgProps) => {
     return (
-        <BorderTr styleObj={{height: "40px"}}>
+        <CommonBorderTr styleObj={{height: "40px"}}>
             <th>住所</th>
             <td>
                 <span>{address}</span>
             </td>
-        </BorderTr>
+        </CommonBorderTr>
     );
 }
 export default Address;

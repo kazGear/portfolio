@@ -1,4 +1,4 @@
-import BorderTr from "../common/BorderTr";
+import CommonBorderTr from "../common/CommonBorderTr";
 
 interface ArgProps {
     tools: string[];
@@ -6,7 +6,7 @@ interface ArgProps {
 
 const Tools = ({tools}: ArgProps) => {
     return (
-        <BorderTr>
+        <CommonBorderTr>
             <th>ツール</th>
             <td>
                 {
@@ -15,7 +15,7 @@ const Tools = ({tools}: ArgProps) => {
                     )
                 }
             </td>
-        </BorderTr>
+        </CommonBorderTr>
     );
 }
 export default Tools;

@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import monsterImages from "../../../lib/MonsterImages";
-import BorderTd from "../../common/BorderTd";
+import BorderTd from "../../common/CommonBorderTd";
 import { CodeDTO } from "../../../types/Common";
 import { EditMonsterDTO } from "../../../types/Edit";
 import EditMonsterName from "./EditMonsterNameBlock";
@@ -9,10 +9,10 @@ import EditMonsterAttack from "./EditMonsterAttackBlock";
 import EditMonsterSpeed from "./EditMonsterSpeedBlock";
 import EditMonsterWeek from "./EditMonsterWeekBlock";
 import { useState } from "react";
-import NowLoading from "../../common/NowLoading";
-import Strong from "../../common/Strong";
+import CommonNowLoading from "../../common/CommonNowLoading";
+import CommonStrong from "../../common/CommonStrong";
 
-const Simg = styled.img`
+const Img = styled.img`
     vertical-align: middle;
     width: 50px;
     height: 50px;
@@ -33,7 +33,7 @@ const MonsterTableBody = ({editMonsters, isNowLoading}: ArgProps) => {
     if (isNowLoading) {
         return (
             <div style={{margin: "100px"}}>
-                <NowLoading alt="ローディング" />
+                <CommonNowLoading alt="ローディング" />
             </div>
         );
     }
@@ -42,13 +42,13 @@ const MonsterTableBody = ({editMonsters, isNowLoading}: ArgProps) => {
         <table style={{width: "100%"}}>
             <thead>
                 <tr style={{textAlign: "center"}}>
-                    <th><Strong>ID</Strong></th>
-                    <td><Strong>イメージ</Strong></td>
-                    <td><Strong>モンスター名</Strong></td>
-                    <td><Strong>HP</Strong></td>
-                    <td><Strong>攻撃力</Strong></td>
-                    <td><Strong>速さ</Strong></td>
-                    <td><Strong>弱点</Strong></td>
+                    <th><CommonStrong>ID</CommonStrong></th>
+                    <td><CommonStrong>イメージ</CommonStrong></td>
+                    <td><CommonStrong>モンスター名</CommonStrong></td>
+                    <td><CommonStrong>HP</CommonStrong></td>
+                    <td><CommonStrong>攻撃力</CommonStrong></td>
+                    <td><CommonStrong>速さ</CommonStrong></td>
+                    <td><CommonStrong>弱点</CommonStrong></td>
                     <td>⇒変更後</td>
                 </tr>
             </thead>
@@ -60,8 +60,8 @@ const MonsterTableBody = ({editMonsters, isNowLoading}: ArgProps) => {
                         <BorderTd>{monster.MonsterId}</BorderTd>
                         {/* イメージ */}
                         <BorderTd>
-                            <Simg src={monsterImages(monster.MonsterId)}
-                                  alt="モンスター" />
+                            <Img src={monsterImages(monster.MonsterId)}
+                                 alt={monster.MonsterName} />
                         </BorderTd>
                         {/* 名称 */}
                         <EditMonsterName monster={monster}/>

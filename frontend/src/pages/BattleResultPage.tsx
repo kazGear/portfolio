@@ -5,18 +5,18 @@ import MonsterReport from "../components/battleResultPage/MonsterReportBlock";
 import BattleReportControllerBlock from "../components/battleResultPage/BattleReportControllerBlock";
 import BattleReportBlock from "../components/battleResultPage/BattleReportBlock";
 import MonsterReportControllerBlock from "../components/battleResultPage/MonsterReportControllerBlock";
-import OutSideFrame from "../components/common/OutSideFrame";
+import CommonFrame from "../components/common/CommonOutSideFrame";
 import { useCheckToken } from "../hooks/useHooksOfCommon";
 
-const SdivOutsideFrame = styled.div`
+const OutsideFrame = styled.div`
     height: 100%;
 `;
-const SdivOptionFrame = styled.div`
+const OptionFrame = styled.div`
     display: flex;
     justify-content: center;
     height: 25%;
 `;
-const SdivReportFrame = styled.div`
+const ReportFrame = styled.div`
     display: flex;
     justify-content: center;
     height: 65%;
@@ -32,36 +32,36 @@ const BattleResultPage = () => {
     useCheckToken();
 
     return (
-        <SdivOutsideFrame>
-            <SdivOptionFrame>
+        <OutsideFrame>
+            <OptionFrame>
                 {/* 検索条件部 */}
-                <OutSideFrame styleObj={{width: "55%", margin: "20px 5px 0px 0px"}}>
+                <CommonFrame styleObj={{width: "55%", margin: "20px 5px 0px 0px"}}>
                     <BattleReportControllerBlock setMonsterReport={setMonsterReport}
                                                  sortType={sortType}
                                                  setIsNowLoadingMonsterReport={setIsNowLoadingMonsterReport}/>
-                </OutSideFrame>
+                </CommonFrame>
 
                 {/* 検索条件部 */}
-                <OutSideFrame styleObj={{width: "35%", margin: "20px 0px 0px 5px"}}>
+                <CommonFrame styleObj={{width: "35%", margin: "20px 0px 0px 5px"}}>
                     <MonsterReportControllerBlock setBattleReport={setBattleReport}
                                                   setIsNowLoadingBattleReport={setIsNowLoadingBattleReport}/>
-                </OutSideFrame>
-            </SdivOptionFrame>
+                </CommonFrame>
+            </OptionFrame>
 
-            <SdivReportFrame>
+            <ReportFrame>
                 {/* レポート部 */}
-                <OutSideFrame styleObj={{width: "55%", height: "60vh", margin: "20px 5px 0px 0px"}}>
+                <CommonFrame styleObj={{width: "55%", height: "60vh", margin: "20px 5px 0px 0px"}}>
                     <MonsterReport monsterReport={monsterReport}
                                    setSortType={setSortType}
                                    isNowLoadingMonsterReport={isNowLoadingMonsterReport}/>
-                 </OutSideFrame>
+                 </CommonFrame>
                 {/* レポート部 */}
-                <OutSideFrame styleObj={{width: "35%", height: "60vh", margin: "20px 0px 0px 5px"}}>
+                <CommonFrame styleObj={{width: "35%", height: "60vh", margin: "20px 0px 0px 5px"}}>
                     <BattleReportBlock battleReport={battleReport}
                                        isNowLoadingBattleReport={isNowLoadingBattleReport} />
-                </OutSideFrame>
-            </SdivReportFrame>
-        </SdivOutsideFrame>
+                </CommonFrame>
+            </ReportFrame>
+        </OutsideFrame>
     );
 }
 

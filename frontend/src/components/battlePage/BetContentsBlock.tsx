@@ -1,5 +1,5 @@
 import { MonsterDTO } from "../../types/MonsterBattle";
-import DialogFrame from "../common/DialogFrame";
+import CommonDialogFrame from "../common/CommonDialogFrame";
 import GameBetContentsBlock from "./GameBetBlock";
 
 
@@ -19,14 +19,14 @@ const GameBetBlock = ({
     setShowBetDialog}: ArgProps
 ) => {
     return (
-        <DialogFrame showDialog={showBetDialog}
+        <CommonDialogFrame showDialog={showBetDialog}
                      showFilter={true}>
             <GameBetContentsBlock
                     monsters={monsters}
                     setBetMonster={setBetMonster}
                     setBetGil={setBetGil}
                     setShowDialog={setShowBetDialog} />
-        </DialogFrame>
+        </CommonDialogFrame>
     );
 }
 

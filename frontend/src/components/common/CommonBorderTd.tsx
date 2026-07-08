@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { COLORS } from "../../lib/Constants";
 import React from "react";
 
-const Str = styled.tr`
+const Td = styled.td`
     border-top: 1px solid ${COLORS.BORDER_COLOR};
     border-bottom: 1px solid ${COLORS.BORDER_COLOR};
 `;
@@ -12,10 +12,10 @@ interface ArgProps {
     styleObj?: React.CSSProperties;
 }
 
-const BorderTr = ({children, styleObj}: ArgProps) => {
+const CommonBorderTd = ({children, styleObj}: ArgProps) => {
     return (
-        <Str style={styleObj}>{children}</Str>
+        <Td>{children}</Td>
     );
 }
 
-export default BorderTr;
+export default CommonBorderTd;

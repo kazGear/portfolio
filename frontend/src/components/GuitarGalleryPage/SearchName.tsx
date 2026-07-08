@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { GuitarParams } from "../../types/Guitar";
-import Input from "../common/Input";
+import CommonInput from "../common/CommonInput";
 
 interface ArgProps {
     guitarParams: GuitarParams;
@@ -20,10 +20,10 @@ const SearchName = ({guitarParams, callback}: ArgProps) => {
     }, [gParams.name])
 
     return (
-        <Input inputType="text"
-               onBlur={changeNameHandler}
-               placeholder="（部分一致検索）"
-               styleObj={{marginTop: "2px"}}/>
+        <CommonInput inputType="text"
+                     onBlur={changeNameHandler}
+                     placeholder="（部分一致検索）"
+                     styleObj={{marginTop: "2px"}}/>
     );
 }
 export default SearchName;

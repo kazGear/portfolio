@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { GuitarParams } from "../../types/Guitar";
-import Input from "../common/Input";
+import CommonInput from "../common/CommonInput";
 
 interface ArgProps {
     guitarParams: GuitarParams;
@@ -20,12 +20,12 @@ const SelectorPageSize = ({guitarParams, callback}: ArgProps) => {
     }, [gParams.pageSize])
 
     return (
-        <Input inputType="number"
-               onBlur={changePageSizeHandler}
-               placeholder=" (10 ~ 100) default 50"
-               min="10"
-               max="100"
-               styleObj={{marginTop: "8px"}}/>
+        <CommonInput inputType="number"
+                     onBlur={changePageSizeHandler}
+                     placeholder=" (10 ~ 100) default 50"
+                     min="10"
+                     max="100"
+                     styleObj={{marginTop: "8px"}}/>
     );
 }
 export default SelectorPageSize;

@@ -1,8 +1,8 @@
-import MenuTitle from "../common/MenuTitle";
+import MenuTitle from "../common/CommonMenuTitle";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import { COLORS } from "../../lib/Constants";
-import OutSideFrame from "../common/OutSideFrame";
+import CommonFrame from "../common/CommonOutSideFrame";
 
 const Slink = styled(Link)`
     text-decoration: none;
@@ -21,14 +21,14 @@ const ToGuitarGalleryBlock = () => {
                 <MenuTitle title={"🎸Guitar gallery"} className={classOfAnime} />
             </Slink>
 
-            <OutSideFrame>
+            <CommonFrame>
                 <SpDescription>
                     様々なギターを眺めて楽しめます。<br/><br/>
                     ギター毎に、詳細スペックもご覧いただけます。<br/><br/>
                     情報を検索可能で、メーカー、シリーズ、カラー、ボディ材、価格帯などの条件で絞り込み検索が可能です。<br/>
                     ページネーションやソートにも対応。
                 </SpDescription>
-            </OutSideFrame>
+            </CommonFrame>
         </div>
     );
 };

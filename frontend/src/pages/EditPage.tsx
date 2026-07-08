@@ -2,14 +2,14 @@ import styled from "styled-components";
 import EditSelector from "../components/editPage/monsterParam/EditSelectorBlock";
 import EditMonsterStatusBlock from "../components/editPage/monsterParam/EditMonsterStatusBlock";
 import { useState } from "react";
-import OutSideFrame from "../components/common/OutSideFrame";
+import CommonFrame from "../components/common/CommonOutSideFrame";
 import { EditMonsterDTO, EditSkillsDTO } from "../types/Edit";
 import ClearAllSkillsBlock from "../components/editPage/monsterSkills/ClearAllSkillsBlock";
 import ClearAllStatusBlock from "../components/editPage/monsterParam/ClearAllStatusBlock";
 import EditMonsterSkillsBlock from "../components/editPage/monsterSkills/EditMonsterSkillsBlock";
 import { useCheckToken } from "../hooks/useHooksOfCommon";
 
-const SdivEditFrame = styled.div`
+const EditFrame = styled.div`
     width: 90%;
     margin: auto;
 `;
@@ -32,20 +32,20 @@ const EditPage = () => {
     useCheckToken();
 
     return (
-        <SdivEditFrame>
-            <OutSideFrame styleObj={styleForController}>
+        <EditFrame>
+            <CommonFrame styleObj={styleForController}>
                 {/* 設定種類コントローラ */}
                 <EditSelector setSelectEditType={setSelectEditType}/>
                 <ClearAllStatusBlock setEditMonsters={setEditMonsters} selectEditType={selectEditType}/>
                 <ClearAllSkillsBlock setEditMonsterSkills={setEditMonsterSkills} selectEditType={selectEditType}/>
-            </OutSideFrame>
-            <OutSideFrame styleObj={styleForEdit}>
+            </CommonFrame>
+            <CommonFrame styleObj={styleForEdit}>
                 {/* 設定部 */}
                 { selectEditType === 1 ? <EditMonsterStatusBlock editMonsters={editMonsters} setEditMonsters={setEditMonsters} /> : ""}
                 { selectEditType === 2 ? <EditMonsterSkillsBlock editMonsterSkills={editMonsterSkills} setEditMonsterSkills={setEditMonsterSkills}/> : ""}
                 { selectEditType === 3 ? <h1 style={{marginLeft: "40px"}}>使用可能モンスター（工事予定）</h1> : ""}
-            </OutSideFrame>
-        </SdivEditFrame>
+            </CommonFrame>
+        </EditFrame>
     );
 }
 

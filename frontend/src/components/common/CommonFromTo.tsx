@@ -3,11 +3,11 @@ import { COLORS, SIZE } from "../../lib/Constants";
 import { useEffect, useState } from "react";
 import { useCheckFromTo } from "../../hooks/useHooksOfBattleResult";
 
-const SdivFromToFrame = styled.div`
+const FromToFrame = styled.div`
     margin: 10px;
     display: inline;
 `;
-const Sinput = styled.input`
+const Input = styled.input`
     font-family: cursive;
     color: ${COLORS.MAIN_FONT_COLOR};
     height: ${SIZE.INPUT_HEIGHT};
@@ -15,7 +15,7 @@ const Sinput = styled.input`
     border: 1px solid ${COLORS.BORDER_COLOR};
     box-shadow: ${COLORS.DIALOG_SHADOW} 1px 1px;
 `;
-const SpAlertMessage = styled.p`
+const AlertMessage = styled.p`
     color: ${COLORS.ALERT_MESSAGE_COLOR};
     display: inline;
     margin-left: 5px;
@@ -31,7 +31,7 @@ interface ArgProps {
     setTo: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const FromToDate = (
+const CommonFromTo = (
     {labelText, setDisable, from, to, setFrom, setTo}: ArgProps
 ) => {
     const [invalid, setInvalid] = useState(false);
@@ -49,23 +49,23 @@ const FromToDate = (
     }, [from, to]);
 
     return (
-        <SdivFromToFrame>
+        <FromToFrame>
             <label style={{paddingRight: "10px"}}>{labelText}</label>
-            <Sinput type="date"
+            <Input type="date"
                     onChange={setFromHandler}
                     />
             <span> ~ </span>
-            <Sinput type="date"
+            <Input type="date"
                     onChange={setToHandler}
                     />
             {invalid ?
-                <SpAlertMessage>
+                <AlertMessage>
                     日付の設定が無効です。
-                </SpAlertMessage>
+                </AlertMessage>
                 : ""
             }
-        </SdivFromToFrame>
+        </FromToFrame>
     );
 }
 
-export default FromToDate;
+export default CommonFromTo;

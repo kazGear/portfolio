@@ -1,6 +1,6 @@
 import { EditMonsterDTO } from "../../../types/Edit";
-import BorderTd from "../../common/BorderTd";
-import Input from "../../common/Input";
+import CommonBorderTd from "../../common/CommonBorderTd";
+import CommonInput from "../../common/CommonInput";
 
 interface ArgProps {
     monster: EditMonsterDTO;
@@ -8,18 +8,16 @@ interface ArgProps {
 
 const EditMonsterAttackBlock = ({monster}: ArgProps) => {
     return (
-        <>
-            <BorderTd>
-                <Input styleObj={{width: "50px", textAlign: "right"}}
-                       inputType="number"
-                       defaultValue={monster.Attack}
-                       labelTitle=""
-                       onChange={(e: React.ChangeEvent<HTMLInputElement> | undefined) => {
-                            monster.AfterAttack = parseInt(e!.target.value);
-                            monster.IsChanged = true;
-                       }}/>
-            </BorderTd>
-        </>
+        <CommonBorderTd>
+            <CommonInput styleObj={{width: "50px", textAlign: "right"}}
+                    inputType="number"
+                    defaultValue={monster.Attack}
+                    labelTitle=""
+                    onChange={(e: React.ChangeEvent<HTMLInputElement> | undefined) => {
+                        monster.AfterAttack = parseInt(e!.target.value);
+                        monster.IsChanged = true;
+                    }}/>
+        </CommonBorderTd>
     );
 }
 

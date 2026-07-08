@@ -1,14 +1,14 @@
-import MenuTitle from "../common/MenuTitle";
+import CommonMenuTitle from "../common/CommonMenuTitle";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import { COLORS } from "../../lib/Constants";
-import OutSideFrame from "../common/OutSideFrame";
+import CommonFrame from "../common/CommonOutSideFrame";
 
-const Slink = styled(Link)`
+const SLink = styled(Link)`
     text-decoration: none;
     color: ${COLORS.MAIN_FONT_COLOR};
 `;
-const SpDescription = styled.p`
+const Description = styled.p`
     margin: 10px
 `;
 
@@ -17,16 +17,16 @@ const classOfAnime: string = "noneAnimation";
 const ToCareerPageBlock = () => {
     return (
         <div>
-            <Slink to={"/CareerPage"}>
-                <MenuTitle title={"📖職務経歴書"} className={classOfAnime} />
-            </Slink>
+            <SLink to={"/CareerPage"}>
+                <CommonMenuTitle title={"📖職務経歴書"} className={classOfAnime} />
+            </SLink>
 
-            <OutSideFrame>
-                <SpDescription>
+            <CommonFrame>
+                <Description>
                     HTML版の職務経歴書です。<br/><br/>
                     Microsoft Word のようなシンプルな表示に切り替え可能です。
-                </SpDescription>
-            </OutSideFrame>
+                </Description>
+            </CommonFrame>
         </div>
     );
 };

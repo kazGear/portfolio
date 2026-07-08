@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { UserDTO } from "../../types/UserManage";
-import Strong from "../common/Strong";
+import CommonStrong from "../common/CommonStrong";
 
 const SdivWinFrame = styled.div`
     height: 50%;
@@ -14,8 +14,12 @@ interface ArgProps {
 const WinsBlock = ({user}: ArgProps) => {
     return (
         <SdivWinFrame>
-            <p style={{margin: 0}}><Strong>的中数</Strong> : {user != null ? user!.Wins : ""} 回</p>
-            <p style={{margin: 0}}><Strong>配当金</Strong> : {user != null ? user!.WinsGetCash : ""} Gil</p>
+            <p style={{margin: 0}}><CommonStrong>的中数</CommonStrong>
+                &nbsp;:&nbsp;{user != null ? user!.Wins : ""} 回
+            </p>
+            <p style={{margin: 0}}><CommonStrong>配当金</CommonStrong>
+                &nbsp;:&nbsp;{user != null ? user!.WinsGetCash : ""} Gil
+            </p>
         </SdivWinFrame>
     );
 }

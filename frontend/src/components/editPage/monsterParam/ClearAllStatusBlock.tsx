@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
-import Button from "../../common/Button";
+import CommonButton from "../../common/CommonButton";
 import { URLS } from "../../../lib/Constants";
-import DialogFrame from "../../common/DialogFrame";
+import CommonDialogFrame from "../../common/CommonDialogFrame";
 import { useRefreshMonsterStatus } from "../../../hooks/useHooksOfEdit";
 import { EditMonsterDTO } from "../../../types/Edit";
 import { api } from "../../../lib/apiClient";
@@ -27,19 +27,19 @@ const ClearAllStatusBlock = ({setEditMonsters, selectEditType}: ArgProps) => {
 
     return (
         <>
-            <Button text="全ステータス初期化"
+            <CommonButton text="全ステータス初期化"
                     onClick={() => setShowInitConfirm(true)}
                     width={150}
                     display={selectEditType === 1 ? "inline" : "none"}
                     styleObj={{marginRight: "20px"}}
                     />
             {/* 初期化確認ダイアログ */}
-            <DialogFrame showDialog={showInitConfirm}>
+            <CommonDialogFrame showDialog={showInitConfirm}>
                 <h3 style={{margin: 0}}>全モンスターのステータスを初期状態に戻します。</h3>
                 <h3 style={{margin: 0}}>よろしいですか？</h3>
                 <div style={{textAlign: "end"}}>
-                    <Button text="いいえ" onClick={() => setShowInitConfirm(false)}/>
-                    <Button text="はい" onClick={() => {
+                    <CommonButton text="いいえ" onClick={() => setShowInitConfirm(false)}/>
+                    <CommonButton text="はい" onClick={() => {
                         clearAllMonstersStatus();
                         refreshMonsterStatus(setEditMonsters);
                         setShowInitComplete(true);
@@ -47,7 +47,7 @@ const ClearAllStatusBlock = ({setEditMonsters, selectEditType}: ArgProps) => {
                     }
                         }/>
                 </div>
-            </DialogFrame>
+            </CommonDialogFrame>
         </>
 
     );

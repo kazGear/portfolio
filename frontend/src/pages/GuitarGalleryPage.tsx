@@ -4,7 +4,7 @@ import { api } from "../lib/apiClient";
 import { Guitar, GuitarParams, GuitarsResponse } from "../types/Guitar";
 import { useGuitarParams } from "../hooks/useGuitarParams";
 import { createQueryParams } from "../components/guitarGalleryPage/GuitarFuncs";
-import OutSideFrame from "../components/common/OutSideFrame";
+import CommonFrame from "../components/common/CommonOutSideFrame";
 import GuitarCards from "../components/guitarGalleryPage/GuitarCards";
 import SearchConditions from "../components/guitarGalleryPage/SearchConditions";
 import DetailModal from "../components/guitarGalleryPage/DetailModal";
@@ -64,7 +64,7 @@ const GuitarGalleryPage = () => {
 
     return (
         <div style={{display: "flex"}}>
-            <OutSideFrame styleObj={{width: "20%", minWidth: "280px", height: "85vh", marginLeft: "20px"}}>
+            <CommonFrame styleObj={{width: "20%", minWidth: "280px", height: "85vh", marginLeft: "20px"}}>
                 <SearchConditions guitarParams={gParams}
                                   makers={makers}
                                   colors={colors}
@@ -72,12 +72,12 @@ const GuitarGalleryPage = () => {
                                   bodyMaterials={bodyMaterials}
                                   callback={guitarSearchHandler}
                                   />
-            </OutSideFrame>
-            <OutSideFrame styleObj={{width: "80%", minWidth: "280px",height: "85vh", margin: "20px 20px 0px 10px"}}>
+            </CommonFrame>
+            <CommonFrame styleObj={{width: "80%", minWidth: "280px",height: "85vh", margin: "20px 20px 0px 10px"}}>
                 <GuitarCards guitarsRes={guitars}
                              callback={getSelectedGuitarHandler}>
                 </GuitarCards>
-            </OutSideFrame>
+            </CommonFrame>
 
             <DetailModal selectedGuitars={selectedGuitar}
                          isShow={isShowDetail}

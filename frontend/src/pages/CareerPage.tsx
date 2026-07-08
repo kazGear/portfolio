@@ -25,7 +25,7 @@ import Portfolio from "../components/careerPage/Portfolio";
 import Career from "../components/careerPage/Career";
 import styled from "styled-components";
 import { useState } from "react";
-import Button from "../components/common/Button";
+import CommonButton from "../components/common/CommonButton";
 import { COLORS } from "../lib/Constants";
 
 const SleftSide = styled.div`
@@ -99,7 +99,7 @@ const CareerPage = () => {
                     </div>
 
                     <div>
-                        <Button text="詳細情報を見る"
+                        <CommonButton text="詳細情報を見る"
                                 onClick={() => setIsShowDetail(true)}
                                 styleObj={{width: "150px", height: "40px"}}/>
                     </div>
@@ -125,7 +125,7 @@ const CareerPage = () => {
                     </div>
 
                     <div>
-                        <Button text="詳細情報を見る"
+                        <CommonButton text="詳細情報を見る"
                                 onClick={() => setIsShowDetail(true)}
                                 styleObj={{width: "150px", height: "40px"}}/>
                     </div>
@@ -159,7 +159,7 @@ const CareerPage = () => {
                             </SinnerFrame>
                         </SdetailModal>
                         <SbuttonFrame>
-                            <Button text="閉じる"
+                            <CommonButton text="閉じる"
                                     onClick={() => setIsShowDetail(false)}
                                     styleObj={{width: "150px", height: "40px"}}/>
                         </SbuttonFrame>

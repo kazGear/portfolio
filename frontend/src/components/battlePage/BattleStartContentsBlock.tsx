@@ -1,10 +1,10 @@
 import styled from "styled-components";
-import Button from "../common/Button";
+import CommonButton from "../common/CommonButton";
 import { COLORS } from "../../lib/Constants";
 import MonsterCountSelectorBlock from "./MonsterCountSelectorBlock";
 
 
-const SdivButtonFrame = styled.div`
+const DivButtonFrame = styled.div`
     height: 50%;
     align-content: flex-end;
     text-align: end;
@@ -36,15 +36,15 @@ const BattleStartContentsBlock = ({
                     selectMonstersCountHandler={selectMonstersCountHandler}
                 />
             </div>
-            <SdivButtonFrame>
-                <Button
+            <DivButtonFrame>
+                <CommonButton
                     id="battleStartBtn"
                     text={"次へ"}
                     width={150}
                     onClick={battleStartHandler}
                 />
 
-            </SdivButtonFrame>
+            </DivButtonFrame>
         </div>
     );
 }

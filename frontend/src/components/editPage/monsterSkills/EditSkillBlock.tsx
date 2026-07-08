@@ -3,7 +3,7 @@ import { URLS } from "../../../lib/Constants";
 import { AllSkillDTO, EditSkillsDTO } from "../../../types/Edit";
 import MonsterSkillBlock from "./MonsterSkillBlock";
 import MonsterStatusBlock from "./MonsterStatusBlock";
-import NowLoading from "../../common/NowLoading";
+import CommonNowLoading from "../../common/CommonNowLoading";
 import { api } from "../../../lib/apiClient";
 
 interface ArgProps {
@@ -29,7 +29,7 @@ const EditSkillBlock = ({editMonsterSkills, isNowLoading}: ArgProps) => {
     if (isNowLoading) {
         return (
             <div style={{margin: "100px"}}>
-                <NowLoading alt="ローディング"/>
+                <CommonNowLoading alt="ローディング"/>
             </div>
         );
     }

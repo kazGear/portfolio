@@ -2,13 +2,13 @@ import styled from "styled-components";
 import { COLORS, SIZE } from "../../lib/Constants";
 import { MouseEventHandler } from "react";
 
-interface SbuttonProps {
+interface ButtonProps {
     opacity: number;
     width: string;
     display: string;
 }
 
-const Sbutton = styled.button<SbuttonProps>`
+const Button = styled.button<ButtonProps>`
     background: ${COLORS.BUTTON_COLOR};
     color: ${COLORS.BUTTON_FONT_COLOR};
     font-weight: 900;
@@ -33,7 +33,7 @@ const Sbutton = styled.button<SbuttonProps>`
     }
 `;
 
-interface ButtonProps {
+interface ArgProps {
     id?: string;
     text: string;
     width?: number;
@@ -43,20 +43,20 @@ interface ButtonProps {
     styleObj?: React.CSSProperties;
 }
 
-const Button = ({
+const CommonButton = ({
     id,
     text,
     width,
     onClick,
     disabled = false,
     display = "inline",
-    styleObj}: ButtonProps
+    styleObj}: ArgProps
 ) => {
     const range: string = width ? width + "px" : "100px"
     const opacity = disabled ? COLORS.BUTTON_DISABLED : 1.0;
 
     return (
-        <Sbutton
+        <Button
             id={id}
             type="button"
             width={range}
@@ -67,8 +67,8 @@ const Button = ({
             style={styleObj}
         >
             {text}
-        </Sbutton>
+        </Button>
     );
 }
 
-export default Button;
+export default CommonButton;

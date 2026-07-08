@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import Button from "../common/Button";
+import CommonButton from "../common/CommonButton";
 import { COLORS, KEYS, URLS } from "../../lib/Constants";
 import { UserDTO } from "../../types/UserManage";
 import { useCreateUsedList } from "../../hooks/useHooksOfUser";
@@ -156,7 +156,7 @@ const UserRegistBlock = ({setShowRegistForm}: ArgProps) => {
             }
             </div>
             <SbuttonFrame>
-                <Button text="閉じる"
+                <CommonButton text="閉じる"
                         onClick={() => {
                             setShowRegistForm(false);
                             setRegistResult("");
@@ -167,7 +167,7 @@ const UserRegistBlock = ({setShowRegistForm}: ArgProps) => {
                             refDispShortName.current.value = "";
                         }}
                 />
-                <Button text="登録"
+                <CommonButton text="登録"
                         disabled={canRegist}
                         onClick={exeUserInsert} />
             </SbuttonFrame>

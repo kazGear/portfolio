@@ -1,16 +1,13 @@
 import styled from "styled-components";
 import { COLORS, KEYS, URLS } from "../../lib/Constants";
-import Select from "../common/Select";
-import Button from "../common/Button";
+import CommonSelect from "../common/CommonSelect";
+import CommonButton from "../common/CommonButton";
 import { useCallback, useState } from "react";
 import { MonsterReportDTO } from "../../types/BattleReport";
 import MonsterTypesListBlock from "./MonsterTypesListBlock";
 import { api } from "../../lib/apiClient";
 
-const SdivOutSideFrame = styled.div`
-
-`;
-const Sh1Title = styled.h1`
+const Title = styled.h1`
     font-size: 16px;
     color: ${COLORS.CAPTION_FONT_COLOR};
     margin-top: 5px;
@@ -56,14 +53,14 @@ const BattleReportControllerBlock = (
 
     return (
         <div style={{margin: "0 0 0 20px"}}>
-            <Sh1Title>モンスター戦績</Sh1Title>
+            <Title>モンスター戦績</Title>
             <MonsterTypesListBlock setMonsterTypeId={setMonsterTypeId} />
-            <Select title="ソート順" onChange={sortHandler}>
+            <CommonSelect title="ソート順" onChange={sortHandler}>
                 <option value={KEYS.ORDER_BY_ASC}>昇順</option>
                 <option value={KEYS.ORDER_BY_DESC}>降順</option>
-            </Select>
+            </CommonSelect>
             <div style={{textAlign: "end"}}>
-                <Button
+                <CommonButton
                     text="検索"
                     onClick={fetchMonsterReportHandler}
                     styleObj={{margin: "0 15px 15px 0"}}

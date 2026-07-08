@@ -2,11 +2,11 @@ import React, { ChangeEventHandler } from "react";
 import styled from "styled-components";
 import { COLORS, SIZE } from "../../lib/Constants";
 
-const SdivFrame = styled.div`
+const Frame = styled.div`
     margin: 10px;
 `;
 
-const Sselect = styled.select`
+const Select = styled.select`
     width: ${SIZE.INPUT_WIDTH};
     margin: 0 10px 0 10px;
     height: ${SIZE.INPUT_HEIGHT};
@@ -23,16 +23,16 @@ interface ArgProps {
     defaultValue?: string | number;
 }
 
-const Select = ({title, children, onChange, styleObj, defaultValue}: ArgProps) => {
+const CommonSelect = ({title, children, onChange, styleObj, defaultValue}: ArgProps) => {
     return (
-        <SdivFrame>
+        <Frame>
             <label>{title}
-                <Sselect onChange={onChange} style={styleObj} defaultValue={defaultValue}>
+                <Select onChange={onChange} style={styleObj} defaultValue={defaultValue}>
                     {children}
-                </Sselect>
+                </Select>
             </label>
-        </SdivFrame>
+        </Frame>
     );
 }
 
-export default Select;
+export default CommonSelect;

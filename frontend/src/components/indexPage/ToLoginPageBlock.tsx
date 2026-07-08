@@ -1,8 +1,8 @@
-import MenuTitle from "../common/MenuTitle";
+import MenuTitle from "../common/CommonMenuTitle";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import { COLORS } from "../../lib/Constants";
-import OutSideFrame from "../common/OutSideFrame";
+import CommonFrame from "../common/CommonOutSideFrame";
 
 const Slink = styled(Link)`
     text-decoration: none;
@@ -21,7 +21,7 @@ const ToLoginPageBlock = () => {
                 <MenuTitle title={"🔓ログイン"} className={classOfAnime} />
             </Slink>
 
-            <OutSideFrame>
+            <CommonFrame>
                 <SpDescription>
                     ログインすると、各種機能をご利用いただけます。
                     数日程は、ログイン状態が維持されます。ユーザ登録も可能です。
@@ -33,7 +33,7 @@ const ToLoginPageBlock = () => {
                     <br />
                     ※管理ユーザー&emsp; ログインID：admin、パスワード：admin
                 </SpDescription>
-            </OutSideFrame>
+            </CommonFrame>
         </div>
     );
 };

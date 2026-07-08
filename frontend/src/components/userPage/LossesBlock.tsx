@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { UserDTO } from "../../types/UserManage";
-import Strong from "../common/Strong";
+import CommonStrong from "../common/CommonStrong";
 
 const SdivLose = styled.div`
     height: 50%;
@@ -14,8 +14,12 @@ interface ArgProps {
 const LossesBlock = ({user}: ArgProps) => {
     return (
         <SdivLose>
-            <p style={{margin: 0}}><Strong>敗北数</Strong> : {user != null ? user!.Losses : ""} 回</p>
-            <p style={{margin: 0}}><Strong>損失</Strong> : {user != null ? user!.LossesLostCash : ""} Gil</p>
+            <p style={{margin: 0}}><CommonStrong>敗北数</CommonStrong>
+                &nbsp;:&nbsp;{user != null ? user!.Losses : ""} 回
+            </p>
+            <p style={{margin: 0}}><CommonStrong>損失</CommonStrong>
+                &nbsp;:&nbsp;{user != null ? user!.LossesLostCash : ""} Gil
+            </p>
         </SdivLose>
     );
 }

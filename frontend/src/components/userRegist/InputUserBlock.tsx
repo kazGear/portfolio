@@ -1,4 +1,4 @@
-import Input from "../common/Input";
+import CommonInput from "../common/CommonInput";
 
 
 interface ArgProps {
@@ -37,7 +37,7 @@ const InputUserBlock = ({
 
     return (
         <div>
-            <Input
+            <CommonInput
                 id="registLoginId"
                 labelTitle="ログインID："
                 inputType="text"
@@ -47,7 +47,7 @@ const InputUserBlock = ({
                 ref={refLoginId}
             />
             <br/>
-            <Input
+            <CommonInput
                 id="registPassword"
                 labelTitle="パスワード："
                 inputType="password"
@@ -57,7 +57,7 @@ const InputUserBlock = ({
                 ref={refPassword}
             />
             <br/>
-            <Input
+            <CommonInput
                 id="registDispName"
                 labelTitle="ユーザー名："
                 inputType="text"
@@ -67,7 +67,7 @@ const InputUserBlock = ({
                 ref={refDispName}
             />
             <br/>
-            <Input
+            <CommonInput
                 id="registDispShortName"
                 labelTitle="ユーザー略称："
                 inputType="text"

@@ -1,14 +1,14 @@
 import styled from "styled-components";
 import { COLORS, KEYS } from "../lib/Constants";
-import DialogFrame from "../components/common/DialogFrame";
+import CommonDialogFrame from "../components/common/CommonDialogFrame";
 import { useCallback, useEffect, useState } from "react";
 import { useLogin } from "../hooks/useHooksOfUser";
 import UserRegistBlock from "../components/loginPage/UserRegistBlock";
-import OutSideFrame from "../components/common/OutSideFrame";
+import CommonFrame from "../components/common/CommonOutSideFrame";
 import InputBlock from "../components/loginPage/InputBlock";
 import ButtonBlock from "../components/loginPage/ButtonBlock";
 
-const LoginContainer = styled.div`
+const LoginFrame = styled.div`
     text-align: center;
     display: flex;
 `;
@@ -26,7 +26,7 @@ const frameStyle: React.CSSProperties = {
     transform: "translate(-50%, -50%)",
 };
 
-const Sspan = styled.span`
+const Span = styled.span`
     color: ${COLORS.ALERT_MESSAGE_COLOR};
     font-size: 12px;
 `;
@@ -56,27 +56,27 @@ const LoginPage = () => {
 
     return (
         <>
-            <LoginContainer>
-                <OutSideFrame styleObj={frameStyle} >
+            <LoginFrame>
+                <CommonFrame styleObj={frameStyle} >
                     <form action="" method="post">
                         <InputBlock setInputLoginId={setInputLoginId}
                                     setInputPassword={setInputPassword}
                          />
                         {
-                            showAlert ? <Sspan>入力に誤りがあるか、無効なユーザーです。</Sspan> : ""
+                            showAlert ? <Span>入力に誤りがあるか、無効なユーザーです。</Span> : ""
                         }
                         <br />
                         <ButtonBlock loginHandler={loginHandler}
                                      setShowRegistForm={setShowRegistForm}
                                      showRegistForm={showRegistForm}/>
                     </form>
-                </OutSideFrame>
-            </LoginContainer>
+                </CommonFrame>
+            </LoginFrame>
 
             {/* ユーザ登録フォーム */}
-            <DialogFrame showDialog={showRegistForm}>
+            <CommonDialogFrame showDialog={showRegistForm}>
                 <UserRegistBlock setShowRegistForm={setShowRegistForm}/>
-            </DialogFrame>
+            </CommonDialogFrame>
          </>
     );
 };

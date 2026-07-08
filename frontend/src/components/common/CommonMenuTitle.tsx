@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { COLORS } from "../../lib/Constants";
 
-const SmenuTitle = styled.h2`
+const MenuTitle = styled.h2`
     height: 40px;
     display: flex;
     justify-content: center;
@@ -18,10 +18,10 @@ interface ArgProps {
     className?: string
 }
 
-const MenuTitle = ({title, styleObj, className}: ArgProps) => {
-    return <SmenuTitle className={className} style={styleObj}>
+const CommonMenuTitle = ({title, styleObj, className}: ArgProps) => {
+    return <MenuTitle className={className} style={styleObj}>
                {title}
-           </SmenuTitle>;
+           </MenuTitle>;
 };
 
-export default MenuTitle;
+export default CommonMenuTitle;

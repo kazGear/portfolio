@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import Select from "../../common/Select";
+import CommonSelect from "../../common/CommonSelect";
 import { URLS } from "../../../lib/Constants";
 import { CodeDTO } from "../../../types/Common";
 import { api } from "../../../lib/apiClient";
@@ -24,7 +24,7 @@ const EditSelectorBlock = ({setSelectEditType}: ArgProps) => {
 
     return (
         <div>
-            <Select title="設定種類"
+            <CommonSelect title="設定種類"
                     onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
                         setSelectEditType(Number.parseInt(e.target.value))
                     }}>
@@ -33,7 +33,7 @@ const EditSelectorBlock = ({setSelectEditType}: ArgProps) => {
                     <option value={opt.Value} key={index}>{opt.Name}</option>
                 ))
             }
-            </Select>
+            </CommonSelect>
         </div>
     );
 }

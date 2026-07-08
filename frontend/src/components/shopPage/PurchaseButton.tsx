@@ -1,7 +1,7 @@
 import { ItemDTO } from "../../types/Shop";
-import BorderTd from "../common/BorderTd";
+import BorderTd from "../common/CommonBorderTd";
 import React, { useCallback } from "react";
-import Button from "../common/Button";
+import CommonButton from "../common/CommonButton";
 import { KEYS, URLS } from "../../lib/Constants";
 import { UserDTO } from "../../types/UserManage";
 import { api } from "../../lib/apiClient";
@@ -14,7 +14,7 @@ interface ArgProps {
     setShowPurchaseDialog: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const PurchaseButton = ({
+const PurchaseCommonButton = ({
     item,
     myCash,
     setMyCash,
@@ -45,11 +45,11 @@ const PurchaseButton = ({
     return (
         <BorderTd>
         {
-            item.IsPurchased ? <Button text="購入済"
+            item.IsPurchased ? <CommonButton text="購入済"
                                        onClick={() => {}}
                                        disabled={true}
                                        styleObj={{width: "80px"}}/>
-                             : <Button text={myCash! < item.ItemPrice ? "資金不足"
+                             : <CommonButton text={myCash! < item.ItemPrice ? "資金不足"
                                                                       : "購入"
                                        }
                                        onClick={() => purchase(item)}
@@ -61,4 +61,4 @@ const PurchaseButton = ({
     );
 }
 
-export default PurchaseButton;
+export default PurchaseCommonButton;

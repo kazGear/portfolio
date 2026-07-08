@@ -1,40 +1,40 @@
 import styled from "styled-components";
 import { COLORS, DECO } from "../../lib/Constants";
-import Button from "../common/Button";
+import CommonButton from "../common/CommonButton";
 import { MetaDataDTO, MonsterDTO } from "../../types/MonsterBattle";
 import { ShopDTO } from "../../types/Shop";
-import Strong from "../common/Strong";
+import CommonStrong from "../common/CommonStrong";
 
-const SpLine = styled.p`
+const Line = styled.p`
     color: ${COLORS.ACCENT_FONT_PINK};
     line-height: 0.5;
     margin: 5px 0 0 0;
 `;
-const SdivBetResultFrame = styled.div`
+const BetResultFrame = styled.div`
     height: 20%;
     text-align: center;
     align-content: center;
 `;
-const SdivMessageFrame = styled.div`
+const MessageFrame = styled.div`
     height: 20%;
     text-align: center;
     align-content: center;
 `;
-const SdivButtonFrame = styled.div`
+const ButtonFrame = styled.div`
     margin-top: 15px;
     height: 10%;
     text-align: end;
     align-content: flex-end;
 `;
-const Sh1 = styled.h1`
+const H1 = styled.h1`
     color: ${COLORS.CAPTION_FONT_COLOR};
     margin: 5px 0 5px 0;
 `;
-const Sspan = styled.span`
+const Span = styled.span`
     color: ${COLORS.ACCENT_FONT_PINK};
 `;
 
-const gamesetHandler = () => {
+const gameSetHandler = () => {
     globalThis.location.reload();
 }
 
@@ -48,49 +48,52 @@ interface ArgProps {
 const BattleResultContentsBlock = (
      {log, betMonster, betGil, newShops}: ArgProps
     ) => {
-    const strike = log && betMonster &&
-        log.WinnerMonsterId === betMonster.MonsterId;
+    const strike = log &&
+                   betMonster &&
+                   log.WinnerMonsterId === betMonster.MonsterId;
 
     return (
         <>
         {log &&
             <>
-            <SpLine>{ log.ExistWinner ? DECO.BLOCK_LINE : "" }</SpLine>
-            <SpLine>{ log.ExistWinner ? DECO.BLOCK_LINE_R : "" }</SpLine>
-            <Sh1>
+            <Line>{ log.ExistWinner ? DECO.BLOCK_LINE : "" }</Line>
+            <Line>{ log.ExistWinner ? DECO.BLOCK_LINE_R : "" }</Line>
+            <H1>
                 {
-                    log.ExistWinner
-                    ? `Winner: ${log.WinnerMonsterName} !!`
-                    : ""
+                    log.ExistWinner ? `Winner: ${log.WinnerMonsterName} !!` : ""
                 }
-            </Sh1>
-            <SpLine>{ log.ExistWinner ? DECO.BLOCK_LINE : "" }</SpLine>
-            <SpLine>{ log.ExistWinner ? DECO.BLOCK_LINE_R : "" }</SpLine>
+            </H1>
+            <Line>{ log.ExistWinner ? DECO.BLOCK_LINE : "" }</Line>
+            <Line>{ log.ExistWinner ? DECO.BLOCK_LINE_R : "" }</Line>
 
             <h1>{log.AllLoser ? "draw ..." : ""}</h1>
 
-            <SdivBetResultFrame>
-                <h2>(∩´∀｀)∩<Sspan>獲得賞金&emsp;</Sspan>
+            <BetResultFrame>
+                <h2>(∩´∀｀)∩<Span>獲得賞金&emsp;</Span>
                 {
-                    strike ? <Sspan>{Math.trunc(betGil * betMonster.BetRate)}</Sspan> : <Sspan>0</Sspan>
+                    strike ? <Span>{Math.trunc(betGil * betMonster.BetRate)}</Span>
+                           : <Span>0</Span>
                 } Gil
                 </h2>
-            </SdivBetResultFrame>
+            </BetResultFrame>
 
-            <SdivMessageFrame>
+            <MessageFrame>
                 {
-                    newShops.length > 0 ? <h3 style={{margin: 0}}>新しいショップが解禁されました。</h3> : ""
+                    newShops.length > 0 ? <h3 style={{margin: 0}}>新しいショップが解禁されました。</h3>
+                                        : ""
                 }
                 {
                     newShops.map((shop, index) => (
-                        <Strong key={index}>{shop.ShopName}&emsp;</Strong>
+                        <CommonStrong key={shop.ShopName + index}>
+                            {shop.ShopName}&emsp;
+                        </CommonStrong>
                     ))
                 }
-            </SdivMessageFrame>
+            </MessageFrame>
 
-            <SdivButtonFrame>
-                <Button text={"終了"} width={120} onClick={gamesetHandler}/>
-            </SdivButtonFrame>
+            <ButtonFrame>
+                <CommonButton text={"終了"} width={120} onClick={gameSetHandler}/>
+            </ButtonFrame>
             </>
         }
         </>

@@ -2,13 +2,13 @@ import React, { forwardRef, useEffect, useState } from "react";
 import styled from "styled-components";
 import { COLORS, SIZE } from "../../lib/Constants";
 
-const Sinput = styled.input`
+const Input = styled.input`
     width: ${SIZE.INPUT_WIDTH};
     height: ${SIZE.INPUT_HEIGHT};
     padding: 0;
     border: ${COLORS.BORDER_COLOR} 1px solid;
 `;
-const Sspan = styled.span`
+const Span = styled.span`
     display: inline;
     font-size: 9px;
     margin-left: 10px;
@@ -36,7 +36,7 @@ interface ArgProps {
 }
 
 // forwardRef: 親から参照されるため
-const Input = forwardRef<HTMLInputElement, ArgProps>(({
+const CommonInput = forwardRef<HTMLInputElement, ArgProps>(({
     labelTitle,
     inputType,
     accept,
@@ -65,7 +65,7 @@ const Input = forwardRef<HTMLInputElement, ArgProps>(({
         <>
             <label style={{marginRight: "10px"}}>
                 {labelTitle}
-                <Sinput type={inputType}
+                <Input type={inputType}
                         accept={accept}
                         style={styleObj}
                         id={id}
@@ -89,10 +89,10 @@ const Input = forwardRef<HTMLInputElement, ArgProps>(({
                         />
             </label>
             {
-                show ? <Sspan>{alertMessage}</Sspan> : ""
+                show ? <Span>{alertMessage}</Span> : ""
             }
         </>
     );
 });
 
-export default Input;
+export default CommonInput;

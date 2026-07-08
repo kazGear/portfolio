@@ -1,4 +1,4 @@
-import BorderTr from "../common/BorderTr";
+import CommonBorderTr from "../common/CommonBorderTr";
 
 interface ArgProps {
     lowSkills: string[];
@@ -6,7 +6,7 @@ interface ArgProps {
 
 const LowSkills = ({lowSkills}: ArgProps) => {
     return (
-        <BorderTr>
+        <CommonBorderTr>
             <th>スキル<br/>(習熟度・低)</th>
             <td>
                 {
@@ -15,7 +15,7 @@ const LowSkills = ({lowSkills}: ArgProps) => {
                     )
                 }
             </td>
-        </BorderTr>
+        </CommonBorderTr>
     );
 }
 export default LowSkills;

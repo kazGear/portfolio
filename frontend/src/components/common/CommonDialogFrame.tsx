@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { COLORS } from "../../lib/Constants";
 
-const SdivDialogFrame = styled.div`
+const DialogFrame = styled.div`
     background-color: ${COLORS.BASE_BACKGROUND};
     background-size: cover;
     position: absolute;
@@ -16,13 +16,13 @@ const SdivDialogFrame = styled.div`
     z-index: 3000;
 `;
 
-const SdivMessageArea = styled.div`
+const MessageFrame = styled.div`
     margin: 20px auto;
     width: 80%;
     height: 80%;
     z-index: 1000;
 `;
-const SdivFilter = styled.div`
+const BackFilter = styled.div`
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.8);
@@ -32,25 +32,25 @@ const SdivFilter = styled.div`
     z-index: 500;
 `;
 
-interface DialogFrameProps {
+interface ArgProps {
     children: React.ReactNode;
     showDialog: boolean;
     showFilter?: boolean;
 }
 
-const DialogFrame = (
-    {children, showDialog = true, showFilter}: DialogFrameProps
+const CommonDialogFrame = (
+    {children, showDialog = true, showFilter}: ArgProps
 ) => {
     return (
         <>
-            <SdivDialogFrame style={{display: showDialog ? "block" : "none"}}>
-                <SdivMessageArea>
+            <DialogFrame style={{display: showDialog ? "block" : "none"}}>
+                <MessageFrame>
                     {children}
-                </SdivMessageArea>
-            </SdivDialogFrame>
+                </MessageFrame>
+            </DialogFrame>
 
-            <SdivFilter style={{display: showDialog ? "block" : "none"}}/>
+            <BackFilter style={{display: showDialog ? "block" : "none"}}/>
         </>
     );
 }
-export default DialogFrame;
+export default CommonDialogFrame;

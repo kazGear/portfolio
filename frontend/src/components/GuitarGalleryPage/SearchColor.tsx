@@ -1,6 +1,6 @@
 import { GuitarParams } from "../../types/Guitar";
 import { Code } from "../../types/Code";
-import Select from "../common/Select";
+import CommonSelect from "../common/CommonSelect";
 import { ChangeEvent, useEffect } from "react";
 
 interface ArgProps {
@@ -22,7 +22,7 @@ const SearchColor = ({guitarParams, colors, callback}: ArgProps) => {
     }, [gParams.colorCd])
 
     return (
-        <Select onChange={changeColorHandler} >
+        <CommonSelect onChange={changeColorHandler} >
             <option value="0">未選択</option>
             {
                 colors?.map(color =>
@@ -32,7 +32,7 @@ const SearchColor = ({guitarParams, colors, callback}: ArgProps) => {
                         </option>
                         )
             }
-        </Select>
+        </CommonSelect>
     );
 }
 export default SearchColor;

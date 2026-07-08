@@ -1,4 +1,4 @@
-import BorderTr from "../common/BorderTr";
+import CommonBorderTr from "../common/CommonBorderTr";
 
 interface ArgProps {
     age: number;
@@ -6,12 +6,12 @@ interface ArgProps {
 
 const Age = ({age}: ArgProps) => {
     return (
-        <BorderTr styleObj={{height: "40px"}}>
+        <CommonBorderTr styleObj={{height: "40px"}}>
             <th>年齢</th>
             <td>
                 <span>{age}&nbsp;歳</span>
             </td>
-        </BorderTr>
+        </CommonBorderTr>
     );
 }
 export default Age;

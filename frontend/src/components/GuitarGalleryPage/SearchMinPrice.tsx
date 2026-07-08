@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { GUITAR } from "../../lib/Constants";
 import { GuitarParams } from "../../types/Guitar";
-import Input from "../common/Input";
+import CommonInput from "../common/CommonInput";
 
 interface ArgProps {
     guitarParams: GuitarParams;
@@ -26,10 +26,10 @@ const SearchMinPrice = ({guitarParams, callback}: ArgProps) => {
     }, [gParams.minPrice])
 
     return (
-        <Input inputType="number"
-               onBlur={changeMinPriceHandler}
-               min="-3"
-               placeholder="（金額を入力）"/>
+        <CommonInput inputType="number"
+                     onBlur={changeMinPriceHandler}
+                     min="-3"
+                     placeholder="（金額を入力）"/>
     );
 }
 export default SearchMinPrice;

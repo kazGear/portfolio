@@ -1,5 +1,5 @@
 import { ItemDTO } from "../../types/Shop";
-import BorderTd from "../common/BorderTd";
+import BorderTd from "../common/CommonBorderTd";
 import React from "react";
 
 interface ArgProps {

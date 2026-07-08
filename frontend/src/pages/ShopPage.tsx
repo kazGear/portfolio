@@ -9,15 +9,15 @@ import PurchaseDialog from "../components/shopPage/PurchaseDialog";
 import { api } from "../lib/apiClient";
 import { useCheckToken } from "../hooks/useHooksOfCommon";
 
-const SshopPageFrame = styled.div`
+const ShopPageFrame = styled.div`
     display: flex;
     height: 90%;
 `;
-const SdivControllerFrame = styled.div`
+const ControllerFrame = styled.div`
     width:25%;
     margin: 0px 20px;
 `;
-const SdivItemFrame = styled.div`
+const ItemFrame = styled.div`
     width: 75%;
     margin: 0px 20px 0px 0px;
     overflow: overlay;
@@ -58,15 +58,15 @@ const ShopPage = () => {
     }, [selectedShop]);
 
     return (
-        <SshopPageFrame>
-            <SdivControllerFrame>
+        <ShopPageFrame>
+            <ControllerFrame>
                 {/* コントローラ */}
                 <SelectShops setSelectedShop={setSelectedShop}
                              user={user}
                              myCash={myCash}/>
-            </SdivControllerFrame>
+            </ControllerFrame>
 
-            <SdivItemFrame>
+            <ItemFrame>
                 {/* 販売商品テーブル */}
                 <ShopItemTable shopItems={shopItems}
                                user={user}
@@ -74,12 +74,12 @@ const ShopPage = () => {
                                setMyCash={setMyCash}
                                setPurchaseItem={setPurchaseItem}
                                setShowPurchaseDialog={setShowPurchaseDialog}/>
-            </SdivItemFrame>
+            </ItemFrame>
             {/* 購入済ダイアログ */}
             <PurchaseDialog showDialog={showPurchaseDialog}
                             purchaseItem={purchaseItem}
                             setShowPurchaseDialog={setShowPurchaseDialog}/>
-        </SshopPageFrame>
+        </ShopPageFrame>
     )
 };
 

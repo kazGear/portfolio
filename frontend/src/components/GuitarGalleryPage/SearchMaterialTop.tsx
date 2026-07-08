@@ -1,6 +1,6 @@
 import { GuitarParams } from "../../types/Guitar";
 import { Code } from "../../types/Code";
-import Select from "../common/Select";
+import CommonSelect from "../common/CommonSelect";
 import { ChangeEvent, useEffect } from "react";
 
 interface ArgProps {
@@ -22,7 +22,7 @@ const SearchMaterialTop = ({guitarParams, materials, callback}: ArgProps) => {
     }, [gParams.bodyMaterialTopCd])
 
     return (
-        <Select onChange={changeMaterialTopHandler} >
+        <CommonSelect onChange={changeMaterialTopHandler} >
             <option value="-1">未選択</option>
             {
                 materials?.map(material =>
@@ -32,7 +32,7 @@ const SearchMaterialTop = ({guitarParams, materials, callback}: ArgProps) => {
                         </option>
                         )
             }
-        </Select>
+        </CommonSelect>
     );
 }
 export default SearchMaterialTop;

@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { PREFIX } from "../../lib/Constants";
 import { ItemDTO } from "../../types/Shop";
-import BorderTd from "../common/BorderTd";
+import BorderTd from "../common/CommonBorderTd";
 
 const Simg = styled.img`
     width: 50px;

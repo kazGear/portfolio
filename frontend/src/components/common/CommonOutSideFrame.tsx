@@ -1,8 +1,7 @@
 import styled from "styled-components";
 import { COLORS } from "../../lib/Constants";
 
-
-const Sdiv = styled.div`
+const Frame = styled.div`
     margin: 20px 0px;
     border: solid 1px ${COLORS.BORDER_COLOR};
     box-shadow: 4px 4px ${COLORS.SHADOW};
@@ -17,12 +16,12 @@ interface ArgProps {
     styleObj?: React.CSSProperties;
 }
 
-const OutSideFrame = ({children, styleObj}: ArgProps) => {
+const CommonFrame = ({children, styleObj}: ArgProps) => {
     return (
-        <Sdiv style={styleObj}>
+        <Frame style={styleObj}>
             {children}
-        </Sdiv>
+        </Frame>
     );
 }
 
-export default OutSideFrame;
+export default CommonFrame;

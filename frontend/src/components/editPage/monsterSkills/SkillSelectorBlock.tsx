@@ -1,5 +1,5 @@
 import { AllSkillDTO, EditSkillsDTO } from "../../../types/Edit";
-import Select from "../../common/Select";
+import CommonSelect from "../../common/CommonSelect";
 
 interface ArgProps {
     allSkills: AllSkillDTO[];
@@ -10,7 +10,7 @@ interface ArgProps {
 
 const SkillSelectorBlock = ({allSkills, mySkill, monster, index}: ArgProps) => {
     return (
-        <Select defaultValue={mySkill}
+        <CommonSelect defaultValue={mySkill}
                 styleObj={{marginRight: 0}}
                 onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
                     monster.IsChanged = true;
@@ -21,7 +21,7 @@ const SkillSelectorBlock = ({allSkills, mySkill, monster, index}: ArgProps) => {
                 <option key={index} value={skill.SkillId}>{skill.SkillName}</option>
             ))
         }
-        </Select>
+        </CommonSelect>
     );
 }
 

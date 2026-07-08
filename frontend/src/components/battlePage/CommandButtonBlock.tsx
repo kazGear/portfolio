@@ -1,8 +1,8 @@
 import styled from "styled-components";
-import Button from "../common/Button";
+import CommonButton from "../common/CommonButton";
 import { useEffect, useState } from "react";
 
-const SdivButtonFrame = styled.div`
+const SdivCommonButtonFrame = styled.div`
     height: 40px;
     display: flex;
     justify-content: space-evenly;
@@ -20,7 +20,7 @@ interface ArgProps {
     battleStarted: boolean;
 }
 
-const CommandButtonBlock = ({
+const CommandCommonButtonBlock = ({
     battleStartHandler,
     nextTurnHandler,
     monsterCount,
@@ -43,29 +43,29 @@ const CommandButtonBlock = ({
     }, [monsterCount, battleStarted]);
 
     return (
-        <SdivButtonFrame>
-            <Button
+        <SdivCommonButtonFrame>
+            <CommonButton
                 id={"nextTurn"}
                 text={"戦闘開始！"}
                 styleObj={{width: "30%", height: "30px"}}
                 onClick={battleStartHandler}
                 disabled={battleBtnDisabled}
                 />
-            <Button
+            <CommonButton
                 id={"nextMessage>"}
                 text={"次のターン！"}
                 styleObj={{width: "30%", height: "30px"}}
                 onClick={nextTurnHandler}
                 disabled={nextBtnDisabled}
                 />
-            <Button
+            <CommonButton
                 id={"nextMessage>"}
                 text={"リセット"}
                 styleObj={{width: "30%", height: "30px"}}
                 onClick={resetHandler}
                 />
-        </SdivButtonFrame>
+        </SdivCommonButtonFrame>
     );
 }
 
-export default CommandButtonBlock;
+export default CommandCommonButtonBlock;

@@ -1,14 +1,14 @@
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { COLORS } from "../../lib/Constants";
-import MenuTitle from "../common/MenuTitle";
-import OutSideFrame from "../common/OutSideFrame";
+import CommonMenuTitle from "../common/CommonMenuTitle";
+import CommonFrame from "../common/CommonOutSideFrame";
 
-const Slink = styled(Link)`
+const SLink = styled(Link)`
     text-decoration: none;
     color: ${COLORS.MAIN_FONT_COLOR};
 `;
-const SpDescription = styled.p`
+const Description = styled.p`
     margin: 10px;
 `;
 
@@ -21,18 +21,18 @@ interface ArgProps {
 const ToBattlePageBlock = ({validToken, classOfAnime, titleStyle}: ArgProps) => {
     return (
         <div>
-            <Slink to={validToken ? "/BattleResultPage" : "/"} >
-                <MenuTitle title={"📜戦闘戦績レポート"}
+            <SLink to={validToken ? "/BattleResultPage" : "/"} >
+                <CommonMenuTitle title={"📜戦闘戦績レポート"}
                         className={validToken ? classOfAnime : ""}
                         styleObj={validToken ? {} : titleStyle}/>
-            </Slink>
+            </SLink>
 
-            <OutSideFrame>
-                <SpDescription>
+            <CommonFrame>
+                <Description>
                     これまでの戦闘の結果を記録していますので、そのレポートを閲覧できます。<br/>
                     モンスター毎、戦闘毎のレポートがあります。
-                </SpDescription>
-            </OutSideFrame>
+                </Description>
+            </CommonFrame>
         </div>
     );
 }

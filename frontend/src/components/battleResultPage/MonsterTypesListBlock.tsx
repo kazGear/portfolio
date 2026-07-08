@@ -1,5 +1,5 @@
 import { ChangeEvent, useEffect, useState } from "react";
-import Select from "../common/Select";
+import CommonSelect from "../common/CommonSelect";
 import { URLS } from "../../lib/Constants";
 import { MonsterTypeDTO } from "../../types/BattleReport";
 import { api } from "../../lib/apiClient";
@@ -24,7 +24,7 @@ const MonsterTypesListBlock = ({setMonsterTypeId}: ArgProps) => {
     }
 
     return (
-        <Select title="モンスター種" onChange={changeMonsterTypeHandler}>
+        <CommonSelect title="モンスター種" onChange={changeMonsterTypeHandler}>
             <option value="0">指定なし</option>
             {
                 monsterTypes.map((monster, index) => {
@@ -34,7 +34,7 @@ const MonsterTypesListBlock = ({setMonsterTypeId}: ArgProps) => {
                         </option>
                 )})
             }
-        </Select>
+        </CommonSelect>
     );
 }
 

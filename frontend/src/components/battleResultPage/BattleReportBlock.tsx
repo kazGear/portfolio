@@ -3,14 +3,14 @@ import { BattleReportDTO } from "../../types/BattleReport";
 import { COLORS } from "../../lib/Constants";
 import monsterImages from "../../lib/MonsterImages";
 import React from "react";
-import BorderTd from "../common/BorderTd";
-import NowLoading from "../common/NowLoading";
+import CommonBorderTd from "../common/CommonBorderTd";
+import CommonNowLoading from "../common/CommonNowLoading";
 
-const Stable = styled.table`
+const Table = styled.table`
     width: 100%;
     border-collapse: collapse;
 `;
-const StdHeader = styled.td`
+const TdHeader = styled.td`
     border-top: ${COLORS.BORDER_COLOR} 5px double;
     border-left: ${COLORS.BORDER_COLOR} 1px solid;
     border-right: ${COLORS.BORDER_COLOR} 1px solid;
@@ -20,14 +20,14 @@ const StdHeader = styled.td`
     align-content: start;
     font-weight: bold;
 `;
-const Simg = styled.img`
+const Img = styled.img`
     width: 50px;
     height: 50px;
     vertical-align: middle;
 `;
 
 interface ArgProps {
-    battleReport: BattleReportDTO[];
+    battleReport:             BattleReportDTO[];
     isNowLoadingBattleReport: boolean;
 }
 
@@ -41,46 +41,46 @@ const BattleReportBlock = (
     if (isNowLoadingBattleReport) {
         return (
             <div style={{margin: "100px"}}>
-                <NowLoading alt="ローディング"/>
+                <CommonNowLoading alt="ローディング"/>
             </div>
         );
     }
 
     return (
-        <Stable>
+        <Table>
             <tbody>
             {
                 battleReport.map((report, index) => {
                     return (
-                        <React.Fragment key={index}>
+                        <React.Fragment key={index + report.BattleId}>
                         { report.Serial === 1 ? // ヘッダーは１試合に１つ
                             <tr>
-                                <StdHeader colSpan={4} >
+                                <TdHeader colSpan={4} >
                                     No. {report.BattleId}
                                     &emsp;&emsp;{report.BattleEndDateStr}
                                     &emsp;{report.BattleEndTimeStr}
-                                </StdHeader>
+                                </TdHeader>
                             </tr>
                             : ""
                         }
                             <tr>
-                                <BorderTd><span style={{marginLeft: "20px"}}>{report.Serial}</span></BorderTd>
-                                <BorderTd>{report.MonsterName}</BorderTd>
-                                <BorderTd>
-                                    <Simg src={monsterImages(report.MonsterId)} alt=""/>
-                                </BorderTd>
-                                <BorderTd>
+                                <CommonBorderTd><span style={{marginLeft: "20px"}}>{report.Serial}</span></CommonBorderTd>
+                                <CommonBorderTd>{report.MonsterName}</CommonBorderTd>
+                                <CommonBorderTd>
+                                    <Img src={monsterImages(report.MonsterId)} alt=""/>
+                                </CommonBorderTd>
+                                <CommonBorderTd>
                                     <span style={{color: COLORS.ACCENT_FONT_PINK}}>
                                         {report.IsWin ? "Winner !!" : ""}
                                     </span>
-                                </BorderTd>
+                                </CommonBorderTd>
                             </tr>
                         </React.Fragment>
                     )
                 })
             }
             </tbody>
-        </Stable>
+        </Table>
     );
 }
 

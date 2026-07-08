@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { GuitarParams } from "../../types/Guitar";
-import Input from "../common/Input";
+import CommonInput from "../common/CommonInput";
 
 interface ArgProps {
     guitarParams: GuitarParams;
@@ -25,11 +25,11 @@ const SearchMaxPrice = ({guitarParams, callback}: ArgProps) => {
     }, [gParams.maxPrice])
 
     return (
-        <Input inputType="number"
-               onBlur={changeMaxPriceHandler}
-               min="-3"
-               placeholder="（金額を入力）"
-               styleObj={{marginTop: "8px"}}/>
+        <CommonInput inputType="number"
+                     onBlur={changeMaxPriceHandler}
+                     min="-3"
+                     placeholder="（金額を入力）"
+                     styleObj={{marginTop: "8px"}}/>
     );
 }
 export default SearchMaxPrice;

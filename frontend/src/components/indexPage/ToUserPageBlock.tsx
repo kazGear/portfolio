@@ -4,7 +4,7 @@ import { COLORS } from "../../lib/Constants";
 import MenuTitle from "../common/CommonMenuTitle";
 import CommonFrame from "../common/CommonOutSideFrame";
 
-const Slink = styled(Link)`
+const SLink = styled(Link)`
     text-decoration: none;
     color: ${COLORS.MAIN_FONT_COLOR};
 `;
@@ -21,13 +21,13 @@ interface ArgProps {
 const ToUserPageBlock = ({validToken, classOfAnime, titleStyle}: ArgProps) => {
     return (
         <div>
-            <Slink to={validToken ? "/UserPage" : ""}>
+            <SLink to={validToken ? "/UserPage" : ""}>
                 <MenuTitle
                     title={"👦ユーザーページ"}
                     className={validToken ? classOfAnime : ""}
                     styleObj={validToken ? {} : titleStyle}
                 />
-            </Slink>
+            </SLink>
 
             <CommonFrame>
                 <Description>

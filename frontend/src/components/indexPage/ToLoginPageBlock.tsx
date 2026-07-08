@@ -8,7 +8,7 @@ const Slink = styled(Link)`
     text-decoration: none;
     color: ${COLORS.MAIN_FONT_COLOR};
 `;
-const SpDescription = styled.p`
+const Description = styled.p`
     margin: 10px
 `;
 
@@ -22,7 +22,7 @@ const ToLoginPageBlock = () => {
             </Slink>
 
             <CommonFrame>
-                <SpDescription>
+                <Description>
                     ログインすると、各種機能をご利用いただけます。
                     数日程は、ログイン状態が維持されます。ユーザ登録も可能です。
                     <br />
@@ -32,7 +32,7 @@ const ToLoginPageBlock = () => {
                     ※テストユーザー&emsp; ログインID：test、パスワード：test
                     <br />
                     ※管理ユーザー&emsp; ログインID：admin、パスワード：admin
-                </SpDescription>
+                </Description>
             </CommonFrame>
         </div>
     );

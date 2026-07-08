@@ -8,7 +8,7 @@ const Slink = styled(Link)`
     text-decoration: none;
     color: ${COLORS.MAIN_FONT_COLOR};
 `;
-const SpDescription = styled.p`
+const Description = styled.p`
     margin: 10px;
 `;
 
@@ -28,10 +28,10 @@ const ToEditPageBlock = ({isValid, classOfAnime, titleStyle}: ArgProps) => {
             </Slink>
 
             <CommonFrame>
-                <SpDescription>
+                <Description>
                     モンスターステータス編集、モンスタースキル編集、使用モンスターの制限などが可能です。<br/>
                     ※管理ユーザのみ使用可能。
-                </SpDescription>
+                </Description>
             </CommonFrame>
         </div>
     );

@@ -1,3 +1,5 @@
+import { PRIVATE_API_BASE_URL } from "../config/env"
+
 const ACCENT_COLOR: string = "#0aff84";
 const ACCENT_COLOR2: string = "#F05F8D";
 const ALERT_COLOR: string = "red";
@@ -93,56 +95,56 @@ export const DAMAGE_VIEW = {
     DAMAGE_END: 2500,
 } as const;
 
-export const DOMAIN = {
-    LOCAL_HOST_API: `http://localhost:5001`,
-    DOTNET_API: `http://localhost:5000/api`,
-    XSERVER_API: `https://kazapp-trial.com`,
-} as const;
+// export const DOMAIN = {
+//     LOCAL_HOST_API: `http://localhost:5001`,
+//     DOTNET_API: `http://localhost:5000/api`,
+//     XSERVER_API: `https://kazapp-trial.com`,
+// } as const;
 ////////////////////////////////////////////////////////////////
 // ドメインを決定。デプロイ前に確認 ///////////////////////////////
 ////////////////////////////////////////////////////////////////
-const ENVIRONMENT = DOMAIN.LOCAL_HOST_API;
+// const ENVIRONMENT = DOMAIN.LOCAL_HOST_API;
 // const ENVIRONMENT = DOMAIN.XSERVER_API;
 export const URLS = {
     // 基本情報取得
-    USER_INFO: `${ENVIRONMENT}/api/user/userInfo`,
-    MONSTERS_INFO: `${ENVIRONMENT}/api/battle/monstersInfo`,
-    ITEM_INFO: `${ENVIRONMENT}/api/shop/itemInfo`,
-    FETCH_ELEMENT_CODE: `${ENVIRONMENT}/api/common/FetchElementCode`,
+    USER_INFO: `${PRIVATE_API_BASE_URL}/api/user/userInfo`,
+    MONSTERS_INFO: `${PRIVATE_API_BASE_URL}/api/battle/monstersInfo`,
+    ITEM_INFO: `${PRIVATE_API_BASE_URL}/api/shop/itemInfo`,
+    FETCH_ELEMENT_CODE: `${PRIVATE_API_BASE_URL}/api/common/FetchElementCode`,
     // ユーザ関係
-    REGIST_USER_INIT: `${ENVIRONMENT}/api/user/init`,
-    SELECT_LOGIN_USER: `${ENVIRONMENT}/api/user/loginUser`,
-    RECORD_USER_RESULT: `${ENVIRONMENT}/api/user/recordUserResults`,
-    REGIST_USER: `${ENVIRONMENT}/api/user/userRegist`,
-    RESTART_AS_PLAYER: `${ENVIRONMENT}/api/user/restartAsPlayer`,
-    GET_MONSTER_COUNT: `${ENVIRONMENT}/api/user/getMonsterCount`,
+    REGIST_USER_INIT: `${PRIVATE_API_BASE_URL}/api/user/init`,
+    SELECT_LOGIN_USER: `${PRIVATE_API_BASE_URL}/api/user/loginUser`,
+    RECORD_USER_RESULT: `${PRIVATE_API_BASE_URL}/api/user/recordUserResults`,
+    REGIST_USER: `${PRIVATE_API_BASE_URL}/api/user/userRegist`,
+    RESTART_AS_PLAYER: `${PRIVATE_API_BASE_URL}/api/user/restartAsPlayer`,
+    GET_MONSTER_COUNT: `${PRIVATE_API_BASE_URL}/api/user/getMonsterCount`,
     // バトル、モンスター関係
-    INIT_MONSTERS: `${ENVIRONMENT}/api/battle/init`,
-    BET_RATE: `${ENVIRONMENT}/api/battle/betRate`,
-    BATTLE_NEXT_TURN: `${ENVIRONMENT}/api/battle/nextTurn`,
-    RECORD_BATTLE_RESULT: `${ENVIRONMENT}/api/battle/recordResults`,
+    INIT_MONSTERS: `${PRIVATE_API_BASE_URL}/api/battle/init`,
+    BET_RATE: `${PRIVATE_API_BASE_URL}/api/battle/betRate`,
+    BATTLE_NEXT_TURN: `${PRIVATE_API_BASE_URL}/api/battle/nextTurn`,
+    RECORD_BATTLE_RESULT: `${PRIVATE_API_BASE_URL}/api/battle/recordResults`,
     // レポート関係
-    INIT_BATTLE_REPORT: `${ENVIRONMENT}/api/battleReport/init`,
-    MONSTER_REPORTS: `${ENVIRONMENT}/api/battleReport/monsterReport`,
-    BATTLE_REPORTS: `${ENVIRONMENT}/api/battleReport/battleReport`,
+    INIT_BATTLE_REPORT: `${PRIVATE_API_BASE_URL}/api/battleReport/init`,
+    MONSTER_REPORTS: `${PRIVATE_API_BASE_URL}/api/battleReport/monsterReport`,
+    BATTLE_REPORTS: `${PRIVATE_API_BASE_URL}/api/battleReport/battleReport`,
     // 認証系
-    LOGIN_USER: `${ENVIRONMENT}/api/auth/login`,
-    CHECK_LOGIN_TOKEN: `${ENVIRONMENT}/api/auth/checkToken`,
+    LOGIN_USER: `${PRIVATE_API_BASE_URL}/api/auth/login`,
+    CHECK_LOGIN_TOKEN: `${PRIVATE_API_BASE_URL}/api/auth/checkToken`,
     // ショップ系
-    SHOP_INIT: `${ENVIRONMENT}/api/shop/init`,
-    SELECT_SHOP_ITEMS: `${ENVIRONMENT}/api/shop/items`,
-    PURCHASE_ITEM: `${ENVIRONMENT}/api/shop/purchase`,
+    SHOP_INIT: `${PRIVATE_API_BASE_URL}/api/shop/init`,
+    SELECT_SHOP_ITEMS: `${PRIVATE_API_BASE_URL}/api/shop/items`,
+    PURCHASE_ITEM: `${PRIVATE_API_BASE_URL}/api/shop/purchase`,
     // 設定系
-    EDIT_INIT: `${ENVIRONMENT}/api/edit/init`,
-    FETCH_EDIT_MONSTERS: `${ENVIRONMENT}/api/edit/fetchMonsters`,
-    UPDATE_MONSTER_STATUS: `${ENVIRONMENT}/api/edit/updateMonsterStatus`,
-    INIT_ALL_MONSTERS_STATUS: `${ENVIRONMENT}/api/edit/initAllMonsterStatus`,
-    INIT_ALL_MONSTERS_SKILLS: `${ENVIRONMENT}/api/edit/initAllMonsterSkills`,
-    FETCH_EDIT_SKILLS: `${ENVIRONMENT}/api/edit/FecthEditSkills`,
-    FETCH_ALL_SKILLS: `${ENVIRONMENT}/api/edit/fecthAllSkills`,
-    CHANGE_MONSTER_SKILLS: `${ENVIRONMENT}/api/edit/UpdateMonsterSkills`,
+    EDIT_INIT: `${PRIVATE_API_BASE_URL}/api/edit/init`,
+    FETCH_EDIT_MONSTERS: `${PRIVATE_API_BASE_URL}/api/edit/fetchMonsters`,
+    UPDATE_MONSTER_STATUS: `${PRIVATE_API_BASE_URL}/api/edit/updateMonsterStatus`,
+    INIT_ALL_MONSTERS_STATUS: `${PRIVATE_API_BASE_URL}/api/edit/initAllMonsterStatus`,
+    INIT_ALL_MONSTERS_SKILLS: `${PRIVATE_API_BASE_URL}/api/edit/initAllMonsterSkills`,
+    FETCH_EDIT_SKILLS: `${PRIVATE_API_BASE_URL}/api/edit/FecthEditSkills`,
+    FETCH_ALL_SKILLS: `${PRIVATE_API_BASE_URL}/api/edit/fecthAllSkills`,
+    CHANGE_MONSTER_SKILLS: `${PRIVATE_API_BASE_URL}/api/edit/UpdateMonsterSkills`,
     // その他
-    UPLOAD_IMAGE: `${ENVIRONMENT}/api/common/imgUpload`
+    UPLOAD_IMAGE: `${PRIVATE_API_BASE_URL}/api/common/imgUpload`
 } as const;
 
 export const KEYS = {

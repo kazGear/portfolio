@@ -46,6 +46,7 @@ docker/db/init/*.sql
 # ============================
 # Secrets
 # ============================
+**/appsettings.json
 **/appsettings.Development.json
 **/appsettings.Production.json
 **/.env
@@ -71,6 +72,4 @@ docker/db/init/*.sql
 # Git merge conflict leftovers
 # ============================
 *.orig
-*.jpg
-*.png
 *.json

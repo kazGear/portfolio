@@ -70,8 +70,20 @@ package.json の script に "dev": "vite --mode dev", "build": "vite build --mod
 
 # README スクショ
 
-htmlで書く。
+- htmlで書く。
 画像を保存しておき、img src=... で読み込む。
+
+- ローカルでREADMEを書いてgit pushする運用
+
+repository
+├ README.md
+└ docs
+   └ images
+      └ gallery.png
+
+![Guitar Gallery](docs/images/guitars.png)
+
+と書く方法が一般的？
 
 GIFは意外と簡単らしい。
 一番おすすめ（Windows）ScreenToGif

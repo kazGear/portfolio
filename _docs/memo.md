@@ -81,7 +81,7 @@ repository
    └ images  
       └ gallery.png  
 
-「![Guitar Gallery](../docs/images/guitars.png)」
+「![Guitar Gallery](../_docs/images/guitars.png)」
 
 と書く方法が一般的？
 

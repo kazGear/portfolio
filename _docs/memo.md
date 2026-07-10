@@ -81,11 +81,11 @@ repository
    └ images
       └ gallery.png
 
-![Guitar Gallery](docs/images/guitars.png)
+![Guitar Gallery](../docs/images/guitars.png)
 
 と書く方法が一般的？
 
-GIFは意外と簡単らしい。
+- GIFは意外と簡単らしい。
 一番おすすめ（Windows）ScreenToGif
 無料で神ソフト。
 

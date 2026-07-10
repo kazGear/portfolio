@@ -1,9 +1,9 @@
 # Main Projects（ポートフォリオ）
 
-・Guitar Gallery
-・Guitar REST API(GET only)
-・Monster Battle Arena
-・web版経歴書
+- Guitar Gallery
+- Guitar REST API(GET only)
+- Monster Battle Arena
+- web版経歴書
 
 ## Demo screenshots
 

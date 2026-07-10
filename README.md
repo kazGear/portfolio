@@ -178,18 +178,18 @@ GET /public/v1/guitars
 
 Parameter,Type,Description
 
-- makerCd,int,メーカーコード
-- name,string,ギター名（部分一致検索）
-- series,string,シリーズ名（部分一致検索）
-- colorCd,int,カラーコード
-- bodyMaterialTopCd,int,ボディトップ材
-- bodyMaterialBackCd,int,ボディバック材
-- minPrice,int,最低価格
-- maxPrice,int,最高価格
-- sort,string,maker / name / price
-- order,string,ASC / DESC
-- page,int,ページ番号
-- pageSize,int,1ページの件数
+- makerCd, int ,メーカーコード
+- name, string, ギター名（部分一致検索）
+- series, string, シリーズ名（部分一致検索）
+- colorCd, int, カラーコード
+- bodyMaterialTopCd, int, ボディトップ材
+- bodyMaterialBackCd, int, ボディバック材
+- minPrice, int, 最低価格
+- maxPrice, int, 最高価格
+- sort, string, maker or name or price
+- order, string, ASC or DESC
+- page, int, ページ番号
+- pageSize, int, 1ページの件数
 
 使用例 -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 

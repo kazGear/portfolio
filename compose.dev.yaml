@@ -7,10 +7,17 @@ services:
     volumes:
       - ./frontend:/app
       - /app/node_modules
-    ports:
-      - "${REACT_PORT}:5173"
+    expose:
+      - "5173"
     env_file:
       - .env.dev
+    networks:
+      - portfolio-net
+    depends_on:
+      - public-api
+      - private-api
+    environment:
+      TZ: Asia/Tokyo
 
   public-api:
     build:
@@ -21,8 +28,8 @@ services:
       - ./backend/PublicApi:/src/backend/PublicApi
       - ./backend/CSLib:/src/backend/CSLib
       - ./backend/Repository:/src/backend/Repository
-    ports:
-      - "${PUBLIC_API_PORT}:5000"
+    expose:
+      - "5000"
     environment:
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
@@ -42,8 +49,8 @@ services:
       - ./backend/PrivateApi:/src/backend/PrivateApi
       - ./backend/CSLib:/src/backend/CSLib
       - ./backend/Repository:/src/backend/Repository
-    ports:
-      - "${PRIVATE_API_PORT}:5000"
+    expose:
+      - "5000"
     environment:
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
@@ -56,6 +63,7 @@ services:
 
   db:
     image: postgres:17
+    command: postgres -c timezone=Asia/Tokyo
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
@@ -64,7 +72,7 @@ services:
       - pg-data:/var/lib/postgresql/data
       - ./infrastructure/db/init:/docker-entrypoint-initdb.d
     ports:
-      - "${HOST_DB_PORT}:${POSTGRES_PORT}"
+      - "5433:5432"
 
   nginx:
     build:

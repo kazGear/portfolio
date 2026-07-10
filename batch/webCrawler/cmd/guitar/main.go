@@ -13,19 +13,20 @@ import (
 )
 
 func init() {
+	log.Println("Start guitar crawler.")
+
 	envFile := os.Getenv("ENV_FILE")
 
 	if envFile == "" { // ローカル環境なら空
 		envFile = ".env.dev"
-
 	}
-	err := godotenv.Load(envFile)
 
-	if err != nil {
-		log.Fatalf(`godotenv load error: %v`, err)
+	if err := godotenv.Load(envFile); err != nil {
+		log.Printf("Skip env file: %v", envFile)
+		log.Println("Use environment of compose.yaml.")
+	} else {
+		log.Printf("Loaded env file: %v", envFile)
 	}
-	log.Println("godotenv load OK.")
-	log.Printf("loaded env file: %v\n", envFile)
 }
 
 func main() {
@@ -45,4 +46,5 @@ func main() {
 		logPath,
 		logsKeepCount,
 	)
+	log.Println("Finished guitar crawler.")
 }

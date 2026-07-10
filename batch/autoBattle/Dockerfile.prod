@@ -1,39 +1,34 @@
-# --- Build stage ---
+# build stage
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 
 WORKDIR /src
 
-# csproj を先にコピーして restore（キャッシュ効率UP）
-COPY batch/autobattle/autobattle.csproj .
-RUN dotnet restore autobattle.csproj
+COPY . .
 
-# 残りのソースをコピー
-COPY batch/autobattle .
+RUN dotnet restore ./batch/AutoBattle/AutoBattle.csproj
 
-# publish（restore 済みなので no-restore）
-RUN dotnet publish -c Release -o /app/publish --no-restore
+RUN dotnet publish ./batch/AutoBattle/AutoBattle.csproj \
+    -c Release \
+    -o /app/publish \
+    --no-restore
 
 
-# --- Runtime stage ---
-FROM mcr.microsoft.com/dotnet/runtime:8.0
+# runtime stage
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
 
-# cron をインストール（軽量化）
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends cron \
-    && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends cron && \
+    rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
-# publish 成果物をコピー
 COPY --from=build /app/publish .
 
-# cron 設定
-COPY crontab.txt /etc/cron.d/autobattle-cron
-RUN chmod 0644 /etc/cron.d/autobattle-cron \
-    && crontab /etc/cron.d/autobattle-cron
+COPY ./batch/AutoBattle/crontab.txt /etc/cron.d/auto-battle
 
-# cron.log を作成
-RUN touch /var/log/cron.log
+RUN chmod 0644 /etc/cron.d/auto-battle && \
+    crontab /etc/cron.d/auto-battle
 
-# cron をフォアグラウンドで実行
+RUN mkdir -p /app/logs
+
 CMD ["cron", "-f"]

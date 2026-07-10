@@ -1,5 +1,6 @@
 ﻿using CSLib.Const;
 using CSLib.Lib;
+using Microsoft.Extensions.Configuration;
 using PrivateApi.Common._Log;
 using PrivateApi.Domain._Factory;
 using PrivateApi.Domain._GameSystem;
@@ -7,16 +8,19 @@ using PrivateApi.Domain._Monster;
 using PrivateApi.Domain._Monster._State;
 using PrivateApi.Domain.DTO;
 using PrivateApi.Service;
-using Microsoft.Extensions.Configuration;
 using Repository.Repository;
+using System;
 using System.Text;
 
 Console.WriteLine("Auto battle start...");
 
 // 接続先情報
+string environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
+
 var configuration = new ConfigurationBuilder()
     .SetBasePath(AppContext.BaseDirectory)
     .AddJsonFile("appsettings.json", optional: false)
+    .AddJsonFile($"appsettings.{environment}.json", optional: true)
     .Build();
 
 IDatabase _posgre              = new PostgreSQL(ConnectionString.Get(configuration));
@@ -123,7 +127,14 @@ for (int i = 0; i < battleTimes; i++)
 
         _service.InsertBattleResult(records, endDate, endTime);
 
+        // ログ
         Console.WriteLine($"{i + 1}戦目 終了.");
+        Console.WriteLine("-- 参戦モンスター --");
+        foreach (IMonster monster in battleMonsters)
+        {
+            Console.WriteLine($"{monster.MonsterName}");
+        }
+        Console.WriteLine("");
 
         // 間隔を空け再選（10秒ごと、最終回は待たない）
         if (i < battleTimes - 1)
@@ -139,4 +150,4 @@ for (int i = 0; i < battleTimes; i++)
     }
 
 }
-Console.WriteLine($"Auto battle finish. （{battleTimes}戦）");
+Console.WriteLine($"Finished auto battle.（{battleTimes}戦）");

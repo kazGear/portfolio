@@ -5,16 +5,16 @@ WORKDIR /src
 
 # --- csproj を先にコピー（キャッシュ効率UP） ---
 COPY CSLib/CSLib.csproj ./CSLib/
-COPY KazApi.NET/KazApi.csproj ./KazApi.NET/
+COPY PrivateApi/PrivateApi.csproj ./PrivateApi/
 
 
-RUN dotnet restore ./KazApi.NET/KazApi.csproj
+RUN dotnet restore ./PrivateApi/PrivateApi.csproj
 
 # --- 残りのソースをコピー ---
 COPY . .
 
 # --- publish ---
-RUN dotnet publish ./KazApi.NET/KazApi.csproj -c Release -o /app --no-restore
+RUN dotnet publish ./PrivateApi/PrivateApi.csproj -c Release -o /app
 
 # --- Runtime stage ---
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
@@ -27,4 +27,4 @@ ENV ASPNETCORE_URLS=http://0.0.0.0:5000
 
 # EXPOSE 5000
 
-ENTRYPOINT ["dotnet", "KazApi.dll"]
+ENTRYPOINT ["dotnet", "PrivateApi.dll"]

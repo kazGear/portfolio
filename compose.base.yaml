@@ -1,40 +1,45 @@
 name: portfolio
 
 services:
-  frontend:
-    networks:
-      - portfolio-net
-
   public-api:
     networks:
       - portfolio-net
+    environment:
+      TZ: Asia/Tokyo
 
   private-api:
     networks:
       - portfolio-net
+    environment:
+      TZ: Asia/Tokyo
 
   db:
     networks:
       - portfolio-net
+    environment:
+      TZ: Asia/Tokyo
 
   nginx:
     networks:
       - portfolio-net
+    environment:
+      TZ: Asia/Tokyo
 
   batch-auto-battle:
     depends_on:
       - db
     networks:
       - portfolio-net
+    environment:
+      TZ: Asia/Tokyo
 
   batch-guitar-crawler:
     depends_on:
       - db
     networks:
       - portfolio-net
-
-  # 新しいジョブを追加する場合はここに追記
-  # batch_xxx:
+    environment:
+      TZ: Asia/Tokyo
 
 volumes:
   pg-data:

@@ -1,2 +1,1 @@
-PATH=/usr/local/go/bin
-0 20 * * * cd /app && go run ./cmd/guitar >> /proc/1/fd/1 2>&1
+0 20 * * * cd /app && ./guitar >> /proc/1/fd/1 2>&1

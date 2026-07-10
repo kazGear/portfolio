@@ -95,16 +95,6 @@ export const DAMAGE_VIEW = {
     DAMAGE_END: 2500,
 } as const;
 
-// export const DOMAIN = {
-//     LOCAL_HOST_API: `http://localhost:5001`,
-//     DOTNET_API: `http://localhost:5000/api`,
-//     XSERVER_API: `https://kazapp-trial.com`,
-// } as const;
-////////////////////////////////////////////////////////////////
-// ドメインを決定。デプロイ前に確認 ///////////////////////////////
-////////////////////////////////////////////////////////////////
-// const ENVIRONMENT = DOMAIN.LOCAL_HOST_API;
-// const ENVIRONMENT = DOMAIN.XSERVER_API;
 export const URLS = {
     // 基本情報取得
     USER_INFO: `${PRIVATE_API_BASE_URL}/api/user/userInfo`,

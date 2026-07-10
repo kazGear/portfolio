@@ -75,7 +75,8 @@ func (g *guitarCrawlerService) RunCrawler() {
             guitars := maker.scraper.Scrape(maker.provider, maker.parser, parentCtx)
             okCnt, ngCnt, errs := g.repository.UpsertAll(guitars)
 
-            maker.logger.Printf("[Upsert result]: OK %v 件, NG %v 件", okCnt, ngCnt)
+            maker.logger.Printf("[Upsert result %v]: OK %v 件, NG %v 件", maker.name, okCnt, ngCnt)
+            log.Printf("[Upsert result %v]: OK %v 件, NG %v 件", maker.name, okCnt, ngCnt) // コンソール用
 
             for _, err := range errs {
                 maker.logger.Println(err)
@@ -91,8 +92,18 @@ func (g *guitarCrawlerService) RunCrawler() {
 func makersFactory() map[string]*Maker {
     makers := map[string]*Maker{}
 
-    makerName := "ESP-sig"
+    makerName := "Momose"
     logger    := utils.NewLogger(makerName)
+    makers[makerName] = NewMaker(
+        makerName,
+        scraper.NewScraperMomose(logger),
+        scraper.NewCallBacksMomose(logger),
+        scraper.NewCallBacksMomose(logger),
+        logger,
+    )
+
+    makerName = "ESP-sig"
+    logger    = utils.NewLogger(makerName)
     makers[makerName] = NewMaker(
         makerName,
         scraper.NewScraperEspSig(logger),
@@ -158,16 +169,6 @@ func makersFactory() map[string]*Maker {
         scraper.NewScraperSchecter(logger),
         scraper.NewCallBacksSchecter(logger),
         scraper.NewCallBacksSchecter(logger),
-        logger,
-    )
-
-    makerName = "Momose"
-    logger    = utils.NewLogger(makerName)
-    makers[makerName] = NewMaker(
-        makerName,
-        scraper.NewScraperMomose(logger),
-        scraper.NewCallBacksMomose(logger),
-        scraper.NewCallBacksMomose(logger),
         logger,
     )
 

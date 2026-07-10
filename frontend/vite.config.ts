@@ -18,6 +18,16 @@ export default defineConfig({
     })
   ],
   server: {
+    proxy: {
+      "/public": {
+        target: "http://localhost:7170",
+        changeOrigin: true,
+      },
+      "/api": {
+        target: "http://localhost:5000",
+        changeOrigin: true,
+      },
+    },
     open: true,
     middlewareMode: false,
   },

@@ -1,0 +1,30 @@
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+
+WORKDIR /src
+
+# ソリューションとcsprojだけ先にコピー（キャッシュ効率UP）
+COPY KazApi.sln .
+COPY PublicApi/PublicApi.csproj PublicApi/
+COPY Repository/Repository.csproj Repository/
+COPY CSLib/CSLib.csproj CSLib/
+
+RUN dotnet restore PublicApi/PublicApi.csproj
+
+# ソースをコピー
+COPY . .
+
+WORKDIR /src/PublicApi
+
+RUN dotnet publish -c Release -o /app/publish
+
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
+
+WORKDIR /app
+
+COPY --from=build /app/publish .
+
+ENV ASPNETCORE_URLS=http://+:5000
+
+EXPOSE 5000
+
+ENTRYPOINT ["dotnet", "PublicApi.dll"]

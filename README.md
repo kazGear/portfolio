@@ -9,31 +9,32 @@
 
 ---
 
-<style>
-    .frame {
-        text-align: center;
-        width: 100%;
-    }
-
-    .caption {
-        margin: 0;
-    }
-
-    .imageRow {
-        display: flex;
-        width: 100%;
-    }
-
-    .imageCard {
-        width: 50%;
-    }
-
-    img {
-        width: 95%;
-        margin: 10px;
-    }
-</style>
 <main class="frame">
+	<style>
+	    .frame {
+	        text-align: center;
+	        width: 100%;
+	    }
+
+	    .caption {
+	        margin: 0;
+	    }
+
+	    .imageRow {
+	        display: flex;
+	        width: 100%;
+	    }
+
+	    .imageCard {
+	        width: 50%;
+	    }
+
+	    img {
+	        width: 95%;
+	        margin: 10px;
+	    }
+	</style>
+
     <div class="imageRow">
         <div class="imageCard">
             <p class="caption">メニュー画面</p>

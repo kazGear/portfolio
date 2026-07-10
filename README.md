@@ -9,75 +9,72 @@
 
 ---
 
-<body>
-    <style>
-        .frame {
-            text-align: center;
-            width: 100%;
-        }
+<style>
+    .frame {
+        text-align: center;
+        width: 100%;
+    }
 
-        .caption {
-            margin: 0;
-        }
+    .caption {
+        margin: 0;
+    }
 
-        .imageRow {
-            display: flex;
-            width: 100%;
-        }
+    .imageRow {
+        display: flex;
+        width: 100%;
+    }
 
-        .imageCard {
-            width: 50%;
-        }
+    .imageCard {
+        width: 50%;
+    }
 
-        img {
-            width: 95%;
-            margin: 10px;
-        }
-    </style>
-
-    <main class="frame">
-        <div class="imageRow">
-            <div class="imageCard">
-                <p class="caption">メニュー画面</p>
-                <img src="./_docs/images/menu.png" alt="indexMenu">
-            </div>
-            <div class="imageCard">
-                <p class="caption">モンスターバトル</p>
-                <img src="./_docs/images/monsterBattle.png" alt="monsterBattle"">
-            </div>
+    img {
+        width: 95%;
+        margin: 10px;
+    }
+</style>
+<main class="frame">
+    <div class="imageRow">
+        <div class="imageCard">
+            <p class="caption">メニュー画面</p>
+            <img src="./_docs/images/menu.png" alt="indexMenu">
         </div>
-        <div class="imageRow">
-            <div class="imageCard">
-                <p class="caption">ギターギャラリー</p>
-                <img src="./_docs/images/guitars.png" alt="guitars">
-            </div>
-            <div class="imageCard">
-                <p class="caption">ギター詳細</p>
-                <img src="./_docs/images/guitarModal.png" alt="guitarModal">
-            </div>
+        <div class="imageCard">
+            <p class="caption">モンスターバトル</p>
+            <img src="./_docs/images/monsterBattle.png" alt="monsterBattle"">
         </div>
-        <div class="imageRow">
-            <div class="imageCard">
-                <p class="caption">職務経歴書</p>
-                <img src="./_docs/images/career.png" alt="career">
-            </div>
-            <div class="imageCard">
-                <p class="caption">PR欄</p>
-                <img src="./_docs/images/careerModal.png" alt="careerModal">
-            </div>
+    </div>
+    <div class="imageRow">
+        <div class="imageCard">
+            <p class="caption">ギターギャラリー</p>
+            <img src="./_docs/images/guitars.png" alt="guitars">
         </div>
-        <div class="imageRow">
-            <div class="imageCard">
-                <p class="caption">バトル履歴</p>
-                <img src="./_docs/images/battleReport.png" alt="battleReport">
-            </div>
-            <div class="imageCard">
-                <p class="caption">アーキテクチャ図</p>
-                <img src="" alt="architecture">
-            </div>
+        <div class="imageCard">
+            <p class="caption">ギター詳細</p>
+            <img src="./_docs/images/guitarModal.png" alt="guitarModal">
         </div>
-    </main>
-</body>
+    </div>
+    <div class="imageRow">
+        <div class="imageCard">
+            <p class="caption">職務経歴書</p>
+            <img src="./_docs/images/career.png" alt="career">
+        </div>
+        <div class="imageCard">
+            <p class="caption">PR欄</p>
+            <img src="./_docs/images/careerModal.png" alt="careerModal">
+        </div>
+    </div>
+    <div class="imageRow">
+        <div class="imageCard">
+            <p class="caption">バトル履歴</p>
+            <img src="./_docs/images/battleReport.png" alt="battleReport">
+        </div>
+        <div class="imageCard">
+            <p class="caption">アーキテクチャ図</p>
+            <img src="" alt="architecture">
+        </div>
+    </div>
+</main>
 
 ---
 

@@ -75,13 +75,13 @@ package.json の script に "dev": "vite --mode dev", "build": "vite build --mod
 
 - ローカルでREADMEを書いてgit pushする運用
 
-repository
-├ README.md
-└ docs
-   └ images
-      └ gallery.png
+repository  
+├ README.md  
+└ docs  
+   └ images  
+      └ gallery.png  
 
-![Guitar Gallery](../docs/images/guitars.png)
+「![Guitar Gallery](../docs/images/guitars.png)」
 
 と書く方法が一般的？
 

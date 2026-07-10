@@ -6,6 +6,6 @@ repository
    └ images
       └ gallery.png
 
-![Guitar Gallery](docs/images/gallery.png)
+![Guitar Gallery](_docs/images/gallery.png)
 
 と書く方法が一般的？

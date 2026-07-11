@@ -7,16 +7,33 @@ services:
       - "${NGINX_HTTP_PORT}:80"
       - "${NGINX_HTTPS_PORT}:443"
     volumes:
-      - /etc/letsencrypt:/etc/letsencrypt:ro
       - ./certbot/www:/var/www/certbot
       - ./certbot/conf:/etc/letsencrypt:ro
     restart: always
+    command: >
+      /bin/sh -c '
+        while :; do
+          sleep 12h
+          nginx -s reload
+        done &
+        exec nginx -g "daemon off;"
+      '
 
   certbot:
     image: certbot/certbot
+    container_name: certbot
+    restart: unless-stopped
     volumes:
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
+    command: >
+      /bin/sh -c '
+      trap exit TERM;
+      while :; do
+        certbot renew --webroot -w /var/www/certbot;
+        sleep 12h;
+      done
+      '
 
   public-api:
     build:

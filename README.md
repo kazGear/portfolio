@@ -24,7 +24,7 @@
     </div>
     <div>
         <img src="./_docs/images/battleReport.png" alt="battleReport" style="width: 45%; margin: 20px;">
-        <img src="" alt="architecture" style="width: 45%; margin: 20px;">
+        <img src="./_docs/images/architecture.png" alt="architecture" style="width: 45%; margin: 20px;">
     </div>
 </div>
 

@@ -9,45 +9,45 @@
 
 ---
 
-<body style="text-align: center; width: 50%; margin: auto;">
+<body style="text-align: center; width: 80%; margin: auto;">
     <div style="display: flex; width: 100%;">
         <div style="width: 50%;">
             <p style="margin: 0;">メニュー画面</p>
-            <img src="./_docs/images/menu.png" alt="indexMenu" style="width: 95%; margin: 10px;">
+            <img src="./_docs/images/menu.png" alt="indexMenu" style="width: 400px; margin: 10px;">
         </div>
         <div style="width: 50%;">
             <p style="margin: 0;">モンスターバトル</p>
-            <img src="./_docs/images/monsterBattle.png" alt="monsterBattle" style="width: 95%; margin: 10px;">
+            <img src="./_docs/images/monsterBattle.png" alt="monsterBattle" style="width: 400px; margin: 10px;">
         </div>
     </div>
     <div style="display: flex; width: 100%;">
         <div style="width: 50%;">
             <p style="margin: 0;">ギターギャラリー</p>
-            <img src="./_docs/images/guitars.png" alt="guitars" style="width: 95%; margin: 10px;">
+            <img src="./_docs/images/guitars.png" alt="guitars" style="width: 400px; margin: 10px;">
         </div>
         <div style="width: 50%;">
             <p style="margin: 0;">ギター詳細</p>
-            <img src="./_docs/images/guitarModal.png" alt="guitarModal" style="width: 95%; margin: 10px;">
+            <img src="./_docs/images/guitarModal.png" alt="guitarModal" style="width: 400px; margin: 10px;">
         </div>
     </div>
     <div style="display: flex; width: 100%;">
         <div style="width: 50%;">
             <p style="margin: 0;">職務経歴書</p>
-            <img src="./_docs/images/career.png" alt="career" style="width: 95%; margin: 10px;">
+            <img src="./_docs/images/career.png" alt="career" style="width: 400px; margin: 10px;">
         </div>
         <div style="width: 50%;">
             <p style="margin: 0;">PR欄</p>
-            <img src="./_docs/images/careerModal.png" alt="careerModal" style="width: 95%; margin: 10px;">
+            <img src="./_docs/images/careerModal.png" alt="careerModal" style="width: 400px; margin: 10px;">
         </div>
     </div>
     <div style="display: flex; width: 100%;">
         <div style="width: 50%;">
             <p style="margin: 0;">バトル履歴</p>
-            <img src="./_docs/images/battleReport.png" alt="battleReport" style="width: 95%; margin: 10px;">
+            <img src="./_docs/images/battleReport.png" alt="battleReport" style="width: 400px; margin: 10px;">
         </div>
         <div style="width: 50%;">
             <p style="margin: 0;">アーキテクチャ図</p>
-            <img src="" alt="architecture" style="width: 95%; margin: 10px;">
+            <img src="" alt="architecture" style="width: 400px; margin: 10px;">
         </div>
     </div>
 </body>

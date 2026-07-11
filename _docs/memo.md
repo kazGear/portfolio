@@ -81,9 +81,9 @@ repository
    └ images  
       └ gallery.png  
 
-![Guitar Gallery](../_docs/images/guitars.png)
+！［Guitar Gallery］（../_docs/images/guitars.png）※記号は全部半角で
 
-と書く方法が一般的？
+と書く方法が一般的？(サイズ調整はできない)
 
 - GIFは意外と簡単らしい。
 一番おすすめ（Windows）ScreenToGif

@@ -9,7 +9,7 @@
 
 ---
 
-<body style="text-align: center; width: 80%; margin: auto;">
+<body style="text-align: center; width: 50%; margin: auto;">
     <div style="display: flex; width: 100%;">
         <div style="width: 50%;">
             <p style="margin: 0;">メニュー画面</p>

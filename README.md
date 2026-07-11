@@ -9,73 +9,49 @@
 
 ---
 
-<main class="frame">
-	<style>
-	    .frame {
-	        text-align: center;
-	        width: 100%;
-	    }
-
-	    .caption {
-	        margin: 0;
-	    }
-
-	    .imageRow {
-	        display: flex;
-	        width: 100%;
-	    }
-
-	    .imageCard {
-	        width: 50%;
-	    }
-
-	    img {
-	        width: 95%;
-	        margin: 10px;
-	    }
-	</style>
-
-    <div class="imageRow">
-        <div class="imageCard">
-            <p class="caption">メニュー画面</p>
-            <img src="./_docs/images/menu.png" alt="indexMenu">
+<body style="text-align: center; width: 100%;">
+    <div style="display: flex; width: 100%;">
+        <div style="width: 50%;">
+            <p style="margin: 0;">メニュー画面</p>
+            <img src="./_docs/images/menu.png" alt="indexMenu" style="width: 95%; margin: 10px;">
         </div>
-        <div class="imageCard">
-            <p class="caption">モンスターバトル</p>
-            <img src="./_docs/images/monsterBattle.png" alt="monsterBattle"">
+        <div style="width: 50%;">
+            <p style="margin: 0;">モンスターバトル</p>
+            <img src="./_docs/images/monsterBattle.png" alt="monsterBattle" style="width: 95%; margin: 10px;">
         </div>
     </div>
-    <div class="imageRow">
-        <div class="imageCard">
-            <p class="caption">ギターギャラリー</p>
-            <img src="./_docs/images/guitars.png" alt="guitars">
+    <div style="display: flex; width: 100%;">
+        <div style="width: 50%;">
+            <p style="margin: 0;">ギターギャラリー</p>
+            <img src="./_docs/images/guitars.png" alt="guitars" style="width: 95%; margin: 10px;">
         </div>
-        <div class="imageCard">
-            <p class="caption">ギター詳細</p>
-            <img src="./_docs/images/guitarModal.png" alt="guitarModal">
-        </div>
-    </div>
-    <div class="imageRow">
-        <div class="imageCard">
-            <p class="caption">職務経歴書</p>
-            <img src="./_docs/images/career.png" alt="career">
-        </div>
-        <div class="imageCard">
-            <p class="caption">PR欄</p>
-            <img src="./_docs/images/careerModal.png" alt="careerModal">
+        <div style="width: 50%;">
+            <p style="margin: 0;">ギター詳細</p>
+            <img src="./_docs/images/guitarModal.png" alt="guitarModal" style="width: 95%; margin: 10px;">
         </div>
     </div>
-    <div class="imageRow">
-        <div class="imageCard">
-            <p class="caption">バトル履歴</p>
-            <img src="./_docs/images/battleReport.png" alt="battleReport">
+    <div style="display: flex; width: 100%;">
+        <div style="width: 50%;">
+            <p style="margin: 0;">職務経歴書</p>
+            <img src="./_docs/images/career.png" alt="career" style="width: 95%; margin: 10px;">
         </div>
-        <div class="imageCard">
-            <p class="caption">アーキテクチャ図</p>
-            <img src="" alt="architecture">
+        <div style="width: 50%;">
+            <p style="margin: 0;">PR欄</p>
+            <img src="./_docs/images/careerModal.png" alt="careerModal" style="width: 95%; margin: 10px;">
         </div>
     </div>
-</main>
+    <div style="display: flex; width: 100%;">
+        <div style="width: 50%;">
+            <p style="margin: 0;">バトル履歴</p>
+            <img src="./_docs/images/battleReport.png" alt="battleReport" style="width: 95%; margin: 10px;">
+        </div>
+        <div style="width: 50%;">
+            <p style="margin: 0;">アーキテクチャ図</p>
+            <img src="" alt="architecture" style="width: 95%; margin: 10px;">
+        </div>
+    </div>
+</body>
+
 
 ---
 

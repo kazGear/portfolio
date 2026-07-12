@@ -26,7 +26,8 @@ COPY --from=build /app/guitar /app/guitar
 
 COPY crontab.txt /etc/cron.d/guitar-crawler
 
-RUN chmod 0644 /etc/cron.d/guitar-crawler && \
+RUN sed -i 's/\r$//' /etc/cron.d/guitar-crawler && \
+    chmod 0644 /etc/cron.d/guitar-crawler && \
     crontab /etc/cron.d/guitar-crawler
 
 RUN mkdir -p /app/logs

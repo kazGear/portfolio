@@ -26,9 +26,10 @@ services:
     volumes:
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
+    entrypoint: /bin/sh
     command: >
-      /bin/sh -c '
-      trap exit TERM;
+      -c '
+      trap "exit 0" TERM;
       while :; do
         certbot renew --webroot -w /var/www/certbot;
         sleep 12h;

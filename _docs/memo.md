@@ -155,3 +155,21 @@ grep
 find
 tail
 less
+
+# todos
+
+- AWS 基礎履修
+- VPS 障害時の通知（プッシュ通知、メール等、起動できてない検知はheartBeat方式）
+- api 非同期化 async + await + Task＜IActionResult>
+- api 共通例外ハンドラ（ミドルウェア, コントローラのtryCatchは不要になるかも）
+- api ロガー追加
+- react 定数名見直し
+- codeマスタ コードIDのリネーム
+- EC・商品系サービスの検討(トレンド、価格遷移、在庫等様々な分析)
+- 技術分析サービスの検討（実現可能かどうかから検討）
+- 監視ダッシュボードサービスの検討(各サービスが生きてるか、実行されてるか確認するもの)
+- git 本番用ブランチ作成
+- CI/CD構築
+- モンスター画像 差し替え（約80件、背景透過png）
+- guitar crawler メーカー追加
+- guitar gallery ページ送りUIの改善（◀ x page / xx page ▶）

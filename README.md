@@ -15,7 +15,7 @@
         <img src="./_docs/images/monsterBattle.png" alt="monsterBattle" style="width: 45%; margin: 20px;">
     </div>
     <div>
-        <img src="./_docs/images/guitars.png" alt="guitars" style="width: 45%; margin: 20px;">
+        <img src="./_docs/images/guitars2.png" alt="guitars" style="width: 45%; margin: 20px;">
         <img src="./_docs/images/guitarModal.png" alt="guitarModal" style="width: 45%; margin: 20px;">
     </div>
     <div>

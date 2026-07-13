@@ -4,7 +4,7 @@ import { api } from "../lib/apiClient";
 import { Guitar, GuitarParams, GuitarsResponse } from "../types/Guitar";
 import { useGuitarParams } from "../hooks/useGuitarParams";
 import { createQueryParams } from "../components/guitarGalleryPage/GuitarFuncs";
-import CommonFrame from "../components/common/CommonOutSideFrame";
+import CommonFrame from "../components/common/CommonFrame";
 import GuitarCards from "../components/guitarGalleryPage/GuitarCards";
 import SearchConditions from "../components/guitarGalleryPage/SearchConditions";
 import DetailModal from "../components/guitarGalleryPage/DetailModal";

@@ -9,7 +9,7 @@ import WinsBlock from "../components/userPage/WinsBlock";
 import LossesBlock from "../components/userPage/LossesBlock";
 import MonstersBlock from "../components/userPage/MonstersBlock";
 import React, { useEffect, useState } from "react";
-import CommonFrame from "../components/common/CommonOutSideFrame";
+import CommonFrame from "../components/common/CommonFrame";
 import CommonImgUpload from "../components/common/CommonImgUpload";
 import { api } from "../lib/apiClient";
 import { useCheckToken } from "../hooks/useHooksOfCommon";

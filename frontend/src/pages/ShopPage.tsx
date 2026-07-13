@@ -11,7 +11,7 @@ import { useCheckToken } from "../hooks/useHooksOfCommon";
 
 const ShopPageFrame = styled.div`
     display: flex;
-    height: 90%;
+    height: 85vh;
 `;
 const ControllerFrame = styled.div`
     width: 25%;
@@ -19,9 +19,9 @@ const ControllerFrame = styled.div`
 `;
 const ItemFrame = styled.div`
     width: 75%;
-    height: 90vh;
-    margin: 0px 20px 0px 0px;
-    overflow: scroll;
+    height: 100%;
+    margin: 20px 20px 0px 0px;
+    overflow-y: scroll;
 `;
 
 const ShopPage = () => {

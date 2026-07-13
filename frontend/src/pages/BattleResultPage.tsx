@@ -5,7 +5,7 @@ import MonsterReport from "../components/battleResultPage/MonsterReportBlock";
 import BattleReportControllerBlock from "../components/battleResultPage/BattleReportControllerBlock";
 import BattleReportBlock from "../components/battleResultPage/BattleReportBlock";
 import MonsterReportControllerBlock from "../components/battleResultPage/MonsterReportControllerBlock";
-import CommonFrame from "../components/common/CommonOutSideFrame";
+import CommonFrame from "../components/common/CommonFrame";
 import { useCheckToken } from "../hooks/useHooksOfCommon";
 
 const OutsideFrame = styled.div`

@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { ItemDTO } from "../../types/Shop";
-import CommonFrame from "../common/CommonOutSideFrame";
+import CommonFrame from "../common/CommonFrame";
 import CommonBorderTd from "../common/CommonBorderTd";
 import React from "react";
 import { UserDTO } from "../../types/UserManage";
@@ -36,7 +36,7 @@ const ShopItemTable = ({
 }: ArgProps) => {
 
     return (
-        <CommonFrame>
+        <CommonFrame styleObj={{marginTop: "0px"}}>
             <p style={{margin: "20px"}}>取り扱い商品</p>
 
             <Table>

@@ -2,7 +2,7 @@ import styled from "styled-components";
 import EditSelector from "../components/editPage/monsterParam/EditSelectorBlock";
 import EditMonsterStatusBlock from "../components/editPage/monsterParam/EditMonsterStatusBlock";
 import { useState } from "react";
-import CommonFrame from "../components/common/CommonOutSideFrame";
+import CommonFrame from "../components/common/CommonFrame";
 import { EditMonsterDTO, EditSkillsDTO } from "../types/Edit";
 import ClearAllSkillsBlock from "../components/editPage/monsterSkills/ClearAllSkillsBlock";
 import ClearAllStatusBlock from "../components/editPage/monsterParam/ClearAllStatusBlock";

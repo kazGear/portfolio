@@ -12,7 +12,7 @@ const Frame = styled.div`
 `;
 
 interface ArgProps {
-    children: React.ReactNode;
+    children:  React.ReactNode;
     styleObj?: React.CSSProperties;
 }
 

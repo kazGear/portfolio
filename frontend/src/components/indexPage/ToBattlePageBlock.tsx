@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { COLORS } from "../../lib/Constants";
 import CommonMenuTitle from "../common/CommonMenuTitle";
-import CommonOutSideFrame from "../common/CommonOutSideFrame";
+import CommonOutSideFrame from "../common/CommonFrame";
 
 const SLink = styled(Link)`
     text-decoration: none;

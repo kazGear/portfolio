@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import CommonFrame from "../common/CommonOutSideFrame";
+import CommonFrame from "../common/CommonFrame";
 import CommonSelect from "../common/CommonSelect";
 import { ShopDTO } from "../../types/Shop";
 import { KEYS, URLS } from "../../lib/Constants";

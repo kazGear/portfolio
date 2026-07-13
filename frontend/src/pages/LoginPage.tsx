@@ -4,7 +4,7 @@ import CommonDialogFrame from "../components/common/CommonDialogFrame";
 import { useCallback, useEffect, useState } from "react";
 import { useLogin } from "../hooks/useHooksOfUser";
 import UserRegistBlock from "../components/loginPage/UserRegistBlock";
-import CommonFrame from "../components/common/CommonOutSideFrame";
+import CommonFrame from "../components/common/CommonFrame";
 import InputBlock from "../components/loginPage/InputBlock";
 import ButtonBlock from "../components/loginPage/ButtonBlock";
 

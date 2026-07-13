@@ -127,7 +127,7 @@ namespace PublicApi.Services
             }
             else
             {
-                sortResult = $" ORDER BY maker ASC, name ASC ";
+                sortResult = $" ORDER BY name ASC ";
             }
             return sortResult;
         }

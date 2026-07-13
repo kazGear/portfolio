@@ -17,6 +17,7 @@ const SelectorPageSize = ({guitarParams, callback}: ArgProps) => {
     // ページサイズを設定した時点で検索実行
     useEffect(() => {
         callback(gParams)
+        gParams.setPage(1)
     }, [gParams.pageSize])
 
     return (

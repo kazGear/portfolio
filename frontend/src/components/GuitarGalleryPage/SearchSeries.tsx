@@ -13,17 +13,18 @@ const SearchSeries = ({guitarParams, series, callback}: ArgProps) => {
     const gParams = guitarParams;
 
     const changeSeriesHandler = (e: ChangeEvent<HTMLSelectElement>) => {
-        gParams.setSeries(e.target.value);
+        gParams.setSeries(e.currentTarget.value);
     }
 
     // シリーズを選択した時点で検索実行
     useEffect(() => {
         callback(gParams)
+        gParams.setPage(1)
     }, [gParams.series])
 
     return (
         <CommonSelect onChange={changeSeriesHandler} >
-            <option>未選択</option>
+            <option value="">未選択</option>
             {
                 series?.map(series =>
                         <option key={series.name}

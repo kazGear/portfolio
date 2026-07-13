@@ -1,17 +1,23 @@
 import { useEffect } from "react";
-import { GuitarParams } from "../../types/Guitar";
-import CommonInput from "../common/CommonInput";
+import { GuitarParams, GuitarsResponse } from "../../types/Guitar";
+import CommonPagination from "../common/CommonPagination";
 
 interface ArgProps {
+    guitarRes:    GuitarsResponse | null;
     guitarParams: GuitarParams;
     callback:     (gParams: GuitarParams) => Promise<void>;
 }
 
-const SelectorPage = ({guitarParams, callback}: ArgProps) => {
+const SelectorPage = ({guitarRes, guitarParams, callback}: ArgProps) => {
+    const res     = guitarRes;
     const gParams = guitarParams;
 
-    const changePageHandler = (e: React.FocusEvent<HTMLInputElement>) => {
-        gParams.setPage(Number(e.currentTarget.value));
+    const changePrevPageHandler = () => {
+        gParams.setPage(gParams.page - 1);
+    }
+
+    const changeNextPageHandler = () => {
+        gParams.setPage(gParams.page + 1);
     }
 
     // ページを変更した時点で検索実行
@@ -20,11 +26,13 @@ const SelectorPage = ({guitarParams, callback}: ArgProps) => {
     }, [gParams.page])
 
     return (
-        <CommonInput inputType="number"
-                     onBlur={changePageHandler}
-                     placeholder=" (1 ~ 50) default 1"
-                     min="1"
-                     max="50"/>
+        <CommonPagination changePrevPageHandler={changePrevPageHandler}
+                          changeNextPageHandler={changeNextPageHandler}
+                          hasPrev={res !== null ? res.hasPrev : false}
+                          hasNext={res !== null ? res.hasNext : false}
+                          styleObj={{margin: "-2px 0px 0px 20px"}}>
+            <span> {res?.page} / {res?.totalPages} </span>
+        </CommonPagination>
     );
 }
 export default SelectorPage;

@@ -23,6 +23,7 @@ const SearchMinPrice = ({guitarParams, callback}: ArgProps) => {
     // 価格を設定した時点で検索実行
     useEffect(() => {
         callback(gParams)
+        gParams.setPage(1)
     }, [gParams.minPrice])
 
     return (

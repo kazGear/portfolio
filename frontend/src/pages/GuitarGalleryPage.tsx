@@ -44,7 +44,7 @@ const GuitarGalleryPage = () => {
             `${PUBLIC_API_BASE_URL}/public/v1/series?makerCd=${gParams.makerCd}`
         ).then(result => setSeries(result));
 
-        gParams.setSeries("") // シリーズを未選択に戻す
+        gParams.setSeries("") // 初期化しないと、他メーカーのシリーズを選択したままになってしまう。
     }, [gParams.makerCd])
 
     // ギターデータ取得
@@ -65,7 +65,8 @@ const GuitarGalleryPage = () => {
     return (
         <div style={{display: "flex"}}>
             <CommonFrame styleObj={{width: "20%", minWidth: "280px", height: "85vh", marginLeft: "20px"}}>
-                <SearchConditions guitarParams={gParams}
+                <SearchConditions guitarRes={guitars}
+                                  guitarParams={gParams}
                                   makers={makers}
                                   colors={colors}
                                   series={series}

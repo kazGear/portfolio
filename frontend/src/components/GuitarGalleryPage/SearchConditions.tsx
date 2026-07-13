@@ -1,4 +1,4 @@
-import { GuitarParams } from "../../types/Guitar";
+import { GuitarParams, GuitarsResponse } from "../../types/Guitar";
 import { Code } from "../../types/Code";
 import SearchMaker from "./SearchMaker";
 import SearchColor from "./SearchColor";
@@ -21,15 +21,17 @@ const P = styled.p`
 `;
 
 interface ArgProps {
+    guitarRes:     GuitarsResponse | null;
     guitarParams:  GuitarParams;
     makers:        Code[] | null;
     series:        Code[] | null;
     colors:        Code[] | null;
     bodyMaterials: Code[] | null;
-    callback: (gParams: GuitarParams) => Promise<void>;
+    callback:      (gParams: GuitarParams) => Promise<void>;
 }
 
-const SearchConditions = ({guitarParams,
+const SearchConditions = ({guitarRes,
+                           guitarParams,
                            makers,
                            series,
                            colors,
@@ -69,7 +71,7 @@ const SearchConditions = ({guitarParams,
                 <SearchMaxPrice guitarParams={gParams} callback={callback}/>
                 <SelectorSort guitarParams={gParams} callback={callback}/>
                 <SelectorOrder guitarParams={gParams} callback={callback}/>
-                <SelectorPage guitarParams={gParams} callback={callback}/>
+                <SelectorPage guitarParams={gParams} guitarRes={guitarRes} callback={callback}/>
                 <SelectorPageSize guitarParams={gParams} callback={callback}/>
                 <p style={{marginRight: "20px", textAlign: "left"}}>
                     ※自動検索<br/>検索条件を変更すると自動的に検索されます。

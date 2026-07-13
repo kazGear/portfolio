@@ -19,6 +19,7 @@ const SearchMaker = ({guitarParams, makers, callback}: ArgProps) => {
     // メーカーを選択した時点で検索実行
     useEffect(() => {
         callback(gParams)
+        gParams.setPage(1)
     }, [gParams.makerCd])
 
     return (

@@ -9,10 +9,9 @@ const Td = styled.td`
 
 interface ArgProps {
     children:  React.ReactNode;
-    styleObj?: React.CSSProperties;
 }
 
-const CommonBorderTd = ({children, styleObj}: ArgProps) => {
+const CommonBorderTd = ({children}: ArgProps) => {
     return (
         <Td>{children}</Td>
     );

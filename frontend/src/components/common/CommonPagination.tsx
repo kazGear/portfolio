@@ -10,16 +10,16 @@ const Div = styled.div`
     text-align: center;
 `;
 type Props = {
-    enable: boolean;
+    $enable: boolean;
 };
 const Button = styled.button<Props>`
     color: ${COLORS.ACCENT_FONT_GREEN};
     border: none;
     cursor: pointer;
     background: none;
-    pointer-events: ${Props => Props.enable ? "" : "none"};
-    opacity: ${Props => Props.enable ? 1.0 : 0.2};
-    cursor: ${Props => Props.enable ? "" : "not-allowed"};
+    pointer-events: ${$enable => $enable ? "auto" : "none"};
+    opacity: ${$enable => $enable ? 1.0 : 0.2};
+    cursor: ${$enable => $enable ? "pointer" : "not-allowed"};
 `;
 const Span = styled.span`
     font-size: 16px;
@@ -31,10 +31,10 @@ const Span = styled.span`
 `;
 
 interface ArgProps {
-    children:          React.ReactNode;
-    styleObj?:         React.CSSProperties;
-    hasPrev:           boolean;
-    hasNext:           boolean;
+    children:              React.ReactNode;
+    styleObj?:             React.CSSProperties;
+    hasPrev:               boolean;
+    hasNext:               boolean;
     changePrevPageHandler: React.MouseEventHandler<HTMLButtonElement> | undefined;
     changeNextPageHandler: React.MouseEventHandler<HTMLButtonElement> | undefined;
 }
@@ -48,10 +48,10 @@ const CommonPagination = ({children,
 ) => {
     return (
         <Div style={styleObj}>
-            <Button onClick={changePrevPageHandler} enable={hasPrev}><Span> ◀ </Span></Button>
-                {/* インライン要素が望ましい */}
+            <Button onClick={changePrevPageHandler} $enable={hasPrev}><Span> ◀ </Span></Button>
+                {/* childrenはインライン要素が望ましい */}
                 {children}
-            <Button onClick={changeNextPageHandler} enable={hasNext}><Span> ▶ </Span></Button>
+            <Button onClick={changeNextPageHandler} $enable={hasNext}><Span> ▶ </Span></Button>
         </Div>
     );
 }

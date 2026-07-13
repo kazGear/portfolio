@@ -19,11 +19,11 @@ namespace PublicApi.Controllers
         }
 
         [HttpGet("/public/v1/series")]
-        public IActionResult Get([FromQuery] SeriesRequest req)
+        public async Task<IActionResult> Get([FromQuery] SeriesRequest req)
         {
             try
             {
-                IEnumerable<CodeResponse> colors = _service.Get(req);
+                IEnumerable<CodeResponse> colors = await _service.Get(req);
                 return StatusCode(HttpStatus.OK, colors);
             }
             catch (Exception e)

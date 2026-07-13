@@ -17,7 +17,7 @@ namespace PublicApi.Services
             _posgre = new PostgreSQL(ConnectionString.Get(Configuration));
         }
 
-        public GuitarsResponse Get(GuitarsRequest req)
+        public async Task<GuitarsResponse> Get(GuitarsRequest req)
         {
             // SQL パーツ構築
             string conditions = CreateConditions(req);
@@ -27,11 +27,12 @@ namespace PublicApi.Services
             DynamicParameters param = CreateParams(req);
 
             // ギター情報取得
-            IReadOnlyList<GuitarResponse> guitars =
-                _posgre.Select<GuitarResponse>(GuitarsSQL.GetGuitars(conditions, sort), param).ToList();
+            IEnumerable<GuitarResponse> guitars =
+                await _posgre.Select<GuitarResponse>(GuitarsSQL.GetGuitars(conditions, sort), param);
             
             // 検索総件数
-            int totalCount = _posgre.Select<int>(GuitarsSQL.GetTotalCount(conditions), param).First();
+            int totalCount =
+                (await _posgre.Select<int>(GuitarsSQL.GetTotalCount(conditions), param)).First();
 
             GuitarsResponse res = new GuitarsResponse()
             {

@@ -19,11 +19,11 @@ namespace PublicApi.Controllers
         }
 
         [HttpGet("/public/v1/guitars")]
-        public IActionResult Get([FromQuery] GuitarsRequest req)
+        public async Task<IActionResult> Get([FromQuery] GuitarsRequest req)
         {
             try
             {
-                GuitarsResponse guitars = _service.Get(req);
+                GuitarsResponse guitars = await _service.Get(req);
                 return StatusCode(HttpStatus.OK, guitars);
             }
             catch (Exception e)

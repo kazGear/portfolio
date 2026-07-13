@@ -14,9 +14,9 @@ namespace PublicApi.Services
             _posgre = new PostgreSQL(ConnectionString.Get(Configuration));
         }
 
-        public IEnumerable<CodeResponse> Get()
+        public async Task<IEnumerable<CodeResponse>> Get()
         {
-            IEnumerable<CodeResponse> makers = _posgre.Select<CodeResponse>(MakersSQL.GetMakers());
+            IEnumerable<CodeResponse> makers = await _posgre.Select<CodeResponse>(MakersSQL.GetMakers());
             return makers;
         }
     }

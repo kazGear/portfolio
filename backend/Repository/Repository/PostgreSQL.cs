@@ -85,24 +85,24 @@ namespace Repository.Repository
             }
         }
 
-        public IEnumerable<T> Select<T>(string query, object parameters)
+        public async Task<IEnumerable<T>> Select<T>(string query, object parameters)
         {
-            return Connection.Query<T>(query, parameters).ToList();
+            return await Connection.QueryAsync<T>(query, parameters);
         }
 
-        public IEnumerable<T> Select<T>(string query)
+        public async Task<IEnumerable<T>> Select<T>(string query)
         {
-            return Connection.Query<T>(query).ToList();
+            return await Connection.QueryAsync<T>(query);
         }
 
-        public void Execute(string query)
+        public async Task Execute(string query)
         {
-            Connection.Execute(query);
+            await Connection.ExecuteAsync(query);
         }
 
-        public void Execute(string query, object parameters)
+        public async Task Execute(string query, object parameters)
         {
-            Connection.Execute(query, parameters);
+            await Connection.ExecuteAsync(query, parameters);
         }
     }
 }

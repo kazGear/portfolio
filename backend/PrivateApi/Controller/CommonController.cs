@@ -1,5 +1,4 @@
 ﻿using CSLib.Lib;
-using PrivateApi.Common;
 using PrivateApi.Domain.DTO;
 using PrivateApi.Service;
 using Microsoft.AspNetCore.Mvc;
@@ -40,7 +39,7 @@ namespace PrivateApi.Controller
                     byte[] imageByte = ms.ToArray();
                     string imageBASE64 = Convert.ToBase64String(imageByte);
 
-                    _serviceCommon.UpdateImage(loginId, imageBASE64);
+                    await _serviceCommon.UpdateImage(loginId, imageBASE64);
                 }
                 return StatusCode(HttpStatus.OK, Message.Create("Image upload success."));
             }
@@ -51,11 +50,11 @@ namespace PrivateApi.Controller
         }
 
         [HttpGet("api/common/FetchElementCode")]
-        public IActionResult FetchElementCode()
+        public async Task<IActionResult> FetchElementCode()
         {
             try
             {
-                IEnumerable<CodeDTO> result = _serviceCommon.FetchElementCode();
+                IEnumerable<CodeDTO> result = await _serviceCommon.FetchElementCode();
                 return StatusCode(HttpStatus.OK, result);
             }
             catch (Exception e)

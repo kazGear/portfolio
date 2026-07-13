@@ -17,21 +17,21 @@ namespace PrivateApi.Service
             _posgre = new PostgreSQL(ConnectionString.Get(configuration));
         }
 
-        public void UpdateImage(string loginId, string image)
+        public async Task UpdateImage(string loginId, string image)
         {
             var param = new
             {
                 login_id = loginId,
                 image,
             };
-            _posgre.Execute(CommonSQL.UpdateUserImage(), param);
+            await _posgre.Execute(CommonSQL.UpdateUserImage(), param);
         }
 
         /// <summary>
         /// コード値を取得
         /// </summary>
-        public IEnumerable<CodeDTO> FetchElementCode()
-            => _posgre.Select<CodeDTO>(CommonSQL.FetchElementCode());
+        public async Task<IEnumerable<CodeDTO>> FetchElementCode()
+            => await _posgre.Select<CodeDTO>(CommonSQL.FetchElementCode());
 
     }
 }

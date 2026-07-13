@@ -8,19 +8,18 @@
         /// <summary>
         /// データ取得（パラメータバインド）
         /// </summary>
-        public IEnumerable<T> Select<T>(string query, object parameters);
+        public Task<IEnumerable<T>> Select<T>(string query, object parameters);
         /// <summary>
         /// データ取得
         /// </summary>
-        public IEnumerable<T> Select<T>(string query);
+        public Task<IEnumerable<T>> Select<T>(string query);
         /// <summary>
         /// 更新操作
         /// </summary>
-        public void Execute(string query);
+        public Task Execute(string query);
         /// <summary>
         /// 更新操作（パラメータバインド）
         /// </summary>
-        public void Execute(string query, object parameters);
-                
+        public Task Execute(string query, object parameters);
     }
 }

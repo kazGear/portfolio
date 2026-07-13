@@ -1,12 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using PrivateApi.Domain.DTO;
-using System.Transactions;
-using PrivateApi.Service;
-using CSLib.Lib;
+﻿using CSLib.Lib;
+using Microsoft.AspNetCore.Mvc;
 using PrivateApi.Common;
 using PrivateApi.Common._Filter;
-using Repository.Repository.sql;
+using PrivateApi.Domain.DTO;
+using PrivateApi.Service;
 using Repository.Repository;
+using Repository.Repository.sql;
+using System.Transactions;
 
 namespace PrivateApi.Controller
 {
@@ -28,12 +28,12 @@ namespace PrivateApi.Controller
         /// 初期処理
         /// </summary>
         [HttpGet("api/user/init")]
-        public IActionResult Init()
+        public async Task<IActionResult> Init()
         {
             // 検証用に登録済みユーザを取得
             try
             {
-                IEnumerable<UserDTO> users = _service.RegistedSelectUsers();
+                IEnumerable<UserDTO> users = await _service.RegistedSelectUsers();
                 return StatusCode(HttpStatus.OK, users);
             }
             catch (Exception e)
@@ -46,11 +46,11 @@ namespace PrivateApi.Controller
         /// ユーザ情報取得
         /// </summary>
         [HttpPost("api/user/userInfo")]
-        public IActionResult SelectUserOne([FromBody] string loginId)
+        public async Task<IActionResult> SelectUserOne([FromBody] string loginId)
         {
             try
             {
-                UserDTO? user = _service.SelectUserOne(loginId);
+                UserDTO? user = await _service.SelectUserOne(loginId);
                 return StatusCode(HttpStatus.OK, user);
             }
             catch (Exception e)
@@ -63,9 +63,9 @@ namespace PrivateApi.Controller
         /// ユーザー登録
         /// </summary>
         [HttpPut("api/user/userRegist")]
-        public IActionResult UserRegist([FromBody] ReqUserRegist req)
+        public async Task<IActionResult> UserRegist([FromBody] ReqUserRegist req)
         {
-            using (TransactionScope transaction = new TransactionScope())
+            using (var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
                 try
                 {
@@ -87,9 +87,9 @@ namespace PrivateApi.Controller
                 try
                 {
                     // 初期登録
-                    _service.InsertUser(loginId, password, dispName, dispShortName);
-                    _service.InsertStartUpMonsters(loginId);
-                    _service.InsertUsableStore(loginId);
+                    await _service.InsertUser(loginId, password, dispName, dispShortName);
+                    await _service.InsertStartUpMonsters(loginId);
+                    await _service.InsertUsableStore(loginId);
 
                     // 処理完了
                     transaction.Complete();
@@ -108,7 +108,7 @@ namespace PrivateApi.Controller
         /// ログインユーザ情報を取得
         /// </summary>
         [HttpPost("api/user/loginUser")]
-        public IActionResult SelectUser([FromBody] string? loginId)
+        public async Task<IActionResult> SelectUser([FromBody] string? loginId)
         {
             
             if (string.IsNullOrEmpty(loginId)) return StatusCode(HttpStatus.BadRequest);
@@ -116,10 +116,11 @@ namespace PrivateApi.Controller
             try
             {
                 var param = new { login_id = loginId };
-            
-                UserDTO? user = _posgre.Select<UserDTO>(UserSQL.SelectLoginUser(), param)
-                                       .SingleOrDefault();
-                return StatusCode(HttpStatus.OK, user);
+
+                IEnumerable<UserDTO?> users =
+                    await _posgre.Select<UserDTO>(UserSQL.SelectLoginUser(), param);
+                                       
+                return StatusCode(HttpStatus.OK, users.SingleOrDefault());
             }
             catch (Exception e)
             {
@@ -131,15 +132,15 @@ namespace PrivateApi.Controller
         /// 自己破産（所持金初期化）
         /// </summary>
         [HttpPut("api/user/restartAsPlayer")]
-        public IActionResult RestartAsPlayer([FromBody] string loginId)
+        public async Task<IActionResult> RestartAsPlayer([FromBody] string loginId)
         {
             if (string.IsNullOrEmpty(loginId)) return StatusCode(HttpStatus.BadRequest);
 
             try
             {
-                _service.RestartAsPlayer(loginId);
+                await _service.RestartAsPlayer(loginId);
 
-                UserDTO? user = _service.SelectUserOne(loginId);
+                UserDTO? user = await _service.SelectUserOne(loginId);
                 return StatusCode(HttpStatus.OK, user);
             }
             catch (Exception e)
@@ -152,13 +153,13 @@ namespace PrivateApi.Controller
         /// 使用可能なモンスター数を取得
         /// </summary>
         [HttpPost("api/user/getMonsterCount")]
-        public ActionResult<string> SelectMonsterCount([FromBody] string? loginId)
+        public async Task<ActionResult<string>> SelectMonsterCount([FromBody] string? loginId)
         {
             if (string.IsNullOrEmpty(loginId)) return StatusCode(HttpStatus.BadRequest);
 
             try
             {
-                LittleDTO<int> result = _service.SelectMonsterCount(loginId);
+                LittleDTO<int> result = await _service.SelectMonsterCount(loginId);
                 return StatusCode(HttpStatus.OK, $"{result.Param1} / {result.Param2}");
             }
             catch (Exception e)
@@ -172,9 +173,9 @@ namespace PrivateApi.Controller
         /// ショップ開放の確認
         /// </summary>
         [HttpPut("api/user/recordUserResults")]
-        public IActionResult RecordUserResults([FromBody] ReqUserResults req)
+        public async Task<IActionResult> RecordUserResults([FromBody] ReqUserResults req)
         {
-            using (TransactionScope transaction = new TransactionScope())
+            using (var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
                 try
                 {
@@ -188,12 +189,12 @@ namespace PrivateApi.Controller
                     if (betMonsterId == winningMonsterId) hit = true;
 
                     // 各種登録
-                    _service.UpdateUserResults(hit, req.betGil, req.betRate, loginId);
+                    await _service.UpdateUserResults(hit, req.betGil, req.betRate, loginId);
 
-                    IEnumerable<ShopDTO> InsertUsableShop = _shopService.ExistsUsableShop(loginId);
+                    IEnumerable<ShopDTO> InsertUsableShop = await _shopService.ExistsUsableShop(loginId);
                     if (InsertUsableShop.Count() > 0)
                     {
-                        _shopService.InsertUsableShop(loginId, InsertUsableShop);
+                        await _shopService.InsertUsableShop(loginId, InsertUsableShop);
                     }
 
                     // 処理完了

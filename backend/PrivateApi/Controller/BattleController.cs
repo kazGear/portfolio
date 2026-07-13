@@ -32,13 +32,13 @@ namespace PrivateApi.Controller
         /// モンスター情報
         /// </summary>
         [HttpPost("api/battle/monstersInfo")]
-        public IActionResult MonstersInfo([FromBody] string? loginId)
+        public async Task<IActionResult> MonstersInfo([FromBody] string? loginId)
         {
             if (string.IsNullOrEmpty(loginId)) return StatusCode(HttpStatus.BadRequest);
 
             try
             {
-                IEnumerable<MonsterDTO> monsters = _service.SelectMonsters(loginId);
+                IEnumerable<MonsterDTO> monsters = await _service.SelectMonsters(loginId);
                 return StatusCode(HttpStatus.OK, monsters);
             }
             catch (Exception e)
@@ -51,14 +51,14 @@ namespace PrivateApi.Controller
         /// 初期処理
         /// </summary>
         [HttpPost("api/battle/init")]
-        public IActionResult Init([FromBody] ReqBattleInit req)
+        public async Task<IActionResult> Init([FromBody] ReqBattleInit req)
         {
             try
             {
                 // モンスターデータ等の読込み
-                IEnumerable<MonsterDTO> monstersFromDB = _service.SelectMonsters(req.loginId);
-                IEnumerable<SkillDTO> skillsFromDB = _service.SelectSkills();
-                IEnumerable<MonsterSkillDTO> monsterSkillFromDB = _service.SelectMonsterSkills();
+                IEnumerable<MonsterDTO> monstersFromDB          = await _service.SelectMonsters(req.loginId);
+                IEnumerable<SkillDTO> skillsFromDB              = await _service.SelectSkills();
+                IEnumerable<MonsterSkillDTO> monsterSkillFromDB = await _service.SelectMonsterSkills();
 
                 // モンスターDTO構築
                 IEnumerable<MonsterDTO> monstersDTO =
@@ -120,14 +120,14 @@ namespace PrivateApi.Controller
         /// モンスターたちの行動
         /// </summary>
         [HttpPost("api/battle/nextTurn")]
-        public IActionResult NextTurn([FromBody] IEnumerable<MonsterDTO>? monsters)
+        public async Task<IActionResult> NextTurn([FromBody] IEnumerable<MonsterDTO>? monsters)
         {
             if (monsters == null || monsters.Count() == 0) return StatusCode(HttpStatus.BadRequest); 
 
             try
             {
                 // 戦闘用モンスターを構築
-                IEnumerable<CodeDTO> codes = _service.SelectStateCode();
+                IEnumerable<CodeDTO> codes = await _service.SelectStateCode();
                 IEnumerable<IMonster> battleMonsters = _monsterFactory.CreateBattleMonsters(monsters, codes);
 
                 // TODO 未実装 チーム決め
@@ -183,18 +183,18 @@ namespace PrivateApi.Controller
         /// 勝敗結果を記録（モンスター）
         /// </summary>
         [HttpPost("api/battle/recordResults")]
-        public IActionResult RecordResults([FromBody] IEnumerable<MonsterDTO>? monsters)
+        public async Task<IActionResult> RecordResults([FromBody] IEnumerable<MonsterDTO>? monsters)
         {
             if (monsters == null || monsters.Count() == 0) return StatusCode(HttpStatus.BadRequest);
 
-            using (TransactionScope transaction = new TransactionScope())
+            using (var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             { 
                 try
                 {
                     DateTime endDate = DateTime.Now;
                     TimeSpan endTime = new TimeSpan(endDate.Ticks);
 
-                    bool result = _service.InsertBattleResult(monsters!, endDate, endTime);
+                    bool result = await _service.InsertBattleResult(monsters!, endDate, endTime);
                     transaction.Complete();
 
                     return StatusCode(HttpStatus.OK, result);

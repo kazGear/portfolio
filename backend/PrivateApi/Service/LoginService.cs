@@ -14,7 +14,7 @@ namespace PrivateApi.Service
         }
 
         // ユーザの一覧を取得
-        public IEnumerable<IUser> SelectLoginUsers(string name, string pass)
+        public async Task<IEnumerable<IUser>> SelectLoginUsers(string name, string pass)
         {
             object parameters = new
             {
@@ -30,7 +30,7 @@ namespace PrivateApi.Service
 	               AND is_invalid = FALSE;
                 ";
 
-            return _posgre.Select<IUser>(select, parameters);
+            return await _posgre.Select<IUser>(select, parameters);
         }
     }
 }

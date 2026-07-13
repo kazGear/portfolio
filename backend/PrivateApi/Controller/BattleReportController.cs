@@ -22,11 +22,11 @@ namespace PrivateApi.Controller
         /// 初期処理
         /// </summary>
         [HttpGet("api/battleReport/init")]
-        public IActionResult Init()
+        public async Task<IActionResult> Init()
         {
             try
             {
-                IEnumerable<MonsterTypeDTO> monsterTypes = _service.SelectMonsterTypes();
+                IEnumerable<MonsterTypeDTO> monsterTypes = await _service.SelectMonsterTypes();
                 return StatusCode(HttpStatus.OK, monsterTypes);
             }
             catch (Exception e)
@@ -39,12 +39,12 @@ namespace PrivateApi.Controller
         /// モンスターのレポートを取得
         /// </summary>
         [HttpPost("api/battleReport/monsterReport")]
-        public IActionResult SelectMonsterReport([FromBody] ReqMonsterReport req)
+        public async Task<IActionResult> SelectMonsterReport([FromBody] ReqMonsterReport req)
         {
             try
             {
                 IEnumerable<MonsterReportDTO> report 
-                    = _service.SelectMonsterReport(req.monsterTypeId, req.sortType, req.isAscOrder);
+                    = await _service.SelectMonsterReport(req.monsterTypeId, req.sortType, req.isAscOrder);
 
                 // 勝率を算出
                 IEnumerable<MonsterReportDTO> editedReport = report.Select(e => new MonsterReportDTO
@@ -68,7 +68,7 @@ namespace PrivateApi.Controller
         /// 戦闘のレポートを取得
         /// </summary>
         [HttpPost("api/battleReport/battleReport")]
-        public IActionResult SelectBattleReport([FromBody] ReqBattleReport req)
+        public async Task<IActionResult> SelectBattleReport([FromBody] ReqBattleReport req)
         {
             try
             {
@@ -76,7 +76,7 @@ namespace PrivateApi.Controller
                 DateTime? dateTo   = string.IsNullOrEmpty(req.to) ? null : DateTime.Parse(req.to);
 
                 IEnumerable<BattleReportDTO> battleReports
-                    = _service.SelectBattleReport(req.battleScale, dateFrom, dateTo);
+                    = await _service.SelectBattleReport(req.battleScale, dateFrom, dateTo);
                 
                 IEnumerable<BattleReportDTO> editedReport = battleReports.Select(e => new BattleReportDTO
                 {

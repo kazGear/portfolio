@@ -42,9 +42,9 @@ for (int i = 0; i < battleTimes; i++)
          */
 
         // モンスターデータ等の読込み
-        IEnumerable<MonsterDTO> monstersFromDB          = _service.SelectMonsters("admin");
-        IEnumerable<SkillDTO> skillsFromDB              = _service.SelectSkills();
-        IEnumerable<MonsterSkillDTO> monsterSkillFromDB = _service.SelectMonsterSkills();
+        IEnumerable<MonsterDTO> monstersFromDB          = await _service.SelectMonsters("admin");
+        IEnumerable<SkillDTO> skillsFromDB              = await _service.SelectSkills();
+        IEnumerable<MonsterSkillDTO> monsterSkillFromDB = await _service.SelectMonsterSkills();
 
         // モンスターDTO構築
         IEnumerable<MonsterDTO> monstersDTO =
@@ -55,7 +55,7 @@ for (int i = 0; i < battleTimes; i++)
             = BattleSystem.MonsterSelector(monstersDTO, _random.RandomInt(2, 7));
 
         // 戦闘用モンスターを構築
-        IEnumerable<CodeDTO> stateCodeFromDB =_service.SelectStateCode();
+        IEnumerable<CodeDTO> stateCodeFromDB = await _service.SelectStateCode();
         IEnumerable<IMonster> battleMonsters 
             = _monsterFactory.CreateBattleMonsters(battleMonstersDTO, stateCodeFromDB);
 
@@ -125,7 +125,7 @@ for (int i = 0; i < battleTimes; i++)
         DateTime endDate = DateTime.Now;
         TimeSpan endTime = new TimeSpan(endDate.Ticks);
 
-        _service.InsertBattleResult(records, endDate, endTime);
+        await _service.InsertBattleResult(records, endDate, endTime);
 
         // ログ
         Console.WriteLine($"{i + 1}戦目 終了.");

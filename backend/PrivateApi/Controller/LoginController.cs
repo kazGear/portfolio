@@ -1,5 +1,4 @@
 ﻿using CSLib.Lib;
-using PrivateApi.Common;
 using PrivateApi.Domain._User;
 using PrivateApi.Service;
 using Microsoft.AspNetCore.Mvc;
@@ -19,7 +18,7 @@ namespace PrivateApi.Controller
 
         // ユーザ一覧を取得する
         [HttpPost("FetchLoginUsers")]
-        public IActionResult FetchLoginUsers([FromBody] User? request)
+        public async Task<IActionResult> FetchLoginUsers([FromBody] User? request)
         {
             if (request == null) return StatusCode(HttpStatus.BadRequest);
 
@@ -28,7 +27,8 @@ namespace PrivateApi.Controller
                 // パスワード暗号化
                 request.Password = Aes.AesEncrypt(request.Password);
 
-                IEnumerable<IUser> users = _service.SelectLoginUsers(request.UserName, request.Password);
+                IEnumerable<IUser> users =
+                    await _service.SelectLoginUsers(request.UserName, request.Password);
 
                 IList<string> userNames = new List<string>();
 

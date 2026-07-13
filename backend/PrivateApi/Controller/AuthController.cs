@@ -24,7 +24,7 @@ namespace PrivateApi.Controller
         /// ログイン実行
         /// </summary>
         [HttpPost("api/auth/login")]
-        public IActionResult Login([FromBody] ReqLogin req)
+        public async Task<IActionResult> Login([FromBody] ReqLogin req)
         {
             try
             {
@@ -32,7 +32,7 @@ namespace PrivateApi.Controller
                 string password = req.password.Trim();
 
                 // ユーザの認証
-                UserDTO? user = _service.AuthenticateUser(loginId, password);
+                UserDTO? user = await _service.AuthenticateUser(loginId, password);
 
                 // 認証失敗
                 if (user == null) return StatusCode(HttpStatus.Unauthorized);

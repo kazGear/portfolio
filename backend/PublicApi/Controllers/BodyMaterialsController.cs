@@ -18,11 +18,11 @@ namespace PublicApi.Controllers
         }
 
         [HttpGet("/public/v1/bodyMaterials")]
-        public IActionResult Get()
+        public async Task<IActionResult> Get()
         {
             try
             {
-                IEnumerable<CodeResponse> bodyMaterials = _service.Get();
+                IEnumerable<CodeResponse> bodyMaterials = await _service.Get();
                 return StatusCode(HttpStatus.OK, bodyMaterials);
             }
             catch (Exception e)

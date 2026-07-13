@@ -17,22 +17,22 @@ namespace PrivateApi.Service
             _posgre = new PostgreSQL(ConnectionString.Get(configuration));
         }
 
-        internal IEnumerable<CodeDTO> FetchDropDown()
-            => _posgre.Select<CodeDTO>(EditSQL.FetchDropDown());
+        internal async Task<IEnumerable<CodeDTO>> FetchDropDown()
+            => await _posgre.Select<CodeDTO>(EditSQL.FetchDropDown());
 
         /// <summary>
         /// 編集用モンスターデータ
         /// </summary>
-        internal IEnumerable<EditMonsterDTO> FetchEditMonsters(string loginId)
+        internal async Task<IEnumerable<EditMonsterDTO>> FetchEditMonsters(string loginId)
         {
             var param = new { login_id = loginId };
-            return _posgre.Select<EditMonsterDTO>(EditSQL.FetchEditMonsters(), param);
+            return await _posgre.Select<EditMonsterDTO>(EditSQL.FetchEditMonsters(), param);
         }
 
         /// <summary>
         /// モンスターのステータスを設定する
         /// </summary>
-        internal void UpdateMonsterStatus(IEnumerable<EditMonsterDTO> changeMonsters)
+        internal async Task UpdateMonsterStatus(IEnumerable<EditMonsterDTO> changeMonsters)
         {
             foreach (EditMonsterDTO monster in changeMonsters)
             {
@@ -45,38 +45,38 @@ namespace PrivateApi.Service
                     speed = monster.AfterSpeed,
                     week = monster.AfterWeek
                 };
-                _posgre.Execute(EditSQL.UpdateMonsterStatus(), param);
+                await _posgre.Execute(EditSQL.UpdateMonsterStatus(), param);
             }
         }
 
         /// <summary>
         /// 全モンスターのステータスを初期化する
         /// </summary>
-        internal void InitAllMonsterStatus()
-            => _posgre.Execute(EditSQL.InitAllMonsterStatus());
+        internal async Task InitAllMonsterStatus()
+            => await _posgre.Execute(EditSQL.InitAllMonsterStatus());
 
         /// <summary>
         /// 全モンスターのスキルを初期化する
         /// </summary>
-        internal void InitAllMonsterSkills()
-            => _posgre.Execute(EditSQL.InitAllMonsterSkills());
+        internal async Task InitAllMonsterSkills()
+            => await _posgre.Execute(EditSQL.InitAllMonsterSkills());
 
         /// <summary>
         /// 編集用モンスターデータ（スキル付き）を取得
         /// </summary>
-        internal IEnumerable<EditSkillsDTO> FecthEditSkills(string loginId)
+        internal async Task<IEnumerable<EditSkillsDTO>> FecthEditSkills(string loginId)
         {
             var param = new { login_id = loginId };
-            return _posgre.Select<EditSkillsDTO>(EditSQL.FecthEditSkills(), param);
+            return await _posgre.Select<EditSkillsDTO>(EditSQL.FecthEditSkills(), param);
         }
 
-        internal IEnumerable<AllSkillDTO> FetchAllSkills()
-            => _posgre.Select<AllSkillDTO>(EditSQL.FetchAllSkills());
+        internal async Task<IEnumerable<AllSkillDTO>> FetchAllSkills()
+            => await _posgre.Select<AllSkillDTO>(EditSQL.FetchAllSkills());
 
         /// <summary>
         /// モンスターのスキルを変更する
         /// </summary>
-        internal void UpdateMonsterSkills(IEnumerable<EditSkillsDTO> skills)
+        internal async Task UpdateMonsterSkills(IEnumerable<EditSkillsDTO> skills)
         {
             foreach (EditSkillsDTO skill in skills)
             {
@@ -87,7 +87,7 @@ namespace PrivateApi.Service
                         myskill_id = skill.MySkillIds[i],
                         skill_id = skill.SkillIds[i],
                     };
-                    _posgre.Execute(EditSQL.UpdateMonsterSkills(), param);
+                    await _posgre.Execute(EditSQL.UpdateMonsterSkills(), param);
                 }
             }
         }

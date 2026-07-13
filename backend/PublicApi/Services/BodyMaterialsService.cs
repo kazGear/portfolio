@@ -14,10 +14,10 @@ namespace PublicApi.Services
             _posgre = new PostgreSQL(ConnectionString.Get(Configuration));
         }
 
-        public IEnumerable<CodeResponse> Get()
+        public async Task<IEnumerable<CodeResponse>> Get()
         {
             IEnumerable<CodeResponse> bodyMaterials =
-                _posgre.Select<CodeResponse>(BodyMaterialsSQL.GetBodyMaterials());
+                await _posgre.Select<CodeResponse>(BodyMaterialsSQL.GetBodyMaterials());
             return bodyMaterials;
         }
     }

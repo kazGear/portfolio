@@ -17,47 +17,47 @@ namespace PrivateApi.Service
             _posgre = new PostgreSQL(ConnectionString.Get(configuration));
         }
 
-        public ItemDTO SelectItemOne(string itemId)
+        public async Task<ItemDTO> SelectItemOne(string itemId)
         {
             var param = new { item_id = itemId };
-            return _posgre.Select<ItemDTO>(ShopSQL.SelectItemOne(), param)
-                          .Single();
+            var items = await _posgre.Select<ItemDTO>(ShopSQL.SelectItemOne(), param);
+            return items.Single();                                   
         }
         /// <summary>
         /// 店舗リスト取得
         /// </summary>
-        public IEnumerable<ShopDTO> SelectShops(string loginId)
+        public async Task<IEnumerable<ShopDTO>> SelectShops(string loginId)
         {
             var param = new { login_id = loginId };
-            return _posgre.Select<ShopDTO>(ShopSQL.SelectShops(), param);
+            return await _posgre.Select<ShopDTO>(ShopSQL.SelectShops(), param);
         }
 
         /// <summary>
         /// 店舗リスト取得
         /// </summary>
-        public IEnumerable<ItemDTO> SelectShopItems(string loginId, string shopId)
+        public async Task<IEnumerable<ItemDTO>> SelectShopItems(string loginId, string shopId)
         {
             var param = new
             {
                 login_id = loginId,
                 shop_id = shopId
             };
-            return _posgre.Select<ItemDTO>(ShopSQL.SelectItems(), param);
+            return await _posgre.Select<ItemDTO>(ShopSQL.SelectItems(), param);
         }
 
         /// <summary>
         /// 開放可能な店舗一覧を取得
         /// </summary>
-        public IEnumerable<ShopDTO> ExistsUsableShop(string loginId)
+        public async Task<IEnumerable<ShopDTO>> ExistsUsableShop(string loginId)
         {
             var param = new { login_id = loginId };
-            return _posgre.Select<ShopDTO>(ShopSQL.ExistsUsableShop(), param);
+            return await _posgre.Select<ShopDTO>(ShopSQL.ExistsUsableShop(), param);
         }
 
         /// <summary>
         /// 開放可能な店舗一覧を登録
         /// </summary>
-        public void InsertUsableShop(string loginId, IEnumerable<ShopDTO> shops)
+        public async Task InsertUsableShop(string loginId, IEnumerable<ShopDTO> shops)
         {
             foreach (ShopDTO shop in shops)
             {
@@ -66,18 +66,18 @@ namespace PrivateApi.Service
                     login_id = loginId,
                     shop_id = shop.ShopId
                 };
-                _posgre.Execute(ShopSQL.InsertUsableStore(), param);
+                await _posgre.Execute(ShopSQL.InsertUsableStore(), param);
             }
         }
 
-        public void Purchase(string loginId, string itemId)
+        public async Task Purchase(string loginId, string itemId)
         {
             var param = new
             {
                 login_id = loginId,
-                item_id = itemId
+                item_id  = itemId
             };
-            _posgre.Execute(ShopSQL.Purchase(), param);
+            await _posgre.Execute(ShopSQL.Purchase(), param);
         }
 
     }

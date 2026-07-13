@@ -21,7 +21,7 @@ namespace PrivateApi.Service
         /// 認証実行 ユーザー検索・パスワード検証
         /// </summary>
 
-        internal UserDTO? AuthenticateUser(string loginId, string password)
+        internal async Task<UserDTO?> AuthenticateUser(string loginId, string password)
         {
             string encryptPass = Aes.AesEncrypt(password);
 
@@ -32,10 +32,10 @@ namespace PrivateApi.Service
             };
 
             // ユーザー検索
-            UserDTO? user = _posgre.Select<UserDTO>(AuthSQL.SelectLoginUser(), param)
-                                   .SingleOrDefault();
-            return user;
-        }
+            IEnumerable<UserDTO?> users = 
+                await _posgre.Select<UserDTO>(AuthSQL.SelectLoginUser(), param);
 
+            return users.SingleOrDefault();
+        }
     }
 }

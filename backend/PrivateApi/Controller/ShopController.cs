@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Repository.Repository;
 using PrivateApi.Domain.DTO;
 using PrivateApi.Service;
 using CSLib.Lib;
@@ -21,13 +20,13 @@ namespace PrivateApi.Controller
         }
 
         [HttpPost("api/shop/itemInfo")]
-        public IActionResult SelectItemInfo([FromBody] string itemId)
+        public async Task<IActionResult> SelectItemInfo([FromBody] string itemId)
         {
             if (string.IsNullOrEmpty(itemId)) return StatusCode(HttpStatus.BadRequest);
 
             try
             {
-                ItemDTO item = _service.SelectItemOne(itemId);
+                ItemDTO item = await _service.SelectItemOne(itemId);
                 return StatusCode(HttpStatus.OK, item);
             }
             catch (Exception e)
@@ -40,14 +39,14 @@ namespace PrivateApi.Controller
         /// 初期処理
         /// </summary>
         [HttpPost("api/shop/init")]
-        public IActionResult Init([FromBody] string? loginId)
+        public async Task<IActionResult> Init([FromBody] string? loginId)
         {
             if (string.IsNullOrEmpty(loginId)) return StatusCode(HttpStatus.BadRequest);
 
             try
             {
                 // ショップリストを取得
-                IEnumerable<ShopDTO> shops = _service.SelectShops(loginId);
+                IEnumerable<ShopDTO> shops = await _service.SelectShops(loginId);
                 return StatusCode(HttpStatus.OK, shops);
             }
             catch (Exception e)
@@ -61,7 +60,7 @@ namespace PrivateApi.Controller
         /// 初期処理
         /// </summary>
         [HttpPost("api/shop/items")]
-        public IActionResult SelectShopItem([FromBody] ReqShopItem req)
+        public async Task<IActionResult> SelectShopItem([FromBody] ReqShopItem req)
         {
             if (req.selectedShop == null)
                 return StatusCode(HttpStatus.OK, new List<string>());
@@ -69,7 +68,7 @@ namespace PrivateApi.Controller
             try
             {
                 // アイテムリストを取得
-                IEnumerable<ItemDTO> shops = _service.SelectShopItems(req.loginId, req.selectedShop);
+                IEnumerable<ItemDTO> shops = await _service.SelectShopItems(req.loginId, req.selectedShop);
                 return StatusCode(HttpStatus.OK, shops);
             }
             catch (Exception e)
@@ -79,9 +78,9 @@ namespace PrivateApi.Controller
         }
 
         [HttpPut("api/shop/purchase")]
-        public IActionResult InsertMyItem([FromBody] ReqMyItem req)
+        public async Task<IActionResult> InsertMyItem([FromBody] ReqMyItem req)
         {
-            using (TransactionScope transaction = new TransactionScope())
+            using (var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
                 try
                 {
@@ -90,9 +89,11 @@ namespace PrivateApi.Controller
                     string itemId  = req.itemId.Trim();
 
                     // 残金取得
-                    int cash = _userService.SelectUserOne(loginId).Cash;
+                    UserDTO? user = await _userService.SelectUserOne(loginId);
+                    int cash      = user.Cash;
+
                     // 購入品取得
-                    ItemDTO item = _service.SelectItemOne(itemId);
+                    ItemDTO item = await _service.SelectItemOne(itemId);
 
                     if (cash < item.ItemPrice)
                     {
@@ -100,8 +101,8 @@ namespace PrivateApi.Controller
                     }
 
                     // 各種登録
-                    _service.Purchase(loginId, itemId);
-                    _userService.Purchase(loginId, (cash - item.ItemPrice));
+                    await _service.Purchase(loginId, itemId);
+                    await _userService.Purchase(loginId, (cash - item.ItemPrice));
 
                     transaction.Complete();
                     return StatusCode(HttpStatus.OK);

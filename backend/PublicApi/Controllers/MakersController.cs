@@ -18,11 +18,11 @@ namespace PublicApi.Controllers
         }
 
         [HttpGet("/public/v1/makers")]
-        public IActionResult Get()
+        public async Task<IActionResult> Get()
         {
             try
             {
-                IEnumerable<CodeResponse> makers = _service.Get();
+                IEnumerable<CodeResponse> makers = await _service.Get();
                 return StatusCode(HttpStatus.OK, makers);
             }
             catch (Exception e)

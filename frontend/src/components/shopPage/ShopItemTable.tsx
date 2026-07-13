@@ -45,7 +45,7 @@ const ShopItemTable = ({
                 {
                     shopItems.map((item, index) => {
                         return (
-                            <tr key={index} style={{height: "60px"}}>
+                            <tr key={item.ItemId + index} style={{height: "60px"}}>
                                 <ItemImage item={item}/>
                                 <CommonBorderTd>{item.ItemName}</CommonBorderTd>
                                 <ItemRemarks item={item}/>

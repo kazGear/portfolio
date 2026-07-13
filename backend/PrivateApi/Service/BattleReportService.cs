@@ -22,7 +22,7 @@ namespace PrivateApi.Service
         /// モンスター種族を取得
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<MonsterTypeDTO> SelectMonsterTypes()
+        public async Task<IEnumerable<MonsterTypeDTO>> SelectMonsterTypes()
         {
             try
             {
@@ -32,7 +32,7 @@ namespace PrivateApi.Service
                 };
                 string sql = ReportSQL.SelectMonsterTypes();
 
-                return _posgre.Select<MonsterTypeDTO>(sql, parameter); ;
+                return await _posgre.Select<MonsterTypeDTO>(sql, parameter); ;
             }
             catch
             {
@@ -44,9 +44,9 @@ namespace PrivateApi.Service
         /// モンスター毎のレポートを取得
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<MonsterReportDTO> SelectMonsterReport(int monsterTypeId,
-                                                                 int sortType,
-                                                                 bool isAscOrder)
+        public async Task<IEnumerable<MonsterReportDTO>> SelectMonsterReport(int monsterTypeId,
+                                                                             int sortType,
+                                                                             bool isAscOrder)
         {
             try
             {
@@ -58,7 +58,7 @@ namespace PrivateApi.Service
                 string SQL = ReportSQL.SelectMonsterReport(monsterTypeId, sortType, isAscOrder);
 
                 IEnumerable<MonsterReportDTO> report =
-                    _posgre.Select<MonsterReportDTO>(SQL, param);
+                    await _posgre.Select<MonsterReportDTO>(SQL, param);
 
                 return report;
             }
@@ -68,9 +68,9 @@ namespace PrivateApi.Service
             }
         }
 
-        public IEnumerable<BattleReportDTO> SelectBattleReport(int battleScale,
-                                                               DateTime? dateFrom,
-                                                               DateTime? dateTo)
+        public async Task<IEnumerable<BattleReportDTO>> SelectBattleReport(int battleScale,
+                                                                           DateTime? dateFrom,
+                                                                           DateTime? dateTo)
         {
             try
             {
@@ -82,7 +82,7 @@ namespace PrivateApi.Service
                 string SQL = ReportSQL.SelectBattleReport(battleScale, dateFrom, dateTo);
 
                 IEnumerable <BattleReportDTO> report
-                    = _posgre.Select<BattleReportDTO>(SQL, param);
+                    = await _posgre.Select<BattleReportDTO>(SQL, param);
 
                 return report;
             }

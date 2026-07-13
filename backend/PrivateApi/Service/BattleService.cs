@@ -24,37 +24,41 @@ namespace PrivateApi.Service
         /// <summary>
         /// モンスターデータ取得
         /// </summary>
-        public IEnumerable<MonsterDTO> SelectMonsters(string? loginId = null)
+        public async Task<IEnumerable<MonsterDTO>> SelectMonsters(string? loginId = null)
         {
             var param = new { login_id = loginId };
-            return _posgre.Select<MonsterDTO>(MonsterSQL.SelectMonsters(), param);
+            return await _posgre.Select<MonsterDTO>(MonsterSQL.SelectMonsters(), param);
         }
 
         /// <summary>
         /// スキルーデータの読込み
         /// </summary>
-        public IEnumerable<SkillDTO> SelectSkills()
-            => _posgre.Select<SkillDTO>(SkillSQL.SelectSkill());
+        public async Task<IEnumerable<SkillDTO>> SelectSkills()
+            => await _posgre.Select<SkillDTO>(SkillSQL.SelectSkill());
 
         /// <summary>
         /// スキルマップデータの読込み
         /// </summary>
-        public IEnumerable<MonsterSkillDTO> SelectMonsterSkills()
-            => _posgre.Select<MonsterSkillDTO>(MonsterSQL.SelectMonsterSkill());
+        public async Task<IEnumerable<MonsterSkillDTO>> SelectMonsterSkills()
+            => await _posgre.Select<MonsterSkillDTO>(MonsterSQL.SelectMonsterSkill());
 
-        public IEnumerable<CodeDTO> SelectStateCode()
-            => _posgre.Select<CodeDTO>(CodeSQL.SelectCode())
-                      .Where(e => e.CodeId == CCodeType.STATE.Value);
+        public async Task<IEnumerable<CodeDTO>> SelectStateCode()
+        {
+            IEnumerable<CodeDTO> codes = await _posgre.Select<CodeDTO>(CodeSQL.SelectCode());
+            
+            return codes.Where(e => e.CodeId == CCodeType.STATE.Value);
+
+        }
 
         /// <summary>
         /// 勝敗結果を記録（モンスター）
         /// </summary>
-        public bool InsertBattleResult(
+        public async Task<bool> InsertBattleResult(
             IEnumerable<MonsterDTO> monsters, DateTime endDate, TimeSpan endTime)
         {
             try
             {
-                using (var transaciton = new TransactionScope())
+                using (var transaciton = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
                 {
                     int seq = 1;
                     foreach (MonsterDTO m in monsters)
@@ -69,7 +73,7 @@ namespace PrivateApi.Service
                         };
 
                         string sql = BattleSQL.InsertBattleResult();
-                        _posgre.Execute(sql, parameters);
+                        await _posgre.Execute(sql, parameters);
 
                         seq++;
                     }

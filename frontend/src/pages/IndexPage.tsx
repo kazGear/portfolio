@@ -114,7 +114,7 @@ const IndexPage = () => {
                 height: "30px",
                 borderRadius: "15px",
                 }}>
-                &emsp;※対応環境：PC(Chrome, edge推奨) ~ iPad mini(横画面1024px)
+                &emsp;※対応環境：PC(Chrome, edge推奨) ~ iPad mini(横画面1024px: safari推奨)
             </h3>
         </SdivLinkFrame>
     );

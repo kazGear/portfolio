@@ -55,11 +55,11 @@
 
 ## Technology Stack
 
-Go + chromedp + colly  
-ASP.NET Core 8 + Dapper + REST API  
-React + TypeScript + Vite + styled-components  
-PostgreSQL  
-docker compose  
+- Go + chromedp + colly  
+- ASP.NET Core 8 + Dapper + REST API  
+- React + TypeScript + Vite + styled-components  
+- PostgreSQL  
+- docker compose  
 
 client, api, repositoryを分割、疎結合化し、  
 client, repository は差し替えてもapiに及ぼす影響は少ない想定です。
@@ -199,6 +199,7 @@ GET /public/v1/guitars?makerCd=1&series=Strat&page=1&pageSize=25
 
 レスポンス例 -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
+```json
 {  
   "totalCount": 283,  
   "page": 1,  
@@ -217,6 +218,7 @@ GET /public/v1/guitars?makerCd=1&series=Strat&page=1&pageSize=25
     },  
   ]
 }
+```
 
 検索仕様 -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 

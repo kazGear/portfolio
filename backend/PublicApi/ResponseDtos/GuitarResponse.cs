@@ -51,5 +51,7 @@
         public string Src { get; init; } = string.Empty;
 
         public double Weight { get; init; }
+
+        public string Updated { get; init; } = string.Empty;
     }
 }

@@ -173,4 +173,3 @@ less
 - VPS DB バックアップ＋ダウンロード
 - モンスター画像 差し替え（約80件、背景透過png）
 - guitar crawler メーカー追加
-- guitar gallery ページ送りUIの改善（◀ x page / xx page ▶）

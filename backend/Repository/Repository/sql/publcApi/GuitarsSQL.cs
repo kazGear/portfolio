@@ -33,7 +33,8 @@ public static class GuitarsSQL
                    guitars.scale_length_mm    AS ScaleLengthMm,
                    guitars.series             AS Series,
                    guitars.src                AS Src,
-                   guitars.weight             AS Weight
+                   guitars.weight             AS Weight,
+                   substring(guitars.updated::text, 1, 16) AS Updated
               FROM
                    t_guitars AS guitars
         INNER JOIN

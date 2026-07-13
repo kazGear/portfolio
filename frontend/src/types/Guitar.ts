@@ -49,6 +49,7 @@ export interface Guitar {
     series:           string;
     src:              string;
     weight:           number;
+    updated:          string;
 };
 
 export type GuitarParams = {

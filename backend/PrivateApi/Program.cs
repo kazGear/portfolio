@@ -1,7 +1,7 @@
 using CSLib.Logging;
+using CSLib.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using PrivateApi.Common._Filter;
 using Serilog;
 
 using System.Text;
@@ -51,7 +51,7 @@ public class Startup
 
         services.AddControllers(options =>
         {
-            options.Filters.Add<ExceptionFilter>();
+            //options.Filters.Add<ExceptionFilter>();
             //options.Filters.Add<AuthActionFilter>();
         })
         .AddJsonOptions(options =>
@@ -108,6 +108,7 @@ public class Startup
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
     {
         app.UseSerilogRequestLogging();
+        app.UseMiddleware<ExceptionMiddleware>();
 
         if (env.IsDevelopment())
         {

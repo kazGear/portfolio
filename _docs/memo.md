@@ -165,8 +165,7 @@ less
 - 監視ダッシュボードサービスの検討(各サービスが生きてるか、実行されてるか確認するもの)
 - AWS 基礎履修
 - VPS 障害時の通知（プッシュ通知、メール等、起動できてない検知はheartBeat方式）
-- api 共通例外ハンドラ（ミドルウェア, コントローラのtryCatchは不要になるかも）
-- api ロガー追加
+- api 各コントローラのtryCatch削除
 - react 定数名見直し
 - react CommonErrorBoundaryの画面作成
 - codeマスタ コードIDのリネーム

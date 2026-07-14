@@ -1,4 +1,5 @@
 using CSLib.Logging;
+using CSLib.Middleware;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -26,6 +27,8 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 app.UseSerilogRequestLogging();
+
+app.UseMiddleware<ExceptionMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

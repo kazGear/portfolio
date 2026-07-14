@@ -167,7 +167,7 @@ less
 - VPS 障害時の通知（プッシュ通知、メール等、起動できてない検知はheartBeat方式）
 - api 各コントローラのtryCatch削除
 - react 定数名見直し
-- react CommonErrorBoundaryの画面作成
+- react エラーコード取得でエラー画面表示
 - codeマスタ コードIDのリネーム
 - git 本番用ブランチ作成
 - CI/CD構築

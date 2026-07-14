@@ -13,7 +13,7 @@ const CommonErrorView = () => {
     return (
         <Body style={{background: `url(${ErrorImage})`, backgroundSize: "contain"}}>
             <H1>想定外のエラーが発生しました。</H1>
-            <H1>そんな日もありますよね。</H1>
+            <H1>そんな日もありますよね(;^ω^)</H1>
         </Body>
     );
 }

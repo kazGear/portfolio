@@ -9,8 +9,6 @@ const H1 = styled.h1`
     margin: 40px;
 `;
 
-
-
 const CommonErrorView = () => {
     return (
         <Body style={{background: `url(${ErrorImage})`, backgroundSize: "contain"}}>

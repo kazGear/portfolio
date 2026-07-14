@@ -1,6 +1,7 @@
 import { Component, ErrorInfo, ReactNode } from 'react';
 import { NavigateFunction } from 'react-router-dom';
 import { KEYS } from '../../lib/Constants';
+import CommonErrorView from './CommonErrorView';
 
 interface ErrorBoundaryProps {
     children: ReactNode;
@@ -51,9 +52,10 @@ class CommonErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySta
 
     render() {
         if (this.state.hasError) {
-            return <h1 style={{margin: "60px"}}>暫定エラーページ</h1>;
+            return (
+                <CommonErrorView/>
+            )
         }
-
         return this.props.children;
     }
 }

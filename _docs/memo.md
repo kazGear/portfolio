@@ -75,6 +75,7 @@ package.json の script に "dev": "vite --mode dev", "build": "vite build --mod
 
 - ローカルでREADMEを書いてgit pushする運用
 
+```
 repository
 ├ README.md
 └ docs
@@ -82,7 +83,7 @@ repository
       └ gallery.png
 
 ！［Guitar Gallery］（../_docs/images/guitars.png）※記号は全部半角で
-
+```
 と書く方法が一般的？(サイズ調整はできない)
 
 - GIFは意外と簡単らしい。
@@ -107,6 +108,7 @@ repository
 # crontab
 
 最後は改行で終了すること。.....\nで終わる必要がある。
+windowsの改行（CRLF）が混ざるとcronが起動しない。
 分   時   日   月   曜日
 0    20   *    *    *    <- 20時に一回実行
 * * * * * は1分ごとに実行。
@@ -163,7 +165,6 @@ less
 - 監視ダッシュボードサービスの検討(各サービスが生きてるか、実行されてるか確認するもの)
 - AWS 基礎履修
 - VPS 障害時の通知（プッシュ通知、メール等、起動できてない検知はheartBeat方式）
-- api 非同期化 async + await + Task＜IActionResult>
 - api 共通例外ハンドラ（ミドルウェア, コントローラのtryCatchは不要になるかも）
 - api ロガー追加
 - react 定数名見直し

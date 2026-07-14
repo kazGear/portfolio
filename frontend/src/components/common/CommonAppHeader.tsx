@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import CommonButton from "./CommonButton";
 import { useNavigate } from "react-router-dom";
-import { COLORS, KEYS, PREFIX, URLS, USER_ROLE } from "../../lib/Constants";
+import { COLORS, KEYS, PREFIX, SIZE, URLS, USER_ROLE } from "../../lib/Constants";
 import { useEffect, useState } from "react";
 import { isEmpty } from "../../lib/CommonLogic";
 import { useCheckLogin } from "../../hooks/useHooksOfIndex";
@@ -16,7 +16,7 @@ const Img = styled.img`
 `;
 const Header = styled.header`
     width: 100%;
-    height: 60px;
+    height: ${SIZE.HEADER_HEIGHT};
     margin-bottom: 20px;
     box-shadow: ${COLORS.SHADOW};
     text-align: left;

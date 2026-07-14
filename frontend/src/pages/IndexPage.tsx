@@ -11,11 +11,11 @@ import ToEditPageBlock from "../components/indexPage/ToEditPageBlock";
 import ToGuitarGalleryBlock from "../components/indexPage/ToGuitarGalleryBlock";
 import ToCareerPageBlock from "../components/indexPage/ToCareerPageBlock";
 
-const SdivLinkFrame = styled.div`
+const LinkFrame = styled.div`
     width: 90%;
     margin: 0px auto 0px;
 `;
-const SdivContentsFrame = styled.div`
+const ContentsFrame = styled.div`
     width: 50%;
     margin: 0 20px 0 20px;
 `;
@@ -44,68 +44,63 @@ const IndexPage = () => {
     }, []);
 
     return (
-        <SdivLinkFrame>
+        <LinkFrame>
             <div style={{display: "flex"}}>
-                <SdivContentsFrame>
+                <ContentsFrame>
                     {/* ログインページ */}
                     <ToLoginPageBlock />
-                </SdivContentsFrame>
+                </ContentsFrame>
 
-                <SdivContentsFrame>
+                <ContentsFrame>
                     {/* ギターギャラリー */}
                     <ToGuitarGalleryBlock />
-                </SdivContentsFrame>
+                </ContentsFrame>
             </div>
 
             <div style={{display: "flex"}}>
-                <SdivContentsFrame>
+                <ContentsFrame>
                     {/* 戦闘ページ */}
                     <ToBattlePageBlock validToken={validToken}
                                        classOfAnime={classOfAnime}
                                        titleStyle={titleStyle}/>
-                </SdivContentsFrame>
+                </ContentsFrame>
 
-
-                <SdivContentsFrame>
+                <ContentsFrame>
                     {/* 経歴書ページ */}
                     <ToCareerPageBlock/>
-                </SdivContentsFrame>
+                </ContentsFrame>
             </div>
 
             <div style={{display: "flex"}}>
-                <SdivContentsFrame>
+                <ContentsFrame>
                     {/* 戦闘レポートページ */}
                     <ToBattleResultPageBlock validToken={validToken}
                                              classOfAnime={classOfAnime}
                                              titleStyle={titleStyle}/>
-                </SdivContentsFrame>
+                </ContentsFrame>
 
-                <SdivContentsFrame>
+                <ContentsFrame>
                     {/* ショップページ */}
                     <ToShopPageBlock validToken={validToken}
                                      classOfAnime={classOfAnime}
                                      titleStyle={titleStyle}/>
-                </SdivContentsFrame>
-
-
+                </ContentsFrame>
             </div>
 
             <div style={{display: "flex"}}>
-                <SdivContentsFrame>
+                <ContentsFrame>
                     {/* ユーザーページ */}
                     <ToUserPageBlock validToken={validToken}
                                      classOfAnime={classOfAnime}
                                      titleStyle={titleStyle} />
-                </SdivContentsFrame>
+                </ContentsFrame>
 
-                <SdivContentsFrame>
+                <ContentsFrame>
                     {/* 設定ページ */}
                     <ToEditPageBlock isValid={validToken && usableSettings}
                                      classOfAnime={classOfAnime}
                                      titleStyle={titleStyle}/>
-                </SdivContentsFrame>
-
-
+                </ContentsFrame>
             </div>
 
             <h3 style={{
@@ -116,7 +111,7 @@ const IndexPage = () => {
                 }}>
                 &emsp;※対応環境：PC(Chrome, edge推奨) ~ iPad mini(横画面1024px: safari推奨)
             </h3>
-        </SdivLinkFrame>
+        </LinkFrame>
     );
 };
 

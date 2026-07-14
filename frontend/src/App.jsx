@@ -12,13 +12,14 @@ import EditPage from "./pages/EditPage";
 import GuitarGalleryPage from "./pages/GuitarGalleryPage";
 import CareerPage from "./pages/CareerPage";
 import CommonErrorBoundary from "./components/common/CommonErrorBoundary";
+import { SIZE } from "./lib/Constants";
 
 function App() {
     return (
         <BrowserRouter>
             <CommonErrorBoundary>
                 <CommonAppHeader title="KazApp" />
-                <main style={{paddingTop:"60px"}}>
+                <main style={{paddingTop: SIZE.HEADER_HEIGHT}}>
                     <Routes>
                         {/* 新しいページを作成したらここに追加（要:import） */}
                         <Route path={"/"} element={<IndexPage />} />

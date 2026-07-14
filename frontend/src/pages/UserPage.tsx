@@ -24,7 +24,7 @@ const PageL = styled.div`
     min-width: 440px;
 `;
 const PageR = styled.div`
-    width: 57%;
+    width: 60%;
     height: 85vh;
 `;
 const cashStyle: React.CSSProperties = {

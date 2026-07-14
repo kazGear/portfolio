@@ -61,7 +61,8 @@ export const GUITAR_COLORS = {
 
 export const SIZE = {
     INPUT_WIDTH: "150px",
-    INPUT_HEIGHT: "22px"
+    INPUT_HEIGHT: "22px",
+    HEADER_HEIGHT: "55px",
 } as const;
 
 export const STATE_TYPE = {

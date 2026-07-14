@@ -1,4 +1,10 @@
+using CSLib.Logging;
+using Serilog;
+
 var builder = WebApplication.CreateBuilder(args);
+
+Log.Logger = LoggerConfig.Create("logs/public-api-.log");
+builder.Host.UseSerilog();
 
 // Add services to the container.
 
@@ -18,6 +24,8 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
+
+app.UseSerilogRequestLogging();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

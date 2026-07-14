@@ -168,9 +168,11 @@ less
 - api 共通例外ハンドラ（ミドルウェア, コントローラのtryCatchは不要になるかも）
 - api ロガー追加
 - react 定数名見直し
+- react CommonErrorBoundaryの画面作成
 - codeマスタ コードIDのリネーム
 - git 本番用ブランチ作成
 - CI/CD構築
 - VPS DB バックアップ＋ダウンロード
 - モンスター画像 差し替え（約80件、背景透過png）
 - guitar crawler メーカー追加
+- batch log table(DB)

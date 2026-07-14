@@ -1,6 +1,9 @@
-using PrivateApi.Common._Filter;
+using CSLib.Logging;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using PrivateApi.Common._Filter;
+using Serilog;
+
 using System.Text;
 
 
@@ -8,12 +11,14 @@ public class Program
 {
     public static void Main(string[] args)
     {
+        Log.Logger = LoggerConfig.Create("logs/private-api-.log");
         Console.WriteLine("KazApp is starting...");
         CreateHostBuilder(args).Build().Run();
     }
 
     public static IHostBuilder CreateHostBuilder(string[] args) =>
         Host.CreateDefaultBuilder(args)
+            .UseSerilog()
             .ConfigureWebHostDefaults(webBuilder =>
             {
                 webBuilder.UseStartup<Startup>();
@@ -102,6 +107,8 @@ public class Startup
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
     {
+        app.UseSerilogRequestLogging();
+
         if (env.IsDevelopment())
         {
             app.UseDeveloperExceptionPage();

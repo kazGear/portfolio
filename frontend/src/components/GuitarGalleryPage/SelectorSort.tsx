@@ -21,9 +21,9 @@ const SelectorSort = ({guitarParams, callback}: ArgProps) => {
 
     return (
         <CommonSelect onChange={changeSortHandler} >
+            <option value="name">ギター名</option>
             <option value="price">価格</option>
             <option value="maker">メーカー</option>
-            <option value="name">ギター名</option>
         </CommonSelect>
     );
 }

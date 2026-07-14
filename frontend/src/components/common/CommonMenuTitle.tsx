@@ -8,7 +8,7 @@ const MenuTitle = styled.h2`
     align-items: center;
     border-radius: 10px;
     border-collapse: collapse;
-    background: ${COLORS.LOGINED_COLOR};
+    background: ${COLORS.LOGINED};
     box-shadow: 4px 4px ${COLORS.SHADOW};
 `;
 

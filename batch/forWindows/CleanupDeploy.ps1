@@ -32,4 +32,14 @@ foreach ($target in $targets) {
         Remove-Item $target -Recurse -Force
     }
 }
+
+# Zone.Identifier 削除
+Write-Host "Removing fake Zone.Identifier files..."
+
+Get-ChildItem -Path $root -Recurse -File |
+    Where-Object { $_.Name -like "*.Zone.Identifier" -or $_.Name -like "*Zone.Identifier" } |
+    ForEach-Object {
+        Write-Host "Remove: $($_.FullName)"
+        Remove-Item $_.FullName -Force
+    }
 Write-Host "Cleaning completed."

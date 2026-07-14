@@ -12,7 +12,7 @@ const SkillUpdateDialog = ({
 ) => {
     return (
         <CommonDialogFrame showDialog={showDialog}>
-            <h2 style={{color: COLORS.MAIN_FONT_COLOR}}>
+            <h2 style={{color: COLORS.MAIN_FONT}}>
                 スキル更新が完了しました。
             </h2>
             <div style={{textAlign: "end"}}>

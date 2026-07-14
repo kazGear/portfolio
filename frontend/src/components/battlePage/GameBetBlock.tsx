@@ -14,7 +14,7 @@ const InputFrame = styled.div`
 `;
 const H1 = styled.h1`
     margin: 0 0 5px 0;
-    color: ${COLORS.CAPTION_FONT_COLOR};
+    color: ${COLORS.CAPTION_FONT};
 `;
 
 interface ArgProps {

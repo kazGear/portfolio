@@ -13,7 +13,7 @@ const TitleFrame = styled.div`
 `;
 
 const Span = styled.span`
-    color: ${COLORS.CAPTION_FONT_COLOR};
+    color: ${COLORS.CAPTION_FONT};
     font-weight: bold;
 `;
 

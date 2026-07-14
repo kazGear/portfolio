@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { MetaDataDTO, MonsterDTO } from "../../types/MonsterBattle";
 
 const MonsterInfoFrame = styled.div`
-    border: solid 4px ${COLORS.BORDER_COLOR};
+    border: solid 4px ${COLORS.BORDER};
     margin-bottom: 10px;
     border-radius: 10px;
     height: 70px;
@@ -66,8 +66,8 @@ const MonsterInfoBlock = ({monster, shortLog}: ArgProps) => {
 
     return (
         <MonsterInfoFrame
-            color={infoColor === STATE_NAME.LOSER ? COLORS.LOSER_FONT_COLOR
-                                                  : COLORS.MAIN_FONT_COLOR}>
+            color={infoColor === STATE_NAME.LOSER ? COLORS.LOSER_FONT
+                                                  : COLORS.MAIN_FONT}>
             {
                 monster.Hp !== undefined ? (
                 <Table>

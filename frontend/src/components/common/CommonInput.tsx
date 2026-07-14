@@ -6,13 +6,13 @@ const Input = styled.input`
     width: ${SIZE.INPUT_WIDTH};
     height: ${SIZE.INPUT_HEIGHT};
     padding: 0;
-    border: ${COLORS.BORDER_COLOR} 1px solid;
+    border: ${COLORS.BORDER} 1px solid;
 `;
 const Span = styled.span`
     display: inline;
     font-size: 9px;
     margin-left: 10px;
-    color: ${COLORS.ALERT_MESSAGE_COLOR};
+    color: ${COLORS.ALERT_MESSAGE};
 `;
 
 interface ArgProps {

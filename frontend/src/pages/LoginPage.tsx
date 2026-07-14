@@ -27,7 +27,7 @@ const frameStyle: React.CSSProperties = {
 };
 
 const Span = styled.span`
-    color: ${COLORS.ALERT_MESSAGE_COLOR};
+    color: ${COLORS.ALERT_MESSAGE};
     font-size: 12px;
 `;
 

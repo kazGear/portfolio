@@ -9,14 +9,14 @@ const FromToFrame = styled.div`
 `;
 const Input = styled.input`
     font-family: cursive;
-    color: ${COLORS.MAIN_FONT_COLOR};
+    color: ${COLORS.MAIN_FONT};
     height: ${SIZE.INPUT_HEIGHT};
     width: 100px;
-    border: 1px solid ${COLORS.BORDER_COLOR};
+    border: 1px solid ${COLORS.BORDER};
     box-shadow: ${COLORS.DIALOG_SHADOW} 1px 1px;
 `;
 const AlertMessage = styled.p`
-    color: ${COLORS.ALERT_MESSAGE_COLOR};
+    color: ${COLORS.ALERT_MESSAGE};
     display: inline;
     margin-left: 5px;
     font-size: 12px;

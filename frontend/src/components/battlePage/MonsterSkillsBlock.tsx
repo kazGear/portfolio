@@ -3,7 +3,7 @@ import { COLORS } from "../../lib/Constants";
 import { MonsterDTO } from "../../types/MonsterBattle";
 
 const MonsterSkillsFrame = styled.div`
-    border: solid 4px ${COLORS.BORDER_COLOR};
+    border: solid 4px ${COLORS.BORDER};
     border-radius: 10px;
     padding: 5px;
     background: rgba(255, 255, 255, 0.8);

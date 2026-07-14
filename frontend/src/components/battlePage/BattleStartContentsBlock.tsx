@@ -11,7 +11,7 @@ const DivButtonFrame = styled.div`
 `;
 const Sh1 = styled.h1`
     margin: 0;
-    color: ${COLORS.CAPTION_FONT_COLOR};
+    color: ${COLORS.CAPTION_FONT};
 `;
 
 interface ArgProps {

@@ -150,7 +150,7 @@ const UserRegistBlock = ({setShowRegistForm}: ArgProps) => {
                                />
             <div style={{height: "20px"}}>
             {
-                registResult === "" ?  "" : <span style={{color: `${COLORS.ALERT_MESSAGE_COLOR}`}}>
+                registResult === "" ?  "" : <span style={{color: `${COLORS.ALERT_MESSAGE}`}}>
                                                 {registResult}
                                             </span>
             }

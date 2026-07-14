@@ -3,7 +3,7 @@ import { COLORS } from "../../lib/Constants";
 
 const Span = styled.span`
     font-weight: 900;
-    color: ${COLORS.CAPTION_FONT_COLOR};
+    color: ${COLORS.CAPTION_FONT};
 `;
 
 interface ArgProps {

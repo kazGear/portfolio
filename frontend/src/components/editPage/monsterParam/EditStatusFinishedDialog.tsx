@@ -20,7 +20,7 @@ const EditStatusFinishedDialog = ({
 
     return (
         <CommonDialogFrame showDialog={isShow}>
-            <h2 style={{color: COLORS.MAIN_FONT_COLOR}}>
+            <h2 style={{color: COLORS.MAIN_FONT}}>
                 ステータス更新が完了しました。
             </h2>
             <div style={{textAlign: "end"}}>

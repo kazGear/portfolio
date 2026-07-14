@@ -6,7 +6,7 @@ import CommonFrame from "../common/CommonFrame";
 
 const SLink = styled(Link)`
     text-decoration: none;
-    color: ${COLORS.MAIN_FONT_COLOR};
+    color: ${COLORS.MAIN_FONT};
 `;
 const Description = styled.p`
     margin: 10px;

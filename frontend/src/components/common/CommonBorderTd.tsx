@@ -3,8 +3,8 @@ import { COLORS } from "../../lib/Constants";
 import React from "react";
 
 const Td = styled.td`
-    border-top: 1px solid ${COLORS.BORDER_COLOR};
-    border-bottom: 1px solid ${COLORS.BORDER_COLOR};
+    border-top: 1px solid ${COLORS.BORDER};
+    border-bottom: 1px solid ${COLORS.BORDER};
 `;
 
 interface ArgProps {

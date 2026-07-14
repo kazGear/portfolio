@@ -11,11 +11,11 @@ const Table = styled.table`
     border-collapse: collapse;
 `;
 const TdHeader = styled.td`
-    border-top: ${COLORS.BORDER_COLOR} 5px double;
-    border-left: ${COLORS.BORDER_COLOR} 1px solid;
-    border-right: ${COLORS.BORDER_COLOR} 1px solid;
+    border-top: ${COLORS.BORDER} 5px double;
+    border-left: ${COLORS.BORDER} 1px solid;
+    border-right: ${COLORS.BORDER} 1px solid;
     padding-left: 10px;
-    color: ${COLORS.CAPTION_FONT_COLOR};
+    color: ${COLORS.CAPTION_FONT};
     height: 25px;
     align-content: start;
     font-weight: bold;

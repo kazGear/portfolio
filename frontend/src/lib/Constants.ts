@@ -6,26 +6,26 @@ const ALERT_COLOR: string = "red";
 const SHADOW_COLOR: string = "#15400e";
 
 export const COLORS = {
-    MAIN_FONT_COLOR: "gray",
+    MAIN_FONT: "gray",
     ACCENT_FONT_GREEN: `${ACCENT_COLOR}`,
     ACCENT_FONT_PINK: `${ACCENT_COLOR2}`,
-    LOSER_FONT_COLOR: "#EC008C",
-    CAPTION_FONT_COLOR: "#33cc99",
-    BUTTON_FONT_COLOR: "gray",
+    LOSER_FONT: "#EC008C",
+    CAPTION_FONT: "#33cc99",
+    BUTTON_FONT: "gray",
 
-    ALERT_MESSAGE_COLOR: `${ALERT_COLOR}`,
+    ALERT_MESSAGE: `${ALERT_COLOR}`,
 
-    BORDER_COLOR: "darkgray",
-    LINE_COLOR: "blue",
+    BORDER: "darkgray",
+    LINE: "blue",
 
     SHADOW: `${SHADOW_COLOR}`,
     DIALOG_SHADOW: `${SHADOW_COLOR}`,
     MENU_SHADOW: `${SHADOW_COLOR}`,
 
-    BUTTON_COLOR: `${ACCENT_COLOR}`,
+    BUTTON: `${ACCENT_COLOR}`,
     BUTTON_DISABLED: 0.3,
 
-    THEME_COLOR: "#7fffd4",
+    THEME: "#7fffd4",
     BASE_BACKGROUND: "white",
     DARK_BACKGROUND: "#454545",
     MODAL_BACKGROUND: "black",
@@ -34,7 +34,7 @@ export const COLORS = {
 
     DIALOG_FRAME: `${ACCENT_COLOR}`,
 
-    LOGINED_COLOR: `${ACCENT_COLOR}`,
+    LOGINED: `${ACCENT_COLOR}`,
 
     URL: "skyblue"
 } as const;

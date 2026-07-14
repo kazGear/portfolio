@@ -9,8 +9,8 @@ interface ButtonProps {
 }
 
 const Button = styled.button<ButtonProps>`
-    background: ${COLORS.BUTTON_COLOR};
-    color: ${COLORS.BUTTON_FONT_COLOR};
+    background: ${COLORS.BUTTON};
+    color: ${COLORS.BUTTON_FONT};
     font-weight: 900;
     font-size: 14px;
     border: none;

@@ -20,7 +20,7 @@ const ContentsFrame = styled.div`
     margin: 0 20px 0 20px;
 `;
 
-const fontColor: string = COLORS.MAIN_FONT_COLOR;
+const fontColor: string = COLORS.MAIN_FONT;
 const backColor: string = COLORS.MENU_DISABLED;
 const classOfAnime: string = "noneAnimation";
 const titleStyle: {} = {

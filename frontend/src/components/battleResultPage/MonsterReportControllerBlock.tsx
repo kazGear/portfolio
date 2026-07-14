@@ -10,7 +10,7 @@ import { api } from "../../lib/apiClient";
 
 const Title = styled.h1`
     font-size: 16px;
-    color: ${COLORS.CAPTION_FONT_COLOR};
+    color: ${COLORS.CAPTION_FONT};
     margin-top: 5px;
 `;
 

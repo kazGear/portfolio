@@ -67,7 +67,7 @@ const SdetailModal = styled.div`
     width: 80%;
     height: 80%;
     border-radius: 15px;
-    color: ${COLORS.MAIN_FONT_COLOR};
+    color: ${COLORS.MAIN_FONT};
     background: aliceblue;
     overflow-y: scroll;
 `;

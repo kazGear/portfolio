@@ -13,9 +13,9 @@ const Table = styled.table`
 const Thead = styled.thead`
     height: 35px;
     max-height: 35px;
-    color: ${COLORS.CAPTION_FONT_COLOR};
-    border-top: ${COLORS.BORDER_COLOR} 1px solid;
-    border-bottom: ${COLORS.BORDER_COLOR} 1px solid;
+    color: ${COLORS.CAPTION_FONT};
+    border-top: ${COLORS.BORDER} 1px solid;
+    border-bottom: ${COLORS.BORDER} 1px solid;
     position: sticky;
     top: 0;
     transform: translateY(-1px); // 上にスクロールしたものが見えてしまうので蓋をする

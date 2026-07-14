@@ -11,7 +11,7 @@ export const useGuitarParams = () => {
     const [minPrice, setMinPrice]                     = useState<number>(-3);
     const [maxPrice, setMaxPrice]                     = useState<number>(100000000);
     const [order, setOrder]                           = useState<string>("ASC");
-    const [sort, setSort]                             = useState<string>("price");
+    const [sort, setSort]                             = useState<string>("name");
     const [page, setPage]                             = useState<number>(1);
     const [pageSize, setPageSize]                     = useState<number>(50);
 

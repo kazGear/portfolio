@@ -5,7 +5,7 @@ import { MetaDataDTO } from "../../types/MonsterBattle";
 
 const MessageFrame = styled.div`
     min-height: 30vh;
-    border: inset 4px ${COLORS.BORDER_COLOR};
+    border: inset 4px ${COLORS.BORDER};
     overflow-y: scroll;
     background: rgba(255, 255, 255, 0.8);
 `;

@@ -10,9 +10,9 @@ const Select = styled.select`
     width: ${SIZE.INPUT_WIDTH};
     margin: 0 10px 0 10px;
     height: ${SIZE.INPUT_HEIGHT};
-    border: 1px solid ${COLORS.BORDER_COLOR};
+    border: 1px solid ${COLORS.BORDER};
     box-shadow: ${COLORS.DIALOG_SHADOW} 1px 1px;
-    color: ${COLORS.MAIN_FONT_COLOR};
+    color: ${COLORS.MAIN_FONT};
 `;
 
 interface ArgProps {

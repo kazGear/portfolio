@@ -27,7 +27,7 @@ const ButtonFrame = styled.div`
     align-content: flex-end;
 `;
 const H1 = styled.h1`
-    color: ${COLORS.CAPTION_FONT_COLOR};
+    color: ${COLORS.CAPTION_FONT};
     margin: 5px 0 5px 0;
 `;
 const Span = styled.span`

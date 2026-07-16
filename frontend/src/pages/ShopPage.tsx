@@ -8,6 +8,9 @@ import { UserDTO } from "../types/UserManage";
 import PurchaseDialog from "../components/shopPage/PurchaseDialog";
 import { api } from "../lib/apiClient";
 import { useCheckToken } from "../hooks/useHooksOfCommon";
+import useApiErrorHandler from "../hooks/useApiErrorHandler";
+import { ApiError } from "../types/ApiError";
+import { isEmpty } from "../lib/CommonLogic";
 
 const ShopPageFrame = styled.div`
     display: flex;
@@ -27,13 +30,15 @@ const ItemFrame = styled.div`
 const ShopPage = () => {
     // ショップ関係
     const [selectedShop, setSelectedShop] = useState<string | undefined>("shop001");
-    const [shopItems, setShopItems] = useState<ItemDTO[]>([]);
+    const [shopItems, setShopItems]       = useState<ItemDTO[]>([]);
     const [purchaseItem, setPurchaseItem] = useState("");
     // ユーザー関係
-    const [user, setUser] = useState<UserDTO | null>(null);
+    const [user, setUser]     = useState<UserDTO | null>(null);
     const [myCash, setMyCash] = useState<number | null>(null);
 
     const [showPurchaseDialog, setShowPurchaseDialog] = useState(false);
+
+    const errorHandler = useApiErrorHandler();
 
     useCheckToken();
 
@@ -42,18 +47,25 @@ const ShopPage = () => {
      */
     useEffect(() => {
         const fetchShopItems = async () => {
-            const loginId: string | null = localStorage.getItem(KEYS.USER_ID);
+            try {
+                const loginId: string | null = localStorage.getItem(KEYS.USER_ID);
 
-            const items = await api.POST<ItemDTO[]>(URLS.SELECT_SHOP_ITEMS, {
-                loginId:      `${loginId}`,
-                selectedShop: `${selectedShop}`,
-            });
+                const items = await api.POST<ItemDTO[]>(URLS.SELECT_SHOP_ITEMS, {
+                    loginId:      `${loginId}`,
+                    selectedShop: `${selectedShop}`,
+                });
 
-            const loginUser = await api.POST<UserDTO>(URLS.USER_INFO, loginId);
+                if (isEmpty(items)) throw new ApiError(500, "Fetch items failed ...");
 
-            setShopItems(items!);
-            setUser(loginUser);
-            setMyCash(loginUser!.Cash);
+                const loginUser = await api.POST<UserDTO>(URLS.USER_INFO, loginId);
+
+                setShopItems(items!);
+                setUser(loginUser);
+                setMyCash(loginUser!.Cash);
+            } catch (e) {
+                console.log(e);
+                errorHandler(e);
+            }
         }
         fetchShopItems();
     }, [selectedShop]);

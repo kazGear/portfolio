@@ -9,6 +9,8 @@ import GuitarCards from "../components/guitarGalleryPage/GuitarCards";
 import SearchConditions from "../components/guitarGalleryPage/SearchConditions";
 import DetailModal from "../components/guitarGalleryPage/DetailModal";
 import { PUBLIC_API_BASE_URL } from "../config/env"
+import useApiErrorHandler from "../hooks/useApiErrorHandler";
+import { ApiError } from "../types/ApiError";
 
 const GuitarGalleryPage = () => {
     // プルダウン用 params
@@ -23,14 +25,19 @@ const GuitarGalleryPage = () => {
     const [isShowDetail, setIsShowDetail] = useState<boolean>(false);
 
     const gParams: GuitarParams = useGuitarParams();
+    const errorHandler          = useApiErrorHandler();
 
     // プルダウンデータ等取得
     useEffect(() => {
-        api.GET<Code[]>(`${PUBLIC_API_BASE_URL}/public/v1/makers`).then(result => setMakers(result));
-        api.GET<Code[]>(`${PUBLIC_API_BASE_URL}/public/v1/Colors`).then(result => setColors(result));
-        api.GET<Code[]>(`${PUBLIC_API_BASE_URL}/public/v1/bodyMaterials`).then(result => setBodyMaterials(result));
+        api.GET<Code[]>(`${PUBLIC_API_BASE_URL}/public/v1/makers`).then(result => setMakers(result))
+                                                                  .catch(errorHandler);
+        api.GET<Code[]>(`${PUBLIC_API_BASE_URL}/public/v1/Colors`).then(result => setColors(result))
+                                                                  .catch(errorHandler);
+        api.GET<Code[]>(`${PUBLIC_API_BASE_URL}/public/v1/bodyMaterials`).then(result => setBodyMaterials(result))
+                                                                         .catch(errorHandler)
         // 初期画面用、条件なし検索
-        api.GET<GuitarsResponse>(`${PUBLIC_API_BASE_URL}/public/v1/guitars?`).then(result => setGuitars(result));
+        api.GET<GuitarsResponse>(`${PUBLIC_API_BASE_URL}/public/v1/guitars?`).then(result => setGuitars(result))
+                                                                             .catch(errorHandler);
     }, [])
 
     // 変動プルダウンデータ取得
@@ -42,7 +49,8 @@ const GuitarGalleryPage = () => {
         }
         api.GET<Code[]>(
             `${PUBLIC_API_BASE_URL}/public/v1/series?makerCd=${gParams.makerCd}`
-        ).then(result => setSeries(result));
+        ).then(result => setSeries(result))
+         .catch(errorHandler);
 
         gParams.setSeries("") // 初期化しないと、他メーカーのシリーズを選択したままになってしまう。
     }, [gParams.makerCd])

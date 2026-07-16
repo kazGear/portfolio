@@ -3,6 +3,9 @@ import CommonSelect from "../../common/CommonSelect";
 import { URLS } from "../../../lib/Constants";
 import { CodeDTO } from "../../../types/Common";
 import { api } from "../../../lib/apiClient";
+import useApiErrorHandler from "../../../hooks/useApiErrorHandler";
+import { ApiError } from "../../../types/ApiError";
+import { isEmpty } from "../../../lib/CommonLogic";
 
 interface ArgProps {
     setSelectEditType: React.Dispatch<React.SetStateAction<number>>
@@ -10,14 +13,23 @@ interface ArgProps {
 
 const EditSelectorBlock = ({setSelectEditType}: ArgProps) => {
     const [editTypeDropDown, setEditTypeDropDown] = useState<CodeDTO[]>([]);
+    const errorHandler                            = useApiErrorHandler()
 
     /**
      * 設定種類
      */
     useEffect(() => {
         const fetchDropDown = async () => {
-            const dropDown = await api.GET<CodeDTO[]>(URLS.EDIT_INIT);
-            setEditTypeDropDown(dropDown!);
+            try {
+                const dropDown = await api.GET<CodeDTO[]>(URLS.EDIT_INIT);
+
+                if (isEmpty(dropDown)) throw new ApiError(500, "Fetch dropDown failed ...")
+
+                setEditTypeDropDown(dropDown!);
+            } catch (e) {
+                console.log(e);
+                errorHandler(e);
+            }
         }
         fetchDropDown();
     }, []);

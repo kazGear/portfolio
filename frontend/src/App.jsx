@@ -1,7 +1,7 @@
 import './App.css';
 import './animation.css';
 import IndexPage from './pages/IndexPage';
-import { Route, Routes, useNavigate } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import BattlePage from './pages/BattlePage';
 import ShopPage from './pages/ShopPage';
 import LoginPage from "./pages/LoginPage";

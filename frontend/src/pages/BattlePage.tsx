@@ -13,13 +13,15 @@ import MonsterWindowBlock from "../components/battlePage/MonsterWindowBlock";
 import { ShopDTO } from "../types/Shop";
 import { api } from "../lib/apiClient";
 import { useCheckToken } from "../hooks/useHooksOfCommon";
+import useApiErrorHandler from "../hooks/useApiErrorHandler";
+import { ApiError } from "../types/ApiError";
 
-const SdivOutSideFrame = styled.div`
+const OutSideFrame = styled.div`
     position: relative;
     margin: 20px 20px 20px 20px;
     height: 100%;
 `;
-const SdivMonsterWindowFrame = styled.div`
+const MonsterWindowFrame = styled.div`
     display: flex;
     justify-content: center;
 `;
@@ -60,12 +62,14 @@ const BattlePage = () => {
 
     // ダイアログの表示可否
     const [showResultDialog, setShowResultDialog] = useState(false);
-    const [showStartDialog, setShowStartDialog] = useState(true);
-    const [showBetDialog, setShowBetDialog] = useState(false);
-    const [showBattleView, setShowBattleView] = useState(false);
+    const [showStartDialog, setShowStartDialog]   = useState(true);
+    const [showBetDialog, setShowBetDialog]       = useState(false);
+    const [showBattleView, setShowBattleView]     = useState(false);
 
-    const [loginId, setLoginId] = useState<string>("");
+    const [loginId, setLoginId]   = useState<string>("");
     const [newShops, setNewShops] = useState<ShopDTO[]>([]);
+
+    const errorHandler = useApiErrorHandler()
 
     useEffect(() => {
         setLoginId(localStorage.getItem(KEYS.USER_ID)!);
@@ -84,28 +88,43 @@ const BattlePage = () => {
      * ゲーム開始、モンスター初期化
     */
    const gameStartHandler = useCallback(async (e: any) => {
-        const initMonsters = await api.POST<MonsterDTO[]>(URLS.INIT_MONSTERS, {
-            selectMonstersCount: selectMonstersCount.current.toString(),
-            loginId:             loginId,
-        });
+       try {
+            const initMonsters = await api.POST<MonsterDTO[]>(URLS.INIT_MONSTERS, {
+                selectMonstersCount: selectMonstersCount.current.toString(),
+                loginId:             loginId,
+            });
 
-        setMonsters([...initMonsters!]);
-        setMonsterCount(initMonsters!.length);
-        // 画面切り替え
-        setShowStartDialog(false);
-        setShowBetDialog(true);
-        setShowBattleView(true);
+            if (isEmpty(initMonsters)) throw new ApiError(500, "Init monsters failed ...");
+
+            setMonsters([...initMonsters!]);
+            setMonsterCount(initMonsters!.length);
+            // 画面切り替え
+            setShowStartDialog(false);
+            setShowBetDialog(true);
+            setShowBattleView(true);
+
+        } catch (e) {
+            console.log(e);
+            errorHandler(e);
+        }
     }, [loginId])
     /**
      *  全モンスターが行動。戦闘ログを取得
      */
     const battleHandler = useCallback( async () => {
-        const moveResult = await api.POST<BattleResults>(URLS.BATTLE_NEXT_TURN, monsters);
+        try {
+            const moveResult = await api.POST<BattleResults>(URLS.BATTLE_NEXT_TURN, monsters);
 
-        setMonsters([...moveResult!.Monsters]);
-        setBattleLog([...moveResult!.BattleLog]);
-        setBattleStarted(true);
-        setMonsterCount([...moveResult!.Monsters].length);
+            if (isEmpty(moveResult)) throw new ApiError(500, "Monsters missing move ...");
+
+            setMonsters([...moveResult!.Monsters]);
+            setBattleLog([...moveResult!.BattleLog]);
+            setBattleStarted(true);
+            setMonsterCount([...moveResult!.Monsters].length);
+        } catch (e) {
+            console.log(e);
+            errorHandler(e);
+        }
     }, [monsters]);
 
     const insertBattleResult = useRegistResult();
@@ -121,30 +140,35 @@ const BattlePage = () => {
         setMonsterCount(monsterCount - 1);
         setBattleStarted(false);
 
-        // モンスターの戦績を記録
-        const lastLog: MetaDataDTO | undefined = shortLog.pop();
-        insertBattleResult({
-            monsters, lastLog, setResultLog, setShowResultDialog
-        });
-
-        // ユーザの成績を記録
-        if (!isEmpty(lastLog) && !isEmpty(lastLog!.WinnerMonsterId)) {
-            const newShops = await api.PUT<ShopDTO[]>(URLS.RECORD_USER_RESULT, {
-                betMonsterId:     betMonster!.MonsterId,
-                betGil:           betGil,
-                betRate:          betMonster!.BetRate,
-                winningMonsterId: lastLog?.WinnerMonsterId!,
-                loginId:          loginId,
+        try {
+            // モンスターの戦績を記録
+            const lastLog: MetaDataDTO | undefined = shortLog.pop();
+            insertBattleResult({
+                monsters, lastLog, setResultLog, setShowResultDialog
             });
-            setNewShops(newShops!);
+
+            // ユーザの成績を記録
+            if (!isEmpty(lastLog) && !isEmpty(lastLog!.WinnerMonsterId)) {
+                const newShops = await api.PUT<ShopDTO[]>(URLS.RECORD_USER_RESULT, {
+                    betMonsterId:     betMonster!.MonsterId,
+                    betGil:           betGil,
+                    betRate:          betMonster!.BetRate,
+                    winningMonsterId: lastLog?.WinnerMonsterId!,
+                    loginId:          loginId,
+                });
+                setNewShops(newShops!);
+            }
+        } catch (e) {
+            console.log(e);
+            errorHandler(e);
         }
     }, [monsters, battleLog, monsterCount]);
 
     return (
         <>
-            <SdivOutSideFrame style={{display: showBattleView ? "block" : "none", overflow: "hidden"}} >
+            <OutSideFrame style={{display: showBattleView ? "block" : "none", overflow: "hidden"}} >
                 {/* モンスター画面 */}
-                <SdivMonsterWindowFrame>
+                <MonsterWindowFrame>
                     {
                         monsters.map((monster, index) => (
                             <MonsterWindowBlock
@@ -154,7 +178,7 @@ const BattlePage = () => {
                                 />
                         ))
                     }
-                </SdivMonsterWindowFrame>
+                </MonsterWindowFrame>
                 {/* 操作部 */}
                 <CommandButtonBlock
                     battleStartHandler={battleHandler}
@@ -166,7 +190,7 @@ const BattlePage = () => {
                 <MessageWindowBlock
                     shortLog={shortLog}
                     />
-            </SdivOutSideFrame>
+            </OutSideFrame>
             {/* 開始ダイアログ */}
             <GameStartBlock
                 battleStartHandler={gameStartHandler}

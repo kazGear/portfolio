@@ -1,3 +1,4 @@
+import { ApiError } from "../types/ApiError";
 import { KEYS } from "./Constants";
 
 interface FetchOptions {
@@ -46,6 +47,8 @@ export async function apiClient<T>(
     // apiアクセス
     const res = await fetch(endpoint, { ...fetchOptions, });
 
+    if (res === null) throw new ApiError(500, "Response is null ...");
+
     // エラー処理
     if (!res.ok) {
         let message = `API Error ${res.status}`;
@@ -54,7 +57,7 @@ export async function apiClient<T>(
             if (data?.message) message += ` ${data.message}`;
         } catch { /* JSON じゃない場合は無視 */ }
 
-        throw new Error(message);
+        throw new ApiError(res.status, message);
     }
 
     // apiのレスポンス次第でjsonParseが失敗する

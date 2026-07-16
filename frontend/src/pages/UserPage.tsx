@@ -13,6 +13,9 @@ import CommonFrame from "../components/common/CommonFrame";
 import CommonImgUpload from "../components/common/CommonImgUpload";
 import { api } from "../lib/apiClient";
 import { useCheckToken } from "../hooks/useHooksOfCommon";
+import useApiErrorHandler from "../hooks/useApiErrorHandler";
+import { isEmpty } from "../lib/CommonLogic";
+import { ApiError } from "../types/ApiError";
 
 const PageFrame = styled.div`
     display: flex;
@@ -52,6 +55,7 @@ const winAndLoseStyle: React.CSSProperties = {
 const UserPage = () => {
     const [user, setUser] = useState<UserDTO | null>(null);
     const [monsters, setMonsters] = useState<MonsterDTO[] | null>([]);
+    const errorHandler            = useApiErrorHandler();
 
     const loginId = localStorage.getItem(KEYS.USER_ID);
 
@@ -62,10 +66,19 @@ const UserPage = () => {
      */
     useEffect(() => {
         const selectUser = async () => {
-            const loginUser = await api.POST<UserDTO>(URLS.USER_INFO, loginId);
-            const userMonsters = await api.POST<MonsterDTO[]>(URLS.MONSTERS_INFO, loginId);
-            setUser(loginUser);
-            setMonsters(userMonsters);
+            try {
+                const loginUser = await api.POST<UserDTO>(URLS.USER_INFO, loginId);
+                const userMonsters = await api.POST<MonsterDTO[]>(URLS.MONSTERS_INFO, loginId);
+
+                if (isEmpty(loginUser)) throw new ApiError(500, "Get loginUser failed ...");
+                if (isEmpty(userMonsters)) throw new ApiError(500, "Get userMonsters failed ...");
+
+                setUser(loginUser);
+                setMonsters(userMonsters);
+            } catch (e) {
+                console.log(e);
+                errorHandler(e);
+            }
         }
         selectUser();
     }, []);

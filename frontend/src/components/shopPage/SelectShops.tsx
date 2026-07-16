@@ -6,6 +6,9 @@ import { KEYS, URLS } from "../../lib/Constants";
 import { UserDTO } from "../../types/UserManage";
 import CommonAccent from "../common/CommonAccent";
 import { api } from "../../lib/apiClient";
+import useApiErrorHandler from "../../hooks/useApiErrorHandler";
+import { isEmpty } from "../../lib/CommonLogic";
+import { ApiError } from "../../types/ApiError";
 
 interface ArgProps {
     setSelectedShop: React.Dispatch<React.SetStateAction<string | undefined>>;
@@ -14,7 +17,8 @@ interface ArgProps {
 }
 
 const SelectShops = ({setSelectedShop, user, myCash}: ArgProps) => {
-    const [shopsOfSelectBox, setShopsOfSelectBox] = useState<ShopDTO[]>([])
+    const [shopsOfSelectBox, setShopsOfSelectBox] = useState<ShopDTO[]>([]);
+    const errorHandler                            = useApiErrorHandler();
 
     /**
      * 店舗の選択肢を取得
@@ -22,8 +26,17 @@ const SelectShops = ({setSelectedShop, user, myCash}: ArgProps) => {
     useEffect(() => {
         const selectShops = async () => {
             const loginId = localStorage.getItem(KEYS.USER_ID);
-            const shops = await api.POST<ShopDTO[]>(URLS.SHOP_INIT, loginId);
-            setShopsOfSelectBox(shops!);
+
+            try {
+                const shops = await api.POST<ShopDTO[]>(URLS.SHOP_INIT, loginId);
+                setShopsOfSelectBox(shops!);
+
+                if (isEmpty(shops)) throw new ApiError(500, "Get shops failed ...")
+
+            } catch (e) {
+                console.log(e);
+                errorHandler(e);
+            }
         }
         selectShops();
     }, []);

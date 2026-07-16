@@ -6,6 +6,9 @@ import { BattleReportDTO } from "../../types/BattleReport";
 import styled from "styled-components";
 import BattleScaleListBlock from "./BattleScaleListBlock";
 import { api } from "../../lib/apiClient";
+import useApiErrorHandler from "../../hooks/useApiErrorHandler";
+import { ApiError } from "../../types/ApiError";
+import { isEmpty } from "../../lib/CommonLogic";
 
 
 const Title = styled.h1`
@@ -22,10 +25,11 @@ interface ArgProps {
 const MonsterReportControllerBlock = (
     {setBattleReport, setIsNowLoadingBattleReport}: ArgProps
 ) => {
-    const [from, setFrom] = useState("");
-    const [to, setTo] = useState("");
+    const [from, setFrom]               = useState("");
+    const [to, setTo]                   = useState("");
     const [battleScale, setBattleScale] = useState("0");
-    const [disable, setDisable] = useState(false);
+    const [disable, setDisable]         = useState(false);
+    const errorHandler                  = useApiErrorHandler();
 
     /**
      * 戦闘規模の選択
@@ -37,16 +41,23 @@ const MonsterReportControllerBlock = (
      * 戦闘毎のレポートを取得
      */
     const fetchBattleReportHandler = useCallback(async () => {
-        setIsNowLoadingBattleReport(true);
+        try {
+            setIsNowLoadingBattleReport(true);
 
-        const battleReport = await api.POST<BattleReportDTO[]>(URLS.BATTLE_REPORTS, {
-            battleScale: battleScale,
-            from:        from,
-            to:          to,
-        });
+            const battleReport = await api.POST<BattleReportDTO[]>(URLS.BATTLE_REPORTS, {
+                battleScale: battleScale,
+                from:        from,
+                to:          to,
+            });
 
-        setBattleReport(battleReport!);
-        setIsNowLoadingBattleReport(false);
+            if (isEmpty(battleReport)) throw new ApiError(500, "Fetch battleReport failed ...")
+
+            setBattleReport(battleReport!);
+            setIsNowLoadingBattleReport(false);
+        } catch (e) {
+            console.log(e);
+            errorHandler(e)
+        }
     }, [battleScale, from, to]);
 
     return (

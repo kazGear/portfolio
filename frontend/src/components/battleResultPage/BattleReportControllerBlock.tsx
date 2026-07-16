@@ -6,6 +6,9 @@ import { useCallback, useState } from "react";
 import { MonsterReportDTO } from "../../types/BattleReport";
 import MonsterTypesListBlock from "./MonsterTypesListBlock";
 import { api } from "../../lib/apiClient";
+import { ApiError } from "../../types/ApiError";
+import useApiErrorHandler from "../../hooks/useApiErrorHandler";
+import { isEmpty } from "../../lib/CommonLogic";
 
 const Title = styled.h1`
     font-size: 16px;
@@ -23,7 +26,8 @@ const BattleReportControllerBlock = (
     {setMonsterReport, sortType, setIsNowLoadingMonsterReport}: ArgProps
 ) => {
     const [monsterTypeId, setMonsterTypeId] = useState("0");
-    const [isAscOrder, setIsAscOrder] = useState(true);
+    const [isAscOrder, setIsAscOrder]       = useState(true);
+    const errorHandler                      = useApiErrorHandler();
 
     /**
      * ソート制御
@@ -39,16 +43,22 @@ const BattleReportControllerBlock = (
      * モンスター毎のレポートを取得
      */
     const fetchMonsterReportHandler = useCallback(async () => {
-        setIsNowLoadingMonsterReport(true);
+        try {
+            setIsNowLoadingMonsterReport(true);
 
-        const monsterReport = await api.POST<MonsterReportDTO[]>(URLS.MONSTER_REPORTS, {
-            monsterTypeId: monsterTypeId,
-            sortType:      sortType,
-            isAscOrder:    isAscOrder,
-        });
+            const monsterReport = await api.POST<MonsterReportDTO[]>(URLS.MONSTER_REPORTS, {
+                monsterTypeId: monsterTypeId,
+                sortType:      sortType,
+                isAscOrder:    isAscOrder,
+            });
+            if (isEmpty(monsterReport)) throw new ApiError(500, "Fetch monsterReport failed ...")
 
-        setMonsterReport(monsterReport!);
-        setIsNowLoadingMonsterReport(false);
+            setMonsterReport(monsterReport!);
+            setIsNowLoadingMonsterReport(false);
+        } catch (e) {
+            console.log(e);
+            errorHandler(e);
+        }
     }, [monsterTypeId, sortType, isAscOrder]);
 
     return (

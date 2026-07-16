@@ -20,15 +20,8 @@ namespace PublicApi.Controllers
         [HttpGet("/public/v1/Colors")]
         public async Task<IActionResult> Get()
         {
-            try
-            {
-                IEnumerable<CodeResponse> colors = await _service.Get();
-                return StatusCode(HttpStatus.OK, colors);
-            }
-            catch (Exception e)
-            {
-                return StatusCode(HttpStatus.InternalServerError, Message.Create(e));
-            }
+            IEnumerable<CodeResponse> colors = await _service.Get();
+            return StatusCode(HttpStatus.OK, colors);
         }
     }
 }

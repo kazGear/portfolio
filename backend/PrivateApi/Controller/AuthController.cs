@@ -26,27 +26,20 @@ namespace PrivateApi.Controller
         [HttpPost("api/auth/login")]
         public async Task<IActionResult> Login([FromBody] ReqLogin req)
         {
-            try
-            {
-                string loginId  = req.loginId.Trim();
-                string password = req.password.Trim();
+            string loginId  = req.loginId.Trim();
+            string password = req.password.Trim();
 
-                // ユーザの認証
-                UserDTO? user = await _service.AuthenticateUser(loginId, password);
+            // ユーザの認証
+            UserDTO? user = await _service.AuthenticateUser(loginId, password);
 
-                // 認証失敗
-                if (user == null) return StatusCode(HttpStatus.Unauthorized);
+            // 認証失敗
+            if (user == null) return StatusCode(HttpStatus.Unauthorized);
 
-                // トークン発行
-                string token = Jwt.GenerateJwtToken(user.LoginId, _configuration);
-                user.Token = token;
+            // トークン発行
+            string token = Jwt.GenerateJwtToken(user.LoginId, _configuration);
+            user.Token = token;
 
-                return StatusCode(HttpStatus.OK, user);
-            }
-            catch (Exception e)
-            {
-                return StatusCode(HttpStatus.InternalServerError, Message.Create(e));
-            }
+            return StatusCode(HttpStatus.OK, user);
         }
 
         /// <summary>

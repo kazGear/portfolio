@@ -58,16 +58,10 @@ namespace CSLib.Lib
             JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
 
             JwtSecurityToken? jwtToken;
-            try
-            {
-                // トークンデコード。改ざんされていれば例外発生
-                jwtToken = handler.ReadToken(token) as JwtSecurityToken;
-                if (jwtToken == null) return false;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
+
+            // トークンデコード。改ざんされていれば例外発生
+            jwtToken = handler.ReadToken(token) as JwtSecurityToken;
+            if (jwtToken == null) return false;
 
             // 有効期限
             DateTime limit = jwtToken!.ValidTo;

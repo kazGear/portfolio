@@ -31,15 +31,8 @@ namespace PrivateApi.Controller
         public async Task<IActionResult> Init()
         {
             // 検証用に登録済みユーザを取得
-            try
-            {
-                IEnumerable<UserDTO> users = await _service.RegistedSelectUsers();
-                return StatusCode(HttpStatus.OK, users);
-            }
-            catch (Exception e)
-            {
-                return StatusCode(HttpStatus.InternalServerError, Message.Create(e));
-            }
+            IEnumerable<UserDTO> users = await _service.RegistedSelectUsers();
+            return StatusCode(HttpStatus.OK, users);
         }
 
         /// <summary>
@@ -48,15 +41,8 @@ namespace PrivateApi.Controller
         [HttpPost("api/user/userInfo")]
         public async Task<IActionResult> SelectUserOne([FromBody] string loginId)
         {
-            try
-            {
-                UserDTO? user = await _service.SelectUserOne(loginId);
-                return StatusCode(HttpStatus.OK, user);
-            }
-            catch (Exception e)
-            {
-                return StatusCode(HttpStatus.InternalServerError, Message.Create(e));
-            }
+            UserDTO? user = await _service.SelectUserOne(loginId);
+            return StatusCode(HttpStatus.OK, user);
         }
 
         /// <summary>
@@ -67,40 +53,25 @@ namespace PrivateApi.Controller
         {
             using (var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
-                try
-                {
-                    Validation.LoginId(req.loginId);
-                    Validation.LoginPass(req.password);
-                    Validation.DispName(req.dispName);
-                    Validation.DispName(req.dispShortName);
-                }
-                catch (Exception e)
-                {
-                    return StatusCode(HttpStatus.BadRequest, Message.Create(e));
-                }
+                Validation.LoginId(req.loginId);
+                Validation.LoginPass(req.password);
+                Validation.DispName(req.dispName);
+                Validation.DispName(req.dispShortName);
 
                 string loginId       = req.loginId.Trim();
                 string password      = req.password.Trim();
                 string dispName      = req.dispName.Trim();
                 string dispShortName = req.dispShortName.Trim();
 
-                try
-                {
-                    // 初期登録
-                    await _service.InsertUser(loginId, password, dispName, dispShortName);
-                    await _service.InsertStartUpMonsters(loginId);
-                    await _service.InsertUsableStore(loginId);
+                // 初期登録
+                await _service.InsertUser(loginId, password, dispName, dispShortName);
+                await _service.InsertStartUpMonsters(loginId);
+                await _service.InsertUsableStore(loginId);
 
-                    // 処理完了
-                    transaction.Complete();
-                    string message = $"Regist user complete. LoginId: {loginId}, DispNaem: {dispName}";
-                    return StatusCode(HttpStatus.Created, Message.Create(message));
-                }
-                catch (Exception e)
-                {
-                    string message = $"Error regist user. LoginId: {loginId}, DispNaem: {dispName}";
-                    return StatusCode(HttpStatus.InternalServerError, Message.Create(e, message));
-                }
+                // 処理完了
+                transaction.Complete();
+                string message = $"Regist user complete. LoginId: {loginId}, DispNaem: {dispName}";
+                return StatusCode(HttpStatus.Created, Message.Create(message));
             }
         }
 
@@ -110,22 +81,14 @@ namespace PrivateApi.Controller
         [HttpPost("api/user/loginUser")]
         public async Task<IActionResult> SelectUser([FromBody] string? loginId)
         {
-            
             if (string.IsNullOrEmpty(loginId)) return StatusCode(HttpStatus.BadRequest);
 
-            try
-            {
-                var param = new { login_id = loginId };
+            var param = new { login_id = loginId };
 
-                IEnumerable<UserDTO?> users =
-                    await _posgre.Select<UserDTO>(UserSQL.SelectLoginUser(), param);
+            IEnumerable<UserDTO?> users =
+                await _posgre.Select<UserDTO>(UserSQL.SelectLoginUser(), param);
                                        
-                return StatusCode(HttpStatus.OK, users.SingleOrDefault());
-            }
-            catch (Exception e)
-            {
-                return StatusCode(HttpStatus.InternalServerError, Message.Create(e));
-            }
+            return StatusCode(HttpStatus.OK, users.SingleOrDefault());
         }
 
         /// <summary>
@@ -136,17 +99,10 @@ namespace PrivateApi.Controller
         {
             if (string.IsNullOrEmpty(loginId)) return StatusCode(HttpStatus.BadRequest);
 
-            try
-            {
-                await _service.RestartAsPlayer(loginId);
+            await _service.RestartAsPlayer(loginId);
 
-                UserDTO? user = await _service.SelectUserOne(loginId);
-                return StatusCode(HttpStatus.OK, user);
-            }
-            catch (Exception e)
-            {
-                return StatusCode(HttpStatus.InternalServerError, Message.Create(e));
-            }
+            UserDTO? user = await _service.SelectUserOne(loginId);
+            return StatusCode(HttpStatus.OK, user);
         }
 
         /// <summary>
@@ -157,15 +113,8 @@ namespace PrivateApi.Controller
         {
             if (string.IsNullOrEmpty(loginId)) return StatusCode(HttpStatus.BadRequest);
 
-            try
-            {
-                LittleDTO<int> result = await _service.SelectMonsterCount(loginId);
-                return StatusCode(HttpStatus.OK, $"{result.Param1} / {result.Param2}");
-            }
-            catch (Exception e)
-            {
-                return StatusCode(HttpStatus.InternalServerError, Message.Create(e));
-            }
+            LittleDTO<int> result = await _service.SelectMonsterCount(loginId);
+            return StatusCode(HttpStatus.OK, $"{result.Param1} / {result.Param2}");
         }
 
         /// <summary>
@@ -177,34 +126,27 @@ namespace PrivateApi.Controller
         {
             using (var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
-                try
+                // クレンジング
+                string loginId          = req.loginId.Trim();
+                string betMonsterId     = req.betMonsterId.Trim();
+                string winningMonsterId = req.winningMonsterId.Trim();
+
+                // 予想的中か
+                bool hit = false;
+                if (betMonsterId == winningMonsterId) hit = true;
+
+                // 各種登録
+                await _service.UpdateUserResults(hit, req.betGil, req.betRate, loginId);
+
+                IEnumerable<ShopDTO> InsertUsableShop = await _shopService.ExistsUsableShop(loginId);
+                if (InsertUsableShop.Count() > 0)
                 {
-                    // クレンジング
-                    string loginId          = req.loginId.Trim();
-                    string betMonsterId     = req.betMonsterId.Trim();
-                    string winningMonsterId = req.winningMonsterId.Trim();
-
-                    // 予想的中か
-                    bool hit = false;
-                    if (betMonsterId == winningMonsterId) hit = true;
-
-                    // 各種登録
-                    await _service.UpdateUserResults(hit, req.betGil, req.betRate, loginId);
-
-                    IEnumerable<ShopDTO> InsertUsableShop = await _shopService.ExistsUsableShop(loginId);
-                    if (InsertUsableShop.Count() > 0)
-                    {
-                        await _shopService.InsertUsableShop(loginId, InsertUsableShop);
-                    }
-
-                    // 処理完了
-                    transaction.Complete();
-                    return StatusCode(HttpStatus.OK, InsertUsableShop);
+                    await _shopService.InsertUsableShop(loginId, InsertUsableShop);
                 }
-                catch (Exception e)
-                {
-                    return StatusCode(HttpStatus.InternalServerError, Message.Create(e));
-                }
+
+                // 処理完了
+                transaction.Complete();
+                return StatusCode(HttpStatus.OK, InsertUsableShop);
             }
         }
     }

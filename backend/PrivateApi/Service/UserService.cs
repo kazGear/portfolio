@@ -45,25 +45,18 @@ namespace PrivateApi.Service
                                      string DispName,
                                      string DispShortName)
         {
-            try
-            {
-                // 暗号化
-                string encryptPass = Aes.AesEncrypt(Password);
+            // 暗号化
+            string encryptPass = Aes.AesEncrypt(Password);
 
-                var param = new
-                {
-                    login_id = LoginId,
-                    login_pass = encryptPass,
-                    disp_name = DispName,
-                    disp_short_name = DispShortName
-                };
-
-                await _posgre.Execute(UserSQL.InsertUser(), param);
-            }
-            catch (Exception)
+            var param = new
             {
-                throw;
-            }
+                login_id = LoginId,
+                login_pass = encryptPass,
+                disp_name = DispName,
+                disp_short_name = DispShortName
+            };
+
+            await _posgre.Execute(UserSQL.InsertUser(), param);
         }
 
         /// <summary>
@@ -71,24 +64,17 @@ namespace PrivateApi.Service
         /// </summary>
         public async Task InsertStartUpMonsters(string loginId)
         {
-            try
-            {
-                DateTime now = DateTime.Now;
+            DateTime now = DateTime.Now;
 
-                foreach (CMonsterType monsterType in CMonsterType.START_UP)
-                {
-                    var param = new
-                    {
-                        user_id = loginId,
-                        item_id = monsterType.Value,
-                        not_use_this = false
-                    };
-                    await _posgre.Execute(UserSQL.InsertStartUpMonsters(), param);
-                }
-            }
-            catch (Exception)
+            foreach (CMonsterType monsterType in CMonsterType.START_UP)
             {
-                throw;
+                var param = new
+                {
+                    user_id = loginId,
+                    item_id = monsterType.Value,
+                    not_use_this = false
+                };
+                await _posgre.Execute(UserSQL.InsertStartUpMonsters(), param);
             }
         }
 
@@ -140,27 +126,18 @@ namespace PrivateApi.Service
         /// <summary>
         /// 勝敗結果を記録（ユーザー）
         /// </summary>
-        public async Task<bool> UpdateUserResults(bool hit, int betGil, decimal betRate, string loginId)
+        public async Task UpdateUserResults(bool hit, int betGil, decimal betRate, string loginId)
         {
-            try
+            var param = new
             {
-                var param = new
-                {
-                    login_id = loginId,
-                    wins = hit ? 1 : 0,
-                    losses = hit ? 0 : 1,
-                    cash = hit ? Math.Floor(betGil * betRate) : -1 * betGil,
-                    wins_get_cash = hit ? Math.Floor(betGil * betRate) : 0,
-                    losses_lost_cash = hit ? 0 : betGil,
-                };
-                await _posgre.Execute(UserSQL.InsertUserResult(), param);
-
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
+                login_id = loginId,
+                wins = hit ? 1 : 0,
+                losses = hit ? 0 : 1,
+                cash = hit ? Math.Floor(betGil * betRate) : -1 * betGil,
+                wins_get_cash = hit ? Math.Floor(betGil * betRate) : 0,
+                losses_lost_cash = hit ? 0 : betGil,
+            };
+            await _posgre.Execute(UserSQL.InsertUserResult(), param);
         }
     }
 }

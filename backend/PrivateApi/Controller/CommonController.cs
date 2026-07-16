@@ -30,37 +30,23 @@ namespace PrivateApi.Controller
             if (string.IsNullOrEmpty(loginId))
                 return StatusCode(HttpStatus.BadRequest);
 
-            try
+            // 画像のバイナリ化
+            using (MemoryStream ms = new MemoryStream())
             {
-                // 画像のバイナリ化
-                using (MemoryStream ms = new MemoryStream())
-                {
-                    await image.CopyToAsync(ms);
-                    byte[] imageByte = ms.ToArray();
-                    string imageBASE64 = Convert.ToBase64String(imageByte);
+                await image.CopyToAsync(ms);
+                byte[] imageByte = ms.ToArray();
+                string imageBASE64 = Convert.ToBase64String(imageByte);
 
-                    await _serviceCommon.UpdateImage(loginId, imageBASE64);
-                }
-                return StatusCode(HttpStatus.OK, Message.Create("Image upload success."));
+                await _serviceCommon.UpdateImage(loginId, imageBASE64);
             }
-            catch (Exception e)
-            {
-                return StatusCode(HttpStatus.InternalServerError, Message.Create(e, "Image upload failed."));
-            }
+            return StatusCode(HttpStatus.OK, Message.Create("Image upload success."));
         }
 
         [HttpGet("api/common/FetchElementCode")]
         public async Task<IActionResult> FetchElementCode()
         {
-            try
-            {
-                IEnumerable<CodeDTO> result = await _serviceCommon.FetchElementCode();
-                return StatusCode(HttpStatus.OK, result);
-            }
-            catch (Exception e)
-            {
-                return StatusCode(HttpStatus.InternalServerError, Message.Create(e));
-            }
+            IEnumerable<CodeDTO> result = await _serviceCommon.FetchElementCode();
+            return StatusCode(HttpStatus.OK, result);
         }
     }
 }

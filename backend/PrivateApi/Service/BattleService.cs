@@ -53,38 +53,31 @@ namespace PrivateApi.Service
         /// <summary>
         /// 勝敗結果を記録（モンスター）
         /// </summary>
-        public async Task<bool> InsertBattleResult(
-            IEnumerable<MonsterDTO> monsters, DateTime endDate, TimeSpan endTime)
+        public async Task InsertBattleResult(IEnumerable<MonsterDTO> monsters,
+                                             DateTime endDate, 
+                                             TimeSpan endTime)
         {
-            try
+            using (var transaciton = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
-                using (var transaciton = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+                int seq = 1;
+                foreach (MonsterDTO m in monsters)
                 {
-                    int seq = 1;
-                    foreach (MonsterDTO m in monsters)
+                    object parameters = new
                     {
-                        object parameters = new
-                        {
-                            battle_end_date = endDate,
-                            battle_end_time = endTime,
-                            serial = seq,
-                            monster_id = m.MonsterId,
-                            is_win = m.Hp > 0 ? true : false
-                        };
+                        battle_end_date = endDate,
+                        battle_end_time = endTime,
+                        serial = seq,
+                        monster_id = m.MonsterId,
+                        is_win = m.Hp > 0 ? true : false
+                    };
 
-                        string sql = BattleSQL.InsertBattleResult();
-                        await _posgre.Execute(sql, parameters);
+                    string sql = BattleSQL.InsertBattleResult();
+                    await _posgre.Execute(sql, parameters);
 
-                        seq++;
-                    }
-                    transaciton.Complete();
+                    seq++;
                 }
+                transaciton.Complete();
             }
-            catch (Exception)
-            {
-                return false;
-            }
-            return true;
         }
     }
 }

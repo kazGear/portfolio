@@ -1,7 +1,8 @@
 ﻿using CSLib.Lib;
+using CSLib.Middleware;
+using Microsoft.AspNetCore.Mvc;
 using PrivateApi.Domain._User;
 using PrivateApi.Service;
-using Microsoft.AspNetCore.Mvc;
 
 namespace PrivateApi.Controller
 {
@@ -22,26 +23,19 @@ namespace PrivateApi.Controller
         {
             if (request == null) return StatusCode(HttpStatus.BadRequest);
 
-            try
-            {
-                // パスワード暗号化
-                request.Password = Aes.AesEncrypt(request.Password);
+            // パスワード暗号化
+            request.Password = Aes.AesEncrypt(request.Password);
 
-                IEnumerable<IUser> users =
-                    await _service.SelectLoginUsers(request.UserName, request.Password);
+            IEnumerable<IUser> users =
+                await _service.SelectLoginUsers(request.UserName, request.Password);
 
-                IList<string> userNames = new List<string>();
+            IList<string> userNames = new List<string>();
 
-                // ユーザー名一覧作成
-                foreach (IUser user in users)
-                    userNames.Add(user.UserName);
+            // ユーザー名一覧作成
+            foreach (IUser user in users)
+                userNames.Add(user.UserName);
 
-                return StatusCode(HttpStatus.OK, userNames);
-            }
-            catch (Exception e)
-            {
-                return StatusCode(HttpStatus.InternalServerError, Message.Create(e));
-            }
+            return StatusCode(HttpStatus.OK, userNames);
         }
     }
 }

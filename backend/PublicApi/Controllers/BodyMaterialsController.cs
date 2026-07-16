@@ -20,15 +20,8 @@ namespace PublicApi.Controllers
         [HttpGet("/public/v1/bodyMaterials")]
         public async Task<IActionResult> Get()
         {
-            try
-            {
-                IEnumerable<CodeResponse> bodyMaterials = await _service.Get();
-                return StatusCode(HttpStatus.OK, bodyMaterials);
-            }
-            catch (Exception e)
-            {
-                return StatusCode(HttpStatus.InternalServerError, Message.Create(e));
-            }
+            IEnumerable<CodeResponse> bodyMaterials = await _service.Get();
+            return StatusCode(HttpStatus.OK, bodyMaterials);
         }
     }
 }

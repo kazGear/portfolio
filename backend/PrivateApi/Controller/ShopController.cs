@@ -24,15 +24,8 @@ namespace PrivateApi.Controller
         {
             if (string.IsNullOrEmpty(itemId)) return StatusCode(HttpStatus.BadRequest);
 
-            try
-            {
-                ItemDTO item = await _service.SelectItemOne(itemId);
-                return StatusCode(HttpStatus.OK, item);
-            }
-            catch (Exception e)
-            {
-                return StatusCode(HttpStatus.InternalServerError, Message.Create(e));
-            }
+            ItemDTO item = await _service.SelectItemOne(itemId);
+            return StatusCode(HttpStatus.OK, item);
         }
 
         /// <summary>
@@ -42,17 +35,10 @@ namespace PrivateApi.Controller
         public async Task<IActionResult> Init([FromBody] string? loginId)
         {
             if (string.IsNullOrEmpty(loginId)) return StatusCode(HttpStatus.BadRequest);
-
-            try
-            {
-                // ショップリストを取得
-                IEnumerable<ShopDTO> shops = await _service.SelectShops(loginId);
-                return StatusCode(HttpStatus.OK, shops);
-            }
-            catch (Exception e)
-            {
-                return StatusCode(HttpStatus.InternalServerError, Message.Create(e));
-            }
+  
+            // ショップリストを取得
+            IEnumerable<ShopDTO> shops = await _service.SelectShops(loginId);
+            return StatusCode(HttpStatus.OK, shops);
         }
 
         //
@@ -65,16 +51,9 @@ namespace PrivateApi.Controller
             if (req.selectedShop == null)
                 return StatusCode(HttpStatus.OK, new List<string>());
 
-            try
-            {
-                // アイテムリストを取得
-                IEnumerable<ItemDTO> shops = await _service.SelectShopItems(req.loginId, req.selectedShop);
-                return StatusCode(HttpStatus.OK, shops);
-            }
-            catch (Exception e)
-            {
-                return StatusCode(HttpStatus.InternalServerError, Message.Create(e));
-            }
+            // アイテムリストを取得
+            IEnumerable<ItemDTO> shops = await _service.SelectShopItems(req.loginId, req.selectedShop);
+            return StatusCode(HttpStatus.OK, shops);
         }
 
         [HttpPut("api/shop/purchase")]
@@ -82,35 +61,28 @@ namespace PrivateApi.Controller
         {
             using (var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
-                try
+                // クレンジング
+                string loginId = req.loginId.Trim();
+                string itemId  = req.itemId.Trim();
+
+                // 残金取得
+                UserDTO? user = await _userService.SelectUserOne(loginId);
+                int cash      = user.Cash;
+
+                // 購入品取得
+                ItemDTO item = await _service.SelectItemOne(itemId);
+
+                if (cash < item.ItemPrice)
                 {
-                    // クレンジング
-                    string loginId = req.loginId.Trim();
-                    string itemId  = req.itemId.Trim();
-
-                    // 残金取得
-                    UserDTO? user = await _userService.SelectUserOne(loginId);
-                    int cash      = user.Cash;
-
-                    // 購入品取得
-                    ItemDTO item = await _service.SelectItemOne(itemId);
-
-                    if (cash < item.ItemPrice)
-                    {
-                        return StatusCode(HttpStatus.InternalServerError, Message.Create("資金が不足しています。"));
-                    }
-
-                    // 各種登録
-                    await _service.Purchase(loginId, itemId);
-                    await _userService.Purchase(loginId, (cash - item.ItemPrice));
-
-                    transaction.Complete();
-                    return StatusCode(HttpStatus.OK);
+                    return StatusCode(HttpStatus.InternalServerError, Message.Create("資金が不足しています。"));
                 }
-                catch (Exception e)
-                {
-                    return StatusCode(HttpStatus.InternalServerError, Message.Create(e));
-                }
+
+                // 各種登録
+                await _service.Purchase(loginId, itemId);
+                await _userService.Purchase(loginId, (cash - item.ItemPrice));
+
+                transaction.Complete();
+                return StatusCode(HttpStatus.OK);
             }
         }
     }

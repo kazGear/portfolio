@@ -173,3 +173,4 @@ less
 - モンスター画像 差し替え（約80件、背景透過png）
 - guitar crawler メーカー追加
 - batch log table(DB)
+- 秘密鍵・公開鍵

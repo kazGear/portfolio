@@ -36,15 +36,8 @@ namespace PrivateApi.Controller
         {
             if (string.IsNullOrEmpty(loginId)) return StatusCode(HttpStatus.BadRequest);
 
-            try
-            {
-                IEnumerable<MonsterDTO> monsters = await _service.SelectMonsters(loginId);
-                return StatusCode(HttpStatus.OK, monsters);
-            }
-            catch (Exception e)
-            {
-                return StatusCode(HttpStatus.InternalServerError, Message.Create(e));
-            }
+            IEnumerable<MonsterDTO> monsters = await _service.SelectMonsters(loginId);
+            return StatusCode(HttpStatus.OK, monsters);
         }
 
         /// <summary>
@@ -53,33 +46,26 @@ namespace PrivateApi.Controller
         [HttpPost("api/battle/init")]
         public async Task<IActionResult> Init([FromBody] ReqBattleInit req)
         {
-            try
-            {
-                // モンスターデータ等の読込み
-                IEnumerable<MonsterDTO> monstersFromDB          = await _service.SelectMonsters(req.loginId);
-                IEnumerable<SkillDTO> skillsFromDB              = await _service.SelectSkills();
-                IEnumerable<MonsterSkillDTO> monsterSkillFromDB = await _service.SelectMonsterSkills();
+            // モンスターデータ等の読込み
+            IEnumerable<MonsterDTO> monstersFromDB          = await _service.SelectMonsters(req.loginId);
+            IEnumerable<SkillDTO> skillsFromDB              = await _service.SelectSkills();
+            IEnumerable<MonsterSkillDTO> monsterSkillFromDB = await _service.SelectMonsterSkills();
 
-                // モンスターDTO構築
-                IEnumerable<MonsterDTO> monstersDTO =
-                    _monsterFactory.MappingToMonsterDTO(monstersFromDB, skillsFromDB, monsterSkillFromDB);
+            // モンスターDTO構築
+            IEnumerable<MonsterDTO> monstersDTO =
+                _monsterFactory.MappingToMonsterDTO(monstersFromDB, skillsFromDB, monsterSkillFromDB);
 
-                // 参加モンスター（ランダム）
-                IEnumerable<MonsterDTO> battleMonsters =
-                    BattleSystem.MonsterSelector(monstersDTO, int.Parse(req.selectMonstersCount));
+            // 参加モンスター（ランダム）
+            IEnumerable<MonsterDTO> battleMonsters =
+                BattleSystem.MonsterSelector(monstersDTO, int.Parse(req.selectMonstersCount));
 
-                // 賭けレート算出
-                BattleSystem.CalcBetRate(battleMonsters);
+            // 賭けレート算出
+            BattleSystem.CalcBetRate(battleMonsters);
 
-                // テスト用モンスターで対戦
-                //battleMonsters = UseTestMonsters(monstersDTO);
+            // テスト用モンスターで対戦
+            //battleMonsters = UseTestMonsters(monstersDTO);
 
-                return StatusCode(HttpStatus.OK, battleMonsters);
-            }
-            catch (Exception e)
-            {
-                return StatusCode(HttpStatus.InternalServerError, Message.Create(e));
-            }
+            return StatusCode(HttpStatus.OK, battleMonsters);
         }
 
         /// <summary>
@@ -124,59 +110,52 @@ namespace PrivateApi.Controller
         {
             if (monsters == null || monsters.Count() == 0) return StatusCode(HttpStatus.BadRequest); 
 
-            try
-            {
-                // 戦闘用モンスターを構築
-                IEnumerable<CodeDTO> codes = await _service.SelectStateCode();
-                IEnumerable<IMonster> battleMonsters = _monsterFactory.CreateBattleMonsters(monsters, codes);
+            // 戦闘用モンスターを構築
+            IEnumerable<CodeDTO> codes = await _service.SelectStateCode();
+            IEnumerable<IMonster> battleMonsters = _monsterFactory.CreateBattleMonsters(monsters, codes);
 
-                // TODO 未実装 チーム決め
-                ((List<IMonster>)battleMonsters).ForEach(e => e.DefineTeam(CTeam.A.Value));
-                if (battleMonsters.Where(e => e.Team == CTeam.UNKNOWN.Value).Count() > 0)
-                {
-                    throw new Exception("チーム決めが完了していません。");
-                }
-                // 行動順決め
-                IEnumerable<IMonster> orderedMonsters = BattleSystem.ActionOrder(battleMonsters);
+            // TODO 未実装 チーム決め
+            ((List<IMonster>)battleMonsters).ForEach(e => e.DefineTeam(CTeam.A.Value));
+            if (battleMonsters.Where(e => e.Team == CTeam.UNKNOWN.Value).Count() > 0)
+            {
+                throw new Exception("チーム決めが完了していません。");
+            }
+            // 行動順決め
+            IEnumerable<IMonster> orderedMonsters = BattleSystem.ActionOrder(battleMonsters);
+
+            // モンスターの行動
+            foreach (IMonster me in orderedMonsters)
+            {
+                if (me.Hp <= 0) continue;
+
+                // 誰のターンか
+                MessageInfo.WhoseTurn(me, _logger);
+
+                // 状態異常の影響
+                me.StateImpact(_logger);
 
                 // モンスターの行動
-                foreach (IMonster me in orderedMonsters)
-                {
-                    if (me.Hp <= 0) continue;
+                IList<IMonster> otherMonsters = orderedMonsters.Where(e => e.MonsterId != me.MonsterId)
+                                                                .ToList();
+                if (me.IsMoveAble()) me.Move(otherMonsters, _logger);
 
-                    // 誰のターンか
-                    MessageInfo.WhoseTurn(me, _logger);
+                // 状態異常解除
+                if (me.CurrentStatus().Count() > 0) me.RefreshStatus(_logger);
 
-                    // 状態異常の影響
-                    me.StateImpact(_logger);
-
-                    // モンスターの行動
-                    IList<IMonster> otherMonsters = orderedMonsters.Where(e => e.MonsterId != me.MonsterId)
-                                                                   .ToList();
-                    if (me.IsMoveAble()) me.Move(otherMonsters, _logger);
-
-                    // 状態異常解除
-                    if (me.CurrentStatus().Count() > 0) me.RefreshStatus(_logger);
-
-                    _logger.Logging(new BattleMetaData());
-                }
-
-                // 勝敗判定
-                MessageInfo.BattleResult(battleMonsters, _logger);
-
-                // DTOへ変換
-                IEnumerable<MonsterDTO> monstersDTO = _monsterFactory.ConvertToDTO(battleMonsters);
-
-                BattleViewModel model = new BattleViewModel();
-                model.Monsters = monstersDTO;
-                model.BattleLog = _logger.DumpMemory();
-
-                return StatusCode(HttpStatus.OK, model);
+                _logger.Logging(new BattleMetaData());
             }
-            catch (Exception e)
-            {
-                return StatusCode(HttpStatus.InternalServerError, Message.Create(e));
-            }
+
+            // 勝敗判定
+            MessageInfo.BattleResult(battleMonsters, _logger);
+
+            // DTOへ変換
+            IEnumerable<MonsterDTO> monstersDTO = _monsterFactory.ConvertToDTO(battleMonsters);
+
+            BattleViewModel model = new BattleViewModel();
+            model.Monsters = monstersDTO;
+            model.BattleLog = _logger.DumpMemory();
+
+            return StatusCode(HttpStatus.OK, model);
         }
 
         /// <summary>
@@ -189,20 +168,13 @@ namespace PrivateApi.Controller
 
             using (var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             { 
-                try
-                {
-                    DateTime endDate = DateTime.Now;
-                    TimeSpan endTime = new TimeSpan(endDate.Ticks);
+                DateTime endDate = DateTime.Now;
+                TimeSpan endTime = new TimeSpan(endDate.Ticks);
 
-                    bool result = await _service.InsertBattleResult(monsters!, endDate, endTime);
-                    transaction.Complete();
+                bool result = await _service.InsertBattleResult(monsters!, endDate, endTime);
+                transaction.Complete();
 
-                    return StatusCode(HttpStatus.OK, result);
-                }
-                catch (Exception e)
-                {
-                    return StatusCode(HttpStatus.InternalServerError, Message.Create(e));
-                }
+                return StatusCode(HttpStatus.OK, result);
             }
         }
     }

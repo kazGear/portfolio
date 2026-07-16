@@ -9,7 +9,6 @@ using PrivateApi.Domain._Monster._State;
 using PrivateApi.Domain.DTO;
 using PrivateApi.Service;
 using Repository.Repository;
-using System;
 using System.Text;
 
 Console.WriteLine("Auto battle start...");

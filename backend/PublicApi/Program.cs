@@ -1,5 +1,6 @@
 using CSLib.Logging;
 using CSLib.Middleware;
+using CSLib.Notify;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,6 +13,7 @@ builder.Host.UseSerilog();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddHttpClient<INotify, DiscordNotify>(); // notify setting
 
 builder.Services.AddCors(options =>
 {

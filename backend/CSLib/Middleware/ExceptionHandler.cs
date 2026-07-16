@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using CSLib.Notify;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Serilog;
+using System.Text;
 
 namespace CSLib.Middleware
 {
@@ -8,11 +10,15 @@ namespace CSLib.Middleware
     {
         private readonly RequestDelegate _next;
         private readonly ILogger<ExceptionMiddleware> _logger;
+        private readonly INotify _notify;
 
-        public ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger)
+        public ExceptionMiddleware(RequestDelegate next,
+                                   ILogger<ExceptionMiddleware> logger,
+                                   INotify notify)
         {
             _next   = next;
             _logger = logger;
+            _notify = notify;
         }
 
         public async Task Invoke(HttpContext context)
@@ -33,6 +39,10 @@ namespace CSLib.Middleware
                 {
                     message = $"Internal Server Error.\n{ex}"
                 });
+
+                await _notify.NotifyAsync(_notify.CreateErrorMessage(context, ex));
+
+                throw;
             }
         }
     }

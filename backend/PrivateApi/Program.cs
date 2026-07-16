@@ -1,5 +1,6 @@
 using CSLib.Logging;
 using CSLib.Middleware;
+using CSLib.Notify;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
@@ -103,6 +104,9 @@ public class Startup
             // C# のプロパティ名そのまま（PascalCase）で返す。プロパティ名が完全に合致する必要あり。
             options.JsonSerializerOptions.PropertyNamingPolicy = null;
         });
+
+        // 通知設定
+        services.AddHttpClient<INotify, DiscordNotify>();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)

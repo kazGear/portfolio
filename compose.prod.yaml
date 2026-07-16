@@ -111,7 +111,11 @@ services:
     volumes:
       - ./batch/webCrawler/logs:/app/logs
     environment:
-      DB_DSN: ${DB_DSN}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
       LOGS_PATH: ${LOGS_PATH}
       LOGS_KEEP_COUNT: ${LOGS_KEEP_COUNT}
       PARALLEL_COUNT: ${PARALLEL_COUNT}

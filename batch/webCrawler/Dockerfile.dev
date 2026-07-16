@@ -14,4 +14,4 @@ COPY crontab.txt /etc/cron.d/guitar-crawler
 RUN chmod 0644 /etc/cron.d/guitar-crawler
 RUN crontab /etc/cron.d/guitar-crawler
 
-CMD ["cron", "-f"]
+CMD ["/bin/sh", "-c", "printenv > /etc/environment && cron -f"]

@@ -32,4 +32,4 @@ RUN sed -i 's/\r$//' /etc/cron.d/auto-battle && \
 
 RUN mkdir -p /app/logs
 
-CMD ["cron", "-f"]
+CMD ["/bin/sh", "-c", "printenv > /etc/environment && cron -f"]

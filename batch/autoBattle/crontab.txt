@@ -1,1 +1,1 @@
-0 19 * * * dotnet /app/publish/AutoBattle.dll >> /proc/1/fd/1 2>&1
+0 21 * * * dotnet /app/AutoBattle.dll >> /proc/1/fd/1 2>&1

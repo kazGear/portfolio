@@ -24,7 +24,7 @@ const ItemFrame = styled.div`
     width: 75%;
     height: 100%;
     margin: 20px 20px 0px 0px;
-    overflow-y: scroll;
+    overflow-y: auto;
 `;
 
 const ShopPage = () => {

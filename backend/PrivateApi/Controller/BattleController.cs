@@ -171,10 +171,10 @@ namespace PrivateApi.Controller
                 DateTime endDate = DateTime.Now;
                 TimeSpan endTime = new TimeSpan(endDate.Ticks);
 
-                bool result = await _service.InsertBattleResult(monsters!, endDate, endTime);
+                await _service.InsertBattleResult(monsters!, endDate, endTime);
                 transaction.Complete();
 
-                return StatusCode(HttpStatus.OK, result);
+                return StatusCode(HttpStatus.OK, "Insert battle result OK.");
             }
         }
     }

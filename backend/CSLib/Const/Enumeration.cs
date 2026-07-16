@@ -50,12 +50,7 @@ namespace CSLib.Const
 
             foreach (FieldInfo field in fields.GetFields())
             {
-                try
-                {
-                    result.Add(field.GetValue(fields) ?? "");
-                }
-                catch (ArgumentException)
-                { }
+                result.Add(field.GetValue(fields) ?? "");
             }
             return result;
         }

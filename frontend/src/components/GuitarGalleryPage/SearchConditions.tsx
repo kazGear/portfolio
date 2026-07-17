@@ -14,7 +14,6 @@ import SelectorSort from "./SelectorSort";
 import SelectorPage from "./SelectorPage";
 import SelectorPageSize from "./SelectorPageSize";
 import CommonBorderTr from "../common/CommonBorderTr";
-import { SIZE } from "../../lib/Constants";
 
 const Th = styled.th`
     text-align: left;

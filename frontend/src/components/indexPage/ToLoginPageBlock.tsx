@@ -32,6 +32,9 @@ const ToLoginPageBlock = () => {
                     ※テストユーザー&emsp; ログインID：test、パスワード：test
                     <br />
                     ※管理ユーザー&emsp; ログインID：admin、パスワード：admin
+                    <span style={{color: COLORS.ACCENT_FONT_PINK}}>
+                        （ログイン推奨アカウント）
+                    </span>
                 </Description>
             </CommonFrame>
         </div>

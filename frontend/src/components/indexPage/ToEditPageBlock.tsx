@@ -29,7 +29,7 @@ const ToEditPageBlock = ({isValid, classOfAnime, titleStyle}: ArgProps) => {
 
             <CommonFrame>
                 <Description>
-                    モンスターステータス編集、モンスタースキル編集、使用モンスターの制限などが可能です。<br/>
+                    モンスターステータス編集、モンスタースキル編集、使用モンスターの制限などが可能です。<br/><br/>
                     ※管理ユーザのみ使用可能。
                 </Description>
             </CommonFrame>

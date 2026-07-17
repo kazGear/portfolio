@@ -29,8 +29,8 @@ const ToBattleResultPageBlock = ({validToken, classOfAnime, titleStyle}: ArgProp
 
             <CommonOutSideFrame>
                 <Description>
-                    某RPGカジノ風のモンスター闘技場です。どのモンスターが勝ち残るか当ててみてください。<br/>
-                    ※バッチ処理でも毎晩強制的に戦わされています。
+                    某RPGカジノ風のモンスター闘技場です。どのモンスターが勝ち残るか当ててみてください。<br/><br/>
+                    ※バッチ処理でも日々強制的に戦わされています。
                 </Description>
             </CommonOutSideFrame>
         </div>

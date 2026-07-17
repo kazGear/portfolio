@@ -50,13 +50,13 @@ const BattleResultPage = () => {
 
             <ReportFrame>
                 {/* レポート部 */}
-                <CommonFrame styleObj={{width: "55%", height: "60vh", margin: "20px 5px 0px 0px"}}>
+                <CommonFrame styleObj={{width: "55%", height: "58vh", margin: "20px 5px 0px 0px"}}>
                     <MonsterReport monsterReport={monsterReport}
                                    setSortType={setSortType}
                                    isNowLoadingMonsterReport={isNowLoadingMonsterReport}/>
                  </CommonFrame>
                 {/* レポート部 */}
-                <CommonFrame styleObj={{width: "35%", height: "60vh", margin: "20px 0px 0px 5px"}}>
+                <CommonFrame styleObj={{width: "35%", height: "58vh", margin: "20px 0px 0px 5px"}}>
                     <BattleReportBlock battleReport={battleReport}
                                        isNowLoadingBattleReport={isNowLoadingBattleReport} />
                 </CommonFrame>

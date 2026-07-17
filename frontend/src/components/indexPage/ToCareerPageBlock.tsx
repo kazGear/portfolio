@@ -23,8 +23,8 @@ const ToCareerPageBlock = () => {
 
             <CommonFrame>
                 <Description>
-                    HTML版の職務経歴書です。<br/><br/>
-                    Microsoft Word のようなシンプルな表示に切り替え可能です。
+                    HTML版の職務経歴書です。
+                    経歴、PR、ポートフォリオ等について記載しております。
                 </Description>
             </CommonFrame>
         </div>

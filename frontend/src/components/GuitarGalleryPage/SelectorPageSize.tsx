@@ -5,9 +5,11 @@ import CommonInput from "../common/CommonInput";
 interface ArgProps {
     guitarParams: GuitarParams;
     callback:     (gParams: GuitarParams) => Promise<void>;
+    styleObj?:    React.CSSProperties;
+
 }
 
-const SelectorPageSize = ({guitarParams, callback}: ArgProps) => {
+const SelectorPageSize = ({guitarParams, callback, styleObj}: ArgProps) => {
     const gParams = guitarParams;
 
     const changePageSizeHandler = (e: React.FocusEvent<HTMLInputElement>) => {
@@ -26,7 +28,7 @@ const SelectorPageSize = ({guitarParams, callback}: ArgProps) => {
                      placeholder=" (10 ~ 100) default 50"
                      min="10"
                      max="100"
-                     styleObj={{marginTop: "8px"}}/>
+                     styleObj={styleObj}/>
     );
 }
 export default SelectorPageSize;

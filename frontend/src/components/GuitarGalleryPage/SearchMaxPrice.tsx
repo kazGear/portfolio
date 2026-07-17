@@ -5,9 +5,10 @@ import CommonInput from "../common/CommonInput";
 interface ArgProps {
     guitarParams: GuitarParams;
     callback:     (gParams: GuitarParams) => Promise<void>;
+    styleObj?   : React.CSSProperties;
 }
 
-const SearchMaxPrice = ({guitarParams, callback}: ArgProps) => {
+const SearchMaxPrice = ({guitarParams, callback, styleObj}: ArgProps) => {
     const gParams = guitarParams;
 
     const changeMaxPriceHandler = (e: React.FocusEvent<HTMLInputElement>) => {
@@ -30,7 +31,7 @@ const SearchMaxPrice = ({guitarParams, callback}: ArgProps) => {
                      onBlur={changeMaxPriceHandler}
                      min="-3"
                      placeholder="（金額を入力）"
-                     styleObj={{marginTop: "8px"}}/>
+                     styleObj={styleObj}/>
     );
 }
 export default SearchMaxPrice;

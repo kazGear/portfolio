@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { COLORS, SIZE } from "../../lib/Constants";
 
 const Frame = styled.div`
+    width: ${SIZE.INPUT_WIDTH};
     margin: 10px;
 `;
 

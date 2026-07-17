@@ -6,9 +6,11 @@ interface ArgProps {
     guitarRes:    GuitarsResponse | null;
     guitarParams: GuitarParams;
     callback:     (gParams: GuitarParams) => Promise<void>;
+    styleObj?   : React.CSSProperties;
+
 }
 
-const SelectorPage = ({guitarRes, guitarParams, callback}: ArgProps) => {
+const SelectorPage = ({guitarRes, guitarParams, callback, styleObj}: ArgProps) => {
     const res     = guitarRes;
     const gParams = guitarParams;
 
@@ -30,7 +32,7 @@ const SelectorPage = ({guitarRes, guitarParams, callback}: ArgProps) => {
                           changeNextPageHandler={changeNextPageHandler}
                           hasPrev={res !== null ? res.hasPrev : false}
                           hasNext={res !== null ? res.hasNext : false}
-                          styleObj={{margin: "-2px 0px 0px 20px"}}>
+                          styleObj={styleObj}>
             <span> {res?.page} / {res?.totalPages} </span>
         </CommonPagination>
     );

@@ -6,9 +6,10 @@ import CommonInput from "../common/CommonInput";
 interface ArgProps {
     guitarParams: GuitarParams;
     callback:     (gParams: GuitarParams) => Promise<void>;
+    styleObj?:    React.CSSProperties;
 }
 
-const SearchMinPrice = ({guitarParams, callback}: ArgProps) => {
+const SearchMinPrice = ({guitarParams, callback, styleObj}: ArgProps) => {
     const gParams = guitarParams;
 
     const changeMinPriceHandler = (e: React.FocusEvent<HTMLInputElement>) => {
@@ -30,7 +31,9 @@ const SearchMinPrice = ({guitarParams, callback}: ArgProps) => {
         <CommonInput inputType="number"
                      onBlur={changeMinPriceHandler}
                      min="-3"
-                     placeholder="（金額を入力）"/>
+                     placeholder="（金額を入力）"
+                     styleObj={styleObj}
+                     />
     );
 }
 export default SearchMinPrice;

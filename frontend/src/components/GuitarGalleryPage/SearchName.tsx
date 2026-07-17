@@ -5,9 +5,10 @@ import CommonInput from "../common/CommonInput";
 interface ArgProps {
     guitarParams: GuitarParams;
     callback:     (gParams: GuitarParams) => Promise<void>;
+    styleObj?:    React.CSSProperties;
 }
 
-const SearchName = ({guitarParams, callback}: ArgProps) => {
+const SearchName = ({guitarParams, callback, styleObj}: ArgProps) => {
     const gParams = guitarParams;
 
     const changeNameHandler = (e: React.FocusEvent<HTMLInputElement>) => {
@@ -24,7 +25,7 @@ const SearchName = ({guitarParams, callback}: ArgProps) => {
         <CommonInput inputType="text"
                      onBlur={changeNameHandler}
                      placeholder="（部分一致検索）"
-                     styleObj={{marginTop: "2px"}}/>
+                     styleObj={styleObj}/>
     );
 }
 export default SearchName;

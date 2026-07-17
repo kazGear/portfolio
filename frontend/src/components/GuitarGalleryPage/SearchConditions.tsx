@@ -56,8 +56,8 @@ const SearchConditions = ({guitarRes,
             <table>
                 <thead>
                     <CommonBorderTr>
-                        <th>検索条件</th>
-                        <td style={{paddingLeft: "30px"}}>設定値</td>
+                        <th style={{textAlign: "left"}}>検索条件</th>
+                        <td style={{paddingLeft: "20px", fontWeight: "bold"}}>設定値</td>
                     </CommonBorderTr>
                 </thead>
                 <tbody>
@@ -79,11 +79,15 @@ const SearchConditions = ({guitarRes,
                     </CommonBorderTr>
                     <CommonBorderTr>
                         <Th>トップ材</Th>
-                        <Td><SearchMaterialTop guitarParams={gParams} materials={bodyMaterials} callback={callback}/></Td>
+                        <Td><SearchMaterialTop guitarParams={gParams}
+                                               materials={bodyMaterials}
+                                               callback={callback}/></Td>
                     </CommonBorderTr>
                     <CommonBorderTr>
                         <Th>ボディ材</Th>
-                        <Td><SearchMaterialBack guitarParams={gParams} materials={bodyMaterials} callback={callback}/></Td>
+                        <Td><SearchMaterialBack guitarParams={gParams}
+                                                materials={bodyMaterials}
+                                                callback={callback}/></Td>
                     </CommonBorderTr>
                     <CommonBorderTr>
                         <Th>最低価格</Th>
@@ -114,7 +118,9 @@ const SearchConditions = ({guitarRes,
                     </CommonBorderTr>
                     <CommonBorderTr>
                         <Th>検索方法</Th>
-                        <Td>※自動検索<br/>検索条件を変更すると<br/>自動的に検索されます。</Td>
+                        <td style={{fontSize: "13px", paddingLeft: "20px"}}>
+                            ※自動検索<br/>検索条件を変更すると<br/>自動的に検索されます。
+                        </td>
                     </CommonBorderTr>
                 </tbody>
             </table>

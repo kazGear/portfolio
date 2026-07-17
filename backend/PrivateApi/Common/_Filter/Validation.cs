@@ -1,4 +1,5 @@
 ﻿using CSLib.Const;
+using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
 
 namespace PrivateApi.Common._Filter
@@ -25,7 +26,7 @@ namespace PrivateApi.Common._Filter
         public static int Amount(int amount)
         {
             if (amount < 0)
-                throw new Exception($"金額は{amount}円以上で設定してください。");
+                throw new ValidationException($"金額は{amount}円以上で設定してください。");
 
             return amount;
         }
@@ -37,8 +38,8 @@ namespace PrivateApi.Common._Filter
 
             string message = GetMessageSetWithinRange("バトルレポートの連番", min, max);
 
-            if (serial < min) throw new Exception(message);
-            if (max < serial) throw new Exception(message);
+            if (serial < min) throw new ValidationException(message);
+            if (max < serial) throw new ValidationException(message);
 
             return serial;
         }
@@ -50,8 +51,8 @@ namespace PrivateApi.Common._Filter
 
             string message = GetMessageSetWithinRange("コード値", min, max);
 
-            if (codeValue < min) throw new Exception(message);
-            if (max < codeValue) throw new Exception(message);
+            if (codeValue < min) throw new ValidationException(message);
+            if (max < codeValue) throw new ValidationException(message);
 
             return codeValue;
         }
@@ -59,7 +60,7 @@ namespace PrivateApi.Common._Filter
         public static int Count(int count)
         {
             if (count < 0)
-                throw new Exception($"カウントは{count}以上で設定してください。");
+                throw new ValidationException($"カウントは{count}以上で設定してください。");
 
             return count;
         }
@@ -67,7 +68,7 @@ namespace PrivateApi.Common._Filter
         public static string DispName(string name)
         {
             if (name.Length <= 0)
-                throw new Exception($"表示名は１文字以上で設定してください。");
+                throw new ValidationException($"表示名は１文字以上で設定してください。");
 
             return name;
         }
@@ -79,7 +80,7 @@ namespace PrivateApi.Common._Filter
             IReadOnlyCollection<int> values = CElement.GetValues();
 
             if (!values.Contains(week))
-                throw new Exception(GetMessageUndefined("属性", week));
+                throw new ValidationException(GetMessageUndefined("属性", week));
 
             return week;
         }
@@ -91,8 +92,8 @@ namespace PrivateApi.Common._Filter
 
             string message = GetMessageSetWithinRange("割合", min, max);
 
-            if (rate < min) throw new Exception(message);
-            if (max < rate) throw new Exception(message);
+            if (rate < min) throw new ValidationException(message);
+            if (max < rate) throw new ValidationException(message);
 
             return rate;
         }
@@ -104,18 +105,18 @@ namespace PrivateApi.Common._Filter
 
             string message = GetMessageSetWithinRange("HP", min, max);
 
-            if (hp < min) throw new Exception(message);
-            if (max < hp) throw new Exception(message);
+            if (hp < min) throw new ValidationException(message);
+            if (max < hp) throw new ValidationException(message);
 
             return hp;
         }
 
         public static string Id(string itemId)
         {
-            string pattern = @"^[a-zA-Z]+\d{3}$";
+            string pattern = @"[a-z_]+";
 
             if (!Regex.IsMatch(itemId, pattern))
-                throw new Exception(GetMessageNotMatching("ID", itemId));
+                throw new ValidationException(GetMessageNotMatching("ID", itemId));
 
             return itemId;
         }
@@ -125,7 +126,7 @@ namespace PrivateApi.Common._Filter
             string pattern = @"^[a-zA-Z0-9-_]{4,15}$";
 
             if (!Regex.IsMatch(loginId, pattern))
-                throw new Exception(GetMessageNotMatching("ログインID", loginId));
+                throw new ValidationException(GetMessageNotMatching("ログインID", loginId));
 
             return loginId;
         }
@@ -135,7 +136,7 @@ namespace PrivateApi.Common._Filter
             int minLength = 4;
 
             if (minLength > loginPass.Length)
-                throw new Exception($"ログインパスワードは{minLength}文字以上で設定してください。");
+                throw new ValidationException($"ログインパスワードは{minLength}文字以上で設定してください。");
 
             return loginPass;
 
@@ -146,7 +147,7 @@ namespace PrivateApi.Common._Filter
             IReadOnlyCollection<string> values = CMonsterType.GetValues();
 
             if (!values.Contains(monsterType))
-                throw new Exception(GetMessageUndefined("モンスタータイプ", monsterType));
+                throw new ValidationException(GetMessageUndefined("モンスタータイプ", monsterType));
 
             return monsterType;
         }
@@ -156,7 +157,7 @@ namespace PrivateApi.Common._Filter
             string pattern = @"^myskill\d{4}$";
 
             if (!Regex.IsMatch(mySkillId, pattern))
-                throw new Exception(GetMessageNotMatching("マイスキルID", mySkillId));
+                throw new ValidationException(GetMessageNotMatching("マイスキルID", mySkillId));
 
             return mySkillId;
         }
@@ -166,7 +167,7 @@ namespace PrivateApi.Common._Filter
             int maxLength = 30;
 
             if (maxLength < name.Length)
-                throw new Exception($"名称は{maxLength}文字以内で設定してください。");
+                throw new ValidationException($"名称は{maxLength}文字以内で設定してください。");
 
             return name;
         }
@@ -176,7 +177,7 @@ namespace PrivateApi.Common._Filter
             int maxLength = 5;
 
             if (maxLength < shortName.Length)
-                throw new Exception($"省略名は{maxLength}文字以内で設定してください。");
+                throw new ValidationException($"省略名は{maxLength}文字以内で設定してください。");
 
             return shortName;
         }
@@ -189,7 +190,7 @@ namespace PrivateApi.Common._Filter
             IReadOnlyCollection<int> values = CSkillType.GetValues();
 
             if (!values.Contains(skillType))
-                throw new Exception(GetMessageUndefined("スキル", skillType));
+                throw new ValidationException(GetMessageUndefined("スキル", skillType));
 
             return skillType;
         }
@@ -201,7 +202,7 @@ namespace PrivateApi.Common._Filter
             IReadOnlyCollection<int> values = CStateType.GetValues();
 
             if (!values.Contains(stateType))
-                throw new Exception(GetMessageUndefined("状態", stateType));
+                throw new ValidationException(GetMessageUndefined("状態", stateType));
 
             return stateType;
         }
@@ -213,8 +214,8 @@ namespace PrivateApi.Common._Filter
 
             string message = GetMessageSetWithinRange("素早さ", min, max);
 
-            if (speed < min) throw new Exception(message);
-            if (max < speed) throw new Exception(message);
+            if (speed < min) throw new ValidationException(message);
+            if (max < speed) throw new ValidationException(message);
 
             return speed;
         }
@@ -226,7 +227,7 @@ namespace PrivateApi.Common._Filter
             IReadOnlyCollection<int> values = CTarget.GetValues();
 
             if (!values.Contains(targetType))
-                throw new Exception(GetMessageUndefined("ターゲット", targetType));
+                throw new ValidationException(GetMessageUndefined("ターゲット", targetType));
 
             return targetType;
         }

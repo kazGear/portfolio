@@ -15,7 +15,7 @@ public static class BodyMaterialsSQL
                   FROM
                        m_code
                  WHERE
-                       code_id = 'code010'
+                       code_id = 'guitar_woods'
               ORDER BY
                        code ASC
                      ;

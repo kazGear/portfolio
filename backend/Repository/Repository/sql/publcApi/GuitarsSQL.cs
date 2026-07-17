@@ -40,15 +40,15 @@ public static class GuitarsSQL
         INNER JOIN
                    m_code AS maker
                 ON guitars.maker = maker.VALUE
-               AND maker.code_id = 'code009'
+               AND maker.code_id = 'guitar_makers'
         INNER JOIN
                    m_code AS neck
                 ON guitars.neck_material = neck.VALUE
-               AND neck.code_id          = 'code010'
+               AND neck.code_id          = 'guitar_woods'
         INNER JOIN
                    m_code AS fingerboard
                 ON guitars.fingerboard = fingerboard.VALUE
-               AND fingerboard.code_id = 'code010'
+               AND fingerboard.code_id = 'guitar_woods'
 
              WHERE
                    TRUE

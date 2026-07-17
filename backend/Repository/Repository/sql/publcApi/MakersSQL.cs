@@ -15,7 +15,7 @@ public static class MakersSQL
                   FROM
                        m_code
                  WHERE
-                       code_id = 'code009'
+                       code_id = 'guitar_makers'
               ORDER BY
                        code ASC
                      ;

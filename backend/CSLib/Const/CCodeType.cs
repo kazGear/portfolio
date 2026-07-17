@@ -13,34 +13,34 @@
         /// <summary>
         /// 自然属性
         /// </summary>
-        public static readonly CCodeType ELEMENT = new("code001", "ELEMENT");
+        public static readonly CCodeType ELEMENT = new("battle_elements", "ELEMENT");
         ///// <summary>
         ///// 状態
         ///// </summary>
-        public static readonly CCodeType STATE = new("code002", "STATE");
+        public static readonly CCodeType STATE = new("battle_status", "STATE");
         ///// <summary>
         ///// 対象
         ///// </summary>
-        public static readonly CCodeType TARGET = new("code003", "TARGET");
+        public static readonly CCodeType TARGET = new("battle_target_types", "TARGET");
         ///// <summary>
         ///// スキル
         ///// </summary>
-        public static readonly CCodeType SKILL = new("code004", "SKILL");
+        public static readonly CCodeType SKILL = new("battle_skill_types", "SKILL");
         ///// <summary>
         ///// システム補正率
         ///// </summary>
-        public static readonly CCodeType SYS_RATE = new("code005", "SYS_RATE");
+        public static readonly CCodeType SYS_RATE = new("battle_system_rates", "SYS_RATE");
         ///// <summary>
         ///// モンスター
         ///// </summary>
-        public static readonly CCodeType MONSTER = new("code006", "MONSTER");
+        public static readonly CCodeType MONSTER = new("battle_monster_types", "MONSTER");
         ///// <summary>
         ///// ロール
         ///// </summary>
-        public static readonly CCodeType ROLE = new("code007", "ROLE");
+        public static readonly CCodeType ROLE = new("user_rolls", "ROLE");
         ///// <summary>
         ///// 設定種類
         ///// </summary>
-        public static readonly CCodeType EDIT = new("code008", "EDIT");
+        public static readonly CCodeType EDIT = new("battle_configs", "EDIT");
     }
 }

@@ -47,13 +47,13 @@ namespace Repository.Repository.sql
 
             INNER JOIN
                        m_code AS monster_type
-                    ON monster_type.code_id = 'code006'
-                   AND monster_type.value = monster.monster_type
+                    ON monster_type.code_id = 'battle_monster_types'
+                   AND monster_type.value   = monster.monster_type
 
             INNER JOIN
                        m_code AS week
-                    ON week.code_id = 'code001'
-                   AND week.value = monster.week
+                    ON week.code_id = 'battle_elements'
+                   AND week.value   = monster.week
 
                  WHERE 
                        ""user"".login_id = @login_id
@@ -137,11 +137,11 @@ namespace Repository.Repository.sql
             INNER JOIN m_skill AS skill
                     ON skill.skill_id = monster_skills.skill_id
             INNER JOIN m_code AS week
-                    ON week.code_id = 'code001'
-                   AND week.value = monster.week
+                    ON week.code_id = 'battle_elements'
+                   AND week.value   = monster.week
             INNER JOIN m_code AS skill_element
-                    ON skill_element.code_id = 'code001'
-                   AND skill_element.value = skill.element_type 
+                    ON skill_element.code_id = 'battle_elements'
+                   AND skill_element.value   = skill.element_type 
                  WHERE login_id = @login_id
               ORDER BY monster.monster_id ASC
                      , skill.skill_id ASC ;
@@ -159,11 +159,11 @@ namespace Repository.Repository.sql
                      , skill.attack AS Attack
                   FROM m_skill AS skill
             INNER JOIN m_code AS skill_type
-                    ON skill_type.code_id = 'code004'
-                   AND skill_type.value = skill.skill_type 
+                    ON skill_type.code_id = 'battle_skill_types'
+                   AND skill_type.value   = skill.skill_type 
             INNER JOIN m_code AS element
-                    ON element.code_id = 'code001'
-                   AND element.value = skill.element_type
+                    ON element.code_id = 'battle_elements'
+                   AND element.value   = skill.element_type
               ORDER BY SkillName ASC ;
                 ";
             return SQL;

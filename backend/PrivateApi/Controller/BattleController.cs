@@ -136,7 +136,7 @@ namespace PrivateApi.Controller
 
                 // モンスターの行動
                 IList<IMonster> otherMonsters = orderedMonsters.Where(e => e.MonsterId != me.MonsterId)
-                                                                .ToList();
+                                                               .ToList();
                 if (me.IsMoveAble()) me.Move(otherMonsters, _logger);
 
                 // 状態異常解除

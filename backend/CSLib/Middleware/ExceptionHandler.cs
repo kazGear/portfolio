@@ -1,8 +1,6 @@
 ﻿using CSLib.Notify;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using Serilog;
-using System.Text;
 
 namespace CSLib.Middleware
 {
@@ -40,7 +38,8 @@ namespace CSLib.Middleware
                     message = $"Internal Server Error.\n{ex}"
                 });
 
-                await _notify.NotifyAsync(_notify.CreateErrorMessage(context, ex));
+                INotifyMessage message = new MessageApiError();
+                await _notify.NotifyAsync(message.CreateMessage(context, ex));
 
                 throw;
             }

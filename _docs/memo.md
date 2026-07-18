@@ -21,23 +21,6 @@ win側で行う。動作確認、リリース前の確認は,wsl + docker
 git管理はC:/repository/portfolio
 
 # CI/CD
-```
-develop
-   │
-   ├── 開発
-   ├── 修正
-   ├── commit
-   └── push
-         │
-         ▼
-     動作確認
-         │
-         ▼
-develop → main
-         │
-         ▼
-       本番
-```
 
 ```
 ① developへ切り替え
@@ -52,7 +35,7 @@ develop → main
        ↓
 ⑥ develop → main
        ↓
-⑦ Merge
+⑦ Merge（デプロイ）
 ```
 
 ```
@@ -246,8 +229,6 @@ less
 - 企画 監視ダッシュボードサービスの検討(各サービスが生きてるか、実行されてるか確認するもの)
 - AWS 基礎履修
 - VPS バッチ未起動の検知（heartBeat方式, 要：batch log table(DB)）
-- git 本番用ブランチ作成
-- CI/CD構築
 - VPS DB バックアップ＋ダウンロード
 - モンスター画像 差し替え（約80件、背景透過png）
 - guitar crawler メーカー追加

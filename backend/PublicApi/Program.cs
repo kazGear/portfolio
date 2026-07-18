@@ -13,7 +13,7 @@ builder.Host.UseSerilog();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddHttpClient<INotify, DiscordNotify>(); // notify setting
+builder.Services.AddHttpClient<INotify, NotifyDiscord>(); // notify setting
 
 builder.Services.AddCors(options =>
 {

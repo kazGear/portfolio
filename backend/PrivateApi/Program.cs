@@ -106,7 +106,7 @@ public class Startup
         });
 
         // 通知設定
-        services.AddHttpClient<INotify, DiscordNotify>();
+        services.AddHttpClient<INotify, NotifyDiscord>();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)

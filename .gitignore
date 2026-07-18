@@ -73,3 +73,9 @@ docker/db/init/*.sql
 # ============================
 *.orig
 *.json
+
+# ============================
+# Let's Encrypt
+# ============================
+/certbot/conf/*
+/certbot/www/*

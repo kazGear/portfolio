@@ -39,6 +39,68 @@ develop → main
        本番
 ```
 
+```
+① developへ切り替え
+       ↓
+② ファイル変更
+       ↓
+③ Commit to develop
+       ↓
+④ Push origin
+       ↓
+⑤ GitHubでPR作成
+       ↓
+⑥ develop → main
+       ↓
+⑦ Merge
+```
+
+```
+開発者
+  │
+  ├── developで開発
+  ├── commit
+  ├── push
+  └── PR → main
+          │
+          ▼
+     GitHub Actions
+          │
+          ▼
+         VPS
+          │
+          ├── 最新ソース取得
+          ├── Docker Build
+          └── 起動
+```
+
+```
+┌────────────────┐
+│ Local PC       │
+│                │
+│ develop        │
+└───────┬────────┘
+        │
+        │ Pull Request / merge
+        ▼
+┌────────────────┐
+│ GitHub         │
+│                │
+│ main           │
+└───────┬────────┘
+        │
+        │ GitHub Actions
+        │ SSH
+        ▼
+┌────────────────┐
+│ VPS            │
+│                │
+│ git pull       │
+│ docker compose │
+│ build/up       │
+└────────────────┘
+```
+
 # C#バッチを叩く
 
 swaggerから実行

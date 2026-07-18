@@ -20,6 +20,25 @@ docker compose --env-file .env.prod -f compose.base.yaml -f compose.prod.yaml do
 win側で行う。動作確認、リリース前の確認は,wsl + docker
 git管理はC:/repository/portfolio
 
+# CI/CD
+```
+develop
+   │
+   ├── 開発
+   ├── 修正
+   ├── commit
+   └── push
+         │
+         ▼
+     動作確認
+         │
+         ▼
+develop → main
+         │
+         ▼
+       本番
+```
+
 # C#バッチを叩く
 
 swaggerから実行

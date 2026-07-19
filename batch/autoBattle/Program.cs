@@ -28,7 +28,7 @@ MonsterFactory _monsterFactory = new MonsterFactory();
 Randoms _random                = new Randoms();
 ILog<BattleMetaData> logger    = new BattleLogger();
 
-int battleTimes = 5; // 戦闘回数
+int battleTimes = 10; // 戦闘回数
 
 for (int i = 0; i < battleTimes; i++)
 {

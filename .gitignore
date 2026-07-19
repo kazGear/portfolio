@@ -42,6 +42,7 @@ pgdata/
 docker/db/init/*.sql
 *.sqlite
 *.sqlite3
+infrastructure/db/backup/*.dump
 
 # ============================
 # Secrets

@@ -1,0 +1,1 @@
+0 22 * * * /home/kazuki/app/portfolio/batch/forLinux/BackupPostgres.sh >> /home/kazuki/app/portfolio/batch/forLinux/BackupPostgres.log 2>&1

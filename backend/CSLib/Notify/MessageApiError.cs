@@ -5,28 +5,9 @@ using System.Text;
 
 namespace CSLib.Notify
 {
-    public class DiscordNotify : INotify
+    public class MessageApiError : INotifyMessage
     {
-        private readonly HttpClient _httpClient;
-        private readonly string _webhookUrl;
-
-        public DiscordNotify(HttpClient httpClient, IConfiguration configuration)
-        {
-            _httpClient = httpClient;
-            _webhookUrl = configuration["Discord:WebhookUrl"]!;
-        }
-
-        public async Task NotifyAsync(string message)
-        {
-            var body = new
-            {
-                content = message
-            };
-
-            await _httpClient.PostAsJsonAsync(_webhookUrl, body);
-        }
-
-        public string CreateErrorMessage(HttpContext context, Exception ex)
+        public string CreateMessage(HttpContext context, Exception ex)
         {
             StringBuilder sb = new StringBuilder();
 

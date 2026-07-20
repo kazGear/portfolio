@@ -64,7 +64,7 @@ git管理はC:/repository/portfolio
 │ develop        │
 └───────┬────────┘
         │
-        │ Pull Request / merge
+        │ Pull Request / merge <<< deployトリガ
         ▼
 ┌────────────────┐
 │ GitHub         │
@@ -180,7 +180,11 @@ windowsの改行（CRLF）が混ざるとcronが起動しない。
 # docker DB 初期化ファイル作成
 
 powerShellで、
+
 pg_dump -U postgres -h localhost -p 5432 -d kaz_app --no-owner --no-privileges -f C:\repository\portfolio\infrastructure\db\init\init.sql
+
+DBを削除、再作成してから
+pg_restore -h localhost -p 5432 -U postgres -d kaz_app .\infrastructure\db\backup\kaz_app_yyyymmdd_hhmmss.dump
 
 # docker コンテナ内の確認
 

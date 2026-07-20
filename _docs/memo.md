@@ -202,6 +202,7 @@ docker exec -it コンテナ名 bash
 
 ログ確認
 docker logs コンテナ名
+docker compose --env-file .env.prod -f compose.base.yaml -f compose.prod.yaml logs --tail=200 {サービス名}
 
 # docker 基本操作
 

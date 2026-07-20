@@ -1,7 +1,4 @@
-﻿using System.Reflection;
-using System.Security.Policy;
-
-namespace CSLib.Const
+﻿namespace CSLib.Const
 {
     /// <summary>
     /// 自然属性定数

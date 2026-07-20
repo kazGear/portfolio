@@ -231,5 +231,13 @@ namespace PrivateApi.Common._Filter
 
             return targetType;
         }
+
+        public static int Minute(int minite)
+        {
+            if (minite < 0)
+                throw new ValidationException($"0分以上の時間設定をしてください。");
+
+            return minite;
+        }
     }
 }

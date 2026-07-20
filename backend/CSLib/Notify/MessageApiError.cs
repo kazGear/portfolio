@@ -1,6 +1,4 @@
 ﻿using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
-using System.Net.Http.Json;
 using System.Text;
 
 namespace CSLib.Notify
@@ -11,9 +9,9 @@ namespace CSLib.Notify
         {
             StringBuilder sb = new StringBuilder();
 
-            sb.AppendLine("🚨 portfolio API Error\n");
+            sb.AppendLine("\n🚨 portfolio API Error\n");
 
-            sb.AppendLine($"Time: {DateTime.Now:yyyy-MM-dd HH:mm:ss}\n");
+            sb.AppendLine($"Time: {DateTime.Now:yyyy-MM-dd HH:mm}\n");
             sb.AppendLine($"Path: {context.Request.Method} {context.Request.Path}\n");
             sb.AppendLine($"Exception: {ex.GetType().Name}\n");
             sb.AppendLine($"Message: {ex.Message}\n");

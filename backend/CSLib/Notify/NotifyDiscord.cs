@@ -6,12 +6,17 @@ namespace CSLib.Notify
     public class NotifyDiscord : INotify
     {
         private readonly HttpClient _httpClient;
-        private readonly string _webhookUrl;
+        private readonly string? _webhookUrl;
 
         public NotifyDiscord(HttpClient httpClient, IConfiguration configuration)
         {
             _httpClient = httpClient;
-            _webhookUrl = configuration["Discord:WebhookUrl"]!;
+            _webhookUrl = configuration["Discord:WebhookUrl"];
+
+            if (string.IsNullOrWhiteSpace(_webhookUrl))
+            {
+                throw new InvalidOperationException("Not set Discord webhookUrl.");
+            }
         }
 
         public async Task NotifyAsync(string message)
@@ -21,7 +26,8 @@ namespace CSLib.Notify
                 content = message
             };
 
-            await _httpClient.PostAsJsonAsync(_webhookUrl, body);
+            HttpResponseMessage? response = await _httpClient.PostAsJsonAsync(_webhookUrl, body);
+            response.EnsureSuccessStatusCode();
         }
     }
 }

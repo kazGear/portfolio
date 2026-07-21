@@ -44,26 +44,21 @@ namespace PrivateApi.Service
         {
             var param = new DynamicParameters();
 
+            param.Add("log_id", config.LogId);
+            param.Add("message", "");
+
             if (config.TimeoutMinutes < timeSpan.TotalMinutes)
-            {
-                // タイムアウト
+            {   
                 param.Add("status", "TIMEOUT");
-                param.Add("message", "");
             }
             else if (config.ExpectedDurationMinutes < timeSpan.TotalMinutes)
             {
-                // 想定通りの時間内に終わってない
                 param.Add("status", "SLOW");
-                param.Add("message", "");
             }
             else
             {
-                // 正常に完了
                 param.Add("status", "SUCCESS");
-                param.Add("message", "");
             }
-            param.Add("log_id", config.LogId);
-
             await _posgre.Execute(BatchLogSQL.UpdateStatus(), param);
         }
     }

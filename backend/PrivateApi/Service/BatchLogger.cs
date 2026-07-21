@@ -58,7 +58,7 @@ namespace PrivateApi.Service
             }
             else
             {
-                // 正常に成功
+                // 正常に完了
                 param.Add("status", "SUCCESS");
                 param.Add("message", "");
             }

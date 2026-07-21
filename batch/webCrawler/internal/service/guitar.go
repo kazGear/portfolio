@@ -75,6 +75,7 @@ func (g *guitarCrawlerService) RunCrawler() {
             guitars := maker.scraper.Scrape(maker.provider, maker.parser, parentCtx)
             okCnt, ngCnt, errs := g.repository.UpsertAll(guitars)
 
+            // ログ
             maker.logger.Printf("[Upsert result %v]: OK %v 件, NG %v 件", maker.name, okCnt, ngCnt)
             log.Printf("[Upsert result %v]: OK %v 件, NG %v 件", maker.name, okCnt, ngCnt) // コンソール用
 

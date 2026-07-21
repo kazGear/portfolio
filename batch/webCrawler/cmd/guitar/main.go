@@ -1,11 +1,14 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"strconv"
+	"time"
 
 	"github.com/joho/godotenv"
+	"github.com/kazGear/portfolio/webCrawler/internal/model"
 	"github.com/kazGear/portfolio/webCrawler/internal/repository"
 	"github.com/kazGear/portfolio/webCrawler/internal/service"
 	"github.com/kazGear/portfolio/webCrawler/pkg/db"
@@ -18,7 +21,7 @@ func init() {
 	envFile := os.Getenv("ENV_FILE")
 
 	if envFile == "" { // ローカル環境なら空
-		envFile = ".env.dev"
+		envFile = `C:\repository\portfolio\batch\webCrawler\.env.dev`
 	}
 
 	if err := godotenv.Load(envFile); err != nil {
@@ -30,14 +33,32 @@ func init() {
 }
 
 func main() {
+	stopWatch := time.Now()
+
 	// DBセットアップ
 	database := db.Connect()
 	defer database.Close()
 	repository := repository.NewGuitarRepository(database)
 
+	// DBロガー
+	dbLogger := service.NewBatchLogger(database)
+	config, err := dbLogger.InsertStartLog("GuitarCrawler")
+
+	defer func(config *model.BatchConfig) {
+		if r := recover(); r != nil {
+			panic := fmt.Errorf("panic: %v\n", r)
+			dbLogger.UpdateError(config, panic)
+		}
+	}(config)
+
+	if err != nil {
+		dbLogger.UpdateError(config, err)
+		return
+	}
+
 	// クローラー起動
-	service := service.NewGuitarCrawlerService(repository)
-	service.RunCrawler()
+	crawler := service.NewGuitarCrawlerService(repository)
+	crawler.RunCrawler()
 
 	// 過去ログの整理
 	logPath 		 := os.Getenv("LOGS_PATH")
@@ -46,5 +67,9 @@ func main() {
 		logPath,
 		logsKeepCount,
 	)
+
+	timeSpan := time.Since(stopWatch)
+	dbLogger.UpdateStatus(config, &timeSpan)
+
 	log.Println("Finished guitar crawler.")
 }

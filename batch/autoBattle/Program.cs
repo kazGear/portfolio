@@ -13,6 +13,10 @@ using System.Text;
 
 Console.WriteLine("Auto battle start...");
 
+// 時間計測
+TimeMeasure stopWatch = new TimeMeasure();
+stopWatch.Start();
+
 // 接続先情報
 string environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
 
@@ -22,11 +26,17 @@ var configuration = new ConfigurationBuilder()
     .AddJsonFile($"appsettings.{environment}.json", optional: true)
     .Build();
 
+// batch log
+string batchName            = "AutoBattle";
+BatchLogger _batchLogger    = new BatchLogger(configuration);
+BatchConfigDTO _batchConfig = await _batchLogger.InsertStartLog(batchName);
+
+// services
 IDatabase _posgre              = new PostgreSQL(ConnectionString.Get(configuration));
 BattleService _service         = new BattleService(configuration);
 MonsterFactory _monsterFactory = new MonsterFactory();
 Randoms _random                = new Randoms();
-ILog<BattleMetaData> logger    = new BattleLogger();
+ILog<BattleMetaData> _logger   = new BattleLogger();
 
 int battleTimes = 10; // 戦闘回数
 
@@ -83,11 +93,11 @@ for (int i = 0; i < battleTimes; i++)
                 if (me.Hp <= 0) continue;
 
                 // 状態異常の効果
-                me.StateImpact(logger);
+                me.StateImpact(_logger);
 
                 // モンスターの行動
                 IList<IMonster> otherMonsters = orderedMonsters.Where(e => e.MonsterId != me.MonsterId).ToList();
-                if (me.IsMoveAble()) me.Move(otherMonsters, logger);
+                if (me.IsMoveAble()) me.Move(otherMonsters, _logger);
 
                 // 状態異常解除
                 IEnumerable<IState> currentStatus = me.CurrentStatus();
@@ -97,7 +107,7 @@ for (int i = 0; i < battleTimes; i++)
                     if (!BattleSystem.StateIsDisabled(state))
                         changedStatus.Add(state);
                     else
-                        state.DisabledLogging(me, logger);
+                        state.DisabledLogging(me, _logger);
                 }
                 me.UpdateStatus(changedStatus);
 
@@ -135,18 +145,22 @@ for (int i = 0; i < battleTimes; i++)
         }
         Console.WriteLine("");
 
-        // 間隔を空け再選（10秒ごと、最終回は待たない）
+        // 間隔を空け再選（最終回は待たない）
         if (i < battleTimes - 1)
         {
-            // 再戦待ち...(10秒)");
-            await Task.Delay(10000);
+            // 再戦待ち...(5秒)");
+            await Task.Delay(5000);
         }
     }
     catch (Exception e)
     {
+        await _batchLogger.UpdateError(e, _batchConfig);
+
         Console.WriteLine("batch [AutoBattle] が異常終了しました。");
         Console.WriteLine(e);
-    }
 
+        return;
+    }
 }
+await _batchLogger.UpdateStatus(_batchConfig, stopWatch.Stop());
 Console.WriteLine($"Finished auto battle.（{battleTimes}戦）");

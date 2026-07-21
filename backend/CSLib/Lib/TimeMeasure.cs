@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
 
 namespace CSLib.Lib
 {
@@ -12,36 +7,31 @@ namespace CSLib.Lib
     /// </summary>
     public class TimeMeasure
     {
-        private static Stopwatch _stopWatch = new();
+        private Stopwatch _stopWatch;
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        private TimeMeasure()
+        public TimeMeasure()
         {
-
+            _stopWatch = new();
         }
         /// <summary>
         /// 時間計測開始
         /// </summary>
-        public static void Start()
+        public void Start()
         {
-            _stopWatch = new();
             _stopWatch.Start();
         }
         /// <summary>
         /// 計測終了
         /// </summary>
-        public static string Stop()
+        public TimeSpan Stop()
         {
             _stopWatch.Stop();
-            TimeSpan ts = _stopWatch.Elapsed;
 
-            return 
-                $"{ts.Hours}:".ToString().PadLeft(3, '0')
-                + $"{ts.Minutes}:".ToString().PadLeft(3, '0')
-                + $"{ts.Seconds}.".ToString().PadLeft(3, '0')
-                + $"{ts.Milliseconds}".ToString().PadLeft(3, '0');
+            TimeSpan ts = _stopWatch.Elapsed;
+            return ts;
         }
     }
 }

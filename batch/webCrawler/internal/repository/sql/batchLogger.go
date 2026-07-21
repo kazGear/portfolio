@@ -18,7 +18,7 @@ func InsertStartLog() string {
     `
 }
 
-func GetConfig() string {
+func SelectBatchConfig() string {
 	return `
         SELECT
                exe.log_id                       AS log_id,

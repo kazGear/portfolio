@@ -34,7 +34,7 @@ func (b *batchLoggerRepository) InsertStartLog(batchName string) (*model.BatchCo
         return nil, err
     }
     // バッチ情報を取得
-    rows, err := b.db.NamedQuery(sql.GetConfig(), params)
+    rows, err := b.db.NamedQuery(sql.SelectBatchConfig(), params)
 
     if err != nil {
         return nil, err

@@ -105,11 +105,11 @@ services:
 
   batch-guitar-crawler:
     build:
-      context: ./batch/webCrawler
+      context: ./batch/goBatch
       dockerfile: Dockerfile.prod
     restart: unless-stopped
     volumes:
-      - ./batch/webCrawler/logs:/app/logs
+      - ./batch/goBatch/logs:/app/logs
     environment:
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}

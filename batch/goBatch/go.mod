@@ -1,4 +1,4 @@
-module github.com/kazGear/portfolio/webCrawler
+module github.com/kazGear/portfolio/goBatch
 
 go 1.26.1
 

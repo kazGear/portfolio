@@ -14,9 +14,9 @@ import (
 	"github.com/PuerkitoBio/goquery"
 	"github.com/chromedp/chromedp"
 	"github.com/gocolly/colly/v2"
-	"github.com/kazGear/portfolio/webCrawler/internal/model"
-	C "github.com/kazGear/portfolio/webCrawler/pkg/constants"
-	"github.com/kazGear/portfolio/webCrawler/pkg/utils"
+	"github.com/kazGear/portfolio/goBatch/internal/model"
+	C "github.com/kazGear/portfolio/goBatch/pkg/constants"
+	"github.com/kazGear/portfolio/goBatch/pkg/utils"
 )
 
 type guitarScraperGibson struct {

@@ -93,11 +93,11 @@ services:
 
   batch-guitar-crawler:
     build:
-      context: ./batch/webCrawler
+      context: ./batch/goBatch
       dockerfile: Dockerfile.dev
     restart: "no"
     volumes:
-     - ./batch/webCrawler/logs:/app/logs
+     - ./batch/goBatch/logs:/app/logs
     environment:
       ENV_FILE: .env.dev
       DB_USER: ${DB_USER}

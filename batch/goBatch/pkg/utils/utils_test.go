@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	C "github.com/kazGear/portfolio/webCrawler/pkg/constants"
+	C "github.com/kazGear/portfolio/goBatch/pkg/constants"
 	"github.com/stretchr/testify/assert"
 )
 

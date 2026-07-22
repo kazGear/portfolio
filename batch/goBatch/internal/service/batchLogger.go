@@ -4,8 +4,8 @@ import (
 	"time"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/kazGear/portfolio/webCrawler/internal/model"
-	"github.com/kazGear/portfolio/webCrawler/internal/repository"
+	"github.com/kazGear/portfolio/goBatch/internal/model"
+	"github.com/kazGear/portfolio/goBatch/internal/repository"
 )
 
 type BatchLogger struct {

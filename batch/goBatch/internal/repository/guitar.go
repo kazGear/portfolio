@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/kazGear/portfolio/webCrawler/internal/model"
-	"github.com/kazGear/portfolio/webCrawler/internal/repository/sql"
+	"github.com/kazGear/portfolio/goBatch/internal/model"
+	"github.com/kazGear/portfolio/goBatch/internal/repository/sql"
 )
 
 type Repository interface {

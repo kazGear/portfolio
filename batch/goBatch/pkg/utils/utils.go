@@ -20,8 +20,8 @@ import (
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/chromedp/cdproto/cdp"
-	"github.com/kazGear/portfolio/webCrawler/internal/model"
-	C "github.com/kazGear/portfolio/webCrawler/pkg/constants"
+	"github.com/kazGear/portfolio/goBatch/internal/model"
+	C "github.com/kazGear/portfolio/goBatch/pkg/constants"
 	"github.com/shopspring/decimal"
 
 	"golang.org/x/text/width"

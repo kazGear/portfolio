@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	"github.com/chromedp/chromedp"
-	"github.com/kazGear/portfolio/webCrawler/pkg/utils"
+	"github.com/kazGear/portfolio/goBatch/pkg/utils"
 	"github.com/stretchr/testify/assert"
 )
 

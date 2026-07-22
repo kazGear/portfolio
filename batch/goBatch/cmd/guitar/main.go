@@ -8,11 +8,11 @@ import (
 	"time"
 
 	"github.com/joho/godotenv"
-	"github.com/kazGear/portfolio/webCrawler/internal/model"
-	"github.com/kazGear/portfolio/webCrawler/internal/repository"
-	"github.com/kazGear/portfolio/webCrawler/internal/service"
-	"github.com/kazGear/portfolio/webCrawler/pkg/db"
-	"github.com/kazGear/portfolio/webCrawler/pkg/utils"
+	"github.com/kazGear/portfolio/goBatch/internal/model"
+	"github.com/kazGear/portfolio/goBatch/internal/repository"
+	"github.com/kazGear/portfolio/goBatch/internal/service"
+	"github.com/kazGear/portfolio/goBatch/pkg/db"
+	"github.com/kazGear/portfolio/goBatch/pkg/utils"
 )
 
 func init() {
@@ -21,7 +21,7 @@ func init() {
 	envFile := os.Getenv("ENV_FILE")
 
 	if envFile == "" { // ローカル環境なら空
-		envFile = `C:\repository\portfolio\batch\webCrawler\.env.dev`
+		envFile = `C:\repository\portfolio\batch\goBatch\.env.dev`
 	}
 
 	if err := godotenv.Load(envFile); err != nil {

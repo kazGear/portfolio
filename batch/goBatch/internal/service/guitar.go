@@ -9,10 +9,10 @@ import (
 	"time"
 
 	"github.com/chromedp/chromedp"
-	"github.com/kazGear/portfolio/webCrawler/internal/repository"
-	"github.com/kazGear/portfolio/webCrawler/internal/scraper"
-	C "github.com/kazGear/portfolio/webCrawler/pkg/constants"
-	"github.com/kazGear/portfolio/webCrawler/pkg/utils"
+	"github.com/kazGear/portfolio/goBatch/internal/repository"
+	"github.com/kazGear/portfolio/goBatch/internal/scraper"
+	C "github.com/kazGear/portfolio/goBatch/pkg/constants"
+	"github.com/kazGear/portfolio/goBatch/pkg/utils"
 )
 
 type CrawlerService interface {

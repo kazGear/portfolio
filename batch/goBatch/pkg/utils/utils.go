@@ -20,6 +20,7 @@ import (
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/chromedp/cdproto/cdp"
+	"github.com/joho/godotenv"
 	"github.com/kazGear/portfolio/goBatch/internal/crawler/model"
 	C "github.com/kazGear/portfolio/goBatch/pkg/constants"
 	"github.com/shopspring/decimal"
@@ -28,6 +29,21 @@ import (
 	"gopkg.in/natefinch/lumberjack.v2"
 )
 
+// 環境変数読み込み
+func LoadEnv() {
+	envFile := os.Getenv("ENV_FILE")
+
+	if envFile == "" { // ローカル環境なら空
+		envFile = `C:\repository\portfolio\batch\goBatch\.env.dev`
+	}
+
+	if err := godotenv.Load(envFile); err != nil {
+		log.Printf("Skip env file: %v", envFile)
+		log.Println("Use environment of compose.yaml.")
+	} else {
+		log.Printf("Loaded env file: %v", envFile)
+	}
+}
 
 var _regPriceSpliter   = regexp.MustCompile(`[()（）/／:、]`)
 var _regUndefinedPrice = regexp.MustCompile(`(?i)(ask|open|オープン)`)

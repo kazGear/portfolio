@@ -76,6 +76,7 @@ const InputUserBlock = ({
                 alertMessage="既に使用されている略称です。"
                 ref={refDispShortName}
                 styleObj={{width: "135px"}}
+                maxLength={5}
             />
         </div>
     );

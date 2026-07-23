@@ -1,8 +1,6 @@
-﻿using CSLib.Lib;
-using CSLib.Notify;
+﻿using CSLib.Notify;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using System.Collections.Concurrent;
 
 namespace CSLib.Middleware
 {

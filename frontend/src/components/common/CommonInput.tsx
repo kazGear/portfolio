@@ -33,6 +33,7 @@ interface ArgProps {
     defaultValue?: string | number;
     min?: string;
     max?: string;
+    maxLength?: number;
 }
 
 // forwardRef: 親から参照されるため
@@ -54,6 +55,7 @@ const CommonInput = forwardRef<HTMLInputElement, ArgProps>(({
     defaultValue,
     min,
     max,
+    maxLength,
 }, ref) => {
     const [show, setShow] = useState(false);
 
@@ -80,6 +82,7 @@ const CommonInput = forwardRef<HTMLInputElement, ArgProps>(({
                         defaultValue={defaultValue}
                         min={min}
                         max={max}
+                        maxLength={maxLength}
                         onKeyDown={(e) => {
                             // Enter入力でフォーカスアウト = 入力済扱い
                             if (e.key === "Enter") {

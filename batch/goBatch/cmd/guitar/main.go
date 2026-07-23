@@ -7,7 +7,6 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/joho/godotenv"
 	"github.com/kazGear/portfolio/goBatch/internal/batchLogger/model"
 	batchLoggerService "github.com/kazGear/portfolio/goBatch/internal/batchLogger/service"
 	"github.com/kazGear/portfolio/goBatch/internal/crawler/repository"
@@ -18,19 +17,7 @@ import (
 
 func init() {
 	log.Println("Start guitar crawler.")
-
-	envFile := os.Getenv("ENV_FILE")
-
-	if envFile == "" { // ローカル環境なら空
-		envFile = `C:\repository\portfolio\batch\goBatch\.env.dev`
-	}
-
-	if err := godotenv.Load(envFile); err != nil {
-		log.Printf("Skip env file: %v", envFile)
-		log.Println("Use environment of compose.yaml.")
-	} else {
-		log.Printf("Loaded env file: %v", envFile)
-	}
+	utils.LoadEnv()
 }
 
 func main() {

@@ -109,7 +109,7 @@ services:
       dockerfile: Dockerfile.prod
     restart: unless-stopped
     volumes:
-      - ./batch/goBatch/logs:/app/logs
+      - ./batch/goBatch/internal/crawler/logs:/app/internal/crawler/logs
     environment:
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}

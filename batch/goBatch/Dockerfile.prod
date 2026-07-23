@@ -30,6 +30,6 @@ RUN sed -i 's/\r$//' /etc/cron.d/guitar-crawler && \
     chmod 0644 /etc/cron.d/guitar-crawler && \
     crontab /etc/cron.d/guitar-crawler
 
-RUN mkdir -p /app/logs
+RUN mkdir -p /app/internal/crawler/logs
 
-CMD ["/bin/sh", "-c", "printenv > /etc/environment && cron -f"]
+CMD ["/bin/sh", "-c", "printenv > /etc/environment && exec cron -f"]

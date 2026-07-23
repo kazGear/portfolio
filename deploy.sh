@@ -50,4 +50,4 @@ if [ "$ERROR" -ne 0 ]; then
 fi
 
 echo "=== All containers are running ==="
-echo "=== Deploy completed ==="
+echo "=== Deploy completed === "

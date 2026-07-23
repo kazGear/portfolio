@@ -9,8 +9,8 @@ import (
 	"time"
 
 	"github.com/chromedp/chromedp"
-	"github.com/kazGear/portfolio/goBatch/internal/repository"
-	"github.com/kazGear/portfolio/goBatch/internal/scraper"
+	"github.com/kazGear/portfolio/goBatch/internal/crawler/repository"
+	"github.com/kazGear/portfolio/goBatch/internal/crawler/scraper"
 	C "github.com/kazGear/portfolio/goBatch/pkg/constants"
 	"github.com/kazGear/portfolio/goBatch/pkg/utils"
 )

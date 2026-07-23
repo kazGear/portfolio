@@ -8,9 +8,10 @@ import (
 	"time"
 
 	"github.com/joho/godotenv"
-	"github.com/kazGear/portfolio/goBatch/internal/model"
-	"github.com/kazGear/portfolio/goBatch/internal/repository"
-	"github.com/kazGear/portfolio/goBatch/internal/service"
+	"github.com/kazGear/portfolio/goBatch/internal/batchLogger/model"
+	batchLoggerService "github.com/kazGear/portfolio/goBatch/internal/batchLogger/service"
+	"github.com/kazGear/portfolio/goBatch/internal/crawler/repository"
+	crawlerService "github.com/kazGear/portfolio/goBatch/internal/crawler/service"
 	"github.com/kazGear/portfolio/goBatch/pkg/db"
 	"github.com/kazGear/portfolio/goBatch/pkg/utils"
 )
@@ -41,7 +42,7 @@ func main() {
 	repository := repository.NewGuitarRepository(database)
 
 	// DBロガー
-	dbLogger := service.NewBatchLogger(database)
+	dbLogger := batchLoggerService.NewBatchLogger(database)
 	config, err := dbLogger.InsertStartLog("GuitarCrawler")
 
 	defer func(config *model.BatchConfig) {
@@ -57,7 +58,7 @@ func main() {
 	}
 
 	// クローラー起動
-	crawler := service.NewGuitarCrawlerService(repository)
+	crawler := crawlerService.NewGuitarCrawlerService(repository)
 	crawler.RunCrawler()
 
 	// 過去ログの整理

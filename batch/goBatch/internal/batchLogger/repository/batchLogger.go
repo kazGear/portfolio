@@ -12,19 +12,12 @@ type batchLoggerRepository struct {
     db *sqlx.DB
 }
 
-type batchLoggerParam struct {
-	LogId     int64  `db:"log_id"`
-	BatchName string `db:"batch_name"`
-	Status    string `db:"status"`
-	Message   string `db:"message"`
-}
-
 func NewBatchLoggerRepository(db *sqlx.DB) *batchLoggerRepository {
     return &batchLoggerRepository{ db: db }
 }
 
 func (b *batchLoggerRepository) InsertStartLog(batchName string) (*model.BatchConfig, error) {
-    params := &batchLoggerParam{
+    params := &model.BatchLoggerParam{
         BatchName: batchName,
     }
     // 開始ログ挿入
@@ -52,7 +45,7 @@ func (b *batchLoggerRepository) InsertStartLog(batchName string) (*model.BatchCo
 }
 
 func (b *batchLoggerRepository) UpdateError(config *model.BatchConfig, err error) error {
-    param := &batchLoggerParam{
+    param := &model.BatchLoggerParam{
         LogId:   config.LogId,
         Status:  "ERROR",
         Message: err.Error(),
@@ -66,7 +59,7 @@ func (b *batchLoggerRepository) UpdateError(config *model.BatchConfig, err error
 }
 
 func (b *batchLoggerRepository) UpdateStatus(config *model.BatchConfig, timeSpan *time.Duration) error {
-    params := &batchLoggerParam{
+    params := &model.BatchLoggerParam{
         LogId:   config.LogId,
         Message: "",
     }

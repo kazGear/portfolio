@@ -3,22 +3,20 @@ package service
 import (
 	"time"
 
-	"github.com/jmoiron/sqlx"
 	"github.com/kazGear/portfolio/goBatch/internal/batchLogger/model"
 	"github.com/kazGear/portfolio/goBatch/internal/batchLogger/repository"
 )
 
 type BatchLogger struct {
-    db *sqlx.DB
+    repository repository.BatchLoggerRepository
 }
 
-func NewBatchLogger(db *sqlx.DB) *BatchLogger {
-    return &BatchLogger{ db: db }
+func NewBatchLogger(repository repository.BatchLoggerRepository) *BatchLogger {
+    return &BatchLogger{ repository: repository }
 }
 
 func (b *BatchLogger) InsertStartLog(batchName string) (*model.BatchConfig, error) {
-    repository  := repository.NewBatchLoggerRepository(b.db)
-    config, err := repository.InsertStartLog(batchName)
+    config, err := b.repository.InsertStartLog(batchName)
 
     if err != nil {
         return nil, err
@@ -27,8 +25,7 @@ func (b *BatchLogger) InsertStartLog(batchName string) (*model.BatchConfig, erro
 }
 
 func (b *BatchLogger) UpdateError(config *model.BatchConfig, err error) error {
-    repository := repository.NewBatchLoggerRepository(b.db)
-    err         = repository.UpdateError(config, err)
+    err = b.repository.UpdateError(config, err)
 
     if err != nil {
         return err
@@ -37,8 +34,7 @@ func (b *BatchLogger) UpdateError(config *model.BatchConfig, err error) error {
 }
 
 func (b *BatchLogger) UpdateStatus(config *model.BatchConfig, timeSpan *time.Duration) error {
-    repository := repository.NewBatchLoggerRepository(b.db)
-    err        := repository.UpdateStatus(config, timeSpan)
+    err := b.repository.UpdateStatus(config, timeSpan)
 
     if err != nil {
         return err

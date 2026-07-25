@@ -7,8 +7,9 @@ import (
 	"time"
 
 	"github.com/kazGear/portfolio/goBatch/internal/batchLogger/model"
+	batchLoggerRepository "github.com/kazGear/portfolio/goBatch/internal/batchLogger/repository"
 	batchLoggerService "github.com/kazGear/portfolio/goBatch/internal/batchLogger/service"
-	"github.com/kazGear/portfolio/goBatch/internal/batchMonitor/repository"
+	batchMonitorRepository "github.com/kazGear/portfolio/goBatch/internal/batchMonitor/repository"
 	batchMonitorService "github.com/kazGear/portfolio/goBatch/internal/batchMonitor/service"
 	"github.com/kazGear/portfolio/goBatch/pkg/db"
 	"github.com/kazGear/portfolio/goBatch/pkg/utils"
@@ -26,8 +27,12 @@ func main() {
 	database := db.Connect()
 	defer database.Close()
 
+	// リポジトリ作成
+	batchMonitorRepository := batchMonitorRepository.NewBatchMonitorRepository(database)
+	batchLoggerRepository  := batchLoggerRepository.NewBatchLoggerRepository(database)
+
 	// DBロガー
-	dbLogger    := batchLoggerService.NewBatchLogger(database)
+	dbLogger    := batchLoggerService.NewBatchLogger(*batchLoggerRepository)
 	config, err := dbLogger.InsertStartLog("BatchMonitor")
 
 	defer func(config *model.BatchConfig) {
@@ -42,12 +47,9 @@ func main() {
 		return
 	}
 
-	// リポジトリ作成
-	repository := repository.NewBatchMonitorRepository(database)
-
 	// サービス作成・実行
 	discordWebHook := os.Getenv("DISCORD_WEBHOOK_URL")
-	batchMonitor   := batchMonitorService.NewBatchMonitorService(repository)
+	batchMonitor   := batchMonitorService.NewBatchMonitorService(batchMonitorRepository)
 	batchMonitor.Notify(discordWebHook)
 
 	timeSpan := time.Since(stopWatch)

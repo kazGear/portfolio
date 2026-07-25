@@ -4,7 +4,7 @@
 - Guitar Gallery
 - Guitar REST API(GET only)
 - web版経歴書
-- batch監視システム(異常時にプッシュ通知)
+- API・batch監視システム(異常時にプッシュ通知)
 
 ## Demo スクリーンショット
 

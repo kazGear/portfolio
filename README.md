@@ -6,6 +6,10 @@
 - web版経歴書
 - API・batch監視システム(異常時にプッシュ通知)
 
+《 システム構成要素 》
+
+React(Vite + HTML + CSS + TypeScript), C#(ASP.NET Core Web API), Go言語, PostgreSQL, REST API, Webスクレイピング, バッチ処理, Docker Compose, Nginx(リバースプロキシ), HTTPS(Let's Encrypt), レンタルVPS, GitHub Actions(CI/CD・自動デプロイ), ログ管理, 共通エラーハンドリング基盤, API・バッチ監視(異常検知, Discord通知), システム運用基盤(自動デプロイエラー、他各種エラー検知等)
+
 ## Demo スクリーンショット
 
 ---

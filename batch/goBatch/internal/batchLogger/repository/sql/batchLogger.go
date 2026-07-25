@@ -35,7 +35,7 @@ func SelectBatchConfig() string {
             ON exe.batch_name = config.batch_name
 
          WHERE
-               exe.log_id = (SELECT max(log_id) FROM t_batch_execution)
+               exe.log_id     = (SELECT max(log_id) FROM t_batch_execution)
            AND exe.batch_name = :batch_name
              ;
     `

@@ -8,8 +8,9 @@ import (
 	"time"
 
 	"github.com/kazGear/portfolio/goBatch/internal/batchLogger/model"
+	loggerRepository "github.com/kazGear/portfolio/goBatch/internal/batchLogger/repository"
 	batchLoggerService "github.com/kazGear/portfolio/goBatch/internal/batchLogger/service"
-	"github.com/kazGear/portfolio/goBatch/internal/crawler/repository"
+	guitarRepository "github.com/kazGear/portfolio/goBatch/internal/crawler/repository"
 	crawlerService "github.com/kazGear/portfolio/goBatch/internal/crawler/service"
 	"github.com/kazGear/portfolio/goBatch/pkg/db"
 	"github.com/kazGear/portfolio/goBatch/pkg/utils"
@@ -26,10 +27,13 @@ func main() {
 	// DBセットアップ
 	database := db.Connect()
 	defer database.Close()
-	repository := repository.NewGuitarRepository(database)
+
+	// リポジトリ作成
+	guitarRepository := guitarRepository.NewGuitarRepository(database)
+	loggerRepository := loggerRepository.NewBatchLoggerRepository(database)
 
 	// DBロガー
-	dbLogger := batchLoggerService.NewBatchLogger(database)
+	dbLogger    := batchLoggerService.NewBatchLogger(*loggerRepository)
 	config, err := dbLogger.InsertStartLog("GuitarCrawler")
 
 	defer func(config *model.BatchConfig) {
@@ -44,8 +48,8 @@ func main() {
 		return
 	}
 
-	// クローラー起動
-	crawler := crawlerService.NewGuitarCrawlerService(repository)
+	// サービス作成・起動
+	crawler := crawlerService.NewGuitarCrawlerService(guitarRepository)
 	crawler.RunCrawler()
 
 	// 過去ログの整理

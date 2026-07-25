@@ -8,15 +8,15 @@ import (
 	"github.com/kazGear/portfolio/goBatch/internal/batchLogger/repository/sql"
 )
 
-type batchLoggerRepository struct {
+type BatchLoggerRepository struct {
     db *sqlx.DB
 }
 
-func NewBatchLoggerRepository(db *sqlx.DB) *batchLoggerRepository {
-    return &batchLoggerRepository{ db: db }
+func NewBatchLoggerRepository(db *sqlx.DB) *BatchLoggerRepository {
+    return &BatchLoggerRepository{ db: db }
 }
 
-func (b *batchLoggerRepository) InsertStartLog(batchName string) (*model.BatchConfig, error) {
+func (b *BatchLoggerRepository) InsertStartLog(batchName string) (*model.BatchConfig, error) {
     params := &model.BatchLoggerParam{
         BatchName: batchName,
     }
@@ -44,7 +44,7 @@ func (b *batchLoggerRepository) InsertStartLog(batchName string) (*model.BatchCo
     return &config, nil
 }
 
-func (b *batchLoggerRepository) UpdateError(config *model.BatchConfig, err error) error {
+func (b *BatchLoggerRepository) UpdateError(config *model.BatchConfig, err error) error {
     param := &model.BatchLoggerParam{
         LogId:   config.LogId,
         Status:  "ERROR",
@@ -58,7 +58,7 @@ func (b *batchLoggerRepository) UpdateError(config *model.BatchConfig, err error
     return nil
 }
 
-func (b *batchLoggerRepository) UpdateStatus(config *model.BatchConfig, timeSpan *time.Duration) error {
+func (b *BatchLoggerRepository) UpdateStatus(config *model.BatchConfig, timeSpan *time.Duration) error {
     params := &model.BatchLoggerParam{
         LogId:   config.LogId,
         Message: "",

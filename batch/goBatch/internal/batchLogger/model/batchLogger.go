@@ -11,3 +11,10 @@ type BatchConfig struct {
 	ExpectedDurationMinutes int       `db:"expected_duration_minutes" json:"expected_duration_minutes"`
 	TimeoutMinutes          int       `db:"timeout_minutes"           json:"timeout_minutes"`
 }
+
+type BatchLoggerParam struct {
+	LogId     int64  `db:"log_id"`
+	BatchName string `db:"batch_name"`
+	Status    string `db:"status"`
+	Message   string `db:"message"`
+}

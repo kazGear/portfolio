@@ -34,15 +34,26 @@ func LoadEnv() {
 	envFile := os.Getenv("ENV_FILE")
 
 	if envFile == "" { // ローカル環境なら空
-		envFile = `C:\repository\portfolio\batch\goBatch\.env.dev`
+		envFile = `.env.dev`
 	}
 
 	if err := godotenv.Load(envFile); err != nil {
-		log.Printf("Skip env file: %v", envFile)
+		log.Printf("Skip load file: %v\n%v", envFile, err)
 		log.Println("Use environment of compose.yaml.")
 	} else {
 		log.Printf("Loaded env file: %v", envFile)
 	}
+}
+
+// 長い文字列をmaxLengthまでに区切る
+func TruncateString(s string, maxLength int) string {
+    runes := []rune(s)
+
+    if len(runes) <= maxLength {
+        return string(s)
+    }
+
+    return string(runes[:maxLength])
 }
 
 var _regPriceSpliter   = regexp.MustCompile(`[()（）/／:、]`)

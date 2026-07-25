@@ -103,7 +103,23 @@ services:
       dockerfile: Dockerfile.dev
     restart: "no"
     volumes:
-     - ./batch/goBatch/logs:/app/logs
+      - ./batch/goBatch/internal/crawler/logs:/app/internal/crawler/logs
+      - ./batch/goBatch/cron/guitarCrawler.txt:/etc/cron.d/app-cron:ro
+    environment:
+      ENV_FILE: .env.dev
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+
+  batch-monitor:
+    build:
+      context: ./batch/goBatch
+      dockerfile: Dockerfile.dev
+    restart: "no"
+    volumes:
+      - ./batch/goBatch/cron/batchMonitor.txt:/etc/cron.d/app-cron:ro
     environment:
       ENV_FILE: .env.dev
       DB_USER: ${DB_USER}

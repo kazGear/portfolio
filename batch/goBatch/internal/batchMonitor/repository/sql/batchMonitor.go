@@ -12,6 +12,8 @@ func SelectBatchExecution() string {
                message
           FROM
                t_batch_execution
+         WHERE
+               batch_name <> 'BatchMonitor' -- 監視対象外
       ORDER BY
                start_at DESC
          LIMIT

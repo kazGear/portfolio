@@ -29,7 +29,7 @@ func main() {
 	repository := repository.NewGuitarRepository(database)
 
 	// DBロガー
-	dbLogger := batchLoggerService.NewBatchLogger(database)
+	dbLogger    := batchLoggerService.NewBatchLogger(database)
 	config, err := dbLogger.InsertStartLog("GuitarCrawler")
 
 	defer func(config *model.BatchConfig) {

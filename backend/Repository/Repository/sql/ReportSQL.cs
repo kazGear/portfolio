@@ -137,8 +137,8 @@ namespace Repository.Repository.sql
                   {AND_fromTo}
 
               ORDER BY
-                       BattleEndDate ASC 
-                     , BattleEndTime ASC 
+                       BattleEndDate DESC 
+                     , BattleEndTime DESC
                      , Serial ASC ;
             ";
 

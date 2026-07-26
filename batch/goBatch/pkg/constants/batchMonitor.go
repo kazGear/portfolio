@@ -4,6 +4,7 @@ package constants
 var BatchNames = []string{
 	"AutoBattle",
 	"GuitarCrawler",
+	"DbArchiver",
 }
 
 var BatchBadStatus = []string{

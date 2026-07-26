@@ -30,7 +30,7 @@ const MonsterTypesListBlock = ({setMonsterTypeId}: ArgProps) => {
                 monsterTypes.map((monster, index) => {
                     return (
                         <option value={monster.MonsterTypeId} key={index}>
-                            {monster.MonsterTypeName}
+                            {monster.MonsterTypeName}&nbsp;種
                         </option>
                 )})
             }

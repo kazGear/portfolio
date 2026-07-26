@@ -30,6 +30,11 @@ RUN sed -i 's/\r$//' /etc/cron.d/auto-battle && \
     chmod 0644 /etc/cron.d/auto-battle && \
     crontab /etc/cron.d/auto-battle
 
+COPY ./batch/AutoBattle/entrypoint.sh /entrypoint.sh
+
+RUN sed -i 's/\r$//' /entrypoint.sh && \
+    chmod +x /entrypoint.sh
+
 RUN mkdir -p /app/logs
 
-CMD ["/bin/sh", "-c", "printenv > /etc/environment && cron -f"]
+CMD ["/entrypoint.sh"]

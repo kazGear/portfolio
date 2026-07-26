@@ -1,1 +1,1 @@
-* 9 * * * . /etc/environment && cd /app && ./batchMonitor >> /proc/1/fd/1 2>&1
+0 9 * * * . /etc/environment && cd /app && ./batchMonitor >> /proc/1/fd/1 2>&1

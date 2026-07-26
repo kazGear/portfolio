@@ -1,4 +1,5 @@
 import { Guitar } from "../../types/Guitar";
+import CommonZoomableImage from "../common/CommonZoomableImage";
 import { parsePrice } from "./GuitarFuncs";
 
 interface ArgProps {
@@ -11,18 +12,19 @@ const DetailLeftSide = ({selectedGuitars}: ArgProps) => {
     return (
         <div style={{width: "50%", margin: "0px 40px"}}>
             <p>最終更新日：{guitar?.updated}</p>
-            <img src={guitar?.src}
-                 alt={guitar?.name}
-                 style={{
-                    width:"100%",
-                    height:"35%",
-                    objectFit: "contain",
-                    marginTop: "10px"
-                }}/>
+
+            <CommonZoomableImage imgURL={guitar?.src}
+                                 alt={guitar?.name}
+                                 width={400}
+                                 height={200}
+                                 zoomRate={400}/>
+
             <h2 style={{margin: "0px"}}>
                 price:&emsp;{parsePrice(guitar?.price!)}
             </h2>
+
             <p>comment.</p>
+
             <p style={{
                 overflowY: "auto",
                 fontSize: "14px",

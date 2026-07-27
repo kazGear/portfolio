@@ -49,6 +49,14 @@ services:
     environment:
       TZ: Asia/Tokyo
 
+  batch-db-archiver:
+    depends_on:
+      - db
+    networks:
+      - portfolio-net
+    environment:
+      TZ: Asia/Tokyo
+
 volumes:
   pg-data:
 

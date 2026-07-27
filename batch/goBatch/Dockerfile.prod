@@ -10,7 +10,7 @@ COPY . .
 
 RUN go build -o /app/guitar ./cmd/guitar
 RUN go build -o /app/batchMonitor ./cmd/batchMonitor
-
+RUN go build -o /app/dbArchiver ./cmd/dbArchiver
 
 # runtime stage
 FROM debian:bookworm-slim
@@ -25,6 +25,7 @@ WORKDIR /app
 
 COPY --from=build /app/guitar /app/guitar
 COPY --from=build /app/batchMonitor /app/batchMonitor
+COPY --from=build /app/dbArchiver /app/dbArchiver
 
 COPY entrypoint.sh /entrypoint.sh
 

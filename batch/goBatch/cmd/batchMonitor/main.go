@@ -47,8 +47,12 @@ func main() {
 		return
 	}
 
-	// サービス作成・実行
 	discordWebHook := os.Getenv("DISCORD_WEBHOOK_URL")
+	if discordWebHook == "" {
+		panic("DISCORD_WEBHOOK_URL is blank ...")
+	}
+
+	// サービス作成・実行
 	batchMonitor   := batchMonitorService.NewBatchMonitorService(batchMonitorRepository)
 	batchMonitor.Notify(discordWebHook)
 

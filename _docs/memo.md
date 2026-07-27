@@ -205,11 +205,18 @@ docker logs コンテナ名
 docker compose --env-file .env.prod -f compose.base.yaml -f compose.prod.yaml logs --tail=200 {サービス名}
 
 VPSでバッチを手動実行
-docker compose --env-file .env.prod -f compose.base.yaml -f compose.prod.yaml run --rm <サービス名>
+docker compose \
+  --env-file .env.prod \
+  -f compose.base.yaml \
+  -f compose.prod.yaml \
+  exec {サービス名} {コマンド}
 
 例:
-docker compose --env-file .env.prod -f compose.base.yaml -f compose.prod.yaml run --rm batch-guitar-crawler
-docker compose --env-file .env.prod -f compose.base.yaml -f compose.prod.yaml run --rm batch-auto-battle
+docker compose \
+  --env-file .env.prod \
+  -f compose.base.yaml \
+  -f compose.prod.yaml \
+  exec batch-guitar-crawler ./guitar
 
 # docker 基本操作
 

@@ -136,6 +136,7 @@ services:
       DB_NAME: ${DB_NAME}
       DB_HOST: ${DB_HOST}
       DB_PORT: ${DB_PORT}
+      DISCORD_WEBHOOK_URL: ${DISCORD_WEBHOOK_URL}
     depends_on:
       - db
 

@@ -128,3 +128,18 @@ services:
       DB_HOST: ${DB_HOST}
       DB_PORT: ${DB_PORT}
       DISCORD_WEBHOOK_URL: ${DISCORD_WEBHOOK_URL}
+
+  batch-db-archiver:
+    build:
+      context: ./batch/goBatch
+      dockerfile: Dockerfile.dev
+    restart: "no"
+    volumes:
+      - ./batch/goBatch/cron/dbArchiver.txt:/etc/cron.d/app-cron:ro
+    environment:
+      ENV_FILE: .env.dev
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}

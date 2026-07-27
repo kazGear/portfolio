@@ -12,6 +12,7 @@ COPY . .
 
 RUN go build -o /app/guitar ./cmd/guitar
 RUN go build -o /app/batchMonitor ./cmd/batchMonitor
+RUN go build -o /app/dbArchiver ./cmd/dbArchiver
 
 COPY entrypoint.sh /entrypoint.sh
 

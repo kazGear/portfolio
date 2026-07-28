@@ -51,7 +51,7 @@ const CommonZoomableImage = ({ imgURL, alt,  width, height, zoomRate }: ArgProps
             backgroundRepeat: "no-repeat",
             backgroundSize: `${zoomRate}%`,
             backgroundPosition: `${position.x}% ${position.y}%`,
-        }}>
+        }} id="zoom-test">
             <img
                 src={imgURL}
                 alt={alt}

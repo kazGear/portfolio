@@ -10,7 +10,6 @@ import SearchConditions from "../components/guitarGalleryPage/SearchConditions";
 import DetailModal from "../components/guitarGalleryPage/DetailModal";
 import { PUBLIC_API_BASE_URL } from "../config/env"
 import useApiErrorHandler from "../hooks/useApiErrorHandler";
-import { ApiError } from "../types/ApiError";
 
 const GuitarGalleryPage = () => {
     // プルダウン用 params

@@ -5,8 +5,6 @@ import CommonButton from "../common/CommonButton";
 import DetailLeftSide from "./DetailLeftSide";
 import DetailRightSide from "./DetailRightSide";
 
-console.log("DetailLeftSide =", DetailLeftSide);
-
 const Background = styled.div`
     width: 100%;
     height: 100%;
@@ -43,7 +41,6 @@ interface ArgProps {
 }
 
 const DetailModal = ({selectedGuitars, isShow, callback}: ArgProps) => {
-    console.log("DetailLeftSide v2");
     const isShowDetail = isShow ? "block" : "none"; // 詳細画面の表示制御
     const guitar = selectedGuitars;
 

@@ -41,6 +41,7 @@ interface ArgProps {
 }
 
 const DetailModal = ({selectedGuitars, isShow, callback}: ArgProps) => {
+    console.log("DetailLeftSide v2");
     const isShowDetail = isShow ? "block" : "none"; // 詳細画面の表示制御
     const guitar = selectedGuitars;
 

@@ -8,20 +8,32 @@ import (
 	"github.com/kazGear/portfolio/goBatch/internal/crawler/repository/sql"
 )
 
-type Repository interface {
-    Upsert(g *model.Guitar) error
-    UpsertAll(guitars []*model.Guitar) (ok int, ng int, errs []error)
-}
-
 type guitarRepository struct {
     db *sqlx.DB
 }
 
-func NewGuitarRepository(db *sqlx.DB) Repository {
+func NewGuitarRepository(db *sqlx.DB) Repository[*model.Guitar] {
     return &guitarRepository{ db: db }
 }
 
-func (r *guitarRepository) Upsert(guitar *model.Guitar) error {
+func (r *guitarRepository) Save(guitars []*model.Guitar) (ok int, ng int, errors []error) {
+    errs    := make([]error, 0, 300)
+    okCount := 0
+    ngCount := 0
+
+    for _, guitar := range guitars {
+        err := r.upsert(guitar)
+        if err != nil {
+            errs = append(errs, err)
+            ngCount++
+            continue
+        }
+        okCount++
+    }
+    return okCount, ngCount, errs
+}
+
+func (r *guitarRepository) upsert(guitar *model.Guitar) error {
     // pkチェック
     if guitar.Maker <= 0 || len(guitar.Name) <= 0 || len(guitar.Color) <= 0 {
         return fmt.Errorf("[Invalid primary key]: maker=%v, name=%v, color=%v\n",
@@ -52,21 +64,4 @@ func (r *guitarRepository) Upsert(guitar *model.Guitar) error {
         return err
     }
     return nil
-}
-
-func (r *guitarRepository) UpsertAll(guitars []*model.Guitar) (int, int, []error) {
-    errs    := make([]error, 0, 300)
-    okCount := 0
-    ngCount := 0
-
-    for _, guitar := range guitars {
-        err := r.Upsert(guitar)
-        if err != nil {
-            errs = append(errs, err)
-            ngCount++
-            continue
-        }
-        okCount++
-    }
-    return okCount, ngCount, errs
 }

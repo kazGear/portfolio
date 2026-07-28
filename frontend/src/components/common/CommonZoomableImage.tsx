@@ -14,6 +14,7 @@ interface ArgProps {
 }
 
 const CommonZoomableImage = ({ imgURL, alt,  width, height, zoomRate }: ArgProps) => {
+    console.log("CommonZoomableImage rendered");
     const initPosition: Position  = { x: -1000, y: -1000}
     const [position, setPosition] = useState<Position>(initPosition);
     const [isShow, setIsShow]     = useState<boolean>(true);

@@ -3,7 +3,6 @@ package scraper
 import (
 	"context"
 	"encoding/csv"
-	"fmt"
 	"io"
 	"maps"
 	"net/http"
@@ -24,15 +23,15 @@ import (
 	"github.com/kazGear/portfolio/goBatch/pkg/utils"
 )
 
-type guitarScraperPRS struct {
-    gScraper guitarScraper
+type CrawlerPRS struct {
+    gScraper Crawler[*model.Guitar]
 }
 
-type callBacksPRS struct {
-    funcs callBacks
+type CallBacksPRS struct {
+    funcs CallBacks
 }
 
-func NewScraperPRS(logger *log.Logger) *guitarScraperPRS {
+func NewScraperPRS(logger *log.Logger) *CrawlerPRS {
     collector := colly.NewCollector(
 		colly.Async(true),
 		colly.MaxDepth(3),
@@ -41,8 +40,8 @@ func NewScraperPRS(logger *log.Logger) *guitarScraperPRS {
 		DomainGlob:  "*",
 		Parallelism: 5, // URL収集漏れが発生するため5に制限
 	})
-    return &guitarScraperPRS{
-        guitarScraper{
+    return &CrawlerPRS{
+        Crawler[*model.Guitar]{
             collector: collector,
             mutex:     &sync.Mutex{},
             logger:    logger,
@@ -50,9 +49,9 @@ func NewScraperPRS(logger *log.Logger) *guitarScraperPRS {
     }
 }
 
-func NewCallBacksPRS(logger *log.Logger) *callBacksPRS {
-    return &callBacksPRS{
-        callBacks{
+func NewCallBacksPRS(logger *log.Logger) *CallBacksPRS {
+    return &CallBacksPRS{
+        CallBacks{
             logger: logger,
         },
     }
@@ -207,7 +206,7 @@ func searchGuitarPrices(flatData []string) map[string]string {
 
 var regNeedPatterPrs = regexp.MustCompile(`https://www.prsguitars.jp/products/.+/.+`)
 
-func (g *guitarScraperPRS) CollectLinks(parentCtx context.Context) ([]string, error) {
+func (g *CrawlerPRS) CollectLinks(parentCtx context.Context) ([]string, error) {
     c := g.gScraper.collector
 
     // クロールログ収集
@@ -220,7 +219,7 @@ func (g *guitarScraperPRS) CollectLinks(parentCtx context.Context) ([]string, er
 
     c.OnHTML("fluid-columns-repeater a", func(html *colly.HTMLElement) {
         link := html.Request.AbsoluteURL(html.Attr("href"))
-        if g.gScraper.isFirstVisit(mutex, link, visited) {
+        if isFirstVisit(mutex, link, visited) {
             c.Visit(link)
         }
     })
@@ -234,9 +233,9 @@ func (g *guitarScraperPRS) CollectLinks(parentCtx context.Context) ([]string, er
     return g.gScraper.urls, nil
 }
 
-func (g *guitarScraperPRS) Scrape(provider  PageProvider,
-                                  parser    GuitarParser,
-                                  parentCtx context.Context,
+func (g *CrawlerPRS) Scrape(provider  PageProvider,
+                            parser    ModelParser[*model.Guitar],
+                            parentCtx context.Context,
 ) []*model.Guitar {
     guitars := g.gScraper.scrapeFrame(provider, parser, parentCtx)
 
@@ -258,7 +257,7 @@ func mergePrice(guitars []*model.Guitar, priceSet map[string]string) {
 }
 
 // 必要に応じて、基盤のTryWaitReadyを組み込む
-func (c *callBacksPRS) FetchDynamicPage(parentCtx context.Context) func(url string) (string, error) {
+func (c *CallBacksPRS) FetchDynamicPage(parentCtx context.Context) func(url string) (string, error) {
     return func(url string) (string, error) {
         if !isDetailPage(`^https://www.prsguitars.jp/products/[\w-]+/[\w-]+`, url) {
             return "", nil
@@ -272,20 +271,17 @@ func (c *callBacksPRS) FetchDynamicPage(parentCtx context.Context) func(url stri
 
         var html string
 
-        err := chromedp.Run(ctx,
-               chromedp.Navigate(url),
-               chromedp.WaitVisible(`//span[contains("Tuning")]`, chromedp.ByQuery), // 求める要素が出るまで待つ
-               chromedp.Sleep(200 * time.Millisecond), // JSが動く猶予を与える
-               chromedp.OuterHTML("html", &html, chromedp.ByQuery), // 最終的なHTML出力
+        chromedp.Run(ctx,
+            chromedp.Navigate(url),
+            chromedp.WaitVisible(`//span[contains("Tuning")]`, chromedp.ByQuery), // 求める要素が出るまで待つ
+            chromedp.Sleep(200 * time.Millisecond), // JSが動く猶予を与える
+            chromedp.OuterHTML("html", &html, chromedp.ByQuery), // 最終的なHTML出力
         )
-        if err != nil {
-            return "", fmt.Errorf("[chromedp error]: %v [url]: %v\n", err, url)
-        }
         return html, nil
     }
 }
 
-func (c *callBacksPRS) CollectSpec() func(doc *goquery.Document) []map[string]string {
+func (c *CallBacksPRS) CollectAttributes() func(doc *goquery.Document) []map[string]string {
     return func(doc *goquery.Document) []map[string]string {
         specs := make([]map[string]string, 0, 1)
         mutex := &sync.Mutex{}
@@ -359,13 +355,13 @@ func parseSpec(specSection string, spec map[string]string) map[string]string {
     return spec
 }
 
-func (c *callBacksPRS) BuildGuitar(url string) func(spec map[string]string) *model.Guitar {
+func (c *CallBacksPRS) BuildModel(url string) func(spec map[string]string) *model.Guitar {
     return func(spec map[string]string) *model.Guitar {
         return buildGuitarFrame(spec, url, c.funcs.logger)
     }
 }
 
-func (c *callBacksPRS) IsStaticPage() func(html string) bool {
+func (c *CallBacksPRS) IsStaticPage() func(html string) bool {
     return func(html string) bool {
         return strings.Contains(html, "Tuning")
     }

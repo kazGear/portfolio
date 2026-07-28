@@ -19,15 +19,15 @@ import (
 	"github.com/kazGear/portfolio/goBatch/pkg/utils"
 )
 
-type guitarScraperIbanez struct {
-    gScraper guitarScraper
+type CrawlerIbanez struct {
+    gScraper Crawler[*model.Guitar]
 }
 
-type callBacksIbanez struct {
-    funcs callBacks
+type CallBacksIbanez struct {
+    funcs CallBacks
 }
 
-func NewScraperIbanez(logger *log.Logger) Scraper {
+func NewScraperIbanez(logger *log.Logger) Scraper[*model.Guitar] {
 	collector := colly.NewCollector(
 		colly.Async(true),
 		colly.MaxDepth(3),
@@ -36,8 +36,8 @@ func NewScraperIbanez(logger *log.Logger) Scraper {
 		DomainGlob:  "*",
 		Parallelism: 5, // URL収集漏れが発生するため5に制限
 	})
-    return &guitarScraperIbanez{
-        guitarScraper{
+    return &CrawlerIbanez{
+        Crawler[*model.Guitar]{
             collector: collector,
             mutex:     &sync.Mutex{},
             logger:    logger,
@@ -45,15 +45,15 @@ func NewScraperIbanez(logger *log.Logger) Scraper {
     }
 }
 
-func NewCallBacksIbanez(logger *log.Logger) *callBacksIbanez {
-    return &callBacksIbanez{
-        callBacks{
+func NewCallBacksIbanez(logger *log.Logger) *CallBacksIbanez {
+    return &CallBacksIbanez{
+        CallBacks{
             logger: logger,
         },
     }
 }
 
-func (g *guitarScraperIbanez) CollectLinks(parentCtx context.Context) ([]string, error) {
+func (g *CrawlerIbanez) CollectLinks(parentCtx context.Context) ([]string, error) {
     // タブごとに独立した context を作る
     tabCtx, tabCancel := chromedp.NewContext(parentCtx)
     defer tabCancel()
@@ -150,15 +150,15 @@ func collectLinksDetailView(ctx context.Context, modelLinks []string) ([]string,
     return detailLinks, nil
 }
 
-func (g *guitarScraperIbanez) Scrape(provider  PageProvider,
-                                     parser    GuitarParser,
-                                     parentCtx context.Context,
+func (g *CrawlerIbanez) Scrape(provider  PageProvider,
+                               parser    ModelParser[*model.Guitar],
+                               parentCtx context.Context,
 ) []*model.Guitar {
     guitars := g.gScraper.scrapeFrame(provider, parser, parentCtx)
     return guitars
 }
 
-func (c *callBacksIbanez) FetchDynamicPage(parentCtx context.Context) func(url string) (string, error) {
+func (c *CallBacksIbanez) FetchDynamicPage(parentCtx context.Context) func(url string) (string, error) {
     return func(url string) (string, error) {
         if !isDetailPage(`https://www/ibanez/com/jp/products/detail/[a-z]+\d+`, url) {
             return "", nil
@@ -190,7 +190,7 @@ func (c *callBacksIbanez) FetchDynamicPage(parentCtx context.Context) func(url s
     }
 }
 
-func (c *callBacksIbanez) CollectSpec() func(doc *goquery.Document) []map[string]string {
+func (c *CallBacksIbanez) CollectAttributes() func(doc *goquery.Document) []map[string]string {
     return func(doc *goquery.Document) []map[string]string {
         // 詳細urlにギター、ベース以外が紛れてしまうのでフィルタリング
         factoryTuning := doc.Find(`.rt_cf_p_data_factory_tuning`).Text()
@@ -251,13 +251,13 @@ func (c *callBacksIbanez) CollectSpec() func(doc *goquery.Document) []map[string
     }
 }
 
-func (c *callBacksIbanez) BuildGuitar(url string) func(spec map[string]string) *model.Guitar {
+func (c *CallBacksIbanez) BuildModel(url string) func(spec map[string]string) *model.Guitar {
     return func(spec map[string]string) *model.Guitar {
         return buildGuitarFrame(spec, url, c.funcs.logger)
     }
 }
 
-func (c *callBacksIbanez) IsStaticPage() func(html string) bool {
+func (c *CallBacksIbanez) IsStaticPage() func(html string) bool {
     return func(html string) bool {
         return strings.Contains(html, "products-spec-table-li")
     }

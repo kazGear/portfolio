@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/chromedp/chromedp"
+	"github.com/kazGear/portfolio/goBatch/internal/crawler/model"
 	"github.com/kazGear/portfolio/goBatch/internal/crawler/repository"
 	"github.com/kazGear/portfolio/goBatch/internal/crawler/scraper"
 	C "github.com/kazGear/portfolio/goBatch/pkg/constants"
@@ -20,25 +21,25 @@ type CrawlerService interface {
 }
 
 type guitarCrawlerService struct {
-    repository repository.Repository
+    repository repository.Repository[*model.Guitar]
 }
 
-func NewGuitarCrawlerService(repository repository.Repository) CrawlerService {
+func NewGuitarCrawlerService(repository repository.Repository[*model.Guitar]) CrawlerService {
     return &guitarCrawlerService{ repository: repository }
 }
 
 type Maker struct {
     name     string
-    scraper  scraper.Scraper
+    scraper  scraper.Scraper[*model.Guitar]
     provider scraper.PageProvider
-    parser   scraper.GuitarParser
+    parser   scraper.ModelParser[*model.Guitar]
     logger   *log.Logger
 }
 
 func NewMaker(name string,
-              scraper  scraper.Scraper,
+              scraper  scraper.Scraper[*model.Guitar],
               provider scraper.PageProvider,
-              parser   scraper.GuitarParser,
+              parser   scraper.ModelParser[*model.Guitar],
               logger *log.Logger,
 ) *Maker {
     return &Maker{ name, scraper, provider, parser ,logger }
@@ -73,7 +74,7 @@ func (g *guitarCrawlerService) RunCrawler() {
             // クローラー起動
             maker.scraper.CollectLinks(parentCtx)
             guitars := maker.scraper.Scrape(maker.provider, maker.parser, parentCtx)
-            okCnt, ngCnt, errs := g.repository.UpsertAll(guitars)
+            okCnt, ngCnt, errs := g.repository.Save(guitars)
 
             // ログ
             maker.logger.Printf("[Upsert result %v]: OK %v 件, NG %v 件", maker.name, okCnt, ngCnt)

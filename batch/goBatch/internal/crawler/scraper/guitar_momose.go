@@ -2,7 +2,6 @@ package scraper
 
 import (
 	"context"
-	"fmt"
 	"regexp"
 	"strconv"
 	"strings"
@@ -19,16 +18,16 @@ import (
 	"github.com/kazGear/portfolio/goBatch/pkg/utils"
 )
 
-type guitarScraperMomose struct {
-    gScraper guitarScraper
+type CrawlerMomose struct {
+    gScraper Crawler[*model.Guitar]
 }
 
-type callBacksMomose struct {
-    funcs callBacks
+type CallBacksMomose struct {
+    funcs CallBacks
 }
 
 
-func NewScraperMomose(logger *log.Logger) Scraper {
+func NewScraperMomose(logger *log.Logger) Scraper[*model.Guitar] {
 	collector := colly.NewCollector(
 		colly.Async(true),
 		colly.MaxDepth(4),
@@ -37,8 +36,8 @@ func NewScraperMomose(logger *log.Logger) Scraper {
 		DomainGlob:  "*",
 		Parallelism: 5, // URL収集漏れが発生するため5に制限
 	})
-    return &guitarScraperMomose{
-        guitarScraper{
+    return &CrawlerMomose{
+        Crawler[*model.Guitar]{
             collector: collector,
             mutex:     &sync.Mutex{},
             logger:    logger,
@@ -46,15 +45,15 @@ func NewScraperMomose(logger *log.Logger) Scraper {
     }
 }
 
-func NewCallBacksMomose(logger *log.Logger) *callBacksMomose {
-    return &callBacksMomose{
-        callBacks{
+func NewCallBacksMomose(logger *log.Logger) *CallBacksMomose {
+    return &CallBacksMomose{
+        CallBacks{
             logger: logger,
         },
     }
 }
 
-func (g *guitarScraperMomose) CollectLinks(parentCtx context.Context) ([]string, error) {
+func (g *CrawlerMomose) CollectLinks(parentCtx context.Context) ([]string, error) {
     c := g.gScraper.collector
 
     // クロールログ収集
@@ -68,35 +67,35 @@ func (g *guitarScraperMomose) CollectLinks(parentCtx context.Context) ([]string,
     // product >>> guitars, base, accessory
     c.OnHTML("ul.c-gnav__items #menu-item-39605 .sub-menu a", func(html *colly.HTMLElement) {
         link := html.Request.AbsoluteURL(html.Attr("href"))
-        if g.gScraper.isFirstVisit(mutex, link, visited) {
+        if isFirstVisit(mutex, link, visited) {
             c.Visit(link)
         }
     })
     // special model >>> limited, premium
     c.OnHTML("ul.c-gnav__items #menu-item-142109 .sub-menu a", func(html *colly.HTMLElement) {
         link := html.Request.AbsoluteURL(html.Attr("href"))
-        if g.gScraper.isFirstVisit(mutex, link, visited) {
+        if isFirstVisit(mutex, link, visited) {
             c.Visit(link)
         }
     })
     // ページネーション
     c.OnHTML("div.pagination a", func(html *colly.HTMLElement) {
         link := html.Request.AbsoluteURL(html.Attr("href"))
-        if g.gScraper.isFirstVisit(mutex, link, visited) {
+        if isFirstVisit(mutex, link, visited) {
             c.Visit(link)
         }
     })
     // 商品カード custom guitars
     c.OnHTML("div.p-product-list .p-product-list__item a", func(html *colly.HTMLElement) {
         link := html.Request.AbsoluteURL(html.Attr("href"))
-        if g.gScraper.isFirstVisit(mutex, link, visited) {
+        if isFirstVisit(mutex, link, visited) {
             c.Visit(link)
         }
     })
     // 商品カード limited, premium  guitars
     c.OnHTML("article div.p-product-list a", func(html *colly.HTMLElement) {
         link := html.Request.AbsoluteURL(html.Attr("href"))
-        if g.gScraper.isFirstVisit(mutex, link, visited) {
+        if isFirstVisit(mutex, link, visited) {
             c.Visit(link)
         }
     })
@@ -110,16 +109,16 @@ func (g *guitarScraperMomose) CollectLinks(parentCtx context.Context) ([]string,
     return g.gScraper.urls, nil
 }
 
-func (g *guitarScraperMomose) Scrape(provider  PageProvider,
-                                     parser    GuitarParser,
-                                     parentCtx context.Context,
+func (g *CrawlerMomose) Scrape(provider  PageProvider,
+                               parser    ModelParser[*model.Guitar],
+                               parentCtx context.Context,
 ) []*model.Guitar {
     guitars := g.gScraper.scrapeFrame(provider, parser, parentCtx)
     return guitars
 }
 
 // 必要に応じて、基盤のTryWaitReadyを組み込む
-func (c *callBacksMomose) FetchDynamicPage(parentCtx context.Context) func(url string) (string, error) {
+func (c *CallBacksMomose) FetchDynamicPage(parentCtx context.Context) func(url string) (string, error) {
     return func(url string) (string, error) {
         if !isDetailPage(`^https://www.deviser.co.jp/products/.+`, url) {
             return "", nil
@@ -133,22 +132,19 @@ func (c *callBacksMomose) FetchDynamicPage(parentCtx context.Context) func(url s
 
         var html string
 
-        err := chromedp.Run(ctx,
-               chromedp.Navigate(url),
-               chromedp.WaitVisible("main", chromedp.ByQuery), // 求める要素が出るまで待つ
-               chromedp.Sleep(300 * time.Millisecond), // JSが動く猶予を与える
-               chromedp.OuterHTML("html", &html, chromedp.ByQuery), // 最終的なHTML出力
+        chromedp.Run(ctx,
+            chromedp.Navigate(url),
+            chromedp.WaitVisible("main", chromedp.ByQuery), // 求める要素が出るまで待つ
+            chromedp.Sleep(300 * time.Millisecond), // JSが動く猶予を与える
+            chromedp.OuterHTML("html", &html, chromedp.ByQuery), // 最終的なHTML出力
         )
-        if err != nil {
-            return "", fmt.Errorf("[chromedp error]: %v [url]: %v\n", err, url)
-        }
         return html, nil
     }
 }
 
 var regSplitMomose = regexp.MustCompile(`(/| |’)`)
 
-func (c *callBacksMomose) CollectSpec() func(doc *goquery.Document) []map[string]string {
+func (c *CallBacksMomose) CollectAttributes() func(doc *goquery.Document) []map[string]string {
     return func(doc *goquery.Document) []map[string]string {
         specs := make([]map[string]string, 0, 1)
         mutex := &sync.Mutex{}
@@ -194,13 +190,13 @@ func (c *callBacksMomose) CollectSpec() func(doc *goquery.Document) []map[string
     }
 }
 
-func (c *callBacksMomose) BuildGuitar(url string) func(spec map[string]string) *model.Guitar {
+func (c *CallBacksMomose) BuildModel(url string) func(spec map[string]string) *model.Guitar {
     return func(spec map[string]string) *model.Guitar {
         return buildGuitarFrame(spec, url, c.funcs.logger)
     }
 }
 
-func (c *callBacksMomose) IsStaticPage() func(html string) bool {
+func (c *CallBacksMomose) IsStaticPage() func(html string) bool {
     return func(html string) bool {
         return strings.Contains(html, "Finish")
     }

@@ -19,16 +19,16 @@ import (
 	"github.com/kazGear/portfolio/goBatch/pkg/utils"
 )
 
-type guitarScraperGibson struct {
-    gScraper guitarScraper
+type CrawlerGibson struct {
+    gScraper Crawler[*model.Guitar]
 }
 
-type callBacksGibson struct {
-    funcs callBacks
+type CallBacksGibson struct {
+    funcs CallBacks
 }
 
 
-func NewScraperGibson(logger *log.Logger) Scraper {
+func NewScraperGibson(logger *log.Logger) Scraper[*model.Guitar] {
 	collector := colly.NewCollector(
 		colly.Async(true),
 		colly.MaxDepth(3),
@@ -37,8 +37,8 @@ func NewScraperGibson(logger *log.Logger) Scraper {
 		DomainGlob:  "*",
 		Parallelism: 5, // URL収集漏れが発生するため5に制限
 	})
-    return &guitarScraperGibson{
-        guitarScraper{
+    return &CrawlerGibson{
+        Crawler[*model.Guitar]{
             collector: collector,
             mutex:     &sync.Mutex{},
             logger:    logger,
@@ -46,9 +46,9 @@ func NewScraperGibson(logger *log.Logger) Scraper {
     }
 }
 
-func NewCallBacksGibson(logger *log.Logger) *callBacksGibson {
-    return &callBacksGibson{
-        callBacks{
+func NewCallBacksGibson(logger *log.Logger) *CallBacksGibson {
+    return &CallBacksGibson{
+        CallBacks{
             logger: logger,
         },
     }
@@ -56,7 +56,7 @@ func NewCallBacksGibson(logger *log.Logger) *callBacksGibson {
 
 var regNeedPatterGibson = regexp.MustCompile(`https://gibson.jp/(electric|acoustic)/`)
 
-func (g *guitarScraperGibson) CollectLinks(parentCtx context.Context) ([]string, error) {
+func (g *CrawlerGibson) CollectLinks(parentCtx context.Context) ([]string, error) {
     c := g.gScraper.collector
 
     // クロールログ収集
@@ -69,13 +69,13 @@ func (g *guitarScraperGibson) CollectLinks(parentCtx context.Context) ([]string,
 
     c.OnHTML(".body-types a", func(html *colly.HTMLElement) {
         link := html.Request.AbsoluteURL(html.Attr("href"))
-        if g.gScraper.isFirstVisit(mutex, link, visited) {
+        if isFirstVisit(mutex, link, visited) {
             c.Visit(link)
         }
     })
     c.OnHTML(".category-wrapper .model-card a", func(html *colly.HTMLElement) {
         link := html.Request.AbsoluteURL(html.Attr("href"))
-        if g.gScraper.isFirstVisit(mutex, link, visited) {
+        if isFirstVisit(mutex, link, visited) {
             c.Visit(link)
         }
     })
@@ -89,16 +89,16 @@ func (g *guitarScraperGibson) CollectLinks(parentCtx context.Context) ([]string,
     return g.gScraper.urls, nil
 }
 
-func (g *guitarScraperGibson) Scrape(provider  PageProvider,
-                                     parser    GuitarParser,
-                                     parentCtx context.Context,
+func (g *CrawlerGibson) Scrape(provider  PageProvider,
+                               parser    ModelParser[*model.Guitar],
+                               parentCtx context.Context,
 ) []*model.Guitar {
     guitars := g.gScraper.scrapeFrame(provider, parser, parentCtx)
     utils.AutoDownLoader(guitars, "images/gibson")
     return guitars
 }
 
-func (c *callBacksGibson) FetchDynamicPage(parentCtx context.Context) func(url string) (string, error) {
+func (c *CallBacksGibson) FetchDynamicPage(parentCtx context.Context) func(url string) (string, error) {
     return func(url string) (string, error) {
         if !isDetailPage(`https://gibson.jp/(electric|acoustic)/[a-z0-9\-]+`, url) {
             return "", nil
@@ -135,7 +135,7 @@ var regSeriesGibson = regexp.MustCompile(
     `(Les Paul|SG|ES-\d+|Flying V|Explorer|Firebird|Hummingbird|J\-\d+)+\s[A-Za-z]+\b`,
 )
 
-func (c *callBacksGibson) CollectSpec() func(doc *goquery.Document) []map[string]string {
+func (c *CallBacksGibson) CollectAttributes() func(doc *goquery.Document) []map[string]string {
     return func(doc *goquery.Document) []map[string]string {
         specs := []map[string]string{}
         mutex := &sync.Mutex{}
@@ -169,13 +169,13 @@ func (c *callBacksGibson) CollectSpec() func(doc *goquery.Document) []map[string
     }
 }
 
-func (c *callBacksGibson) BuildGuitar(url string) func(spec map[string]string) *model.Guitar {
+func (c *CallBacksGibson) BuildModel(url string) func(spec map[string]string) *model.Guitar {
     return func(spec map[string]string) *model.Guitar {
         return buildGuitarFrame(spec, url, c.funcs.logger)
     }
 }
 
-func (c *callBacksGibson) IsStaticPage() func(html string) bool {
+func (c *CallBacksGibson) IsStaticPage() func(html string) bool {
     return func(html string) bool {
         return strings.Contains(html, "product-overview")
     }

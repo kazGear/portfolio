@@ -2,7 +2,6 @@ package scraper
 
 import (
 	"context"
-	"fmt"
 	"regexp"
 	"strconv"
 	"strings"
@@ -19,16 +18,16 @@ import (
 	"github.com/kazGear/portfolio/goBatch/pkg/utils"
 )
 
-type guitarScraperEsp struct {
-    gScraper guitarScraper
+type CrawlerEsp struct {
+    gScraper Crawler[*model.Guitar]
 }
 
-type callBacksEsp struct {
-    funcs callBacks
+type CallBacksEsp struct {
+    funcs CallBacks
 }
 
 
-func NewScraperEsp(logger *log.Logger) Scraper {
+func NewScraperEsp(logger *log.Logger) Scraper[*model.Guitar] {
 	collector := colly.NewCollector(
 		colly.Async(true),
 		colly.MaxDepth(4),
@@ -37,8 +36,8 @@ func NewScraperEsp(logger *log.Logger) Scraper {
 		DomainGlob:  "*",
 		Parallelism: 5, // URL収集漏れが発生するため5に制限
 	})
-    return &guitarScraperEsp{
-        guitarScraper{
+    return &CrawlerEsp{
+        Crawler[*model.Guitar]{
             collector: collector,
             mutex:     &sync.Mutex{},
             logger:    logger,
@@ -46,9 +45,9 @@ func NewScraperEsp(logger *log.Logger) Scraper {
     }
 }
 
-func NewCallBacksEsp(logger *log.Logger) *callBacksEsp {
-    return &callBacksEsp{
-        callBacks{
+func NewCallBacksEsp(logger *log.Logger) *CallBacksEsp {
+    return &CallBacksEsp{
+        CallBacks{
             logger: logger,
         },
     }
@@ -57,7 +56,7 @@ func NewCallBacksEsp(logger *log.Logger) *callBacksEsp {
 
 var regNeedPatterEsp = regexp.MustCompile(`https://espguitars.co.jp/product/\d+/`)
 
-func (g *guitarScraperEsp) CollectLinks(parentCtx context.Context) ([]string, error) {
+func (g *CrawlerEsp) CollectLinks(parentCtx context.Context) ([]string, error) {
     c := g.gScraper.collector
 
     // クロールログ収集
@@ -70,19 +69,19 @@ func (g *guitarScraperEsp) CollectLinks(parentCtx context.Context) ([]string, er
 
     c.OnHTML("#item .figcap a", func(html *colly.HTMLElement) {
         link := html.Request.AbsoluteURL(html.Attr("href"))
-        if g.gScraper.isFirstVisit(mutex, link, visited) {
+        if isFirstVisit(mutex, link, visited) {
             c.Visit(link)
         }
     })
     c.OnHTML("#inner_content .figcap a", func(html *colly.HTMLElement) {
         link := html.Request.AbsoluteURL(html.Attr("href"))
-        if g.gScraper.isFirstVisit(mutex, link, visited) {
+        if isFirstVisit(mutex, link, visited) {
             c.Visit(link)
         }
     })
     c.OnHTML("section.color_variation a", func(html *colly.HTMLElement) {
         link := html.Request.AbsoluteURL(html.Attr("href"))
-        if g.gScraper.isFirstVisit(mutex, link, visited) {
+        if isFirstVisit(mutex, link, visited) {
             c.Visit(link)
         }
     })
@@ -96,16 +95,16 @@ func (g *guitarScraperEsp) CollectLinks(parentCtx context.Context) ([]string, er
     return g.gScraper.urls, nil
 }
 
-func (g *guitarScraperEsp) Scrape(provider  PageProvider,
-                                  parser    GuitarParser,
-                                  parentCtx context.Context,
+func (g *CrawlerEsp) Scrape(provider  PageProvider,
+                            parser    ModelParser[*model.Guitar],
+                            parentCtx context.Context,
 ) []*model.Guitar {
     guitars := g.gScraper.scrapeFrame(provider, parser, parentCtx)
     return guitars
 }
 
 // 必要に応じて、基盤のTryWaitReadyを組み込む
-func (c *callBacksEsp) FetchDynamicPage(parentCtx context.Context) func(url string) (string, error) {
+func (c *CallBacksEsp) FetchDynamicPage(parentCtx context.Context) func(url string) (string, error) {
     return func(url string) (string, error) {
         if !isDetailPage(`^https://espguitars\.co\.jp/product/\d{4,}/?$`, url) {
             return "", nil
@@ -119,25 +118,22 @@ func (c *callBacksEsp) FetchDynamicPage(parentCtx context.Context) func(url stri
 
         var html string
 
-        err := chromedp.Run(ctx,
-               chromedp.Navigate(url),
-               chromedp.WaitVisible("#main", chromedp.ByQuery), // 求める要素が出るまで待つ
-               chromedp.Sleep(300 * time.Millisecond), // JSが動く猶予を与える
-               tryWaitReady("h1.header_title"), // 必要な要素が生成されるのを待つ
-               tryWaitReady(".tbl_spec"),
-               tryWaitReady("p.detail_price"),
-               chromedp.OuterHTML("html", &html, chromedp.ByQuery), // 最終的なHTML出力
+        chromedp.Run(ctx,
+            chromedp.Navigate(url),
+            chromedp.WaitVisible("#main", chromedp.ByQuery), // 求める要素が出るまで待つ
+            chromedp.Sleep(300 * time.Millisecond), // JSが動く猶予を与える
+            tryWaitReady("h1.header_title"), // 必要な要素が生成されるのを待つ
+            tryWaitReady(".tbl_spec"),
+            tryWaitReady("p.detail_price"),
+            chromedp.OuterHTML("html", &html, chromedp.ByQuery), // 最終的なHTML出力
         )
-        if err != nil {
-            return "", fmt.Errorf("[chromedp error]: %v [url]: %v\n", err, url)
-        }
         return html, nil
     }
 }
 
 var regSeries = regexp.MustCompile(`^[\w-]+`)
 
-func (c *callBacksEsp) CollectSpec() func(doc *goquery.Document) []map[string]string {
+func (c *CallBacksEsp) CollectAttributes() func(doc *goquery.Document) []map[string]string {
     return func(doc *goquery.Document) []map[string]string {
         specs := make([]map[string]string, 0, 1)
         mutex := &sync.Mutex{}
@@ -189,13 +185,13 @@ func (c *callBacksEsp) CollectSpec() func(doc *goquery.Document) []map[string]st
     }
 }
 
-func (c *callBacksEsp) BuildGuitar(url string) func(spec map[string]string) *model.Guitar {
+func (c *CallBacksEsp) BuildModel(url string) func(spec map[string]string) *model.Guitar {
     return func(spec map[string]string) *model.Guitar {
         return buildGuitarFrame(spec, url, c.funcs.logger)
     }
 }
 
-func (c *callBacksEsp) IsStaticPage() func(html string) bool {
+func (c *CallBacksEsp) IsStaticPage() func(html string) bool {
     return func(html string) bool {
         return strings.Contains(html, "tbl_spec")
     }

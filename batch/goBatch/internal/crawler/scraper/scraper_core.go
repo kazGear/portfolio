@@ -1,0 +1,274 @@
+package scraper
+
+import (
+	"context"
+	"fmt"
+	"log"
+	"regexp"
+	"strings"
+	"sync"
+	"sync/atomic"
+	"time"
+
+	"github.com/PuerkitoBio/goquery"
+	"github.com/chromedp/chromedp"
+	"github.com/gocolly/colly/v2"
+	"github.com/kazGear/portfolio/goBatch/pkg/utils"
+)
+
+type Scraper[T any] interface {
+	Scrape(provider PageProvider, parser ModelParser[T], ctx context.Context) []T
+	CollectLinks(ctx context.Context) ([]string, error)
+}
+
+type PageProvider interface {
+    IsStaticPage()                        func(html string) bool
+    FetchDynamicPage(ctx context.Context) func(url string)  (string, error)
+}
+
+type ModelParser[T any] interface {
+    CollectAttributes()    func(doc *goquery.Document)  []map[string]string
+    BuildModel(url string) func(spec map[string]string) T
+}
+
+type Crawler[T any] struct {
+    urls      []string
+	collector *colly.Collector
+    mutex     *sync.Mutex
+    logger    *log.Logger
+}
+
+type CallBacks struct {
+    logger *log.Logger
+}
+
+// スクレイピング実行のフレームワーク
+func (g *Crawler[T]) scrapeFrame(provider PageProvider,
+                                 parser ModelParser[T],
+                                 ctx context.Context,
+) []T {
+    var models = make([]T, 0, 400)
+
+    if len(g.urls) <= 0 {
+        g.logger.Println("None URL for crawling...")
+        return []T{}
+    }
+    utils.LoggingCollectedLinks(g.urls, g.logger)
+    g.logger.Printf("[Urls count]: %v 件\n", len(g.urls))
+
+    wg := &sync.WaitGroup{}
+
+    for _, url := range g.urls {
+        url := url
+        // 静的/動的を判定してHTMLを取得
+        html := fetchPage(url, provider.IsStaticPage(), provider.FetchDynamicPage(ctx))
+
+        wg.Add(1)
+        go func(html string, url string) {
+            defer wg.Done()
+            doc, err := goquery.NewDocumentFromReader(strings.NewReader(html))
+
+            if err != nil {
+                g.logger.Println("[Goquery error]:", err)
+                return
+            }
+            funcCollectAttributes := parser.CollectAttributes()
+            funcBuildModel        := parser.BuildModel(url)
+            attributes            := funcCollectAttributes(doc) // 1ページ：N詳細ページでもOK
+
+            for _, attribute := range attributes {
+                attribute := attribute
+                model     := funcBuildModel(attribute)
+
+				models = utils.LockedAppend(g.mutex, models, model)
+            }
+        }(html, url)
+    }
+    wg.Wait()
+    return models
+}
+
+// 動的、静的ページを取得（動的が優先）。funcは個々で実装の必要あり。
+func fetchPage(url string,
+               isStaticPage func(string)bool,
+               fetchDynamicPage func(string) (string, error),
+) string {
+    var html string
+    html = fetchStaticPage(url)
+
+    if !isStaticPage(html) {
+        var err error
+        html, err = fetchDynamicPage(url)
+
+        if err != nil {
+            log.Println(err)
+        }
+    }
+    return html
+}
+
+// 静的HTMLを取得
+func fetchStaticPage(url string) string {
+    var html string
+    c := colly.NewCollector()
+
+    c.OnHTML("html", func(e *colly.HTMLElement) {
+        var err error
+        html, err = e.DOM.Html()
+
+        if err != nil {
+            log.Printf("[fetchStaticPage failed]: %v", err)
+        }
+    })
+    c.Visit(url)
+    return html
+}
+
+// 動的ページ取得用ヘルパー
+// WaitVisible を実行し、失敗しても無視するフォールバック
+func tryWaitVisible(selector string) chromedp.Action {
+    return chromedp.ActionFunc(func(ctx context.Context) error {
+        err := chromedp.WaitVisible(selector, chromedp.ByQuery).Do(ctx)
+        if err != nil {
+            log.Printf("[TryWaitVisible fallback]: selector=%s err=%v\n", selector, err)
+            return nil
+        }
+        return nil
+    })
+}
+
+// 動的ページ取得用ヘルパー
+// WaitReady を実行し、失敗しても無視するフォールバック
+func tryWaitReady(elem string) chromedp.ActionFunc {
+  return chromedp.ActionFunc(func(ctx context.Context) error {
+        // 失敗しても止めない
+        err := chromedp.WaitReady(elem, chromedp.ByQuery).Do(ctx)
+
+        if err != nil {
+            log.Printf("[TryWaitReady fallback]: elem=%v err=%v\n", elem, err)
+        }
+        return nil
+    })
+}
+
+// ブラウザクリックのフォールバック版
+func tryClick(path string) chromedp.Action {
+    return chromedp.ActionFunc(func(ctx context.Context) error {
+        err := chromedp.Click(path, chromedp.NodeVisible).Do(ctx)
+        if err != nil {
+            log.Printf("[TryClick fallback]: selector=%s err=%v\n", path, err)
+            return nil
+        }
+        return nil
+    })
+}
+
+// URLセットに追加（重複なし）
+// true: 初visit, false: visit済
+func isFirstVisit(mutex *sync.Mutex, url string, visited map[string]struct{}) bool {
+    mutex.Lock()
+    defer mutex.Unlock()
+
+    _, exists := visited[url]
+
+    if exists {
+        return false
+    }
+    visited[url] = struct{}{} // struct{} = use memory 0
+    return true
+}
+
+// 詳細データが載っているページであるか判定
+func isDetailPage(pattern string, url string) bool {
+    matched, _ := regexp.MatchString(pattern, url)
+    return matched
+}
+
+// 動的ページのレンダー(CSR/SSRに影響を受けない)
+func renderHTML(ctx context.Context, startURL string, waitElem string,
+) (*goquery.Document, error) {
+
+    var html string
+
+    // 一覧ページをレンダリング
+    err := chromedp.Run(ctx,
+        chromedp.Navigate(startURL),
+        tryWaitVisible(waitElem), // 商品一覧の親
+        chromedp.Sleep(2000 * time.Millisecond), // JS描画待
+        chromedp.OuterHTML("html", &html),
+    )
+    if err != nil {
+        return nil, fmt.Errorf("[Chromedp error]: %v %v\n", err, waitElem)
+    }
+    doc, err := goquery.NewDocumentFromReader(strings.NewReader(html))
+
+    if err != nil {
+        return nil, fmt.Errorf("[Document read error]: %v %v\n", err, waitElem)
+    }
+    return doc, nil
+}
+
+// htmlを自動でスクロールさせる
+func autoScroll() chromedp.Action {
+    return chromedp.ActionFunc(func(ctx context.Context) error {
+        var lastHeight int
+        var scrollY int
+        var innerHeight int
+
+        for i := 0; i < 50; i++ {
+            chromedp.Run(ctx,
+                chromedp.Evaluate(`document.body.scrollHeight`, &lastHeight), // ページ全体の高さ
+            )
+            chromedp.Run(ctx,
+                chromedp.Evaluate(`window.scrollBy(0, 800)`, nil),
+                chromedp.Sleep(300 * time.Millisecond),
+                chromedp.Evaluate(`window.scrollY`, &scrollY), // 画面上端のスクロール位置
+                chromedp.Evaluate(`window.innerHeight`, &innerHeight),
+            )
+            if scrollY + innerHeight >= lastHeight - 50 {
+                break // 最後までスクロール済
+            }
+            time.Sleep(5 * time.Second)
+        }
+        return nil
+    })
+}
+
+type crawlStats struct {
+    requests  atomic.Int64
+    responses atomic.Int64
+    errors    atomic.Int64
+}
+
+// クロールの req,res,err の数を集計する
+func statsCrawlLogs (c      *colly.Collector,
+                     stats  *crawlStats,
+                     logger *log.Logger,
+) {
+    c.OnRequest(func(c *colly.Request) {
+        stats.requests.Add(1)
+    })
+    c.OnResponse(func(c *colly.Response) {
+        stats.responses.Add(1)
+    })
+    c.OnError(func(c *colly.Response, err error) {
+        stats.errors.Add(1)
+
+        logger.Printf(
+            "[Crawl error]: status=%d url=%s err=%v\n",
+            c.StatusCode,
+            c.Request.URL,
+            err,
+        )
+    })
+}
+
+// クロールのロギング
+func loggingCrawlStats(stats *crawlStats, logger *log.Logger) {
+    logger.Printf(
+        "[Crawl stats]: requests=%d responses=%d errors=%d\n",
+        stats.requests.Load(),
+        stats.responses.Load(),
+        stats.errors.Load(),
+    )
+}

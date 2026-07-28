@@ -3,7 +3,6 @@ package scraper
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"io"
 	"maps"
 	"net/http"
@@ -22,15 +21,15 @@ import (
 	"github.com/kazGear/portfolio/goBatch/pkg/utils"
 )
 
-type guitarScraperFender struct {
-    gScraper guitarScraper
+type CrawlerFender struct {
+    gScraper Crawler[*model.Guitar]
 }
 
-type callBacksFender struct {
-    funcs callBacks
+type CallBacksFender struct {
+    funcs CallBacks
 }
 
-func NewScraperFender(logger *log.Logger) Scraper {
+func NewScraperFender(logger *log.Logger) Scraper[*model.Guitar] {
 	collector := colly.NewCollector(
 		colly.Async(true),
 		colly.MaxDepth(3),
@@ -39,8 +38,8 @@ func NewScraperFender(logger *log.Logger) Scraper {
 		DomainGlob:  "*",
 		Parallelism: 5, // URL収集漏れが発生するため5に制限
 	})
-    return &guitarScraperFender{
-        guitarScraper{
+    return &CrawlerFender{
+        Crawler[*model.Guitar]{
             collector: collector,
             mutex:     &sync.Mutex{},
             logger:    logger,
@@ -48,9 +47,9 @@ func NewScraperFender(logger *log.Logger) Scraper {
     }
 }
 
-func NewCallBacksFender(logger *log.Logger) *callBacksFender {
-    return &callBacksFender{
-        callBacks{
+func NewCallBacksFender(logger *log.Logger) *CallBacksFender {
+    return &CallBacksFender{
+        CallBacks{
             logger: logger,
         },
     }
@@ -68,7 +67,7 @@ type product struct {
 
 var productsFender = make(map[string]*product, 550)
 
-func (g *guitarScraperFender) CollectLinks(parentCtx context.Context) ([]string, error) {
+func (g *CrawlerFender) CollectLinks(parentCtx context.Context) ([]string, error) {
     apiLinks := []string{
         // エレキ
         `https://hx9wc9.a.searchspring.io/api/search/search.json?siteId=hx9wc9&resultsPerPage=50&bgfilter.ss_entry_type=product&bgfilter.collection_handle=electric-guitars&resultsFormat=native`,
@@ -126,9 +125,9 @@ func (g *guitarScraperFender) CollectLinks(parentCtx context.Context) ([]string,
     return g.gScraper.urls, nil
 }
 
-func (g *guitarScraperFender) Scrape(provider  PageProvider,
-                                     parser    GuitarParser,
-                                     parentCtx context.Context,
+func (g *CrawlerFender) Scrape(provider  PageProvider,
+                               parser    ModelParser[*model.Guitar],
+                               parentCtx context.Context,
 ) []*model.Guitar {
     guitars := g.gScraper.scrapeFrame(provider, parser, parentCtx)
 
@@ -143,7 +142,7 @@ func (g *guitarScraperFender) Scrape(provider  PageProvider,
 }
 
 // 必要に応じて、基盤のTryWaitReadyを組み込む
-func (c *callBacksFender) FetchDynamicPage(parentCtx context.Context) func(url string) (string, error) {
+func (c *CallBacksFender) FetchDynamicPage(parentCtx context.Context) func(url string) (string, error) {
     return func(url string) (string, error) {
         if !isDetailPage(`^https://jp.fender.com/products/.+`, url) {
             return "", nil
@@ -157,20 +156,17 @@ func (c *callBacksFender) FetchDynamicPage(parentCtx context.Context) func(url s
 
         var html string
 
-        err := chromedp.Run(ctx,
+        chromedp.Run(ctx,
             chromedp.Navigate(url),
             // chromedp.WaitReady("#fender-react div div img", chromedp.ByQuery), // 求める要素が出るまで待つ
             chromedp.Sleep(10 * time.Second), // JSが動く猶予を与える
             chromedp.OuterHTML("html", &html, chromedp.ByQuery), // 最終的なHTML出力
         )
-        if err != nil {
-            return "", fmt.Errorf("[chromedp error]: %v [url]: %v\n", err, url)
-        }
         return html, nil
     }
 }
 
-func (c *callBacksFender) CollectSpec() func(doc *goquery.Document) []map[string]string {
+func (c *CallBacksFender) CollectAttributes() func(doc *goquery.Document) []map[string]string {
     return func(doc *goquery.Document) []map[string]string {
         specs := make([]map[string]string, 0, 1)
         mutex := &sync.Mutex{}
@@ -197,13 +193,13 @@ func (c *callBacksFender) CollectSpec() func(doc *goquery.Document) []map[string
     }
 }
 
-func (c *callBacksFender) BuildGuitar(url string) func(spec map[string]string) *model.Guitar {
+func (c *CallBacksFender) BuildModel(url string) func(spec map[string]string) *model.Guitar {
     return func(spec map[string]string) *model.Guitar {
         return buildGuitarFrame(spec, url, c.funcs.logger)
     }
 }
 
-func (c *callBacksFender) IsStaticPage() func(html string) bool {
+func (c *CallBacksFender) IsStaticPage() func(html string) bool {
     return func(html string) bool {
         return strings.Contains(html, "fender")
     }

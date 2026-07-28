@@ -19,15 +19,15 @@ import (
 	"github.com/kazGear/portfolio/goBatch/pkg/utils"
 )
 
-type guitarScraperSchecter struct {
-    gScraper guitarScraper
+type CrawlerSchecter struct {
+    gScraper Crawler[*model.Guitar]
 }
 
-type callBacksSchecter struct {
-    funcs callBacks
+type CallBacksSchecter struct {
+    funcs CallBacks
 }
 
-func NewScraperSchecter(logger *log.Logger) Scraper {
+func NewScraperSchecter(logger *log.Logger) Scraper[*model.Guitar] {
 	collector := colly.NewCollector(
 		colly.Async(true),
 		colly.MaxDepth(4),
@@ -36,8 +36,8 @@ func NewScraperSchecter(logger *log.Logger) Scraper {
 		DomainGlob:  "*",
 		Parallelism: 5, // URL収集漏れが発生するため5に制限
 	})
-    return &guitarScraperSchecter{
-        guitarScraper{
+    return &CrawlerSchecter{
+        Crawler[*model.Guitar]{
             collector: collector,
             mutex:     &sync.Mutex{},
             logger:    logger,
@@ -45,9 +45,9 @@ func NewScraperSchecter(logger *log.Logger) Scraper {
     }
 }
 
-func NewCallBacksSchecter(logger *log.Logger) *callBacksSchecter {
-    return &callBacksSchecter{
-        callBacks{
+func NewCallBacksSchecter(logger *log.Logger) *CallBacksSchecter {
+    return &CallBacksSchecter{
+        CallBacks{
             logger: logger,
         },
     }
@@ -55,7 +55,7 @@ func NewCallBacksSchecter(logger *log.Logger) *callBacksSchecter {
 
 var regNeedPatterSchecter = regexp.MustCompile(`\?variation=`)
 
-func (g *guitarScraperSchecter) CollectLinks(parentCtx context.Context) ([]string, error) {
+func (g *CrawlerSchecter) CollectLinks(parentCtx context.Context) ([]string, error) {
     c := g.gScraper.collector
 
     // クロールログ収集
@@ -68,19 +68,19 @@ func (g *guitarScraperSchecter) CollectLinks(parentCtx context.Context) ([]strin
 
     c.OnHTML("#guitar a", func(html *colly.HTMLElement) {
         link := html.Request.AbsoluteURL(html.Attr("href"))
-        if g.gScraper.isFirstVisit(mutex, link, visited) {
+        if isFirstVisit(mutex, link, visited) {
             c.Visit(link)
         }
     })
     c.OnHTML("#products a", func(html *colly.HTMLElement) {
         link := html.Request.AbsoluteURL(html.Attr("href"))
-        if g.gScraper.isFirstVisit(mutex, link, visited) {
+        if isFirstVisit(mutex, link, visited) {
             c.Visit(link)
         }
     })
     c.OnHTML("#main_visual aside a", func(html *colly.HTMLElement) {
         link := html.Request.AbsoluteURL(html.Attr("href"))
-        if g.gScraper.isFirstVisit(mutex, link, visited) {
+        if isFirstVisit(mutex, link, visited) {
             c.Visit(link)
         }
     })
@@ -95,16 +95,16 @@ func (g *guitarScraperSchecter) CollectLinks(parentCtx context.Context) ([]strin
     return g.gScraper.urls, nil
 }
 
-func (g *guitarScraperSchecter) Scrape(provider  PageProvider,
-                                  parser    GuitarParser,
-                                  parentCtx context.Context,
+func (g *CrawlerSchecter) Scrape(provider  PageProvider,
+                                 parser    ModelParser[*model.Guitar],
+                                 parentCtx context.Context,
 ) []*model.Guitar {
     guitars := g.gScraper.scrapeFrame(provider, parser, parentCtx)
     return guitars
 }
 
 // 必要に応じて、基盤のTryWaitReadyを組み込む
-func (c *callBacksSchecter) FetchDynamicPage(parentCtx context.Context) func(url string) (string, error) {
+func (c *CallBacksSchecter) FetchDynamicPage(parentCtx context.Context) func(url string) (string, error) {
     return func(url string) (string, error) {
         if !isDetailPage(`^https://schecter.co.jp/[a-z]+/\d{3,5}/\?variation=`, url) {
             return "", nil
@@ -118,22 +118,19 @@ func (c *callBacksSchecter) FetchDynamicPage(parentCtx context.Context) func(url
 
         var html string
 
-        err := chromedp.Run(ctx,
+        chromedp.Run(ctx,
             chromedp.Navigate(url),
             chromedp.WaitVisible("main", chromedp.ByQuery), // 求める要素が出るまで待つ
             chromedp.Sleep(300 * time.Millisecond), // JSが動く猶予を与える
             chromedp.OuterHTML("html", &html, chromedp.ByQuery), // 最終的なHTML出力
         )
-        if err != nil {
-            return "", fmt.Errorf("[chromedp error]: %v [url]: %v\n", err, url)
-        }
         return html, nil
     }
 }
 
 var regEX_IV = regexp.MustCompile(`\[EX-IV\][\n.]+`)
 
-func (c *callBacksSchecter) CollectSpec() func(doc *goquery.Document) []map[string]string {
+func (c *CallBacksSchecter) CollectAttributes() func(doc *goquery.Document) []map[string]string {
     return func(doc *goquery.Document) []map[string]string {
         specs := make([]map[string]string, 0, 1)
         mutex := &sync.Mutex{}
@@ -210,13 +207,13 @@ func (c *callBacksSchecter) CollectSpec() func(doc *goquery.Document) []map[stri
     }
 }
 
-func (c *callBacksSchecter) BuildGuitar(url string) func(spec map[string]string) *model.Guitar {
+func (c *CallBacksSchecter) BuildModel(url string) func(spec map[string]string) *model.Guitar {
     return func(spec map[string]string) *model.Guitar {
         return buildGuitarFrame(spec, url, c.funcs.logger)
     }
 }
 
-func (c *callBacksSchecter) IsStaticPage() func(html string) bool {
+func (c *CallBacksSchecter) IsStaticPage() func(html string) bool {
     return func(html string) bool {
         return strings.Contains(html, "Notes")
     }

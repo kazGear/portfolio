@@ -21,16 +21,16 @@ import (
 	"github.com/kazGear/portfolio/goBatch/pkg/utils"
 )
 
-type guitarScraperStrandberg struct {
-    gScraper guitarScraper
+type CrawlerStrandberg struct {
+    gScraper Crawler[*model.Guitar]
 }
 
-type callBacksStrandberg struct {
-    funcs callBacks
+type CallBacksStrandberg struct {
+    funcs CallBacks
 }
 
 
-func NewScraperStrandberg(logger *log.Logger) Scraper {
+func NewScraperStrandberg(logger *log.Logger) Scraper[*model.Guitar] {
 	collector := colly.NewCollector(
 		colly.Async(true),
 		colly.MaxDepth(3),
@@ -39,8 +39,8 @@ func NewScraperStrandberg(logger *log.Logger) Scraper {
 		DomainGlob:  "*",
 		Parallelism: 5, // URL収集漏れが発生するため5に制限
 	})
-    return &guitarScraperStrandberg{
-        guitarScraper{
+    return &CrawlerStrandberg{
+        Crawler[*model.Guitar]{
             collector: collector,
             mutex:     &sync.Mutex{},
             logger:    logger,
@@ -48,9 +48,9 @@ func NewScraperStrandberg(logger *log.Logger) Scraper {
     }
 }
 
-func NewCallBacksStrandberg(logger *log.Logger) *callBacksStrandberg {
-    return &callBacksStrandberg{
-        callBacks{
+func NewCallBacksStrandberg(logger *log.Logger) *CallBacksStrandberg {
+    return &CallBacksStrandberg{
+        CallBacks{
             logger: logger,
         },
     }
@@ -58,7 +58,7 @@ func NewCallBacksStrandberg(logger *log.Logger) *callBacksStrandberg {
 
 var regNeedPatterStrandberg = regexp.MustCompile(`/en-US/product/`)
 
-func (g *guitarScraperStrandberg) CollectLinks(parentCtx context.Context) ([]string, error) {
+func (g *CrawlerStrandberg) CollectLinks(parentCtx context.Context) ([]string, error) {
     // タブごとに独立した context を作る
     tabCtx, tabCancel := chromedp.NewContext(parentCtx)
     defer tabCancel()
@@ -85,15 +85,15 @@ func (g *guitarScraperStrandberg) CollectLinks(parentCtx context.Context) ([]str
     return g.gScraper.urls, nil
 }
 
-func (g *guitarScraperStrandberg) Scrape(provider  PageProvider,
-                                         parser    GuitarParser,
-                                         parentCtx context.Context,
+func (g *CrawlerStrandberg) Scrape(provider  PageProvider,
+                                   parser    ModelParser[*model.Guitar],
+                                   parentCtx context.Context,
 ) []*model.Guitar {
     guitars := g.gScraper.scrapeFrame(provider, parser, parentCtx)
     return guitars
 }
 
-func (c *callBacksStrandberg) FetchDynamicPage(parentCtx context.Context) func(url string) (string, error) {
+func (c *CallBacksStrandberg) FetchDynamicPage(parentCtx context.Context) func(url string) (string, error) {
     return func(url string) (string, error) {
         if !isDetailPage(`https://strandbergguitars.com/en-US/product/[a-z0-9\-]+`, url) {
             return "", nil
@@ -154,7 +154,7 @@ var regSeriesStrandberg = regexp.MustCompile(`^[A-Za-z]+\s[A-Za-z]+\b`)
 
 var exchangeRate        = utils.GetExchangeUSDtoJPY()
 
-func (c *callBacksStrandberg) CollectSpec() func(doc *goquery.Document) []map[string]string {
+func (c *CallBacksStrandberg) CollectAttributes() func(doc *goquery.Document) []map[string]string {
     return func(doc *goquery.Document) []map[string]string {
         specs := []map[string]string{}
         mutex := &sync.Mutex{}
@@ -192,13 +192,13 @@ func (c *callBacksStrandberg) CollectSpec() func(doc *goquery.Document) []map[st
     }
 }
 
-func (c *callBacksStrandberg) BuildGuitar(url string) func(spec map[string]string) *model.Guitar {
+func (c *CallBacksStrandberg) BuildModel(url string) func(spec map[string]string) *model.Guitar {
     return func(spec map[string]string) *model.Guitar {
         return buildGuitarFrame(spec, url, c.funcs.logger)
     }
 }
 
-func (c *callBacksStrandberg) IsStaticPage() func(html string) bool {
+func (c *CallBacksStrandberg) IsStaticPage() func(html string) bool {
     return func(html string) bool {
         // ありえない文字列、確実に動的ページを取得させる。
         return strings.Contains(html, "@abcd1234@")

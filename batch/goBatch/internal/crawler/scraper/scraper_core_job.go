@@ -3315,3 +3315,320 @@ var skillsRoleDictionary = []*Skill{
         Patterns: []*regexp.Regexp{},
     },
 }
+
+var skillsAiDictionary = []*Skill{
+    {
+        Name:     "ChatGPT",
+        Category: C.AI,
+        Keywords: []string{
+            "chatgpt",
+            "chat gpt",
+            "チャットgpt",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "OpenAI API",
+        Category: C.AI,
+        Keywords: []string{
+            "openai api",
+            "openaiのapi",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "Claude Code",
+        Category: C.AI,
+        Keywords: []string{
+            "claude code",
+            "claude-code",
+            "クロードコード",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "Claude",
+        Category: C.AI,
+        Keywords: []string{
+            "claude",
+            "クロード",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "Anthropic API",
+        Category: C.AI,
+        Keywords: []string{
+            "anthropic api",
+            "anthropic",
+            "anthropicのapi",
+            "claude api",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "Google Gemini",
+        Category: C.AI,
+        Keywords: []string{
+            "google gemini",
+            "gemini ai",
+            "gemini",
+            "ジェミニ",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "Gemini API",
+        Category: C.AI,
+        Keywords: []string{
+            "gemini api",
+            "google ai studio",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "Gemini Code Assist",
+        Category: C.AI,
+        Keywords: []string{
+            "gemini code assist",
+            "gemini code assistance",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "Microsoft Copilot",
+        Category: C.AI,
+        Keywords: []string{
+            "copilot",
+            "microsoft copilot",
+            "copilot for microsoft 365",
+            "microsoft 365 copilot",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "Amazon Q Developer",
+        Category: C.AI,
+        Keywords: []string{
+            "amazon q developer",
+            "amazon q",
+            "aws q",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "Amazon Bedrock",
+        Category: C.AI,
+        Keywords: []string{
+            "amazon bedrock",
+            "amazon bedrock api",
+            "aws bedrock",
+            "bedrock",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "Azure OpenAI Service",
+        Category: C.AI,
+        Keywords: []string{
+            "azure openai",
+            "azure openai service",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "Google Vertex AI",
+        Category: C.AI,
+        Keywords: []string{
+            "google vertex ai",
+            "vertex ai",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "Windsurf",
+        Category: C.AI,
+        Keywords: []string{
+            "windsurf",
+            "windsurf editor",
+            "codeium windsurf",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "Codeium",
+        Category: C.AI,
+        Keywords: []string{
+            "codeium",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "Tabnine",
+        Category: C.AI,
+        Keywords: []string{
+            "tabnine",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "Amazon CodeWhisperer",
+        Category: C.AI,
+        Keywords: []string{
+            "amazon codewhisperer",
+            "codewhisperer",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "JetBrains AI Assistant",
+        Category: C.AI,
+        Keywords: []string{
+            "jetbrains ai assistant",
+            "jetbrains ai",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "Cline",
+        Category: C.AI,
+        Keywords: []string{
+            "cline",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "Continue",
+        Category: C.AI,
+        Keywords: []string{
+            "continue.dev",
+            "continue ai",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "Devin",
+        Category: C.AI,
+        Keywords: []string{
+            "devin ai",
+            "cognition devin",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "v0",
+        Category: C.AI,
+        Keywords: []string{},
+        Patterns: []*regexp.Regexp{
+            regexp.MustCompile(`\bv0\b`),
+        },
+    },
+    {
+        Name:     "Replit Agent",
+        Category: C.AI,
+        Keywords: []string{
+            "replit agent",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "GitHub Copilot Workspace",
+        Category: C.AI,
+        Keywords: []string{
+            "github copilot workspace",
+            "copilot workspace",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "Hugging Face",
+        Category: C.AI,
+        Keywords: []string{
+            "hugging face",
+            "huggingface",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "Ollama",
+        Category: C.AI,
+        Keywords: []string{
+            "ollama",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "LM Studio",
+        Category: C.AI,
+        Keywords: []string{
+            "lm studio",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "OpenAI Codex",
+        Category: C.AI,
+        Keywords: []string{
+            "openai codex",
+            "codex cli",
+            "codex",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "RAG",
+        Category: C.AI,
+        Keywords: []string{
+            "retrieval augmented generation",
+            "retrieval-augmented generation",
+            "検索拡張生成",
+        },
+        Patterns: []*regexp.Regexp{
+            regexp.MustCompile(`\brag\b`),
+        },
+    },
+    {
+        Name:     "LLM",
+        Category: C.AI,
+        Keywords: []string{
+            "large language model",
+            "large language models",
+            "大規模言語モデル",
+        },
+        Patterns: []*regexp.Regexp{
+            regexp.MustCompile(`\bllm\b`),
+        },
+    },
+    {
+        Name:     "Generative AI",
+        Category: C.AI,
+        Keywords: []string{
+            "generative ai",
+            "生成ai",
+            "生成人工知能",
+            "生成系ai",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "Prompt Engineering",
+        Category: C.AI,
+        Keywords: []string{
+            "prompt engineering",
+            "プロンプトエンジニアリング",
+            "プロンプト設計",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "AI Agent",
+        Category: C.AI,
+        Keywords: []string{
+            "ai agent",
+            "aiエージェント",
+            "人工知能エージェント",
+            "agentic ai",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+}

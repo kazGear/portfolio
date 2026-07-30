@@ -28,7 +28,7 @@ func buildJobFrame(data map[string]string, url string, logger *log.Logger) (*mod
 var whitespaceRegex = regexp.MustCompile(`\s+`)
 
 // 文字列をスキル検索用に正規化する
-func normalizeForSkillSearch(str string) string {
+func normalizeForFeatureSearch(str string) string {
 	normalized := norm.NFKC.String(str) // Unicode正規化（全角英数字・互換文字対策）
 	normalized = width.Narrow.String(normalized)
 	normalized = strings.ToLower(normalized)
@@ -40,18 +40,41 @@ func normalizeForSkillSearch(str string) string {
 }
 
 // 必要な情報を抽出する
-func salvageJobData(data map[string]string) {
+func salvageJobData(data map[string]string, target string) {
+    salvageLocation(data, target)
 
 }
 
-type Skill struct {
+func salvageLocation(data map[string]string, target string) {
+    for _, location := range locationDictionary {
+        for _, locationName := range location.Keywords {
+            if strings.Contains(target, locationName) {
+                data[C.Location] = location.Name
+                return
+            }
+        }
+    }
+    data[C.Location] = "不明"
+}
+func salvage_A(data map[string]string, target string) {}
+func salvage_B(data map[string]string, target string) {}
+func salvage_C(data map[string]string, target string) {}
+func salvage_D(data map[string]string, target string) {}
+func salvage_E(data map[string]string, target string) {}
+func salvage_F(data map[string]string, target string) {}
+func salvage_G(data map[string]string, target string) {}
+func salvage_H(data map[string]string, target string) {}
+func salvage_I(data map[string]string, target string) {}
+func salvage_J(data map[string]string, target string) {}
+
+type Feature struct {
     Name     string
     Category string
     Keywords []string // 大文字・小文字等で区分けする必要はない（検索対象が正規化済の前提）
     Patterns []*regexp.Regexp // 短いキーワードの誤検出防止用
 }
 
-var skillsLanguageDictionary = []*Skill{
+var skillsLanguageDictionary = []*Feature{
     {
         Name:     "HTML",
         Category: C.Language,
@@ -344,7 +367,7 @@ var skillsLanguageDictionary = []*Skill{
     },
 }
 
-var skillsFrameworkLibraryDictionary = []*Skill{
+var skillsFrameworkLibraryDictionary = []*Feature{
     {
         Name:     "Spring (Java)",
         Category: C.FrameworkLibrary,
@@ -1132,7 +1155,7 @@ var skillsFrameworkLibraryDictionary = []*Skill{
     },
 }
 
-var skillsDatabaseDictionary = []*Skill{
+var skillsDatabaseDictionary = []*Feature{
     {
         Name:     "PostgreSQL",
         Category: C.Database,
@@ -1409,7 +1432,7 @@ var skillsDatabaseDictionary = []*Skill{
     },
 }
 
-var skillsCloudDictionary = []*Skill{
+var skillsCloudDictionary = []*Feature{
     {
         Name:     "Amazon Web Services (AWS)",
         Category: C.Cloud,
@@ -1720,7 +1743,7 @@ var skillsCloudDictionary = []*Skill{
     },
 }
 
-var skillsInfrastructureDictionary = []*Skill{
+var skillsInfrastructureDictionary = []*Feature{
     {
         Name:     "Docker",
         Category: C.Infrastructure,
@@ -2056,7 +2079,7 @@ var skillsInfrastructureDictionary = []*Skill{
     },
 }
 
-var skillsToolDictionary = []*Skill{
+var skillsToolDictionary = []*Feature{
     {
         Name:     "Visual Studio Code",
         Category: C.Tool,
@@ -2328,7 +2351,7 @@ var skillsToolDictionary = []*Skill{
     },
 }
 
-var skillsTestDictionary = []*Skill{
+var skillsTestDictionary = []*Feature{
     {
         Name:     "JUnit (Java)",
         Category: C.Test,
@@ -2603,7 +2626,7 @@ var skillsTestDictionary = []*Skill{
     },
 }
 
-var skillsArchitectureDictionary = []*Skill{
+var skillsArchitectureDictionary = []*Feature{
     {
         Name:     "MVC Architecture",
         Category: C.Architecture,
@@ -2863,7 +2886,7 @@ var skillsArchitectureDictionary = []*Skill{
     },
 }
 
-var skillsMethodologyDictionary = []*Skill{
+var skillsMethodologyDictionary = []*Feature{
     {
         Name:     "Agile Development",
         Category: C.Methodology,
@@ -3080,7 +3103,7 @@ var skillsMethodologyDictionary = []*Skill{
     },
 }
 
-var skillsRoleDictionary = []*Skill{
+var skillsRoleDictionary = []*Feature{
     {
         Name:     "要件定義",
         Category: C.Role,
@@ -3321,7 +3344,7 @@ var skillsRoleDictionary = []*Skill{
     },
 }
 
-var skillsAiDictionary = []*Skill{
+var skillsAiDictionary = []*Feature{
     {
         Name:     "ChatGPT",
         Category: C.AI,
@@ -3638,7 +3661,7 @@ var skillsAiDictionary = []*Skill{
     },
 }
 
-var skillsLocationDictionary = []*Skill{
+var locationDictionary = []*Feature{
     {
         Name:     "北海道",
         Category: C.JobLocation,

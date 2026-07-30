@@ -131,9 +131,28 @@ func (c *CallBacksCrowdworksTech) CollectAttributes() func(doc *goquery.Document
 
         data := map[string]string{}
 
-        data[C.Title] = jsonModel.DetailedTitle
-        data[C.Url] = "" // BuildModel側で注入
-        data[C.Description] = jsonModel.SpecificWorkContent + "\n" + jsonModel.RelatedServicesProducts
+        data[C.Url]         = "" // BuildModel側で注入
+        data[C.Title]       = jsonModel.DetailedTitle
+        data[C.CompanyName] = jsonModel.ClientName
+        data[C.Location]    = ""
+
+        data[C.MinSalaryAtHour]  = ""
+        data[C.MinSalaryAtMonth] = ""
+        data[C.MaxSalaryAtHour]  = ""
+        data[C.MaxSalaryAtMonth] = doc.Find(`meta[name="description"]`).Text()
+
+        data[C.SkillsText]          = ""
+        data[C.RequiredSkillsText]  = ""
+        data[C.PreferredSkillsText] = ""
+
+        data[C.Description]    = jsonModel.SpecificWorkContent + "\n" + jsonModel.RelatedServicesProducts
+        data[C.EmploymentType] = ""
+        data[C.RemoteType]     = ""
+        data[C.IsActive]       = "true"
+        // data[C.SimilarityScore] =
+        data[C.SourceSite]     = "CrowdWorks Tech"
+
+        salvageJobData(data, data[C.Description])
 
         dataset = utils.LockedAppend(mutex, dataset, data)
         return dataset

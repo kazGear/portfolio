@@ -3,6 +3,7 @@ package scraper
 import (
 	"log"
 	"regexp"
+	"strconv"
 	"strings"
 
 	"golang.org/x/text/unicode/norm"
@@ -18,9 +19,66 @@ func buildJobFrame(data map[string]string, url string, logger *log.Logger) (*mod
     job  := model.Job{}
     trim := utils.TrimSpace()
 
-	job.Title = trim(data[C.Title])
 	job.Url = trim(url)
-	job.Description = data[C.Description]
+	job.Title = trim(data[C.Title])
+    job.CompanyName = trim(data[C.CompanyName])
+    job.Location = trim(data[C.Location])
+
+    minSalaryAtHour, err := utils.ParsePrice(data[C.MinSalaryAtHour])
+
+    if err != nil {
+        logger.Println(err)
+        job.MinSalaryAtHour = nil
+    } else {
+        job.MinSalaryAtHour = &minSalaryAtHour
+    }
+
+    minSalaryAtMonth, err := utils.ParsePrice(data[C.MinSalaryAtMonth])
+
+    if err != nil {
+        logger.Println(err)
+        job.MinSalaryAtMonth = nil
+    } else {
+        job.MinSalaryAtMonth = &minSalaryAtMonth
+    }
+
+    maxSalaryAtHour, err := utils.ParsePrice(data[C.MaxSalaryAtHour])
+
+    if err != nil {
+        logger.Println(err)
+        job.MaxSalaryAtHour = nil
+    } else {
+        job.MaxSalaryAtHour = &maxSalaryAtHour
+    }
+
+    maxSalaryAtMonth, err := utils.ParsePrice(data[C.MaxSalaryAtMonth])
+
+    if err != nil {
+        logger.Println(err)
+        job.MaxSalaryAtMonth = nil
+    } else {
+        job.MaxSalaryAtMonth = &maxSalaryAtMonth
+    }
+
+    job.SkillsText = data[C.SkillsText]
+    job.RequiredSkillsText = data[C.RequiredSkillsText]
+    job.PreferredSkillsText = data[C.PreferredSkillsText]
+
+    job.Description = trim(data[C.Description])
+    job.EmploymentType = trim(data[C.EmploymentType])
+    job.RemoteType = trim(data[C.RemoteType])
+
+    isActive, err := strconv.ParseBool(data[C.IsActive])
+
+    if err != nil {
+        logger.Println(err)
+        job.IsActive = true
+    } else {
+        job.IsActive = isActive
+    }
+
+    job.SimilarityScore = nil
+    job.SourceSite = trim(data[C.SourceSite])
 
 	return &job
 }
@@ -28,7 +86,7 @@ func buildJobFrame(data map[string]string, url string, logger *log.Logger) (*mod
 var whitespaceRegex = regexp.MustCompile(`\s+`)
 
 // 文字列をスキル検索用に正規化する
-func normalizeForFeatureSearch(str string) string {
+func normalizeForJobFeature(str string) string {
 	normalized := norm.NFKC.String(str) // Unicode正規化（全角英数字・互換文字対策）
 	normalized = width.Narrow.String(normalized)
 	normalized = strings.ToLower(normalized)
@@ -41,7 +99,9 @@ func normalizeForFeatureSearch(str string) string {
 
 // 必要な情報を抽出する
 func salvageJobData(data map[string]string, target string) {
-    salvageLocation(data, target)
+    normalizedTarget := normalizeForJobFeature(target)
+
+    salvageLocation(data, normalizedTarget)
 
 }
 
@@ -926,7 +986,7 @@ var skillsFrameworkLibraryDictionary = []*Feature{
             "mui",
         },
         Patterns: []*regexp.Regexp{
-            regexp.MustCompile(`\mui\b`),
+            regexp.MustCompile(`\bmui\b`),
         },
     },
     {

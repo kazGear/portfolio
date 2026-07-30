@@ -10,6 +10,7 @@ const (
 	MaxSalaryAtHour     = "MaxSalaryAtHour"
 	MinSalaryAtMonth    = "MinSalaryAtMonth"
 	MaxSalaryAtMonth    = "MaxSalaryAtMonth"
+	SkillsText          = "SkillsText"
 	RequiredSkillsText  = "RequiredSkillsText"
 	PreferredSkillsText = "PreferredSkillsText"
 	EmploymentType      = "EmploymentType"

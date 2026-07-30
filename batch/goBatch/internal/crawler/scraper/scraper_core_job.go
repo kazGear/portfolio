@@ -39,6 +39,11 @@ func normalizeForSkillSearch(str string) string {
 	return normalized
 }
 
+// 必要な情報を抽出する
+func salvageJobData(data map[string]string) {
+
+}
+
 type Skill struct {
     Name     string
     Category string
@@ -3628,6 +3633,431 @@ var skillsAiDictionary = []*Skill{
             "aiエージェント",
             "人工知能エージェント",
             "agentic ai",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+}
+
+var skillsLocationDictionary = []*Skill{
+    {
+        Name:     "北海道",
+        Category: C.JobLocation,
+        Keywords: []string{
+            "北海道",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "青森県",
+        Category: C.JobLocation,
+        Keywords: []string{
+            "青森",
+            "青森県",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "岩手県",
+        Category: C.JobLocation,
+        Keywords: []string{
+            "岩手",
+            "岩手県",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "宮城県",
+        Category: C.JobLocation,
+        Keywords: []string{
+            "宮城",
+            "宮城県",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "秋田県",
+        Category: C.JobLocation,
+        Keywords: []string{
+            "秋田",
+            "秋田県",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "山形県",
+        Category: C.JobLocation,
+        Keywords: []string{
+            "山形",
+            "山形県",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "福島県",
+        Category: C.JobLocation,
+        Keywords: []string{
+            "福島",
+            "福島県",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "茨城県",
+        Category: C.JobLocation,
+        Keywords: []string{
+            "茨城",
+            "茨城県",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "栃木県",
+        Category: C.JobLocation,
+        Keywords: []string{
+            "栃木",
+            "栃木県",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "群馬県",
+        Category: C.JobLocation,
+        Keywords: []string{
+            "群馬",
+            "群馬県",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "埼玉県",
+        Category: C.JobLocation,
+        Keywords: []string{
+            "埼玉",
+            "埼玉県",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "千葉県",
+        Category: C.JobLocation,
+        Keywords: []string{
+            "千葉",
+            "千葉県",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "東京都",
+        Category: C.JobLocation,
+        Keywords: []string{
+            "東京",
+            "東京都",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "神奈川県",
+        Category: C.JobLocation,
+        Keywords: []string{
+            "神奈川",
+            "神奈川県",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "新潟県",
+        Category: C.JobLocation,
+        Keywords: []string{
+            "新潟",
+            "新潟県",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "富山県",
+        Category: C.JobLocation,
+        Keywords: []string{
+            "富山",
+            "富山県",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "石川県",
+        Category: C.JobLocation,
+        Keywords: []string{
+            "石川",
+            "石川県",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "福井県",
+        Category: C.JobLocation,
+        Keywords: []string{
+            "福井",
+            "福井県",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "山梨県",
+        Category: C.JobLocation,
+        Keywords: []string{
+            "山梨",
+            "山梨県",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "長野県",
+        Category: C.JobLocation,
+        Keywords: []string{
+            "長野",
+            "長野県",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "岐阜県",
+        Category: C.JobLocation,
+        Keywords: []string{
+            "岐阜",
+            "岐阜県",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "静岡県",
+        Category: C.JobLocation,
+        Keywords: []string{
+            "静岡",
+            "静岡県",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "愛知県",
+        Category: C.JobLocation,
+        Keywords: []string{
+            "愛知",
+            "愛知県",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "三重県",
+        Category: C.JobLocation,
+        Keywords: []string{
+            "三重",
+            "三重県",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "滋賀県",
+        Category: C.JobLocation,
+        Keywords: []string{
+            "滋賀",
+            "滋賀県",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "京都府",
+        Category: C.JobLocation,
+        Keywords: []string{
+            "京都",
+            "京都府",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "大阪府",
+        Category: C.JobLocation,
+        Keywords: []string{
+            "大阪",
+            "大阪府",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "兵庫県",
+        Category: C.JobLocation,
+        Keywords: []string{
+            "兵庫",
+            "兵庫県",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "奈良県",
+        Category: C.JobLocation,
+        Keywords: []string{
+            "奈良",
+            "奈良県",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "和歌山県",
+        Category: C.JobLocation,
+        Keywords: []string{
+            "和歌山",
+            "和歌山県",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "鳥取県",
+        Category: C.JobLocation,
+        Keywords: []string{
+            "鳥取",
+            "鳥取県",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "島根県",
+        Category: C.JobLocation,
+        Keywords: []string{
+            "島根",
+            "島根県",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "岡山県",
+        Category: C.JobLocation,
+        Keywords: []string{
+            "岡山",
+            "岡山県",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "広島県",
+        Category: C.JobLocation,
+        Keywords: []string{
+            "広島",
+            "広島県",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "山口県",
+        Category: C.JobLocation,
+        Keywords: []string{
+            "山口",
+            "山口県",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "徳島県",
+        Category: C.JobLocation,
+        Keywords: []string{
+            "徳島",
+            "徳島県",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "香川県",
+        Category: C.JobLocation,
+        Keywords: []string{
+            "香川",
+            "香川県",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "愛媛県",
+        Category: C.JobLocation,
+        Keywords: []string{
+            "愛媛",
+            "愛媛県",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "高知県",
+        Category: C.JobLocation,
+        Keywords: []string{
+            "高知",
+            "高知県",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "福岡県",
+        Category: C.JobLocation,
+        Keywords: []string{
+            "福岡",
+            "福岡県",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "佐賀県",
+        Category: C.JobLocation,
+        Keywords: []string{
+            "佐賀",
+            "佐賀県",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "長崎県",
+        Category: C.JobLocation,
+        Keywords: []string{
+            "長崎",
+            "長崎県",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "熊本県",
+        Category: C.JobLocation,
+        Keywords: []string{
+            "熊本",
+            "熊本県",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "大分県",
+        Category: C.JobLocation,
+        Keywords: []string{
+            "大分",
+            "大分県",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "宮崎県",
+        Category: C.JobLocation,
+        Keywords: []string{
+            "宮崎",
+            "宮崎県",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "鹿児島県",
+        Category: C.JobLocation,
+        Keywords: []string{
+            "鹿児島",
+            "鹿児島県",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "沖縄県",
+        Category: C.JobLocation,
+        Keywords: []string{
+            "沖縄",
+            "沖縄県",
         },
         Patterns: []*regexp.Regexp{},
     },

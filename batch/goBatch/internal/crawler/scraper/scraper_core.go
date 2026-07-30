@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"net/http"
 	"regexp"
 	"strings"
 	"sync"
@@ -271,4 +272,35 @@ func loggingCrawlStats(stats *crawlStats, logger *log.Logger) {
         stats.responses.Load(),
         stats.errors.Load(),
     )
+}
+
+// apiから直接データを取得（関数外でClose()すること）
+func fetchApiData(apiURL string) (*http.Response, error) {
+    response, err := http.Get(apiURL)
+
+    if err != nil {
+        return nil, fmt.Errorf("failed to request job API: %w", err)
+    }
+
+    if response.StatusCode != http.StatusOK {
+        return nil, fmt.Errorf(
+            "unexpected http status code: %d",
+            response.StatusCode,
+        )
+    }
+    return response, nil
+}
+
+// 開いているwebページのURLを取得
+func getCurrentURL(ctx context.Context) (string, error) {
+	var currentURL string
+
+	err := chromedp.Run(
+		ctx,
+		chromedp.Location(&currentURL),
+	)
+	if err != nil {
+		return "", err
+	}
+	return currentURL, nil
 }

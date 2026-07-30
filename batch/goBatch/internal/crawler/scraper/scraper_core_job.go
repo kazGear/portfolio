@@ -8,7 +8,7 @@ import (
 	"github.com/kazGear/portfolio/goBatch/pkg/utils"
 )
 
-// ギター構造体の構築フレームワーク
+// 案件構造体の構築フレームワーク
 func buildJobFrame(data map[string]string, url string, logger *log.Logger) (*model.Job) {
 	job  := model.Job{}
     trim := utils.TrimSpace()

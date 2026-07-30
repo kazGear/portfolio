@@ -33,5 +33,6 @@ const (
 	Methodology      = "METHODOLOGY"
 	Role             = "ROLE"
 	AI               = "AI"
+	JobLocation      = "JOBLOCATION"
 	Other            = "OTHER"
 )

@@ -46,7 +46,7 @@ type Skill struct {
     Patterns []*regexp.Regexp // 短いキーワードの誤検出防止用
 }
 
-var skillsDictionary = []Skill{
+var skillsLanguageDictionary = []*Skill{
     {
         Name:     "HTML",
         Category: C.Language,
@@ -337,7 +337,9 @@ var skillsDictionary = []Skill{
         },
         Patterns: []*regexp.Regexp{},
     },
+}
 
+var skillsFrameworkLibraryDictionary = []*Skill{
     {
         Name:     "Spring (Java)",
         Category: C.FrameworkLibrary,
@@ -1123,7 +1125,9 @@ var skillsDictionary = []Skill{
         },
         Patterns: []*regexp.Regexp{},
     },
+}
 
+var skillsDatabaseDictionary = []*Skill{
     {
         Name:     "PostgreSQL",
         Category: C.Database,
@@ -1398,7 +1402,9 @@ var skillsDictionary = []Skill{
         },
         Patterns: []*regexp.Regexp{},
     },
+}
 
+var skillsCloudDictionary = []*Skill{
     {
         Name:     "Amazon Web Services (AWS)",
         Category: C.Cloud,
@@ -1707,7 +1713,9 @@ var skillsDictionary = []Skill{
         },
         Patterns: []*regexp.Regexp{},
     },
+}
 
+var skillsInfrastructureDictionary = []*Skill{
     {
         Name:     "Docker",
         Category: C.Infrastructure,
@@ -2041,7 +2049,9 @@ var skillsDictionary = []Skill{
         },
         Patterns: []*regexp.Regexp{},
     },
+}
 
+var skillsToolDictionary = []*Skill{
     {
         Name:     "Visual Studio Code",
         Category: C.Tool,
@@ -2311,7 +2321,9 @@ var skillsDictionary = []Skill{
         },
         Patterns: []*regexp.Regexp{},
     },
+}
 
+var skillsTestDictionary = []*Skill{
     {
         Name:     "JUnit (Java)",
         Category: C.Test,
@@ -2584,7 +2596,9 @@ var skillsDictionary = []Skill{
         },
         Patterns: []*regexp.Regexp{},
     },
+}
 
+var skillsArchitectureDictionary = []*Skill{
     {
         Name:     "MVC Architecture",
         Category: C.Architecture,
@@ -2842,7 +2856,9 @@ var skillsDictionary = []Skill{
         },
         Patterns: []*regexp.Regexp{},
     },
+}
 
+var skillsMethodologyDictionary = []*Skill{
     {
         Name:     "Agile Development",
         Category: C.Methodology,
@@ -3057,7 +3073,9 @@ var skillsDictionary = []Skill{
             regexp.MustCompile(`\brad\b`),
         },
     },
+}
 
+var skillsRoleDictionary = []*Skill{
     {
         Name:     "要件定義",
         Category: C.Role,

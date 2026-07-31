@@ -3,6 +3,7 @@ package scraper
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"strings"
 	"sync"
 
@@ -61,10 +62,12 @@ func (c *CrawlerCrowdworksTech) CollectLinks(parentCtx context.Context) ([]strin
     statsCrawlLogs(collector ,crawlStats, c.jScraper.logger)
 
     // URL収集、クロール
-    visited := make(map[string]struct{}/*, TODO 100000??*/)
+    visited := make(map[string]struct{}, 120)
     mutex   := &sync.Mutex{}
 
-    isFirstVisit(mutex, "https://tech.crowdworks.jp/job_offers/94830", visited)
+    for pageId := 94730; pageId <= 94830; pageId++ {
+        isFirstVisit(mutex, fmt.Sprintf("https://tech.crowdworks.jp/job_offers/%v", pageId), visited)
+    }
 
     loggingCrawlStats(crawlStats, c.jScraper.logger)
 
@@ -165,7 +168,10 @@ func salvageCrowdWorksTech(data map[string]string, target string) {
     normalizedTarget := normalizeForJobFeature(target)
 
     salvageLocation(data, normalizedTarget)
+    salvageWorkPlace(data, normalizedTarget)
+    jobData := salvageJobData(normalizedTarget)
 
+    data[C.SkillsText] = jobData
 }
 
 func salvageLocation(data map[string]string, target string) {
@@ -189,15 +195,35 @@ func salvageWorkPlace(data map[string]string, target string) {
     }
 }
 
-func salvage_B(data map[string]string, target string) {}
-func salvage_C(data map[string]string, target string) {}
-func salvage_D(data map[string]string, target string) {}
-func salvage_E(data map[string]string, target string) {}
-func salvage_F(data map[string]string, target string) {}
-func salvage_G(data map[string]string, target string) {}
-func salvage_H(data map[string]string, target string) {}
-func salvage_I(data map[string]string, target string) {}
-func salvage_J(data map[string]string, target string) {}
+func salvageJobData(target string) string {
+    var builder strings.Builder
+
+    languages          := salvageFeatures(target, languageDictionary)
+    frameworkLibraries := salvageFeatures(target, frameworkLibraryDictionary)
+    databases          := salvageFeatures(target, databaseDictionary)
+    clouds             := salvageFeatures(target, cloudDictionary)
+    infrastructures    := salvageFeatures(target, infrastructureDictionary)
+    tools              := salvageFeatures(target, toolDictionary)
+    tests              := salvageFeatures(target, testDictionary)
+    architectures      := salvageFeatures(target, architectureDictionary)
+    methodologies      := salvageFeatures(target, methodologyDictionary)
+    roles              := salvageFeatures(target, roleDictionary)
+    ais                := salvageFeatures(target, aiDictionary)
+
+    builder.WriteString(languages)
+    builder.WriteString(frameworkLibraries)
+    builder.WriteString(databases)
+    builder.WriteString(clouds)
+    builder.WriteString(infrastructures)
+    builder.WriteString(tools)
+    builder.WriteString(tests)
+    builder.WriteString(architectures)
+    builder.WriteString(methodologies)
+    builder.WriteString(roles)
+    builder.WriteString(ais)
+
+    return builder.String()
+}
 
 func (c *CallBacksCrowdworksTech) BuildModel(url string) func(data map[string]string) *model.Job {
     return func(data map[string]string) *model.Job {

@@ -1,6 +1,7 @@
 package scraper
 
 import (
+	"fmt"
 	"log"
 	"regexp"
 	"strconv"
@@ -95,6 +96,29 @@ func normalizeForJobFeature(str string) string {
 	normalized = whitespaceRegex.ReplaceAllString(normalized, " ") // 連続する空白・改行・タブを1スペースへv
 
 	return normalized
+}
+
+// csv形式で特徴を取得
+func salvageFeatures(target string, features []*JobFeature) string {
+    var builder strings.Builder
+
+    for _, feature := range features {
+        // キーワード検索
+        for _, keyword := range feature.Keywords {
+            if strings.Contains(target, keyword) {
+                builder.WriteString(fmt.Sprintf("%v,", feature.Name))
+                break
+            }
+        }
+        // 正規表現検索
+        for _, pattern := range feature.Patterns {
+            if pattern.MatchString(target) {
+                builder.WriteString(fmt.Sprintf("%v,", feature.Name))
+                break
+            }
+        }
+    }
+    return builder.String()
 }
 
 var workPlaces = []string{
@@ -2683,17 +2707,10 @@ var architectureDictionary = []*JobFeature{
         },
     },
     {
-        Name:     "MVP Architecture",
-        Category: C.Architecture,
-        Keywords: []string{},
-        Patterns: []*regexp.Regexp{
-            regexp.MustCompile(`\bmvp\b`),
-        },
-    },
-    {
         Name:     "Layered Architecture",
         Category: C.Architecture,
         Keywords: []string{
+            "レイヤードア",
             "layered architecture",
             "layer architecture",
             "n tier architecture",
@@ -3288,6 +3305,15 @@ var roleDictionary = []*JobFeature{
         Patterns: []*regexp.Regexp{
             regexp.MustCompile(`\bqa\b`),
         },
+    },
+    {
+        Name:     "プレイングマネージャー",
+        Category: C.Role,
+        Keywords: []string{
+            "playing manager",
+            "プレイングマネージャー",
+        },
+        Patterns: []*regexp.Regexp{},
     },
     {
         Name:     "プロジェクトマネージャー",

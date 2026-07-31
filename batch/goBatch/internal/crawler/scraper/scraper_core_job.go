@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"regexp"
-	"strconv"
 	"strings"
 
 	"golang.org/x/text/unicode/norm"
@@ -20,10 +19,10 @@ func buildJobFrame(data map[string]string, url string, logger *log.Logger) (*mod
     job  := model.Job{}
     trim := utils.TrimSpace()
 
-	job.Url = trim(url)
-	job.Title = trim(data[C.Title])
+	job.Url         = trim(data[C.Url])
+	job.Title       = trim(data[C.Title])
     job.CompanyName = trim(data[C.CompanyName])
-    job.Location = trim(data[C.Location])
+    job.Location    = trim(data[C.Location])
 
     minSalaryAtHour, err := utils.ParsePrice(data[C.MinSalaryAtHour])
 
@@ -61,25 +60,22 @@ func buildJobFrame(data map[string]string, url string, logger *log.Logger) (*mod
         job.MaxSalaryAtMonth = &maxSalaryAtMonth
     }
 
-    job.SkillsText = data[C.SkillsText]
-    job.RequiredSkillsText = data[C.RequiredSkillsText]
-    job.PreferredSkillsText = data[C.PreferredSkillsText]
-
-    job.Description = trim(data[C.Description])
+    job.Description    = trim(data[C.Description])
     job.EmploymentType = trim(data[C.EmploymentType])
-    job.WorkPlace = trim(data[C.WorkPlace])
+    job.WorkPlace      = trim(data[C.WorkPlace])
 
-    isActive, err := strconv.ParseBool(data[C.IsActive])
+    // isActive, err := strconv.ParseBool(data[C.IsActive])
 
-    if err != nil {
-        logger.Println(err)
-        job.IsActive = true
-    } else {
-        job.IsActive = isActive
-    }
+    // if err != nil {
+    //     logger.Println(err)
+    //     job.IsActive = true
+    // } else {
+    //     job.IsActive = isActive
+    // }
+    job.IsActive = nil
 
     job.SimilarityScore = nil
-    job.SourceSite = trim(data[C.SourceSite])
+    job.SourceSite      = trim(data[C.SourceSite])
 
 	return &job
 }
@@ -87,7 +83,7 @@ func buildJobFrame(data map[string]string, url string, logger *log.Logger) (*mod
 var whitespaceRegex = regexp.MustCompile(`\s+`)
 
 // 文字列をスキル検索用に正規化する
-func normalizeForJobFeature(str string) string {
+func normalizeForSearchFeature(str string) string {
 	normalized := norm.NFKC.String(str) // Unicode正規化（全角英数字・互換文字対策）
 	normalized = width.Narrow.String(normalized)
 	normalized = strings.ToLower(normalized)
@@ -99,7 +95,7 @@ func normalizeForJobFeature(str string) string {
 }
 
 // csv形式で特徴を取得
-func salvageFeatures(target string, features []*JobFeature) string {
+func salvageFeatures(target string, features []*SearchFeature) string {
     var builder strings.Builder
 
     for _, feature := range features {
@@ -121,23 +117,34 @@ func salvageFeatures(target string, features []*JobFeature) string {
     return builder.String()
 }
 
+var employmentTypes = []string{
+    "正社員",
+    "準社員",
+    "契約社員",
+    "派遣社員",
+    "業務委託",
+    "準委任",
+}
+
 var workPlaces = []string{
     "リモート",
+    "フルリモート",
     "ハイブリッド",
     "リモート併用",
+    "一部リモート",
     "常駐",
     "客先常駐",
 }
 
 // 案件特徴（スキル、ロール等）
-type JobFeature struct {
+type SearchFeature struct {
     Name     string
     Category string
     Keywords []string // 大文字・小文字等で区分けする必要はない（検索対象が正規化済の前提）
     Patterns []*regexp.Regexp // 短いキーワードの誤検出防止用
 }
 
-var languageDictionary = []*JobFeature{
+var languageDictionary = []*SearchFeature{
     {
         Name:     "HTML",
         Category: C.Language,
@@ -430,7 +437,7 @@ var languageDictionary = []*JobFeature{
     },
 }
 
-var frameworkLibraryDictionary = []*JobFeature{
+var frameworkLibraryDictionary = []*SearchFeature{
     {
         Name:     "Spring (Java)",
         Category: C.FrameworkLibrary,
@@ -1218,7 +1225,7 @@ var frameworkLibraryDictionary = []*JobFeature{
     },
 }
 
-var databaseDictionary = []*JobFeature{
+var databaseDictionary = []*SearchFeature{
     {
         Name:     "PostgreSQL",
         Category: C.Database,
@@ -1495,7 +1502,7 @@ var databaseDictionary = []*JobFeature{
     },
 }
 
-var cloudDictionary = []*JobFeature{
+var cloudDictionary = []*SearchFeature{
     {
         Name:     "Amazon Web Services (AWS)",
         Category: C.Cloud,
@@ -1806,7 +1813,7 @@ var cloudDictionary = []*JobFeature{
     },
 }
 
-var infrastructureDictionary = []*JobFeature{
+var infrastructureDictionary = []*SearchFeature{
     {
         Name:     "Docker",
         Category: C.Infrastructure,
@@ -2142,7 +2149,7 @@ var infrastructureDictionary = []*JobFeature{
     },
 }
 
-var toolDictionary = []*JobFeature{
+var toolDictionary = []*SearchFeature{
     {
         Name:     "Visual Studio Code",
         Category: C.Tool,
@@ -2414,7 +2421,7 @@ var toolDictionary = []*JobFeature{
     },
 }
 
-var testDictionary = []*JobFeature{
+var testDictionary = []*SearchFeature{
     {
         Name:     "JUnit (Java)",
         Category: C.Test,
@@ -2689,7 +2696,7 @@ var testDictionary = []*JobFeature{
     },
 }
 
-var architectureDictionary = []*JobFeature{
+var architectureDictionary = []*SearchFeature{
     {
         Name:     "MVC Architecture",
         Category: C.Architecture,
@@ -2942,7 +2949,7 @@ var architectureDictionary = []*JobFeature{
     },
 }
 
-var methodologyDictionary = []*JobFeature{
+var methodologyDictionary = []*SearchFeature{
     {
         Name:     "Agile Development",
         Category: C.Methodology,
@@ -3159,7 +3166,7 @@ var methodologyDictionary = []*JobFeature{
     },
 }
 
-var roleDictionary = []*JobFeature{
+var roleDictionary = []*SearchFeature{
     {
         Name:     "要件定義",
         Category: C.Role,
@@ -3409,7 +3416,7 @@ var roleDictionary = []*JobFeature{
     },
 }
 
-var aiDictionary = []*JobFeature{
+var aiDictionary = []*SearchFeature{
     {
         Name:     "ChatGPT",
         Category: C.AI,
@@ -3726,7 +3733,7 @@ var aiDictionary = []*JobFeature{
     },
 }
 
-var locationDictionary = []*JobFeature{
+var locationDictionary = []*SearchFeature{
     {
         Name:     "北海道",
         Category: C.JobLocation,

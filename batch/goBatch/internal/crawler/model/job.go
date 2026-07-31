@@ -2,7 +2,6 @@ package model
 
 import "time"
 
-// TODO: ポインタ(nilAble)は後々減らしていく
 type Job struct {
 	Id                  int64      `db:"id"`
 	Url                 string     `db:"url"`
@@ -13,13 +12,10 @@ type Job struct {
 	MaxSalaryAtHour     *int       `db:"max_salary_at_hour"`
 	MinSalaryAtMonth    *int       `db:"min_salary_at_month"`
 	MaxSalaryAtMonth    *int       `db:"max_salary_at_month"`
-	SkillsText 	        string     `db:"skills_text"`
-	RequiredSkillsText  string     `db:"required_skills_text"`
-	PreferredSkillsText string     `db:"preferred_skills_text"`
 	Description         string     `db:"description"`
 	EmploymentType      string     `db:"employment_type"`
-	WorkPlace          string      `db:"work_place"`
-	IsActive            bool       `db:"is_active"`
+	WorkPlace           string     `db:"work_place"`
+	IsActive            *bool      `db:"is_active"`
 	SimilarityScore     *float64   `db:"similarity_score"`
 	SourceSite          string     `db:"source_site"`
 	CreatedAt           time.Time  `db:"created_at"`
@@ -45,4 +41,11 @@ type ApiResponseCrowdworksTech struct {
 	Infrastructures         []string `json:"infrastructures"`
 	Designs                 []string `json:"designs"`
 	PaymentMethods          []string `json:"paymentMethods"`
+}
+
+type JobFeature struct {
+    JobID           int64  `db:"job_id"`
+    FeatureName     string `db:"feature_name"`
+    Category        string `db:"category"`
+    RequirementType string `db:"requirement_type"`
 }

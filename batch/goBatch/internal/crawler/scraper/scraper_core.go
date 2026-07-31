@@ -284,8 +284,9 @@ func fetchApiData(apiURL string) (*http.Response, error) {
 
     if response.StatusCode != http.StatusOK {
         return nil, fmt.Errorf(
-            "unexpected http status code: %d",
+            "unexpected http status code: %d %v",
             response.StatusCode,
+            apiURL,
         )
     }
     return response, nil

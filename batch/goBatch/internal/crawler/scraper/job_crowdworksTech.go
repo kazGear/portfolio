@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"regexp"
 	"strings"
 	"sync"
 
@@ -65,7 +66,7 @@ func (c *CrawlerCrowdworksTech) CollectLinks(parentCtx context.Context) ([]strin
     visited := make(map[string]struct{}, 120)
     mutex   := &sync.Mutex{}
 
-    for pageId := 94730; pageId <= 94830; pageId++ {
+    for pageId := 94815; pageId <= 94815; pageId++ {
         isFirstVisit(mutex, fmt.Sprintf("https://tech.crowdworks.jp/job_offers/%v", pageId), visited)
     }
 
@@ -110,14 +111,19 @@ func (c *CallBacksCrowdworksTech) FetchDynamicPage(parentCtx context.Context) fu
     }
 }
 
+var regCrowdworksTechPageId   = regexp.MustCompile(`\d{1,6}`)
+var regCrowdworksTechMaxPrice = regexp.MustCompile(`\d{0,3},*\d{0,3},\d{0,3}`)
+
 func (c *CallBacksCrowdworksTech) CollectAttributes() func(doc *goquery.Document, url string) []map[string]string {
     return func(doc *goquery.Document, url string) []map[string]string {
         dataset := make([]map[string]string, 0, 1)
         mutex := &sync.Mutex{}
 
         // apiからJSON取得 > struct化
-        res, err := fetchApiData("https://tech.crowdworks.jp/api/v1/users/job_offers/94830/detail")
-
+        pageId   := regCrowdworksTechPageId.FindString(url)
+        res, err := fetchApiData(
+            fmt.Sprintf("https://tech.crowdworks.jp/api/v1/users/job_offers/%v/detail", pageId),
+        )
         if err != nil {
             log.Println(err)
             return []map[string]string{}
@@ -134,25 +140,24 @@ func (c *CallBacksCrowdworksTech) CollectAttributes() func(doc *goquery.Document
 
         data := map[string]string{}
 
-        data[C.Url]         = "" // BuildModel側で注入
+        data[C.Url]         = url
         data[C.Title]       = jsonModel.DetailedTitle
-        data[C.CompanyName] = jsonModel.ClientName
+        data[C.CompanyName] = jsonModel.ClientName // なぜか会社名だけ取得できない
         data[C.Location]    = ""
 
         data[C.MinSalaryAtHour]  = ""
         data[C.MinSalaryAtMonth] = ""
         data[C.MaxSalaryAtHour]  = ""
-        maxSalaryAtMonth, _ := doc.Find(`meta[name="description"]`).Attr("content")
+        maxSalaryAtMonth, _     := doc.Find(`meta[name="description"]`).Attr("content")
+        maxSalaryAtMonth         = regCrowdworksTechMaxPrice.FindString(maxSalaryAtMonth)
         data[C.MaxSalaryAtMonth] = maxSalaryAtMonth
 
-        data[C.SkillsText]          = ""
-        data[C.RequiredSkillsText]  = ""
-        data[C.PreferredSkillsText] = ""
-
-        data[C.Description]    = jsonModel.SpecificWorkContent + "\n" + jsonModel.RelatedServicesProducts
+        data[C.Description]    = jsonModel.DetailedTitle + "\n" +
+                                 jsonModel.SpecificWorkContent + "\n" +
+                                 jsonModel.RelatedServicesProducts
         data[C.EmploymentType] = ""
         data[C.WorkPlace]      = ""
-        data[C.IsActive]       = "true"
+        // data[C.IsActive]       = "true"
         // data[C.SimilarityScore] =
         data[C.SourceSite]     = "CrowdWorks Tech"
 
@@ -165,13 +170,14 @@ func (c *CallBacksCrowdworksTech) CollectAttributes() func(doc *goquery.Document
 
 // 必要な情報を抽出する
 func salvageCrowdWorksTech(data map[string]string, target string) {
-    normalizedTarget := normalizeForJobFeature(target)
+    normalizedTarget := normalizeForSearchFeature(target)
 
     salvageLocation(data, normalizedTarget)
     salvageWorkPlace(data, normalizedTarget)
-    jobData := salvageJobData(normalizedTarget)
+    salvageEmploymentType(data, normalizedTarget)
+    _ = salvageJobData(normalizedTarget)
 
-    data[C.SkillsText] = jobData
+    //ata[C.SkillsText] = jobData
 }
 
 func salvageLocation(data map[string]string, target string) {
@@ -183,13 +189,22 @@ func salvageLocation(data map[string]string, target string) {
             }
         }
     }
-    data[C.Location] = "不明"
+    data[C.Location] = ""
 }
 
 func salvageWorkPlace(data map[string]string, target string) {
     for _, workPlace := range workPlaces {
         if strings.Contains(target, workPlace) {
             data[C.WorkPlace] = workPlace
+            return
+        }
+    }
+}
+
+func salvageEmploymentType(data map[string]string, target string) {
+    for _, employmentType := range employmentTypes {
+        if strings.Contains(target, employmentType) {
+            data[C.EmploymentType] = employmentType
             return
         }
     }

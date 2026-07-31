@@ -17,7 +17,7 @@ func NewJobRepository(db *sqlx.DB) Repository[*model.Job] {
 }
 
 func (r *jobRepository) Save(jobs []*model.Job) (ok int, ng int, errors []error) {
-    errs    := make([]error, 0, 300)
+    errs    := make([]error, 0, 200)
     okCount := 0
     ngCount := 0
 

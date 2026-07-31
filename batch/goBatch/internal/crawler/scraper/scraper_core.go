@@ -28,8 +28,8 @@ type PageProvider interface {
 }
 
 type ModelParser[T any] interface {
-    CollectAttributes()    func(doc *goquery.Document)  []map[string]string
-    BuildModel(url string) func(spec map[string]string) T
+    CollectAttributes()    func(doc *goquery.Document, url string)  []map[string]string
+    BuildModel(url string) func(spec map[string]string)             T
 }
 
 type Crawler[T any] struct {
@@ -75,7 +75,7 @@ func (g *Crawler[T]) scrapeFrame(provider PageProvider,
             }
             funcCollectAttributes := parser.CollectAttributes()
             funcBuildModel        := parser.BuildModel(url)
-            attributes            := funcCollectAttributes(doc) // 1ページ：N詳細ページでもOK
+            attributes            := funcCollectAttributes(doc, url) // 1ページ：N詳細ページでもOK
 
             for _, attribute := range attributes {
                 attribute := attribute

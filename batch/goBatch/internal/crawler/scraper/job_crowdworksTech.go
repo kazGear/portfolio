@@ -110,8 +110,8 @@ func (c *CallBacksCrowdworksTech) FetchDynamicPage(parentCtx context.Context) fu
     }
 }
 
-func (c *CallBacksCrowdworksTech) CollectAttributes() func(doc *goquery.Document) []map[string]string {
-    return func(doc *goquery.Document) []map[string]string {
+func (c *CallBacksCrowdworksTech) CollectAttributes() func(doc *goquery.Document, url string) []map[string]string {
+    return func(doc *goquery.Document, url string) []map[string]string {
         dataset := make([]map[string]string, 0, 1)
         mutex := &sync.Mutex{}
 

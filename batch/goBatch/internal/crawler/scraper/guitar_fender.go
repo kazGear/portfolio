@@ -166,8 +166,8 @@ func (c *CallBacksFender) FetchDynamicPage(parentCtx context.Context) func(url s
     }
 }
 
-func (c *CallBacksFender) CollectAttributes() func(doc *goquery.Document) []map[string]string {
-    return func(doc *goquery.Document) []map[string]string {
+func (c *CallBacksFender) CollectAttributes() func(doc *goquery.Document, url string) []map[string]string {
+    return func(doc *goquery.Document, url string) []map[string]string {
         specs := make([]map[string]string, 0, 1)
         mutex := &sync.Mutex{}
 

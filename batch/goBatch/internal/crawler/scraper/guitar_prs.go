@@ -281,8 +281,8 @@ func (c *CallBacksPRS) FetchDynamicPage(parentCtx context.Context) func(url stri
     }
 }
 
-func (c *CallBacksPRS) CollectAttributes() func(doc *goquery.Document) []map[string]string {
-    return func(doc *goquery.Document) []map[string]string {
+func (c *CallBacksPRS) CollectAttributes() func(doc *goquery.Document, url string) []map[string]string {
+    return func(doc *goquery.Document, url string) []map[string]string {
         specs := make([]map[string]string, 0, 1)
         mutex := &sync.Mutex{}
 

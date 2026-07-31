@@ -190,8 +190,8 @@ func (c *CallBacksIbanez) FetchDynamicPage(parentCtx context.Context) func(url s
     }
 }
 
-func (c *CallBacksIbanez) CollectAttributes() func(doc *goquery.Document) []map[string]string {
-    return func(doc *goquery.Document) []map[string]string {
+func (c *CallBacksIbanez) CollectAttributes() func(doc *goquery.Document, url string) []map[string]string {
+    return func(doc *goquery.Document, url string) []map[string]string {
         // 詳細urlにギター、ベース以外が紛れてしまうのでフィルタリング
         factoryTuning := doc.Find(`.rt_cf_p_data_factory_tuning`).Text()
         if len(factoryTuning) <= 0 {

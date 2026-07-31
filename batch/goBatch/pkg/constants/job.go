@@ -14,7 +14,7 @@ const (
 	RequiredSkillsText  = "RequiredSkillsText"
 	PreferredSkillsText = "PreferredSkillsText"
 	EmploymentType      = "EmploymentType"
-	RemoteType          = "RemoteType"
+	WorkPlace           = "WorkPlace"
 	IsActive            = "IsActive"
 	SimilarityScore     = "SimilarityScore"
 	SourceSite          = "SourceSite"

@@ -18,7 +18,7 @@ type Job struct {
 	PreferredSkillsText string     `db:"preferred_skills_text"`
 	Description         string     `db:"description"`
 	EmploymentType      string     `db:"employment_type"`
-	RemoteType          string     `db:"remote_type"`
+	WorkPlace          string      `db:"work_place"`
 	IsActive            bool       `db:"is_active"`
 	SimilarityScore     *float64   `db:"similarity_score"`
 	SourceSite          string     `db:"source_site"`

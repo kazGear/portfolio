@@ -66,7 +66,7 @@ func buildJobFrame(data map[string]string, url string, logger *log.Logger) (*mod
 
     job.Description = trim(data[C.Description])
     job.EmploymentType = trim(data[C.EmploymentType])
-    job.RemoteType = trim(data[C.RemoteType])
+    job.WorkPlace = trim(data[C.WorkPlace])
 
     isActive, err := strconv.ParseBool(data[C.IsActive])
 
@@ -95,6 +95,14 @@ func normalizeForJobFeature(str string) string {
 	normalized = whitespaceRegex.ReplaceAllString(normalized, " ") // 連続する空白・改行・タブを1スペースへv
 
 	return normalized
+}
+
+var workPlaces = []string{
+    "リモート",
+    "ハイブリッド",
+    "リモート併用",
+    "常駐",
+    "客先常駐",
 }
 
 // 案件特徴（スキル、ロール等）

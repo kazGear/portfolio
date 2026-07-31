@@ -148,7 +148,7 @@ func (c *CallBacksCrowdworksTech) CollectAttributes() func(doc *goquery.Document
 
         data[C.Description]    = jsonModel.SpecificWorkContent + "\n" + jsonModel.RelatedServicesProducts
         data[C.EmploymentType] = ""
-        data[C.RemoteType]     = ""
+        data[C.WorkPlace]      = ""
         data[C.IsActive]       = "true"
         // data[C.SimilarityScore] =
         data[C.SourceSite]     = "CrowdWorks Tech"
@@ -179,7 +179,16 @@ func salvageLocation(data map[string]string, target string) {
     }
     data[C.Location] = "不明"
 }
-func salvage_A(data map[string]string, target string) {}
+
+func salvageWorkPlace(data map[string]string, target string) {
+    for _, workPlace := range workPlaces {
+        if strings.Contains(target, workPlace) {
+            data[C.WorkPlace] = workPlace
+            return
+        }
+    }
+}
+
 func salvage_B(data map[string]string, target string) {}
 func salvage_C(data map[string]string, target string) {}
 func salvage_D(data map[string]string, target string) {}

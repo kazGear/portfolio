@@ -97,44 +97,15 @@ func normalizeForJobFeature(str string) string {
 	return normalized
 }
 
-// 必要な情報を抽出する
-func salvageJobData(data map[string]string, target string) {
-    normalizedTarget := normalizeForJobFeature(target)
-
-    salvageLocation(data, normalizedTarget)
-
-}
-
-func salvageLocation(data map[string]string, target string) {
-    for _, location := range locationDictionary {
-        for _, locationName := range location.Keywords {
-            if strings.Contains(target, locationName) {
-                data[C.Location] = location.Name
-                return
-            }
-        }
-    }
-    data[C.Location] = "不明"
-}
-func salvage_A(data map[string]string, target string) {}
-func salvage_B(data map[string]string, target string) {}
-func salvage_C(data map[string]string, target string) {}
-func salvage_D(data map[string]string, target string) {}
-func salvage_E(data map[string]string, target string) {}
-func salvage_F(data map[string]string, target string) {}
-func salvage_G(data map[string]string, target string) {}
-func salvage_H(data map[string]string, target string) {}
-func salvage_I(data map[string]string, target string) {}
-func salvage_J(data map[string]string, target string) {}
-
-type Feature struct {
+// 案件特徴（スキル、ロール等）
+type JobFeature struct {
     Name     string
     Category string
     Keywords []string // 大文字・小文字等で区分けする必要はない（検索対象が正規化済の前提）
     Patterns []*regexp.Regexp // 短いキーワードの誤検出防止用
 }
 
-var skillsLanguageDictionary = []*Feature{
+var languageDictionary = []*JobFeature{
     {
         Name:     "HTML",
         Category: C.Language,
@@ -427,7 +398,7 @@ var skillsLanguageDictionary = []*Feature{
     },
 }
 
-var skillsFrameworkLibraryDictionary = []*Feature{
+var frameworkLibraryDictionary = []*JobFeature{
     {
         Name:     "Spring (Java)",
         Category: C.FrameworkLibrary,
@@ -1215,7 +1186,7 @@ var skillsFrameworkLibraryDictionary = []*Feature{
     },
 }
 
-var skillsDatabaseDictionary = []*Feature{
+var databaseDictionary = []*JobFeature{
     {
         Name:     "PostgreSQL",
         Category: C.Database,
@@ -1492,7 +1463,7 @@ var skillsDatabaseDictionary = []*Feature{
     },
 }
 
-var skillsCloudDictionary = []*Feature{
+var cloudDictionary = []*JobFeature{
     {
         Name:     "Amazon Web Services (AWS)",
         Category: C.Cloud,
@@ -1803,7 +1774,7 @@ var skillsCloudDictionary = []*Feature{
     },
 }
 
-var skillsInfrastructureDictionary = []*Feature{
+var infrastructureDictionary = []*JobFeature{
     {
         Name:     "Docker",
         Category: C.Infrastructure,
@@ -2139,7 +2110,7 @@ var skillsInfrastructureDictionary = []*Feature{
     },
 }
 
-var skillsToolDictionary = []*Feature{
+var toolDictionary = []*JobFeature{
     {
         Name:     "Visual Studio Code",
         Category: C.Tool,
@@ -2411,7 +2382,7 @@ var skillsToolDictionary = []*Feature{
     },
 }
 
-var skillsTestDictionary = []*Feature{
+var testDictionary = []*JobFeature{
     {
         Name:     "JUnit (Java)",
         Category: C.Test,
@@ -2686,7 +2657,7 @@ var skillsTestDictionary = []*Feature{
     },
 }
 
-var skillsArchitectureDictionary = []*Feature{
+var architectureDictionary = []*JobFeature{
     {
         Name:     "MVC Architecture",
         Category: C.Architecture,
@@ -2946,7 +2917,7 @@ var skillsArchitectureDictionary = []*Feature{
     },
 }
 
-var skillsMethodologyDictionary = []*Feature{
+var methodologyDictionary = []*JobFeature{
     {
         Name:     "Agile Development",
         Category: C.Methodology,
@@ -3163,7 +3134,7 @@ var skillsMethodologyDictionary = []*Feature{
     },
 }
 
-var skillsRoleDictionary = []*Feature{
+var roleDictionary = []*JobFeature{
     {
         Name:     "要件定義",
         Category: C.Role,
@@ -3404,7 +3375,7 @@ var skillsRoleDictionary = []*Feature{
     },
 }
 
-var skillsAiDictionary = []*Feature{
+var aiDictionary = []*JobFeature{
     {
         Name:     "ChatGPT",
         Category: C.AI,
@@ -3721,7 +3692,7 @@ var skillsAiDictionary = []*Feature{
     },
 }
 
-var locationDictionary = []*Feature{
+var locationDictionary = []*JobFeature{
     {
         Name:     "北海道",
         Category: C.JobLocation,

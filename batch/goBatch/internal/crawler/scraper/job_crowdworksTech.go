@@ -139,7 +139,8 @@ func (c *CallBacksCrowdworksTech) CollectAttributes() func(doc *goquery.Document
         data[C.MinSalaryAtHour]  = ""
         data[C.MinSalaryAtMonth] = ""
         data[C.MaxSalaryAtHour]  = ""
-        data[C.MaxSalaryAtMonth] = doc.Find(`meta[name="description"]`).Text()
+        maxSalaryAtMonth, _ := doc.Find(`meta[name="description"]`).Attr("content")
+        data[C.MaxSalaryAtMonth] = maxSalaryAtMonth
 
         data[C.SkillsText]          = ""
         data[C.RequiredSkillsText]  = ""
@@ -152,12 +153,42 @@ func (c *CallBacksCrowdworksTech) CollectAttributes() func(doc *goquery.Document
         // data[C.SimilarityScore] =
         data[C.SourceSite]     = "CrowdWorks Tech"
 
-        salvageJobData(data, data[C.Description])
+        salvageCrowdWorksTech(data, data[C.Description])
 
         dataset = utils.LockedAppend(mutex, dataset, data)
         return dataset
     }
 }
+
+// 必要な情報を抽出する
+func salvageCrowdWorksTech(data map[string]string, target string) {
+    normalizedTarget := normalizeForJobFeature(target)
+
+    salvageLocation(data, normalizedTarget)
+
+}
+
+func salvageLocation(data map[string]string, target string) {
+    for _, location := range locationDictionary {
+        for _, locationName := range location.Keywords {
+            if strings.Contains(target, locationName) {
+                data[C.Location] = location.Name
+                return
+            }
+        }
+    }
+    data[C.Location] = "不明"
+}
+func salvage_A(data map[string]string, target string) {}
+func salvage_B(data map[string]string, target string) {}
+func salvage_C(data map[string]string, target string) {}
+func salvage_D(data map[string]string, target string) {}
+func salvage_E(data map[string]string, target string) {}
+func salvage_F(data map[string]string, target string) {}
+func salvage_G(data map[string]string, target string) {}
+func salvage_H(data map[string]string, target string) {}
+func salvage_I(data map[string]string, target string) {}
+func salvage_J(data map[string]string, target string) {}
 
 func (c *CallBacksCrowdworksTech) BuildModel(url string) func(data map[string]string) *model.Job {
     return func(data map[string]string) *model.Job {

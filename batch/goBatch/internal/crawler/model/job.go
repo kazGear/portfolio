@@ -44,8 +44,13 @@ type ApiResponseCrowdworksTech struct {
 }
 
 type JobFeature struct {
-    JobID           int64  `db:"job_id"`
+    JobId           int64  `db:"job_id"`
     FeatureName     string `db:"feature_name"`
     Category        string `db:"category"`
     RequirementType string `db:"requirement_type"`
 }
+
+// type JobOption struct {
+//     JobId           int64  `db:"job_id"`
+//     FeatureName     string `db:"feature_name"`
+// }

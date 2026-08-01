@@ -1,7 +1,6 @@
 package scraper
 
 import (
-	"fmt"
 	"log"
 	"regexp"
 	"strings"
@@ -95,26 +94,36 @@ func normalizeForSearchFeature(str string) string {
 }
 
 // csv形式で特徴を取得
-func salvageFeatures(target string, features []*SearchFeature) string {
-    var builder strings.Builder
+func salvageFeatures(target string, features []*SearchFeature) []*model.JobFeature {
+    jobFeatures := make([]*model.JobFeature, 0, len(features))
 
     for _, feature := range features {
         // キーワード検索
         for _, keyword := range feature.Keywords {
             if strings.Contains(target, keyword) {
-                builder.WriteString(fmt.Sprintf("%v,", feature.Name))
+                jobFeatures = append(jobFeatures, &model.JobFeature{
+                    JobId: -1,
+                    FeatureName: feature.Name,
+                    Category: feature.Category,
+                    RequirementType: "",
+                })
                 break
             }
         }
         // 正規表現検索
         for _, pattern := range feature.Patterns {
             if pattern.MatchString(target) {
-                builder.WriteString(fmt.Sprintf("%v,", feature.Name))
+                jobFeatures = append(jobFeatures, &model.JobFeature{
+                    JobId: -1,
+                    FeatureName: feature.Name,
+                    Category: feature.Category,
+                    RequirementType: "",
+                })
                 break
             }
         }
     }
-    return builder.String()
+    return jobFeatures
 }
 
 var employmentTypes = []string{
@@ -124,16 +133,18 @@ var employmentTypes = []string{
     "派遣社員",
     "業務委託",
     "準委任",
+    "委託",
+    "委任",
 }
 
 var workPlaces = []string{
-    "リモート",
     "フルリモート",
     "ハイブリッド",
     "リモート併用",
     "一部リモート",
-    "常駐",
     "客先常駐",
+    "リモート",
+    "常駐",
 }
 
 // 案件特徴（スキル、ロール等）
@@ -246,13 +257,17 @@ var languageDictionary = []*SearchFeature{
         Name:     "C++",
         Category: C.Language,
         Keywords: []string{
-            "C++",
+            "c++",
+            "c ++",
             "Ｃ＋＋",
             "cpp",
             "c plus plus",
             "c plusplus",
         },
-        Patterns: []*regexp.Regexp{},
+        Patterns: []*regexp.Regexp{
+            regexp.MustCompile(`\bc++\b`),
+            regexp.MustCompile(`\bc ++\b`),
+        },
     },
     {
         Name:     "PHP",
@@ -3201,6 +3216,25 @@ var roleDictionary = []*SearchFeature{
         Patterns: []*regexp.Regexp{},
     },
     {
+        Name:     "設計",
+        Category: C.Role,
+        Keywords: []string{
+            "design",
+            "設計",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "分析",
+        Category: C.Role,
+        Keywords: []string{
+            "analysis",
+            "analyze",
+            "分析",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
         Name:     "アーキテクト",
         Category: C.Role,
         Keywords: []string{
@@ -3378,6 +3412,7 @@ var roleDictionary = []*SearchFeature{
             "プログラマー",
             "プログラミング",
             "製造",
+            "コーディング",
         },
         Patterns: []*regexp.Regexp{},
     },
@@ -3399,6 +3434,24 @@ var roleDictionary = []*SearchFeature{
             "maintenance engineer",
             "保守",
             "保守エンジニア",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "上流工程",
+        Category: C.Role,
+        Keywords: []string{
+            "上流工程",
+            "上流",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+        {
+        Name:     "下流工程",
+        Category: C.Role,
+        Keywords: []string{
+            "下流工程",
+            "下流",
         },
         Patterns: []*regexp.Regexp{},
     },

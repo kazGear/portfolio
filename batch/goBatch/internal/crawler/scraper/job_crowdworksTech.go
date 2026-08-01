@@ -13,6 +13,7 @@ import (
 	"github.com/PuerkitoBio/goquery"
 	"github.com/gocolly/colly/v2"
 	"github.com/kazGear/portfolio/goBatch/internal/crawler/model"
+	"github.com/kazGear/portfolio/goBatch/internal/crawler/repository"
 	C "github.com/kazGear/portfolio/goBatch/pkg/constants"
 	"github.com/kazGear/portfolio/goBatch/pkg/utils"
 )
@@ -28,11 +29,11 @@ type CallBacksCrowdworksTech struct {
 func NewScraperCrowdworksTech(logger *log.Logger) Scraper[*model.Job] {
 	collector := colly.NewCollector(
 		colly.Async(true),
-		colly.MaxDepth(4),
+		colly.MaxDepth(1),
 	)
 	collector.Limit(&colly.LimitRule{
 		DomainGlob:  "*",
-		Parallelism: 5, // URL収集漏れが発生するため5に制限
+		Parallelism: 1, // URL収集漏れが発生するため5に制限
 	})
     return &CrawlerCrowdworksTech{
         Crawler[*model.Job]{
@@ -66,7 +67,7 @@ func (c *CrawlerCrowdworksTech) CollectLinks(parentCtx context.Context) ([]strin
     visited := make(map[string]struct{}, 120)
     mutex   := &sync.Mutex{}
 
-    for pageId := 94815; pageId <= 94815; pageId++ {
+    for pageId := 94800; pageId <= 95000; pageId++ {
         isFirstVisit(mutex, fmt.Sprintf("https://tech.crowdworks.jp/job_offers/%v", pageId), visited)
     }
 
@@ -161,7 +162,9 @@ func (c *CallBacksCrowdworksTech) CollectAttributes() func(doc *goquery.Document
         // data[C.SimilarityScore] =
         data[C.SourceSite]     = "CrowdWorks Tech"
 
-        salvageCrowdWorksTech(data, data[C.Description])
+        // 案件の特徴を収集し、repositoryへ
+        features := salvageFeaturesCrowdWorksTech(data, data[C.Description])
+        repository.InjectionJobFeaturesCrowdWorksTech(features, url)
 
         dataset = utils.LockedAppend(mutex, dataset, data)
         return dataset
@@ -169,49 +172,47 @@ func (c *CallBacksCrowdworksTech) CollectAttributes() func(doc *goquery.Document
 }
 
 // 必要な情報を抽出する
-func salvageCrowdWorksTech(data map[string]string, target string) {
+func salvageFeaturesCrowdWorksTech(data map[string]string, target string) []*model.JobFeature {
     normalizedTarget := normalizeForSearchFeature(target)
 
-    salvageLocation(data, normalizedTarget)
-    salvageWorkPlace(data, normalizedTarget)
-    salvageEmploymentType(data, normalizedTarget)
-    _ = salvageJobData(normalizedTarget)
+    data[C.Location]       = salvageLocation(normalizedTarget)
+    data[C.WorkPlace]      = salvageWorkPlace(normalizedTarget)
+    data[C.EmploymentType] = salvageEmploymentType(normalizedTarget)
 
-    //ata[C.SkillsText] = jobData
+    return salvageJobData(normalizedTarget)
 }
 
-func salvageLocation(data map[string]string, target string) {
+func salvageLocation(target string) string {
     for _, location := range locationDictionary {
         for _, locationName := range location.Keywords {
             if strings.Contains(target, locationName) {
-                data[C.Location] = location.Name
-                return
+                return location.Name
             }
         }
     }
-    data[C.Location] = ""
+    return ""
 }
 
-func salvageWorkPlace(data map[string]string, target string) {
+func salvageWorkPlace(target string) string {
     for _, workPlace := range workPlaces {
         if strings.Contains(target, workPlace) {
-            data[C.WorkPlace] = workPlace
-            return
+            return workPlace
         }
     }
+    return ""
 }
 
-func salvageEmploymentType(data map[string]string, target string) {
+func salvageEmploymentType(target string) string {
     for _, employmentType := range employmentTypes {
         if strings.Contains(target, employmentType) {
-            data[C.EmploymentType] = employmentType
-            return
+            return employmentType
         }
     }
+    return ""
 }
 
-func salvageJobData(target string) string {
-    var builder strings.Builder
+func salvageJobData(target string) []*model.JobFeature {
+    jobFeatures := make([]*model.JobFeature, 0, 10)
 
     languages          := salvageFeatures(target, languageDictionary)
     frameworkLibraries := salvageFeatures(target, frameworkLibraryDictionary)
@@ -225,19 +226,19 @@ func salvageJobData(target string) string {
     roles              := salvageFeatures(target, roleDictionary)
     ais                := salvageFeatures(target, aiDictionary)
 
-    builder.WriteString(languages)
-    builder.WriteString(frameworkLibraries)
-    builder.WriteString(databases)
-    builder.WriteString(clouds)
-    builder.WriteString(infrastructures)
-    builder.WriteString(tools)
-    builder.WriteString(tests)
-    builder.WriteString(architectures)
-    builder.WriteString(methodologies)
-    builder.WriteString(roles)
-    builder.WriteString(ais)
+    jobFeatures = append(jobFeatures, languages...)
+    jobFeatures = append(jobFeatures, frameworkLibraries...)
+    jobFeatures = append(jobFeatures, databases...)
+    jobFeatures = append(jobFeatures, clouds...)
+    jobFeatures = append(jobFeatures, infrastructures...)
+    jobFeatures = append(jobFeatures, tools...)
+    jobFeatures = append(jobFeatures, tests...)
+    jobFeatures = append(jobFeatures, architectures...)
+    jobFeatures = append(jobFeatures, methodologies...)
+    jobFeatures = append(jobFeatures, roles...)
+    jobFeatures = append(jobFeatures, ais...)
 
-    return builder.String()
+    return jobFeatures
 }
 
 func (c *CallBacksCrowdworksTech) BuildModel(url string) func(data map[string]string) *model.Job {

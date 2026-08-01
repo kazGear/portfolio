@@ -54,3 +54,31 @@ func InsertJob() string {
         );
     `
 }
+
+func SelectCreatedFeatures() string {
+	return `
+        SELECT
+               job_id
+          FROM
+               t_job_features_created
+             ;
+    `
+}
+
+func SelectCurrentJobId() string {
+	return `
+        SELECT
+               id
+          FROM
+               t_jobs
+         WHERE
+               url = :url
+             ;
+    `
+}
+
+func InsertJobId() string {
+	return `
+        INSERT INTO t_job_features_created (job_id) VALUES ($1);
+    `
+}

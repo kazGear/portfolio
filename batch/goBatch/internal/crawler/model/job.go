@@ -50,7 +50,7 @@ type JobFeature struct {
     RequirementType string `db:"requirement_type"`
 }
 
-// type JobOption struct {
-//     JobId           int64  `db:"job_id"`
-//     FeatureName     string `db:"feature_name"`
-// }
+type JobOption struct {
+    JobId  int64  `db:"job_id"`
+    Option string `db:"option"`
+}

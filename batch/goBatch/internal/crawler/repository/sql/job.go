@@ -9,7 +9,6 @@ func UpdateJob() string {
                updated_at = NOW()
          WHERE
                url = :url
-           AND (is_active = TRUE OR is_active IS NULL)
              ;
     `
 }

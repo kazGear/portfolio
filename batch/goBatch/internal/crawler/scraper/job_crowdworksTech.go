@@ -4,13 +4,16 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"net/http"
 	"regexp"
 	"strings"
 	"sync"
+	"time"
 
 	"log"
 
 	"github.com/PuerkitoBio/goquery"
+	"github.com/chromedp/chromedp"
 	"github.com/gocolly/colly/v2"
 	"github.com/kazGear/portfolio/goBatch/internal/crawler/model"
 	"github.com/kazGear/portfolio/goBatch/internal/crawler/repository"
@@ -67,7 +70,7 @@ func (c *CrawlerCrowdworksTech) CollectLinks(parentCtx context.Context) ([]strin
     visited := make(map[string]struct{}, 120)
     mutex   := &sync.Mutex{}
 
-    for pageId := 94800; pageId <= 95000; pageId++ {
+    for pageId := 1; pageId <= 100000; pageId++ {
         isFirstVisit(mutex, fmt.Sprintf("https://tech.crowdworks.jp/job_offers/%v", pageId), visited)
     }
 
@@ -90,24 +93,32 @@ func (c *CallBacksCrowdworksTech) FetchDynamicPage(parentCtx context.Context) fu
         if !isDetailPage(`^https://tech.crowdworks.jp/job_offers/\d+`, url) {
             return "", nil
         }
+        // 無駄なchromedpの起動を回避
+        if err := checkHttpStatus(&http.Client{ Timeout: 5 * time.Second }, url); err != nil {
+            return "", err
+        }
+
         // タブごとに独立した context を作る
-        // tabCtx, tabCancel := chromedp.NewContext(parentCtx)
-        // defer tabCancel()
+        tabCtx, tabCancel := chromedp.NewContext(parentCtx)
+        defer tabCancel()
         // // タブにだけ timeout を付ける
-        // ctx, cancel := context.WithTimeout(tabCtx, 4*time.Second)
-        // defer cancel()
+        ctx, cancel := context.WithTimeout(tabCtx, 10 * time.Second)
+        defer cancel()
 
         var html string
 
-        // chromedp.Run(ctx,
-        //     chromedp.Navigate(url),
-        //     chromedp.WaitVisible("#main", chromedp.ByQuery), // 求める要素が出るまで待つ
-        //     chromedp.Sleep(300 * time.Millisecond), // JSが動く猶予を与える
-        //     tryWaitReady("h1.header_title"), // 必要な要素が生成されるのを待つ
-        //     tryWaitReady(".tbl_spec"),
-        //     tryWaitReady("p.detail_price"),
-        //     chromedp.OuterHTML("html", &html, chromedp.ByQuery), // 最終的なHTML出力
-        // )
+        err := chromedp.Run(ctx,
+            chromedp.Navigate(url),
+            // chromedp.Sleep(2000 * time.Millisecond), // JSが動く猶予を与える
+            chromedp.WaitReady(".job-btn", chromedp.ByQuery), // 求める要素が出るまで待つ
+            autoScroll(),
+            chromedp.OuterHTML("html", &html, chromedp.ByQuery), // 最終的なHTML出力
+        )
+
+        if err != nil {
+            log.Printf("Chromedp error: %v", err)
+            return "", err
+        }
         return html, nil
     }
 }
@@ -118,7 +129,6 @@ var regCrowdworksTechMaxPrice = regexp.MustCompile(`\d{0,3},*\d{0,3},\d{0,3}`)
 func (c *CallBacksCrowdworksTech) CollectAttributes() func(doc *goquery.Document, url string) []map[string]string {
     return func(doc *goquery.Document, url string) []map[string]string {
         dataset := make([]map[string]string, 0, 1)
-        mutex := &sync.Mutex{}
 
         // apiからJSON取得 > struct化
         pageId   := regCrowdworksTechPageId.FindString(url)
@@ -158,7 +168,7 @@ func (c *CallBacksCrowdworksTech) CollectAttributes() func(doc *goquery.Document
                                  jsonModel.RelatedServicesProducts
         data[C.EmploymentType] = ""
         data[C.WorkPlace]      = ""
-        // data[C.IsActive]       = "true"
+        // data[C.IsActive]       = isActiveCrowdworksTech(doc)
         // data[C.SimilarityScore] =
         data[C.SourceSite]     = "CrowdWorks Tech"
 
@@ -166,10 +176,37 @@ func (c *CallBacksCrowdworksTech) CollectAttributes() func(doc *goquery.Document
         features := salvageFeaturesCrowdWorksTech(data, data[C.Description])
         repository.InjectionJobFeaturesCrowdWorksTech(features, url)
 
-        dataset = utils.LockedAppend(mutex, dataset, data)
+        // 案件のオプションを収集し、repositoryへ
+        options := make([]*model.JobOption, 0, 20)
+
+        doc.Find(".job-point").Each(func(idx int, selector *goquery.Selection) {
+            option := &model.JobOption{
+                JobId: -1,
+                Option: selector.Text(),
+            }
+            options = append(options, option)
+        })
+        repository.InjectionJobOptionsCrowdWorksTech(options, url)
+
+        dataset = append(dataset, data)
         return dataset
     }
 }
+
+// func isActiveCrowdworksTech(doc *goquery.Document) string {
+//     isActive := "invalid"
+
+//     doc.Find("a.job-btn").EachWithBreak(func(idx int, selector *goquery.Selection) bool {
+// log.Println("募集中判定ボタン: ", selector.Text())
+//         if strings.TrimSpace(selector.Text()) == "応募フォームへ" {
+//             isActive = "true"
+//             return false // ループ終了
+//         }
+//         isActive = "false"
+//         return true
+//     })
+//     return isActive
+// }
 
 // 必要な情報を抽出する
 func salvageFeaturesCrowdWorksTech(data map[string]string, target string) []*model.JobFeature {

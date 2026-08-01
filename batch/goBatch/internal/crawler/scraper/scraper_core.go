@@ -64,6 +64,10 @@ func (g *Crawler[T]) scrapeFrame(provider PageProvider,
         // 静的/動的を判定してHTMLを取得
         html := fetchPage(url, provider.IsStaticPage(), provider.FetchDynamicPage(ctx))
 
+        if html == "" {
+            continue
+        }
+
         wg.Add(1)
         go func(html string, url string) {
             defer wg.Done()
@@ -292,16 +296,23 @@ func fetchApiData(apiURL string) (*http.Response, error) {
     return response, nil
 }
 
-// 開いているwebページのURLを取得
-func getCurrentURL(ctx context.Context) (string, error) {
-	var currentURL string
+var _httpClient = &http.Client{ Timeout: 5 * time.Second }
 
-	err := chromedp.Run(
-		ctx,
-		chromedp.Location(&currentURL),
-	)
-	if err != nil {
-		return "", err
-	}
-	return currentURL, nil
+// return err: アクセス失敗、nil: アクセス成功
+func checkHttpStatus(client *http.Client, url string) error {
+    response, err := client.Get(url)
+
+    if err != nil {
+        return err
+    }
+    defer response.Body.Close()
+
+    if response.StatusCode != http.StatusOK {
+        return fmt.Errorf(
+            "unexpected HTTP status: %d, url=%s",
+            response.StatusCode,
+            url,
+        )
+    }
+    return nil
 }

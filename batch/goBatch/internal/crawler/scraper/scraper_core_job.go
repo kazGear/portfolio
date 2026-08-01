@@ -3,6 +3,7 @@ package scraper
 import (
 	"log"
 	"regexp"
+	"strconv"
 	"strings"
 
 	"golang.org/x/text/unicode/norm"
@@ -63,15 +64,13 @@ func buildJobFrame(data map[string]string, url string, logger *log.Logger) (*mod
     job.EmploymentType = trim(data[C.EmploymentType])
     job.WorkPlace      = trim(data[C.WorkPlace])
 
-    // isActive, err := strconv.ParseBool(data[C.IsActive])
+    isActive, err := strconv.ParseBool(data[C.IsActive])
 
-    // if err != nil {
-    //     logger.Println(err)
-    //     job.IsActive = true
-    // } else {
-    //     job.IsActive = isActive
-    // }
-    job.IsActive = nil
+    if err != nil {
+        job.IsActive = nil
+    } else {
+        job.IsActive = &isActive
+    }
 
     job.SimilarityScore = nil
     job.SourceSite      = trim(data[C.SourceSite])
@@ -265,8 +264,8 @@ var languageDictionary = []*SearchFeature{
             "c plusplus",
         },
         Patterns: []*regexp.Regexp{
-            regexp.MustCompile(`\bc++\b`),
-            regexp.MustCompile(`\bc ++\b`),
+            regexp.MustCompile(`\bc\+\+\b`),
+            regexp.MustCompile(`\bc \+\+\b`),
         },
     },
     {
@@ -612,7 +611,7 @@ var frameworkLibraryDictionary = []*SearchFeature{
         Patterns: []*regexp.Regexp{},
     },
     {
-        Name:     "React (JavaScript/TypeScript)",
+        Name:     "React (JS/TS)",
         Category: C.FrameworkLibrary,
         Keywords: []string{
             "react",
@@ -622,7 +621,7 @@ var frameworkLibraryDictionary = []*SearchFeature{
         Patterns: []*regexp.Regexp{},
     },
     {
-        Name:     "Next.js (JavaScript/TypeScript)",
+        Name:     "Next.js (JS/TS)",
         Category: C.FrameworkLibrary,
         Keywords: []string{
             "next.js",
@@ -632,7 +631,7 @@ var frameworkLibraryDictionary = []*SearchFeature{
         Patterns: []*regexp.Regexp{},
     },
     {
-        Name:     "Vue.js (JavaScript/TypeScript)",
+        Name:     "Vue.js (JS/TS)",
         Category: C.FrameworkLibrary,
         Keywords: []string{
             "vue.js",
@@ -643,7 +642,7 @@ var frameworkLibraryDictionary = []*SearchFeature{
         },
     },
     {
-        Name:     "Nuxt.js (JavaScript/TypeScript)",
+        Name:     "Nuxt.js (JS/TS)",
         Category: C.FrameworkLibrary,
         Keywords: []string{
             "nuxt.js",
@@ -978,7 +977,7 @@ var frameworkLibraryDictionary = []*SearchFeature{
         Patterns: []*regexp.Regexp{},
     },
     {
-        Name:     "Redux (JavaScript/TypeScript)",
+        Name:     "Redux (JS/TS)",
         Category: C.FrameworkLibrary,
         Keywords: []string{
             "redux",
@@ -986,7 +985,7 @@ var frameworkLibraryDictionary = []*SearchFeature{
         Patterns: []*regexp.Regexp{},
     },
     {
-        Name:     "React Router (JavaScript/TypeScript)",
+        Name:     "React Router (JS/TS)",
         Category: C.FrameworkLibrary,
         Keywords: []string{
             "react router",
@@ -995,7 +994,7 @@ var frameworkLibraryDictionary = []*SearchFeature{
         Patterns: []*regexp.Regexp{},
     },
     {
-        Name:     "React Hook Form (JavaScript/TypeScript)",
+        Name:     "React Hook Form (JS/TS)",
         Category: C.FrameworkLibrary,
         Keywords: []string{
             "react hook form",
@@ -1004,7 +1003,7 @@ var frameworkLibraryDictionary = []*SearchFeature{
         Patterns: []*regexp.Regexp{},
     },
     {
-        Name:     "Material UI (JavaScript/TypeScript)",
+        Name:     "Material UI (JS/TS)",
         Category: C.FrameworkLibrary,
         Keywords: []string{
             "material ui",
@@ -1142,7 +1141,7 @@ var frameworkLibraryDictionary = []*SearchFeature{
         Patterns: []*regexp.Regexp{},
     },
     {
-        Name:     "Svelte (JavaScript/TypeScript)",
+        Name:     "Svelte (JS/TS)",
         Category: C.FrameworkLibrary,
         Keywords: []string{
             "svelte",
@@ -1150,7 +1149,7 @@ var frameworkLibraryDictionary = []*SearchFeature{
         Patterns: []*regexp.Regexp{},
     },
     {
-        Name:     "SvelteKit (JavaScript/TypeScript)",
+        Name:     "SvelteKit (JS/TS)",
         Category: C.FrameworkLibrary,
         Keywords: []string{
             "sveltekit",
@@ -1159,7 +1158,7 @@ var frameworkLibraryDictionary = []*SearchFeature{
         Patterns: []*regexp.Regexp{},
     },
     {
-        Name:     "SolidJS (JavaScript/TypeScript)",
+        Name:     "SolidJS (JS/TS)",
         Category: C.FrameworkLibrary,
         Keywords: []string{
             "solidjs",
@@ -1195,7 +1194,7 @@ var frameworkLibraryDictionary = []*SearchFeature{
         Patterns: []*regexp.Regexp{},
     },
     {
-        Name:     "Quasar Framework (JavaScript/TypeScript)",
+        Name:     "Quasar Framework (JS/TS)",
         Category: C.FrameworkLibrary,
         Keywords: []string{
             "quasar framework",
@@ -1204,7 +1203,7 @@ var frameworkLibraryDictionary = []*SearchFeature{
         Patterns: []*regexp.Regexp{},
     },
     {
-        Name:     "Ionic (JavaScript/TypeScript)",
+        Name:     "Ionic (JS/TS)",
         Category: C.FrameworkLibrary,
         Keywords: []string{
             "ionic framework",
@@ -1213,7 +1212,7 @@ var frameworkLibraryDictionary = []*SearchFeature{
         Patterns: []*regexp.Regexp{},
     },
     {
-        Name:     "Capacitor (JavaScript/TypeScript)",
+        Name:     "Capacitor (JS/TS)",
         Category: C.FrameworkLibrary,
         Keywords: []string{
             "capacitor",
@@ -1230,7 +1229,7 @@ var frameworkLibraryDictionary = []*SearchFeature{
         Patterns: []*regexp.Regexp{},
     },
     {
-        Name:     "Remix (JavaScript/TypeScript)",
+        Name:     "Remix (JS/TS)",
         Category: C.FrameworkLibrary,
         Keywords: []string{
             "remix",
@@ -2523,7 +2522,7 @@ var testDictionary = []*SearchFeature{
         Patterns: []*regexp.Regexp{},
     },
     {
-        Name:     "Jest (JavaScript/TypeScript)",
+        Name:     "Jest (JS/TS)",
         Category: C.Test,
         Keywords: []string{
             "jest",
@@ -2531,7 +2530,7 @@ var testDictionary = []*SearchFeature{
         Patterns: []*regexp.Regexp{},
     },
     {
-        Name:     "Vitest (JavaScript/TypeScript)",
+        Name:     "Vitest (JS/TS)",
         Category: C.Test,
         Keywords: []string{
             "vitest",
@@ -2563,7 +2562,7 @@ var testDictionary = []*SearchFeature{
         Patterns: []*regexp.Regexp{},
     },
     {
-        Name:     "Cypress (JavaScript/TypeScript)",
+        Name:     "Cypress (JS/TS)",
         Category: C.Test,
         Keywords: []string{
             "cypress",
@@ -2571,7 +2570,7 @@ var testDictionary = []*SearchFeature{
         Patterns: []*regexp.Regexp{},
     },
     {
-        Name:     "Playwright (JavaScript/TypeScript)",
+        Name:     "Playwright (JS/TS)",
         Category: C.Test,
         Keywords: []string{
             "playwright",
@@ -3231,6 +3230,17 @@ var roleDictionary = []*SearchFeature{
             "analysis",
             "analyze",
             "分析",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "提案",
+        Category: C.Role,
+        Keywords: []string{
+            "提案",
+            "プレゼンテーション",
+            "プレゼン",
+            "suggest",
         },
         Patterns: []*regexp.Regexp{},
     },

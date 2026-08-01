@@ -13,7 +13,8 @@ import (
 
 var (
     _jobFeaturesCrowdWorksTech map[string][]*model.JobFeature = make(map[string][]*model.JobFeature)
-    _mutex                   *sync.Mutex                      = &sync.Mutex{}
+    _jobOptionsCrowdWorksTech  map[string][]*model.JobOption  = make(map[string][]*model.JobOption)
+    _mutex                     *sync.Mutex                    = &sync.Mutex{}
 )
 
 type jobRepository struct {
@@ -25,10 +26,33 @@ func NewJobRepositoryCrowdWorksTech(db *sqlx.DB) Repository[*model.Job] {
 }
 
 func InjectionJobFeaturesCrowdWorksTech(features []*model.JobFeature, url string) {
-    // 読み取りは同時アクセス可能
     _mutex.Lock()
+    defer _mutex.Unlock()
     _jobFeaturesCrowdWorksTech[url] = features
-    _mutex.Unlock()
+}
+
+func InjectionJobOptionsCrowdWorksTech(options []*model.JobOption, url string) {
+    _mutex.Lock()
+    defer _mutex.Unlock()
+    _jobOptionsCrowdWorksTech[url] = options
+}
+
+// グローバル変数アクセス用（スレッドセーフ）
+func getJobFeaturesCrowdWorksTech(url string) ([]*model.JobFeature, bool) {
+    _mutex.Lock()
+    defer _mutex.Unlock()
+
+    features, exists := _jobFeaturesCrowdWorksTech[url]
+    return features, exists
+}
+
+// グローバル変数アクセス用（スレッドセーフ）
+func getJobOptionsCrowdWorksTech(url string) ([]*model.JobOption, bool) {
+    _mutex.Lock()
+    defer _mutex.Unlock()
+
+    options, exists := _jobOptionsCrowdWorksTech[url]
+    return options, exists
 }
 
 func (r *jobRepository) Save(jobs []*model.Job) (ok int, ng int, errors []error) {
@@ -43,8 +67,7 @@ func (r *jobRepository) Save(jobs []*model.Job) (ok int, ng int, errors []error)
     }
 
     for _, job := range jobs {
-        err := r.updates(job, savedFeatureJobIds)
-        if err != nil {
+        if err := r.updates(job, savedFeatureJobIds); err != nil {
             errs = append(errs, err)
             ngCount++
             continue
@@ -99,21 +122,24 @@ func (r *jobRepository) updates(job *model.Job, savedFeatureJobIds map[int64]str
     if err != nil {
         return err
     }
-    // すでに案件の特徴が保存されてるか確認し、保存済みであれば後続処理は不要
-    // Featuresが無くても同様
-    _, exists := savedFeatureJobIds[jobId]
-    _mutex.Lock()
-    features  := _jobFeaturesCrowdWorksTech[job.Url]
-    _mutex.Unlock()
+    // すでに案件情報が保存されてるか確認し、保存済みであれば後続処理は不要
+    // Features, optionsが共に無くても同様
+    _, exists   := savedFeatureJobIds[jobId]
+    features, _ := getJobFeaturesCrowdWorksTech(job.Url)
+    options, _  := getJobOptionsCrowdWorksTech(job.Url)
 
-    if exists || len(features) <= 0 {
+    if exists || (len(features) <= 0 && len(options) <= 0) {
         return transaction.Commit()
     }
-
-
-    // まとめてインサート(features)
+    // まとめてインサート(features ,options)
     sqlBulkInsertFeatures := createSqlBulkInsertFeatures(job.Url)
     _, err = transaction.Exec(sqlBulkInsertFeatures)
+
+    if err != nil {
+        return err
+    }
+    sqlBulkInsertOptions := createSqlBulkInsertOptions(job.Url)
+    _, err = transaction.Exec(sqlBulkInsertOptions)
 
     if err != nil {
         return err
@@ -125,25 +151,41 @@ func (r *jobRepository) updates(job *model.Job, savedFeatureJobIds map[int64]str
         return err
     }
 
-    err = transaction.Commit()
-
-    if err != nil {
+    if err := transaction.Commit(); err != nil {
         return err
     }
+
     // 処理済のデータは削除
-    removeJobFeaturesCrowdWorksTech(job.Url)
+    removeJobDataCrowdWorksTech(job.Url)
+    removeJobOptionsCrowdWorksTech(job.Url)
+    return nil
+}
+
+func upsert() error {
     return nil
 }
 
 // DB保存済の情報は不要なため削除、メモリ解法
-func removeJobFeaturesCrowdWorksTech(url string) {
+func removeJobDataCrowdWorksTech(url string) {
+    _, exists := getJobFeaturesCrowdWorksTech(url)
+
     _mutex.Lock()
     defer _mutex.Unlock()
 
-    _, exists := _jobFeaturesCrowdWorksTech[url]
-
     if exists {
         delete(_jobFeaturesCrowdWorksTech, url)
+    }
+}
+
+// DB保存済の情報は不要なため削除、メモリ解法
+func removeJobOptionsCrowdWorksTech(url string) {
+    _, exists := getJobOptionsCrowdWorksTech(url)
+
+    _mutex.Lock()
+    defer _mutex.Unlock()
+
+    if exists {
+        delete(_jobOptionsCrowdWorksTech, url)
     }
 }
 
@@ -192,14 +234,16 @@ func setJobId(jobId int64, url string) {
     for _, feature := range _jobFeaturesCrowdWorksTech[url] {
         feature.JobId = jobId
     }
+
+    for _, option := range _jobOptionsCrowdWorksTech[url] {
+        option.JobId = jobId
+    }
 }
 
 func createSqlBulkInsertFeatures(url string) string {
     var builder strings.Builder
 
-    _mutex.Lock()
-    features := _jobFeaturesCrowdWorksTech[url]
-    _mutex.Unlock()
+    features, _ := getJobFeaturesCrowdWorksTech(url)
 
     if len(features) == 0 {
         return ""
@@ -217,6 +261,32 @@ func createSqlBulkInsertFeatures(url string) string {
             features[i].FeatureName,
             features[i].Category,
             features[i].RequirementType),
+        )
+    }
+    builder.WriteString(";")
+
+    return builder.String()
+}
+
+func createSqlBulkInsertOptions(url string) string {
+    var builder strings.Builder
+
+    options, _ := getJobOptionsCrowdWorksTech(url)
+
+    if len(options) == 0 {
+        return ""
+    }
+    builder.WriteString(" INSERT INTO t_job_options VALUES ")
+
+    for i := 0; i < len(options); i++ {
+        // 初回以外カンマで区切る
+        if i > 0 {
+            builder.WriteString(",")
+        }
+
+        builder.WriteString(fmt.Sprintf(" (%v, '%v') ",
+            options[i].JobId,
+            options[i].Option),
         )
     }
     builder.WriteString(";")

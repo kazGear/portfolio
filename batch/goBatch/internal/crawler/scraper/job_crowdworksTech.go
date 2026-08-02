@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"net/http"
 	"regexp"
 	"strings"
 	"sync"
@@ -94,7 +93,7 @@ func (c *CallBacksCrowdworksTech) FetchDynamicPage(parentCtx context.Context) fu
             return "", nil
         }
         // 無駄なchromedpの起動を回避
-        if err := checkHttpStatus(&http.Client{ Timeout: 5 * time.Second }, url); err != nil {
+        if err := checkHttpStatus(_httpClient, url); err != nil {
             return "", err
         }
 
@@ -142,9 +141,8 @@ func (c *CallBacksCrowdworksTech) CollectAttributes() func(doc *goquery.Document
         defer res.Body.Close()
 
         var jsonModel model.ApiResponseCrowdworksTech
-        err = json.NewDecoder(res.Body).Decode(&jsonModel)
 
-        if err != nil {
+        if err := json.NewDecoder(res.Body).Decode(&jsonModel); err != nil {
             log.Printf(C.JsonDecodeError, err)
             return []map[string]string{}
         }

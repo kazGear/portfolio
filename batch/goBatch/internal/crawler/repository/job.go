@@ -38,7 +38,7 @@ func InjectionJobOptions(options []*model.JobOption, url string) {
 }
 
 // グローバル変数アクセス用（スレッドセーフ）
-func getJobFeaturesCrowdWorksTech(url string) ([]*model.JobFeature, bool) {
+func getJobFeatures(url string) ([]*model.JobFeature, bool) {
     _mutex.Lock()
     defer _mutex.Unlock()
 
@@ -47,7 +47,7 @@ func getJobFeaturesCrowdWorksTech(url string) ([]*model.JobFeature, bool) {
 }
 
 // グローバル変数アクセス用（スレッドセーフ）
-func getJobOptionsCrowdWorksTech(url string) ([]*model.JobOption, bool) {
+func getJobOptions(url string) ([]*model.JobOption, bool) {
     _mutex.Lock()
     defer _mutex.Unlock()
 
@@ -111,8 +111,8 @@ func (r *jobRepository) updates(job *model.Job, savedFeatureJobIds map[int64]str
     // すでに案件情報が保存されてるか確認し、保存済みであれば後続処理は不要
     // Features, optionsが共に無くても同様
     _, exists   := savedFeatureJobIds[jobId]
-    features, _ := getJobFeaturesCrowdWorksTech(job.Url)
-    options, _  := getJobOptionsCrowdWorksTech(job.Url)
+    features, _ := getJobFeatures(job.Url)
+    options, _  := getJobOptions(job.Url)
 
     if exists || (len(features) <= 0 && len(options) <= 0) {
         return transaction.Commit()
@@ -142,8 +142,8 @@ func (r *jobRepository) updates(job *model.Job, savedFeatureJobIds map[int64]str
     }
 
     // 処理済のデータは削除
-    removeJobDataCrowdWorksTech(job.Url)
-    removeJobOptionsCrowdWorksTech(job.Url)
+    removeJobData(job.Url)
+    removeJobOptions(job.Url)
     return nil
 }
 
@@ -172,8 +172,8 @@ func upsert(job *model.Job, transaction *sqlx.Tx) error {
 }
 
 // DB保存済の情報は不要なため削除、メモリ解法
-func removeJobDataCrowdWorksTech(url string) {
-    _, exists := getJobFeaturesCrowdWorksTech(url)
+func removeJobData(url string) {
+    _, exists := getJobFeatures(url)
 
     _mutex.Lock()
     defer _mutex.Unlock()
@@ -184,8 +184,8 @@ func removeJobDataCrowdWorksTech(url string) {
 }
 
 // DB保存済の情報は不要なため削除、メモリ解法
-func removeJobOptionsCrowdWorksTech(url string) {
-    _, exists := getJobOptionsCrowdWorksTech(url)
+func removeJobOptions(url string) {
+    _, exists := getJobOptions(url)
 
     _mutex.Lock()
     defer _mutex.Unlock()
@@ -249,7 +249,7 @@ func setJobId(jobId int64, url string) {
 func createSqlBulkInsertFeatures(url string) string {
     var builder strings.Builder
 
-    features, _ := getJobFeaturesCrowdWorksTech(url)
+    features, _ := getJobFeatures(url)
 
     if len(features) == 0 {
         return ""
@@ -277,7 +277,7 @@ func createSqlBulkInsertFeatures(url string) string {
 func createSqlBulkInsertOptions(url string) string {
     var builder strings.Builder
 
-    options, _ := getJobOptionsCrowdWorksTech(url)
+    options, _ := getJobOptions(url)
 
     if len(options) == 0 {
         return ""

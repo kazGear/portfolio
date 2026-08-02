@@ -103,7 +103,7 @@ services:
       dockerfile: Dockerfile.dev
     restart: "no"
     volumes:
-      - ./batch/goBatch/internal/crawler/logs:/app/internal/crawler/logs
+      - ./batch/goBatch/internal/crawler/logs/guitar:/app/internal/crawler/logs/guitar
       - ./batch/goBatch/cron/guitarCrawler.txt:/etc/cron.d/app-cron:ro
     environment:
       ENV_FILE: .env.dev

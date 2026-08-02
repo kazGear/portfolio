@@ -118,8 +118,8 @@ func (c *CallBacksEspSig) FetchDynamicPage(parentCtx context.Context) func(url s
     }
 }
 
-func (c *CallBacksEspSig) CollectAttributes() func(doc *goquery.Document) []map[string]string {
-	return func(doc *goquery.Document) []map[string]string {
+func (c *CallBacksEspSig) CollectAttributes() func(doc *goquery.Document, url string) []map[string]string {
+	return func(doc *goquery.Document, url string) []map[string]string {
         specs := make([]map[string]string, 0, 10)
         mutex := &sync.Mutex{}
 

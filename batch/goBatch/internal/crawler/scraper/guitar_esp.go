@@ -133,8 +133,8 @@ func (c *CallBacksEsp) FetchDynamicPage(parentCtx context.Context) func(url stri
 
 var regSeries = regexp.MustCompile(`^[\w-]+`)
 
-func (c *CallBacksEsp) CollectAttributes() func(doc *goquery.Document) []map[string]string {
-    return func(doc *goquery.Document) []map[string]string {
+func (c *CallBacksEsp) CollectAttributes() func(doc *goquery.Document, url string) []map[string]string {
+    return func(doc *goquery.Document, url string) []map[string]string {
         specs := make([]map[string]string, 0, 1)
         mutex := &sync.Mutex{}
 

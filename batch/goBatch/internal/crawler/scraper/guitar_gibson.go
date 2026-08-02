@@ -135,8 +135,8 @@ var regSeriesGibson = regexp.MustCompile(
     `(Les Paul|SG|ES-\d+|Flying V|Explorer|Firebird|Hummingbird|J\-\d+)+\s[A-Za-z]+\b`,
 )
 
-func (c *CallBacksGibson) CollectAttributes() func(doc *goquery.Document) []map[string]string {
-    return func(doc *goquery.Document) []map[string]string {
+func (c *CallBacksGibson) CollectAttributes() func(doc *goquery.Document, url string) []map[string]string {
+    return func(doc *goquery.Document, url string) []map[string]string {
         specs := []map[string]string{}
         mutex := &sync.Mutex{}
 

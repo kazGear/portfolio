@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"net/http"
 	"regexp"
 	"strings"
 	"sync"
@@ -27,8 +28,8 @@ type PageProvider interface {
 }
 
 type ModelParser[T any] interface {
-    CollectAttributes()    func(doc *goquery.Document)  []map[string]string
-    BuildModel(url string) func(spec map[string]string) T
+    CollectAttributes()    func(doc *goquery.Document, url string)  []map[string]string
+    BuildModel(url string) func(spec map[string]string)             T
 }
 
 type Crawler[T any] struct {
@@ -63,6 +64,10 @@ func (g *Crawler[T]) scrapeFrame(provider PageProvider,
         // 静的/動的を判定してHTMLを取得
         html := fetchPage(url, provider.IsStaticPage(), provider.FetchDynamicPage(ctx))
 
+        if html == "" {
+            continue
+        }
+
         wg.Add(1)
         go func(html string, url string) {
             defer wg.Done()
@@ -74,7 +79,7 @@ func (g *Crawler[T]) scrapeFrame(provider PageProvider,
             }
             funcCollectAttributes := parser.CollectAttributes()
             funcBuildModel        := parser.BuildModel(url)
-            attributes            := funcCollectAttributes(doc) // 1ページ：N詳細ページでもOK
+            attributes            := funcCollectAttributes(doc, url) // 1ページ：N詳細ページでもOK
 
             for _, attribute := range attributes {
                 attribute := attribute
@@ -271,4 +276,43 @@ func loggingCrawlStats(stats *crawlStats, logger *log.Logger) {
         stats.responses.Load(),
         stats.errors.Load(),
     )
+}
+
+// apiから直接データを取得（関数外でClose()すること）
+func fetchApiData(apiURL string) (*http.Response, error) {
+    response, err := http.Get(apiURL)
+
+    if err != nil {
+        return nil, fmt.Errorf("failed to request job API: %w", err)
+    }
+
+    if response.StatusCode != http.StatusOK {
+        return nil, fmt.Errorf(
+            "unexpected http status code: %d %v",
+            response.StatusCode,
+            apiURL,
+        )
+    }
+    return response, nil
+}
+
+var _httpClient = &http.Client{ Timeout: 5 * time.Second }
+
+// return err: アクセス失敗、nil: アクセス成功
+func checkHttpStatus(client *http.Client, url string) error {
+    response, err := client.Get(url)
+
+    if err != nil {
+        return err
+    }
+    defer response.Body.Close()
+
+    if response.StatusCode != http.StatusOK {
+        return fmt.Errorf(
+            "unexpected HTTP status: %d, url=%s",
+            response.StatusCode,
+            url,
+        )
+    }
+    return nil
 }

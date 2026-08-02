@@ -1,24 +1,18 @@
 package service
 
 import (
-	"context"
 	"log"
 	"os"
 	"strconv"
 	"sync"
 	"time"
 
-	"github.com/chromedp/chromedp"
 	"github.com/kazGear/portfolio/goBatch/internal/crawler/model"
 	"github.com/kazGear/portfolio/goBatch/internal/crawler/repository"
 	"github.com/kazGear/portfolio/goBatch/internal/crawler/scraper"
 	C "github.com/kazGear/portfolio/goBatch/pkg/constants"
 	"github.com/kazGear/portfolio/goBatch/pkg/utils"
 )
-
-type CrawlerService interface {
-    RunCrawler()
-}
 
 type guitarCrawlerService struct {
     repository repository.Repository[*model.Guitar]
@@ -36,11 +30,11 @@ type Maker struct {
     logger   *log.Logger
 }
 
-func NewMaker(name string,
+func NewMaker(name     string,
               scraper  scraper.Scraper[*model.Guitar],
               provider scraper.PageProvider,
               parser   scraper.ModelParser[*model.Guitar],
-              logger *log.Logger,
+              logger   *log.Logger,
 ) *Maker {
     return &Maker{ name, scraper, provider, parser ,logger }
 }
@@ -67,7 +61,7 @@ func (g *guitarCrawlerService) RunCrawler() {
             defer cancelAlloc()
             defer cancelParent()
 
-            maker.logger.Printf(C.DecoLabel, "Started crawler " + maker.name)
+            maker.logger.Printf(C.DecoLabel, "Started guitar crawler " + maker.name)
 
             startTime := time.Now() // 処理時間計測開始
 
@@ -83,8 +77,8 @@ func (g *guitarCrawlerService) RunCrawler() {
             for _, err := range errs {
                 maker.logger.Println(err)
             }
-            maker.logger.Printf(C.DecoLabel, "Finished crawler " + maker.name)
-            maker.logger.Printf("Crawler processing time: %v\n", time.Since(startTime))
+            maker.logger.Printf(C.DecoLabel, "Finished guitar crawler " + maker.name)
+            maker.logger.Printf("Guitar crawler processing time: %v\n", time.Since(startTime))
         }(*maker)
     }
     wg.Wait()
@@ -94,8 +88,10 @@ func (g *guitarCrawlerService) RunCrawler() {
 func makersFactory() map[string]*Maker {
     makers := map[string]*Maker{}
 
+    filepath := "logs/guitar/%v_%v.log"
+
     makerName := "Momose"
-    logger    := utils.NewLogger(makerName)
+    logger    := utils.NewLogger(makerName, filepath)
     makers[makerName] = NewMaker(
         makerName,
         scraper.NewScraperMomose(logger),
@@ -105,7 +101,7 @@ func makersFactory() map[string]*Maker {
     )
 
     makerName = "ESP-sig"
-    logger    = utils.NewLogger(makerName)
+    logger    = utils.NewLogger(makerName, filepath)
     makers[makerName] = NewMaker(
         makerName,
         scraper.NewScraperEspSig(logger),
@@ -115,7 +111,7 @@ func makersFactory() map[string]*Maker {
     )
 
     makerName = "ESP"
-    logger    = utils.NewLogger(makerName)
+    logger    = utils.NewLogger(makerName, filepath)
     makers[makerName] = NewMaker(
         makerName,
         scraper.NewScraperEsp(logger),
@@ -125,7 +121,7 @@ func makersFactory() map[string]*Maker {
     )
 
     makerName = "Gibson"
-    logger    = utils.NewLogger(makerName)
+    logger    = utils.NewLogger(makerName, filepath)
     makers[makerName] = NewMaker(
         makerName,
         scraper.NewScraperGibson(logger),
@@ -135,7 +131,7 @@ func makersFactory() map[string]*Maker {
     )
 
     makerName = ".strandberg"
-    logger    = utils.NewLogger(makerName)
+    logger    = utils.NewLogger(makerName, filepath)
     makers[makerName] = NewMaker(
         makerName,
         scraper.NewScraperStrandberg(logger),
@@ -145,7 +141,7 @@ func makersFactory() map[string]*Maker {
     )
 
     makerName = "Ibanez"
-    logger    = utils.NewLogger(makerName)
+    logger    = utils.NewLogger(makerName, filepath)
     makers[makerName] = NewMaker(
         makerName,
         scraper.NewScraperIbanez(logger),
@@ -155,7 +151,7 @@ func makersFactory() map[string]*Maker {
     )
 
     makerName = "PRS"
-    logger    = utils.NewLogger(makerName)
+    logger    = utils.NewLogger(makerName, filepath)
     makers[makerName] = NewMaker(
         makerName,
         scraper.NewScraperPRS(logger),
@@ -165,7 +161,7 @@ func makersFactory() map[string]*Maker {
     )
 
     makerName = "SCHECTER"
-    logger    = utils.NewLogger(makerName)
+    logger    = utils.NewLogger(makerName, filepath)
     makers[makerName] = NewMaker(
         makerName,
         scraper.NewScraperSchecter(logger),
@@ -175,7 +171,7 @@ func makersFactory() map[string]*Maker {
     )
 
     makerName = "ZEMAITIS"
-    logger    = utils.NewLogger(makerName)
+    logger    = utils.NewLogger(makerName, filepath)
     makers[makerName] = NewMaker(
         makerName,
         scraper.NewScraperZemaitis(logger),
@@ -185,7 +181,7 @@ func makersFactory() map[string]*Maker {
     )
 
     makerName = "MusicMan"
-    logger    = utils.NewLogger(makerName)
+    logger    = utils.NewLogger(makerName, filepath)
     makers[makerName] = NewMaker(
         makerName,
         scraper.NewScraperMusicMan(logger),
@@ -195,7 +191,7 @@ func makersFactory() map[string]*Maker {
     )
 
     makerName = "Fender"
-    logger    = utils.NewLogger(makerName)
+    logger    = utils.NewLogger(makerName, filepath)
     makers[makerName] = NewMaker(
         makerName,
         scraper.NewScraperFender(logger),
@@ -205,38 +201,4 @@ func makersFactory() map[string]*Maker {
     )
 
     return makers
-}
-
-// chromedp環境構築
-func createChromedpCtx() (cancelAlloc context.CancelFunc,
-                          cancelParent context.CancelFunc,
-                          parentCtx context.Context,
-) {
-    // 動的ページ取得のためのchromedpコンテキスト構築
-    allocCtx, allocCancel := chromedp.NewExecAllocator(
-        context.Background(),
-        chromedp.DefaultExecAllocatorOptions[:]...,
-    )
-    parentCtx, parentCancel := chromedp.NewContext(allocCtx)
-
-    return allocCancel, parentCancel, parentCtx
-}
-
-// chromedp環境構築（実際にchromeを起動して挙動を確認できる。clickされているか？等）
-func createChromedpCtxDebug() (cancelAlloc context.CancelFunc,
-                               cancelParent context.CancelFunc,
-                               parentCtx context.Context,
-) {
-    // 動的ページ取得のためのchromedpコンテキスト構築
-    opts := append(chromedp.DefaultExecAllocatorOptions[:],
-        chromedp.Flag("headless", false),
-    )
-
-    allocCtx, allocCancel := chromedp.NewExecAllocator(
-        context.Background(),
-        opts...
-    )
-    parentCtx, parentCancel := chromedp.NewContext(allocCtx)
-
-    return allocCancel, parentCancel, parentCtx
 }

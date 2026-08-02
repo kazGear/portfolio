@@ -77,9 +77,3 @@ const (
 	UndefinedPrice  int = -2
 	ParseErrorPrice int = -3
 )
-
-// others
-const (
-	InvalidNumber int = -1
-	DecoLabel = "◆◇◆◇ %v ◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇◆◇\n"
-)

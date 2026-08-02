@@ -130,8 +130,8 @@ func (c *CallBacksSchecter) FetchDynamicPage(parentCtx context.Context) func(url
 
 var regEX_IV = regexp.MustCompile(`\[EX-IV\][\n.]+`)
 
-func (c *CallBacksSchecter) CollectAttributes() func(doc *goquery.Document) []map[string]string {
-    return func(doc *goquery.Document) []map[string]string {
+func (c *CallBacksSchecter) CollectAttributes() func(doc *goquery.Document, url string) []map[string]string {
+    return func(doc *goquery.Document, url string) []map[string]string {
         specs := make([]map[string]string, 0, 1)
         mutex := &sync.Mutex{}
 

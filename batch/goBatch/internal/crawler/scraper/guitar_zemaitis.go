@@ -123,8 +123,8 @@ func (c *CallBacksZemaitis) FetchDynamicPage(parentCtx context.Context) func(url
     }
 }
 
-func (c *CallBacksZemaitis) CollectAttributes() func(doc *goquery.Document) []map[string]string {
-    return func(doc *goquery.Document) []map[string]string {
+func (c *CallBacksZemaitis) CollectAttributes() func(doc *goquery.Document, url string) []map[string]string {
+    return func(doc *goquery.Document, url string) []map[string]string {
         specs := make([]map[string]string, 0, 1)
         mutex := &sync.Mutex{}
 

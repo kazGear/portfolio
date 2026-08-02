@@ -154,8 +154,8 @@ var regSeriesStrandberg = regexp.MustCompile(`^[A-Za-z]+\s[A-Za-z]+\b`)
 
 var exchangeRate        = utils.GetExchangeUSDtoJPY()
 
-func (c *CallBacksStrandberg) CollectAttributes() func(doc *goquery.Document) []map[string]string {
-    return func(doc *goquery.Document) []map[string]string {
+func (c *CallBacksStrandberg) CollectAttributes() func(doc *goquery.Document, url string) []map[string]string {
+    return func(doc *goquery.Document, url string) []map[string]string {
         specs := []map[string]string{}
         mutex := &sync.Mutex{}
 

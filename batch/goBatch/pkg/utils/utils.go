@@ -164,10 +164,10 @@ func InchToMM(inch float64) float64 {
 }
 
 // ログインスタンスを作成
-func NewLogger(makerName string) *log.Logger {
+func NewLogger(makerName string, filepath string) *log.Logger {
     // 日付入りのログファイル名
     date := time.Now().Format(C.DateTime)
-    filename := fmt.Sprintf("logs/%v_%v.log", makerName, date)
+    filename := fmt.Sprintf(filepath, makerName, date)
 
     // ディレクトリがなければ作成
     os.MkdirAll("logs", 0755)

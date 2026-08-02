@@ -88,8 +88,10 @@ func (g *guitarCrawlerService) RunCrawler() {
 func makersFactory() map[string]*Maker {
     makers := map[string]*Maker{}
 
+    filepath := "logs/guitar/%v_%v.log"
+
     makerName := "Momose"
-    logger    := utils.NewLogger(makerName)
+    logger    := utils.NewLogger(makerName, filepath)
     makers[makerName] = NewMaker(
         makerName,
         scraper.NewScraperMomose(logger),
@@ -99,7 +101,7 @@ func makersFactory() map[string]*Maker {
     )
 
     makerName = "ESP-sig"
-    logger    = utils.NewLogger(makerName)
+    logger    = utils.NewLogger(makerName, filepath)
     makers[makerName] = NewMaker(
         makerName,
         scraper.NewScraperEspSig(logger),
@@ -109,7 +111,7 @@ func makersFactory() map[string]*Maker {
     )
 
     makerName = "ESP"
-    logger    = utils.NewLogger(makerName)
+    logger    = utils.NewLogger(makerName, filepath)
     makers[makerName] = NewMaker(
         makerName,
         scraper.NewScraperEsp(logger),
@@ -119,7 +121,7 @@ func makersFactory() map[string]*Maker {
     )
 
     makerName = "Gibson"
-    logger    = utils.NewLogger(makerName)
+    logger    = utils.NewLogger(makerName, filepath)
     makers[makerName] = NewMaker(
         makerName,
         scraper.NewScraperGibson(logger),
@@ -129,7 +131,7 @@ func makersFactory() map[string]*Maker {
     )
 
     makerName = ".strandberg"
-    logger    = utils.NewLogger(makerName)
+    logger    = utils.NewLogger(makerName, filepath)
     makers[makerName] = NewMaker(
         makerName,
         scraper.NewScraperStrandberg(logger),
@@ -139,7 +141,7 @@ func makersFactory() map[string]*Maker {
     )
 
     makerName = "Ibanez"
-    logger    = utils.NewLogger(makerName)
+    logger    = utils.NewLogger(makerName, filepath)
     makers[makerName] = NewMaker(
         makerName,
         scraper.NewScraperIbanez(logger),
@@ -149,7 +151,7 @@ func makersFactory() map[string]*Maker {
     )
 
     makerName = "PRS"
-    logger    = utils.NewLogger(makerName)
+    logger    = utils.NewLogger(makerName, filepath)
     makers[makerName] = NewMaker(
         makerName,
         scraper.NewScraperPRS(logger),
@@ -159,7 +161,7 @@ func makersFactory() map[string]*Maker {
     )
 
     makerName = "SCHECTER"
-    logger    = utils.NewLogger(makerName)
+    logger    = utils.NewLogger(makerName, filepath)
     makers[makerName] = NewMaker(
         makerName,
         scraper.NewScraperSchecter(logger),
@@ -169,7 +171,7 @@ func makersFactory() map[string]*Maker {
     )
 
     makerName = "ZEMAITIS"
-    logger    = utils.NewLogger(makerName)
+    logger    = utils.NewLogger(makerName, filepath)
     makers[makerName] = NewMaker(
         makerName,
         scraper.NewScraperZemaitis(logger),
@@ -179,7 +181,7 @@ func makersFactory() map[string]*Maker {
     )
 
     makerName = "MusicMan"
-    logger    = utils.NewLogger(makerName)
+    logger    = utils.NewLogger(makerName, filepath)
     makers[makerName] = NewMaker(
         makerName,
         scraper.NewScraperMusicMan(logger),
@@ -189,7 +191,7 @@ func makersFactory() map[string]*Maker {
     )
 
     makerName = "Fender"
-    logger    = utils.NewLogger(makerName)
+    logger    = utils.NewLogger(makerName, filepath)
     makers[makerName] = NewMaker(
         makerName,
         scraper.NewScraperFender(logger),

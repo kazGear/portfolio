@@ -32,5 +32,6 @@ COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 RUN mkdir -p /app/internal/crawler/logs/job
+RUN mkdir -p /app/internal/crawler/logs/guitar
 
 CMD ["/entrypoint.sh"]

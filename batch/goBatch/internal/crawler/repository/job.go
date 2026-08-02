@@ -108,6 +108,7 @@ func (r *jobRepository) updates(job *model.Job, savedFeatureJobIds map[int64]str
     if err != nil {
         return err
     }
+
     // すでに案件情報が保存されてるか確認し、保存済みであれば後続処理は不要
     // Features, optionsが共に無くても同様
     _, exists   := savedFeatureJobIds[jobId]

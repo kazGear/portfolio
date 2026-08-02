@@ -249,7 +249,7 @@ func salvageJobData(target string) []*model.JobFeature {
 
 func (c *CallBacksCrowdworksTech) BuildModel(url string) func(data map[string]string) *model.Job {
     return func(data map[string]string) *model.Job {
-        return buildJobFrame(data, url, c.funcs.logger)
+        return buildJobFrame(data, c.funcs.logger)
     }
 }
 

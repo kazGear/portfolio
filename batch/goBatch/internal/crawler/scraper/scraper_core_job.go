@@ -15,7 +15,7 @@ import (
 )
 
 // 案件構造体の構築フレームワーク
-func buildJobFrame(data map[string]string, url string, logger *log.Logger) (*model.Job) {
+func buildJobFrame(data map[string]string, logger *log.Logger) (*model.Job) {
     job  := model.Job{}
     trim := utils.TrimSpace()
 

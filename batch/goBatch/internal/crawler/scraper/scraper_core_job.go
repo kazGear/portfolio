@@ -78,16 +78,16 @@ func buildJobFrame(data map[string]string, url string, logger *log.Logger) (*mod
 	return &job
 }
 
-var whitespaceRegex = regexp.MustCompile(`\s+`)
+var _whitespaceRegex = regexp.MustCompile(`\s+`)
 
 // 文字列をスキル検索用に正規化する
 func normalizeForSearchFeature(str string) string {
-	normalized := norm.NFKC.String(str) // Unicode正規化（全角英数字・互換文字対策）
-	normalized = width.Narrow.String(normalized)
-	normalized = strings.ToLower(normalized)
-	normalized = strings.ReplaceAll(normalized, "\r\n", "\n") // 改行コード統一
-	normalized = strings.TrimSpace(normalized)
-	normalized = whitespaceRegex.ReplaceAllString(normalized, " ") // 連続する空白・改行・タブを1スペースへv
+	normalized := width.Narrow.String(str)
+	normalized  = strings.ToLower(normalized)
+	normalized  = strings.ReplaceAll(normalized, "\r\n", "\n") // 改行コード統一
+	normalized  = strings.TrimSpace(normalized)
+	normalized  = norm.NFKC.String(normalized) // Unicode正規化（全角英数字・互換文字対策）
+	normalized  = _whitespaceRegex.ReplaceAllString(normalized, " ") // 連続する空白・改行・タブを1スペースへv
 
 	return normalized
 }
@@ -136,6 +136,15 @@ var employmentTypes = []string{
     "委任",
 }
 
+func salvageEmploymentType(target string) string {
+    for _, employmentType := range employmentTypes {
+        if strings.Contains(target, employmentType) {
+            return employmentType
+        }
+    }
+    return ""
+}
+
 var workPlaces = []string{
     "フルリモート",
     "ハイブリッド",
@@ -144,6 +153,15 @@ var workPlaces = []string{
     "客先常駐",
     "リモート",
     "常駐",
+}
+
+func salvageWorkPlace(target string) string {
+    for _, workPlace := range workPlaces {
+        if strings.Contains(target, workPlace) {
+            return workPlace
+        }
+    }
+    return ""
 }
 
 // 案件特徴（スキル、ロール等）
@@ -3794,6 +3812,17 @@ var aiDictionary = []*SearchFeature{
         },
         Patterns: []*regexp.Regexp{},
     },
+}
+
+func salvageLocation(target string) string {
+    for _, location := range locationDictionary {
+        for _, locationName := range location.Keywords {
+            if strings.Contains(target, locationName) {
+                return location.Name
+            }
+        }
+    }
+    return ""
 }
 
 var locationDictionary = []*SearchFeature{

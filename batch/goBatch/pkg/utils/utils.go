@@ -163,23 +163,6 @@ func InchToMM(inch float64) float64 {
 	return math.Floor((inch * 25.4))
 }
 
-// ログ設定(グローバル設定)
-func LoggerInit(maker string) {
-	date 	 := time.Now().Format(C.DateTime)
-	filename := fmt.Sprintf("logs/%v_%v.log", maker, date)
-
-	os.MkdirAll("logs", 0755)
-
-	// ローテーション設定
-	log.SetOutput(&lumberjack.Logger{
-		Filename:   filename,
-		MaxSize:    5,   // 5MBでローテーション
-		MaxBackups: 7,   // 最大7ファイル保持
-		MaxAge:     10,  // 30日で削除
-		Compress:   false,
-	})
-}
-
 // ログインスタンスを作成
 func NewLogger(makerName string) *log.Logger {
     // 日付入りのログファイル名

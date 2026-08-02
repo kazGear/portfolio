@@ -56,11 +56,11 @@ func NewCallBacksCrowdworksTech(logger *log.Logger) *CallBacksCrowdworksTech {
 }
 
 // CollectAttributesへ
-var parentCtxCrowdworksTech context.Context
+var _parentCtxCrowdworksTech context.Context
 
 func (c *CrawlerCrowdworksTech) CollectLinks(parentCtx context.Context) ([]string, error) {
     collector              := c.jScraper.collector
-    parentCtxCrowdworksTech = parentCtx
+    _parentCtxCrowdworksTech = parentCtx
 
     // クロールログ収集
     crawlStats := &crawlStats{}
@@ -123,15 +123,15 @@ func (c *CallBacksCrowdworksTech) FetchDynamicPage(parentCtx context.Context) fu
     }
 }
 
-var regCrowdworksTechPageId   = regexp.MustCompile(`\d{1,6}`)
-var regCrowdworksTechMaxPrice = regexp.MustCompile(`\d{0,3},*\d{0,3},\d{0,3}`)
+var _regCrowdworksTechPageId   = regexp.MustCompile(`\d{1,6}`)
+var _regCrowdworksTechMaxPrice = regexp.MustCompile(`\d{0,3},*\d{0,3},\d{0,3}`)
 
 func (c *CallBacksCrowdworksTech) CollectAttributes() func(doc *goquery.Document, url string) []map[string]string {
     return func(doc *goquery.Document, url string) []map[string]string {
         dataset := make([]map[string]string, 0, 1)
 
         // apiからJSON取得 > struct化
-        pageId   := regCrowdworksTechPageId.FindString(url)
+        pageId   := _regCrowdworksTechPageId.FindString(url)
         res, err := fetchApiData(
             fmt.Sprintf("https://tech.crowdworks.jp/api/v1/users/job_offers/%v/detail", pageId),
         )
@@ -160,7 +160,7 @@ func (c *CallBacksCrowdworksTech) CollectAttributes() func(doc *goquery.Document
         data[C.MinSalaryAtMonth] = ""
         data[C.MaxSalaryAtHour]  = ""
         maxSalaryAtMonth, _     := doc.Find(`meta[name="description"]`).Attr("content")
-        maxSalaryAtMonth         = regCrowdworksTechMaxPrice.FindString(maxSalaryAtMonth)
+        maxSalaryAtMonth         = _regCrowdworksTechMaxPrice.FindString(maxSalaryAtMonth)
         data[C.MaxSalaryAtMonth] = maxSalaryAtMonth
 
         data[C.Description]    = jsonModel.DetailedTitle + "\n" +
@@ -174,7 +174,7 @@ func (c *CallBacksCrowdworksTech) CollectAttributes() func(doc *goquery.Document
 
         // 案件の特徴を収集し、repositoryへ
         features := salvageFeaturesCrowdWorksTech(data, data[C.Description])
-        repository.InjectionJobFeaturesCrowdWorksTech(features, url)
+        repository.InjectionJobFeatures(features, url)
 
         // 案件のオプションを収集し、repositoryへ
         options := make([]*model.JobOption, 0, 20)
@@ -186,7 +186,7 @@ func (c *CallBacksCrowdworksTech) CollectAttributes() func(doc *goquery.Document
             }
             options = append(options, option)
         })
-        repository.InjectionJobOptionsCrowdWorksTech(options, url)
+        repository.InjectionJobOptions(options, url)
 
         dataset = append(dataset, data)
         return dataset
@@ -217,35 +217,6 @@ func salvageFeaturesCrowdWorksTech(data map[string]string, target string) []*mod
     data[C.EmploymentType] = salvageEmploymentType(normalizedTarget)
 
     return salvageJobData(normalizedTarget)
-}
-
-func salvageLocation(target string) string {
-    for _, location := range locationDictionary {
-        for _, locationName := range location.Keywords {
-            if strings.Contains(target, locationName) {
-                return location.Name
-            }
-        }
-    }
-    return ""
-}
-
-func salvageWorkPlace(target string) string {
-    for _, workPlace := range workPlaces {
-        if strings.Contains(target, workPlace) {
-            return workPlace
-        }
-    }
-    return ""
-}
-
-func salvageEmploymentType(target string) string {
-    for _, employmentType := range employmentTypes {
-        if strings.Contains(target, employmentType) {
-            return employmentType
-        }
-    }
-    return ""
 }
 
 func salvageJobData(target string) []*model.JobFeature {

@@ -29,7 +29,7 @@ func main() {
 	defer database.Close()
 
 	// リポジトリ作成
-	jobRepository := jobRepository.NewJobRepositoryCrowdWorksTech(database)
+	jobRepository := jobRepository.NewJobRepository(database)
 	loggerRepository := loggerRepository.NewBatchLoggerRepository(database)
 
 	// DBロガー

@@ -53,7 +53,7 @@ func main() {
 	crawler.RunCrawler()
 
 	// 過去ログの整理
-	logPath 		 := os.Getenv("LOGS_PATH")
+	logPath 		 := os.Getenv("LOGS_PATH_GUITAR")
 	logsKeepCount, _ := strconv.Atoi(os.Getenv("LOGS_KEEP_COUNT"))
 	utils.CleanupLogs(
 		logPath,

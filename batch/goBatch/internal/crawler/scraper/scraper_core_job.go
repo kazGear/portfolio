@@ -1911,6 +1911,31 @@ var infrastructureDictionary = []*SearchFeature{
         },
     },
     {
+        Name:     "Windows",
+        Category: C.Infrastructure,
+        Keywords: []string{
+            "windows",
+            "windows server",
+            "win server",
+            "microsoft windows",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "macOS",
+        Category: C.Infrastructure,
+        Keywords: []string{
+            "macos",
+            "mac os",
+            "macbook",
+            "macbook pro",
+            "macbook air",
+        },
+        Patterns: []*regexp.Regexp{
+            regexp.MustCompile(`\bmac\b`),
+        },
+    },
+    {
         Name:     "Linux",
         Category: C.Infrastructure,
         Keywords: []string{
@@ -3389,6 +3414,12 @@ var roleDictionary = []*SearchFeature{
             "test engineer",
             "テスター",
             "テストエンジニア",
+            "単体テスト",
+            "結合テスト",
+            "統合テスト",
+            "総合テスト",
+            "システムテスト",
+            "シナリオテスト",
         },
         Patterns: []*regexp.Regexp{},
     },

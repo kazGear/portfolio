@@ -15,6 +15,7 @@ const (
 	SourceSite       = "SourceSite"
 	CreatedAt        = "CreatedAt"
 	UpdatedAt        = "UpdatedAt"
+	LastSeenAt       = "LastSeenAt"
 )
 
 const (
@@ -36,4 +37,5 @@ const (
 const (
 	CrowdWorksTech = "CrowdWorksTech"
 	AGELESS        = "AGELESS"
+	SES_JOB_LINK   = "SES_JOB_LINK"
 )

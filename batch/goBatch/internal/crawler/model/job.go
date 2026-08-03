@@ -18,6 +18,7 @@ type Job struct {
 	SourceSite          string     `db:"source_site"`
 	CreatedAt           time.Time  `db:"created_at"`
 	UpdatedAt           *time.Time `db:"updated_at"`
+	LastSeenAt          *time.Time `db:"last_seen_at"`
 }
 
 type ApiResponseCrowdworksTech struct {

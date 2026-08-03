@@ -6,7 +6,7 @@ func UpdateJob() string {
                t_jobs
            SET
                is_active  = :is_active,
-               updated_at = NOW()
+               last_seen_at = NOW()
          WHERE
                url = :url
              ;
@@ -29,7 +29,8 @@ func InsertJob() string {
             is_active,
             similarity_score,
             source_site,
-            created_at
+            created_at,
+            updated_at
         )
         VALUES
         (
@@ -45,7 +46,8 @@ func InsertJob() string {
             :is_active,
             :similarity_score,
             :source_site,
-            NOW()
+            NOW(),
+            :updated_at
         );
     `
 }

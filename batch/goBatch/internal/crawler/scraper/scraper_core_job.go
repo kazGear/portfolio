@@ -56,6 +56,7 @@ func buildJobFrame(data map[string]string, logger *log.Logger) (*model.Job) {
 
     job.SimilarityScore = nil
     job.SourceSite      = trim(data[C.SourceSite])
+    job.UpdatedAt       = nil //data[C.UpdatedAt]
 
 	return &job
 }

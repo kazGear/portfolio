@@ -3200,6 +3200,22 @@ var methodologyDictionary = []*SearchFeature{
             regexp.MustCompile(`\brad\b`),
         },
     },
+    {
+        Name:     "ローコード開発",
+        Category: C.Methodology,
+        Keywords: []string{
+            "ローコード",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "ノーコード開発",
+        Category: C.Methodology,
+        Keywords: []string{
+            "ノーコード",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
 }
 
 var roleDictionary = []*SearchFeature{
@@ -3339,6 +3355,14 @@ var roleDictionary = []*SearchFeature{
         Patterns: []*regexp.Regexp{},
     },
     {
+        Name:     "データ移行",
+        Category: C.Role,
+        Keywords: []string{
+            "データ移行",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
         Name:     "データサイエンティスト",
         Category: C.Role,
         Keywords: []string{
@@ -3441,13 +3465,14 @@ var roleDictionary = []*SearchFeature{
         Keywords: []string{
             "developer",
             "programmer",
-            "開発",
             "プログラマー",
             "プログラミング",
             "製造",
             "コーディング",
         },
-        Patterns: []*regexp.Regexp{},
+        Patterns: []*regexp.Regexp{
+            regexp.MustCompile(`\b開発\b`),
+        },
     },
     {
         Name:     "運用",
@@ -3470,6 +3495,16 @@ var roleDictionary = []*SearchFeature{
         },
         Patterns: []*regexp.Regexp{},
     },
+    {
+        Name:     "セキュリティ",
+        Category: C.Role,
+        Keywords: []string{
+            "セキュリティ",
+            "security",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+
     {
         Name:     "上流工程",
         Category: C.Role,

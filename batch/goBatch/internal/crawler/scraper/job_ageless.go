@@ -160,7 +160,7 @@ func isActiveAgeless(doc *goquery.Document) string {
 
     title := doc.Find("title").Text()
 
-    if strings.Contains(title, "404") {
+    if strings.Contains(title, "404") || strings.Contains(title, "４０４") {
         isActive = "false"
     } else if strings.Contains(doc.Find(".btn-disabled").Text(), "募集終了") {
         isActive = "false"

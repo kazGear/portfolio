@@ -88,7 +88,7 @@ func (g *jobCrawlerService) RunCrawler() {
 func jobBoardFactory() map[string]*JobBoard {
     jobBoards := map[string]*JobBoard{}
 
-    filepath := "logs/job/%v_%v.log"
+    filepath := "internal/crawler/logs/job/%v_%v.log"
 
     // jobBoardName := C.CrowdWorksTech
     // logger    := utils.NewLogger(jobBoardName, filepath)

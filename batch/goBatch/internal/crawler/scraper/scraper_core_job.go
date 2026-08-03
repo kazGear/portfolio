@@ -2386,14 +2386,6 @@ var toolDictionary = []*SearchFeature{
         Patterns: []*regexp.Regexp{},
     },
     {
-        Name:     "Playwright",
-        Category: C.Tool,
-        Keywords: []string{
-            "playwright",
-        },
-        Patterns: []*regexp.Regexp{},
-    },
-    {
         Name:     "Cypress",
         Category: C.Tool,
         Keywords: []string{
@@ -3332,7 +3324,8 @@ var roleDictionary = []*SearchFeature{
         Category: C.Role,
         Keywords: []string{
             "cloud engineer",
-            "クラウド",
+            "クラウド開発",
+            "クラウド環境",
         },
         Patterns: []*regexp.Regexp{},
     },

@@ -24,15 +24,6 @@ func buildJobFrame(data map[string]string, logger *log.Logger) (*model.Job) {
     job.CompanyName = trim(data[C.CompanyName])
     job.Location    = trim(data[C.Location])
 
-    minSalaryAtHour, err := utils.ParsePrice(data[C.MinSalaryAtHour])
-
-    if err != nil {
-        logger.Println(err)
-        job.MinSalaryAtHour = nil
-    } else {
-        job.MinSalaryAtHour = &minSalaryAtHour
-    }
-
     minSalaryAtMonth, err := utils.ParsePrice(data[C.MinSalaryAtMonth])
 
     if err != nil {
@@ -40,15 +31,6 @@ func buildJobFrame(data map[string]string, logger *log.Logger) (*model.Job) {
         job.MinSalaryAtMonth = nil
     } else {
         job.MinSalaryAtMonth = &minSalaryAtMonth
-    }
-
-    maxSalaryAtHour, err := utils.ParsePrice(data[C.MaxSalaryAtHour])
-
-    if err != nil {
-        logger.Println(err)
-        job.MaxSalaryAtHour = nil
-    } else {
-        job.MaxSalaryAtHour = &maxSalaryAtHour
     }
 
     maxSalaryAtMonth, err := utils.ParsePrice(data[C.MaxSalaryAtMonth])
@@ -90,6 +72,36 @@ func normalizeForSearchFeature(str string) string {
 	normalized  = _whitespaceRegex.ReplaceAllString(normalized, " ") // 連続する空白・改行・タブを1スペースへv
 
 	return normalized
+}
+
+func salvageJobData(target string) []*model.JobFeature {
+    jobFeatures := make([]*model.JobFeature, 0, 10)
+
+    languages          := salvageFeatures(target, languageDictionary)
+    frameworkLibraries := salvageFeatures(target, frameworkLibraryDictionary)
+    databases          := salvageFeatures(target, databaseDictionary)
+    clouds             := salvageFeatures(target, cloudDictionary)
+    infrastructures    := salvageFeatures(target, infrastructureDictionary)
+    tools              := salvageFeatures(target, toolDictionary)
+    tests              := salvageFeatures(target, testDictionary)
+    architectures      := salvageFeatures(target, architectureDictionary)
+    methodologies      := salvageFeatures(target, methodologyDictionary)
+    roles              := salvageFeatures(target, roleDictionary)
+    ais                := salvageFeatures(target, aiDictionary)
+
+    jobFeatures = append(jobFeatures, languages...)
+    jobFeatures = append(jobFeatures, frameworkLibraries...)
+    jobFeatures = append(jobFeatures, databases...)
+    jobFeatures = append(jobFeatures, clouds...)
+    jobFeatures = append(jobFeatures, infrastructures...)
+    jobFeatures = append(jobFeatures, tools...)
+    jobFeatures = append(jobFeatures, tests...)
+    jobFeatures = append(jobFeatures, architectures...)
+    jobFeatures = append(jobFeatures, methodologies...)
+    jobFeatures = append(jobFeatures, roles...)
+    jobFeatures = append(jobFeatures, ais...)
+
+    return jobFeatures
 }
 
 // csv形式で特徴を取得

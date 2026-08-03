@@ -90,7 +90,7 @@ func jobBoardFactory() map[string]*JobBoard {
 
     filepath := "logs/job/%v_%v.log"
 
-    jobBoardName := "CrowdworksTech"
+    jobBoardName := C.CrowdWorksTech
     logger    := utils.NewLogger(jobBoardName, filepath)
     jobBoards[jobBoardName] = NewJobBoard(
         jobBoardName,

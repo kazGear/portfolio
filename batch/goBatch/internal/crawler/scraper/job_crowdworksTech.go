@@ -66,11 +66,12 @@ func (c *CrawlerCrowdworksTech) CollectLinks(parentCtx context.Context) ([]strin
     statsCrawlLogs(collector ,crawlStats, c.jScraper.logger)
 
     // URL収集、クロール
-    visited := make(map[string]struct{}, 120)
+    visited := make(map[string]struct{}, 30000)
     mutex   := &sync.Mutex{}
 
-    for pageId := 1; pageId <= 100000; pageId++ {
-        isFirstVisit(mutex, fmt.Sprintf("https://tech.crowdworks.jp/job_offers/%v", pageId), visited)
+    for pageId := 1; pageId <= 105000; pageId++ {
+        url := fmt.Sprintf("https://tech.crowdworks.jp/job_offers/%v", pageId)
+        isFirstVisit(mutex, url, visited)
     }
 
     loggingCrawlStats(crawlStats, c.jScraper.logger)
@@ -93,7 +94,7 @@ func (c *CallBacksCrowdworksTech) FetchDynamicPage(parentCtx context.Context) fu
             return "", nil
         }
         // 無駄なchromedpの起動を回避
-        if err := checkHttpStatus(_httpClient, url); err != nil {
+        if err := checkHttpStatusOK(_httpClient, url); err != nil {
             return "", err
         }
 
@@ -108,9 +109,7 @@ func (c *CallBacksCrowdworksTech) FetchDynamicPage(parentCtx context.Context) fu
 
         err := chromedp.Run(ctx,
             chromedp.Navigate(url),
-            // chromedp.Sleep(2000 * time.Millisecond), // JSが動く猶予を与える
             chromedp.WaitReady(".job-btn", chromedp.ByQuery), // 求める要素が出るまで待つ
-            autoScroll(),
             chromedp.OuterHTML("html", &html, chromedp.ByQuery), // 最終的なHTML出力
         )
 
@@ -152,11 +151,9 @@ func (c *CallBacksCrowdworksTech) CollectAttributes() func(doc *goquery.Document
         data[C.Url]         = url
         data[C.Title]       = jsonModel.DetailedTitle
         data[C.CompanyName] = jsonModel.ClientName // なぜか会社名だけ取得できない
-        data[C.Location]    = ""
+        data[C.Location]    = "" // 別関数で抽出
 
-        data[C.MinSalaryAtHour]  = ""
         data[C.MinSalaryAtMonth] = ""
-        data[C.MaxSalaryAtHour]  = ""
         maxSalaryAtMonth, _     := doc.Find(`meta[name="description"]`).Attr("content")
         maxSalaryAtMonth         = _regCrowdworksTechMaxPrice.FindString(maxSalaryAtMonth)
         data[C.MaxSalaryAtMonth] = maxSalaryAtMonth
@@ -164,11 +161,11 @@ func (c *CallBacksCrowdworksTech) CollectAttributes() func(doc *goquery.Document
         data[C.Description]    = jsonModel.DetailedTitle + "\n" +
                                  jsonModel.SpecificWorkContent + "\n" +
                                  jsonModel.RelatedServicesProducts
-        data[C.EmploymentType] = ""
-        data[C.WorkPlace]      = ""
+        data[C.EmploymentType] = "" // 別関数で抽出
+        data[C.WorkPlace]      = "" // 別関数で抽出
         // data[C.IsActive]       = isActiveCrowdworksTech(doc)
         // data[C.SimilarityScore] =
-        data[C.SourceSite]     = "CrowdWorks Tech"
+        data[C.SourceSite]     = C.CrowdWorksTech
 
         // 案件の特徴を収集し、repositoryへ
         features := salvageFeaturesCrowdWorksTech(data, data[C.Description])
@@ -191,21 +188,6 @@ func (c *CallBacksCrowdworksTech) CollectAttributes() func(doc *goquery.Document
     }
 }
 
-// func isActiveCrowdworksTech(doc *goquery.Document) string {
-//     isActive := "invalid"
-
-//     doc.Find("a.job-btn").EachWithBreak(func(idx int, selector *goquery.Selection) bool {
-// log.Println("募集中判定ボタン: ", selector.Text())
-//         if strings.TrimSpace(selector.Text()) == "応募フォームへ" {
-//             isActive = "true"
-//             return false // ループ終了
-//         }
-//         isActive = "false"
-//         return true
-//     })
-//     return isActive
-// }
-
 // 必要な情報を抽出する
 func salvageFeaturesCrowdWorksTech(data map[string]string, target string) []*model.JobFeature {
     normalizedTarget := normalizeForSearchFeature(target)
@@ -215,36 +197,6 @@ func salvageFeaturesCrowdWorksTech(data map[string]string, target string) []*mod
     data[C.EmploymentType] = salvageEmploymentType(normalizedTarget)
 
     return salvageJobData(normalizedTarget)
-}
-
-func salvageJobData(target string) []*model.JobFeature {
-    jobFeatures := make([]*model.JobFeature, 0, 10)
-
-    languages          := salvageFeatures(target, languageDictionary)
-    frameworkLibraries := salvageFeatures(target, frameworkLibraryDictionary)
-    databases          := salvageFeatures(target, databaseDictionary)
-    clouds             := salvageFeatures(target, cloudDictionary)
-    infrastructures    := salvageFeatures(target, infrastructureDictionary)
-    tools              := salvageFeatures(target, toolDictionary)
-    tests              := salvageFeatures(target, testDictionary)
-    architectures      := salvageFeatures(target, architectureDictionary)
-    methodologies      := salvageFeatures(target, methodologyDictionary)
-    roles              := salvageFeatures(target, roleDictionary)
-    ais                := salvageFeatures(target, aiDictionary)
-
-    jobFeatures = append(jobFeatures, languages...)
-    jobFeatures = append(jobFeatures, frameworkLibraries...)
-    jobFeatures = append(jobFeatures, databases...)
-    jobFeatures = append(jobFeatures, clouds...)
-    jobFeatures = append(jobFeatures, infrastructures...)
-    jobFeatures = append(jobFeatures, tools...)
-    jobFeatures = append(jobFeatures, tests...)
-    jobFeatures = append(jobFeatures, architectures...)
-    jobFeatures = append(jobFeatures, methodologies...)
-    jobFeatures = append(jobFeatures, roles...)
-    jobFeatures = append(jobFeatures, ais...)
-
-    return jobFeatures
 }
 
 func (c *CallBacksCrowdworksTech) BuildModel(url string) func(data map[string]string) *model.Job {

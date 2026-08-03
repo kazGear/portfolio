@@ -2,6 +2,7 @@ package repository
 
 import (
 	"fmt"
+	"log"
 	"strings"
 	"sync"
 	"unicode/utf8"
@@ -14,6 +15,7 @@ import (
 var (
     _jobFeatures map[string][]*model.JobFeature = make(map[string][]*model.JobFeature)
     _jobOptions  map[string][]*model.JobOption  = make(map[string][]*model.JobOption)
+    _invalidUrls map[string]struct{}            = make(map[string]struct{})
     _mutex       *sync.Mutex                    = &sync.Mutex{}
 )
 
@@ -115,7 +117,12 @@ func (r *jobRepository) updates(job *model.Job, savedFeatureJobIds map[int64]str
     features, _ := getJobFeatures(job.Url)
     options, _  := getJobOptions(job.Url)
 
+    // 処理済のデータは削除
+    defer removeJobData(job.Url)
+    defer removeJobOptions(job.Url)
+
     if exists || (len(features) <= 0 && len(options) <= 0) {
+log.Println("後続バルク skip.")
         return transaction.Commit()
     }
 
@@ -139,10 +146,6 @@ func (r *jobRepository) updates(job *model.Job, savedFeatureJobIds map[int64]str
     if err := transaction.Commit(); err != nil {
         return err
     }
-
-    // 処理済のデータは削除
-    removeJobData(job.Url)
-    removeJobOptions(job.Url)
     return nil
 }
 

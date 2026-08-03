@@ -6,8 +6,6 @@ const (
 	Description      = "Description"
 	CompanyName      = "CompanyName"
 	Location         = "Location"
-	MinSalaryAtHour  = "MinSalaryAtHour"
-	MaxSalaryAtHour  = "MaxSalaryAtHour"
 	MinSalaryAtMonth = "MinSalaryAtMonth"
 	MaxSalaryAtMonth = "MaxSalaryAtMonth"
 	EmploymentType   = "EmploymentType"
@@ -33,4 +31,9 @@ const (
 	AI               = "AI"
 	JobLocation      = "JOBLOCATION"
 	Other            = "OTHER"
+)
+
+const (
+	CrowdWorksTech = "CrowdWorksTech"
+	AGELESS        = "AGELESS"
 )

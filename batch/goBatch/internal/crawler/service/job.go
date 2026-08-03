@@ -90,13 +90,23 @@ func jobBoardFactory() map[string]*JobBoard {
 
     filepath := "logs/job/%v_%v.log"
 
-    jobBoardName := C.CrowdWorksTech
+    // jobBoardName := C.CrowdWorksTech
+    // logger    := utils.NewLogger(jobBoardName, filepath)
+    // jobBoards[jobBoardName] = NewJobBoard(
+    //     jobBoardName,
+    //     scraper.NewScraperCrowdworksTech(logger),
+    //     scraper.NewCallBacksCrowdworksTech(logger),
+    //     scraper.NewCallBacksCrowdworksTech(logger),
+    //     logger,
+    // )
+
+    jobBoardName := C.AGELESS
     logger    := utils.NewLogger(jobBoardName, filepath)
     jobBoards[jobBoardName] = NewJobBoard(
         jobBoardName,
-        scraper.NewScraperCrowdworksTech(logger),
-        scraper.NewCallBacksCrowdworksTech(logger),
-        scraper.NewCallBacksCrowdworksTech(logger),
+        scraper.NewScraperAgeless(logger),
+        scraper.NewCallBacksAgeless(logger),
+        scraper.NewCallBacksAgeless(logger),
         logger,
     )
 

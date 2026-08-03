@@ -2,7 +2,6 @@ package repository
 
 import (
 	"fmt"
-	"log"
 	"strings"
 	"sync"
 	"unicode/utf8"
@@ -122,7 +121,6 @@ func (r *jobRepository) updates(job *model.Job, savedFeatureJobIds map[int64]str
     defer removeJobOptions(job.Url)
 
     if exists || (len(features) <= 0 && len(options) <= 0) {
-log.Println("後続バルク skip.")
         return transaction.Commit()
     }
 

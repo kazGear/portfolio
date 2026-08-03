@@ -607,11 +607,11 @@ var frameworkLibraryDictionary = []*SearchFeature{
     {
         Name:     ".NET (C#)",
         Category: C.FrameworkLibrary,
-        Keywords: []string{
-            ".net",
-            "dotnet",
+        Keywords: []string{},
+        Patterns: []*regexp.Regexp{
+            regexp.MustCompile(`\b\.net\b`),
+            regexp.MustCompile(`\bdotnet\b`),
         },
-        Patterns: []*regexp.Regexp{},
     },
     {
         Name:     "Entity Framework (C#)",

@@ -5,6 +5,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 
 	"golang.org/x/text/unicode/norm"
 	"golang.org/x/text/width"
@@ -13,6 +14,8 @@ import (
 	C "github.com/kazGear/portfolio/goBatch/pkg/constants"
 	"github.com/kazGear/portfolio/goBatch/pkg/utils"
 )
+
+var _jst, _ = time.LoadLocation("Asia/Tokyo")
 
 // 案件構造体の構築フレームワーク
 func buildJobFrame(data map[string]string, logger *log.Logger) (*model.Job) {
@@ -56,7 +59,19 @@ func buildJobFrame(data map[string]string, logger *log.Logger) (*model.Job) {
 
     job.SimilarityScore = nil
     job.SourceSite      = trim(data[C.SourceSite])
-    job.UpdatedAt       = nil //data[C.UpdatedAt]
+
+    // 案件情報の更新日
+    updatedAt, err := time.ParseInLocation(
+        C.DateOnly,
+        data[C.UpdatedAt],
+        _jst,
+    )
+
+    if err != nil {
+        job.UpdatedAt = nil
+    } else {
+        job.UpdatedAt = &updatedAt
+    }
 
 	return &job
 }
@@ -74,7 +89,6 @@ func normalizeForSearchFeature(str string) string {
 
 	return normalized
 }
-
 
 var (
     _regJobPrice          = regexp.MustCompile(`\d{2,3}\s*万円\s*(〜|~|-|ー)\s*\d{2,3}\s*万円`)

@@ -107,19 +107,19 @@ func parseJobPrices(price string) (min int, max int) {
 
     // 最小価格 + 最大価格の解析
     minPrice, maxPrice = parseJobPricesMinAndMax(price)
-log.Printf("min and max: %v %v", minPrice, maxPrice)
+
     if minPrice > 0 && maxPrice > 0 {
         return minPrice, maxPrice
     }
     // 最小価格の解析
     minPrice, maxPrice = parseJobPricesMin(price)
-log.Printf("min and ...: %v %v", minPrice, maxPrice)
+
     if minPrice > 0 && maxPrice == C.UndefinedPrice {
         return minPrice, maxPrice
     }
     // 最大価格の解析
     minPrice, maxPrice = parseJobPricesMax(price)
-log.Printf("... and max: %v %v", minPrice, maxPrice)
+
     if minPrice == C.UndefinedPrice && maxPrice > 0 {
         return minPrice, maxPrice
     }
@@ -133,7 +133,7 @@ func normalizeJobPrice(price string) string {
     price = strings.ReplaceAll(price, "\r\n", "")
     price = strings.ReplaceAll(price, "\n", "")
     price = strings.ReplaceAll(price, "万円", "0000")
-log.Printf("normalize price: %v", price)
+
     return price
 }
 
@@ -348,11 +348,20 @@ var languageDictionary = []*SearchFeature{
         Category: C.Language,
         Keywords: []string{
             "C#",
+            "C#",
             "Ｃ＃",
             "csharp",
             "c sharp",
+            "unity",
+            ".net framework",
+            "dotnet framework",
+
         },
-        Patterns: []*regexp.Regexp{},
+        Patterns: []*regexp.Regexp{
+            regexp.MustCompile(`\b\.net\b`),
+            regexp.MustCompile(`\bdotnet\b`),
+
+        },
     },
     {
         Name:     "Python",
@@ -378,22 +387,13 @@ var languageDictionary = []*SearchFeature{
         },
     },
     {
-        Name:     "C",
+        Name:     "C/C++",
         Category: C.Language,
         Keywords: []string{
             "c言語",
             "ansi c",
             "ansi-c",
             "c language",
-        },
-        Patterns: []*regexp.Regexp{
-            regexp.MustCompile(`\bc\b`),
-        },
-    },
-    {
-        Name:     "C++",
-        Category: C.Language,
-        Keywords: []string{
             "c++",
             "c ++",
             "Ｃ＋＋",
@@ -402,10 +402,41 @@ var languageDictionary = []*SearchFeature{
             "c plusplus",
         },
         Patterns: []*regexp.Regexp{
+            regexp.MustCompile(`\bc\b`),
             regexp.MustCompile(`\bc\+\+\b`),
             regexp.MustCompile(`\bc \+\+\b`),
+
         },
     },
+    // {
+    //     Name:     "C",
+    //     Category: C.Language,
+    //     Keywords: []string{
+    //         "c言語",
+    //         "ansi c",
+    //         "ansi-c",
+    //         "c language",
+    //     },
+    //     Patterns: []*regexp.Regexp{
+    //         regexp.MustCompile(`\bc\b`),
+    //     },
+    // },
+    // {
+    //     Name:     "C++",
+    //     Category: C.Language,
+    //     Keywords: []string{
+    //         "c++",
+    //         "c ++",
+    //         "Ｃ＋＋",
+    //         "cpp",
+    //         "c plus plus",
+    //         "c plusplus",
+    //     },
+    //     Patterns: []*regexp.Regexp{
+    //         regexp.MustCompile(`\bc\+\+\b`),
+    //         regexp.MustCompile(`\bc \+\+\b`),
+    //     },
+    // },
     {
         Name:     "PHP",
         Category: C.Language,

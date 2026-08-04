@@ -63,7 +63,7 @@ func buildJobFrame(data map[string]string, logger *log.Logger) (*model.Job) {
 
 var _whitespaceRegex = regexp.MustCompile(`\s+`)
 
-// 文字列をスキル検索用に正規化する
+// 文字列をスキル等の検索用に正規化する
 func normalizeForSearchFeature(str string) string {
 	normalized := width.Narrow.String(str)
 	normalized  = strings.ToLower(normalized)
@@ -73,6 +73,113 @@ func normalizeForSearchFeature(str string) string {
 	normalized  = _whitespaceRegex.ReplaceAllString(normalized, " ") // 連続する空白・改行・タブを1スペースへv
 
 	return normalized
+}
+
+
+var (
+    _regJobPrice          = regexp.MustCompile(`\d{2,3}\s*万円\s*(〜|~|-|ー)\s*\d{2,3}\s*万円`)
+    _regJobPriceMin       = regexp.MustCompile(`\d{2,3}\s*万円\s*(〜|~|-|ー)\s*`)
+    _regJobPriceMax       = regexp.MustCompile(`\s*(〜|~|-|ー)\s*\d{2,3}\s*万円`)
+    _regJobPriceSeparator = regexp.MustCompile(`(〜|~|-|ー)`)
+    _regJobPriceMaxPrefix = regexp.MustCompile(`^(〜|~|-|ー)`)
+    _regJobPriceMinSuffix = regexp.MustCompile(`(〜|~|-|ー)$`)
+)
+
+func getJobPrice(text string) (min int, max int) {
+    price := ""
+
+    if price = _regJobPrice.FindString(text); price != "" {
+        return parseJobPrices(price)
+    }
+    if price = _regJobPriceMin.FindString(text); price != "" {
+        return parseJobPrices(price)
+    }
+    if price = _regJobPriceMax.FindString(text); price != "" {
+        return parseJobPrices(price)
+    }
+    return C.UndefinedPrice, C.UndefinedPrice
+}
+
+func parseJobPrices(price string) (min int, max int) {
+    price = normalizeJobPrice(price)
+    minPrice := C.UndefinedPrice
+    maxPrice := C.UndefinedPrice
+
+    // 最小価格 + 最大価格の解析
+    minPrice, maxPrice = parseJobPricesMinAndMax(price)
+log.Printf("min and max: %v %v", minPrice, maxPrice)
+    if minPrice > 0 && maxPrice > 0 {
+        return minPrice, maxPrice
+    }
+    // 最小価格の解析
+    minPrice, maxPrice = parseJobPricesMin(price)
+log.Printf("min and ...: %v %v", minPrice, maxPrice)
+    if minPrice > 0 && maxPrice == C.UndefinedPrice {
+        return minPrice, maxPrice
+    }
+    // 最大価格の解析
+    minPrice, maxPrice = parseJobPricesMax(price)
+log.Printf("... and max: %v %v", minPrice, maxPrice)
+    if minPrice == C.UndefinedPrice && maxPrice > 0 {
+        return minPrice, maxPrice
+    }
+    return C.UndefinedPrice, C.UndefinedPrice
+}
+
+func normalizeJobPrice(price string) string {
+    price = width.Narrow.String(price)
+    price = strings.ReplaceAll(price, " ", "")
+    price = strings.ReplaceAll(price, ",", "")
+    price = strings.ReplaceAll(price, "\r\n", "")
+    price = strings.ReplaceAll(price, "\n", "")
+    price = strings.ReplaceAll(price, "万円", "0000")
+log.Printf("normalize price: %v", price)
+    return price
+}
+
+func parseJobPricesMin(price string) (int, int) {
+    if thisMin := _regJobPriceMinSuffix.MatchString(price); thisMin {
+        price          = _regJobPriceSeparator.ReplaceAllString(price, "")
+        minPrice, err := strconv.Atoi(price)
+
+        if err != nil {
+            return C.UndefinedPrice, C.UndefinedPrice
+        }
+        return  minPrice, C.UndefinedPrice
+    }
+    return C.UndefinedPrice, C.UndefinedPrice
+}
+
+func parseJobPricesMax(price string) (int, int) {
+    if thisMax := _regJobPriceMaxPrefix.MatchString(price); thisMax {
+        price          = _regJobPriceSeparator.ReplaceAllString(price, "")
+        maxPrice, err := strconv.Atoi(price)
+
+        if err != nil {
+            return C.UndefinedPrice, C.UndefinedPrice
+        }
+        return C.UndefinedPrice, maxPrice
+    }
+    return C.UndefinedPrice, C.UndefinedPrice
+}
+
+func parseJobPricesMinAndMax(price string) (int, int) {
+    prices := _regJobPriceSeparator.Split(price, 2)
+
+    if len(prices) == 2 {
+        minPrice, err := strconv.Atoi(prices[0])
+
+        if err != nil {
+            return C.UndefinedPrice, C.UndefinedPrice
+        }
+        maxPrice, err := strconv.Atoi(prices[1])
+
+        if err != nil {
+            return C.UndefinedPrice, C.UndefinedPrice
+        }
+        return minPrice, maxPrice
+    }
+    return C.UndefinedPrice, C.UndefinedPrice
 }
 
 func salvageJobData(target string) []*model.JobFeature {

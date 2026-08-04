@@ -153,9 +153,9 @@ func (c *CallBacksCrowdworksTech) CollectAttributes() func(doc *goquery.Document
         data[C.CompanyName] = jsonModel.ClientName // なぜか会社名だけ取得できない
         data[C.Location]    = "" // 別関数で抽出
 
-        data[C.MinSalaryAtMonth] = ""
         maxSalaryAtMonth, _     := doc.Find(`meta[name="description"]`).Attr("content")
         maxSalaryAtMonth         = _regCrowdworksTechMaxPrice.FindString(maxSalaryAtMonth)
+        data[C.MinSalaryAtMonth] = maxSalaryAtMonth
         data[C.MaxSalaryAtMonth] = maxSalaryAtMonth
 
         data[C.Description]    = jsonModel.DetailedTitle + "\n" +

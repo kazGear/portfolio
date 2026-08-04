@@ -79,6 +79,7 @@ func ParsePrice(price string) (int, error) {
 	}
 	if err != nil { return C.ParseErrorPrice, err }
 	if result == _initPrice { return C.ParseErrorPrice, err }
+	if result <= 10 /*円*/ { return C.ParseErrorPrice, err }
 	return result, nil
 }
 

@@ -749,7 +749,7 @@ var frameworkLibraryDictionary = []*SearchFeature{
         Patterns: []*regexp.Regexp{},
     },
     {
-        Name:     ".NET Framework (C#)",
+        Name:     ".NET Framework (C#/VB.NET)",
         Category: C.FrameworkLibrary,
         Keywords: []string{
             ".net framework",
@@ -758,7 +758,7 @@ var frameworkLibraryDictionary = []*SearchFeature{
         Patterns: []*regexp.Regexp{},
     },
     {
-        Name:     ".NET (C#)",
+        Name:     ".NET (C#/VB.NET)",
         Category: C.FrameworkLibrary,
         Keywords: []string{},
         Patterns: []*regexp.Regexp{

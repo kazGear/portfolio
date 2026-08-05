@@ -612,9 +612,11 @@ var languageDictionary = []*SearchFeature{
     {
         Name:     "SQL",
         Category: C.Language,
-        Keywords: []string{},
+        Keywords: []string{
+            "sql",
+        },
         Patterns: []*regexp.Regexp{
-            regexp.MustCompile(`\bsql\b`),
+            // regexp.MustCompile(`\bsql\b`),
         },
     },
     {

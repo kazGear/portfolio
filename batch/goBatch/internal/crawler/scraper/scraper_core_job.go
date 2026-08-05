@@ -229,8 +229,11 @@ func salvageJobData(target string) []*model.JobFeature {
 // csv形式で特徴を取得
 func salvageFeatures(target string, features []*SearchFeature) []*model.JobFeature {
     jobFeatures := make([]*model.JobFeature, 0, len(features))
+    isFound     := false
 
     for _, feature := range features {
+        isFound = false
+
         // キーワード検索
         for _, keyword := range feature.Keywords {
             if strings.Contains(target, keyword) {
@@ -240,9 +243,12 @@ func salvageFeatures(target string, features []*SearchFeature) []*model.JobFeatu
                     Category: feature.Category,
                     RequirementType: "",
                 })
+                isFound = true
                 break
             }
         }
+        if isFound { continue } // 2重抽出防止
+
         // 正規表現検索
         for _, pattern := range feature.Patterns {
             if pattern.MatchString(target) {
@@ -330,7 +336,6 @@ var languageDictionary = []*SearchFeature{
         Category: C.Language,
         Keywords: []string{
             "javascript",
-            "js",
             "java script",
         },
         Patterns: []*regexp.Regexp{
@@ -338,11 +343,22 @@ var languageDictionary = []*SearchFeature{
         },
     },
     {
+        Name:     "Node.js",
+        Category: C.Language,
+        Keywords: []string{
+            "node.js",
+            "nodejs",
+            "node js",
+        },
+        Patterns: []*regexp.Regexp{
+            regexp.MustCompile(`(?i)\bnode\.?js\b`),
+        },
+    },
+    {
         Name:     "TypeScript",
         Category: C.Language,
         Keywords: []string{
             "typescript",
-            "ts",
             "type script",
         },
         Patterns: []*regexp.Regexp{

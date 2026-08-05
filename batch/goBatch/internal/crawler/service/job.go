@@ -110,13 +110,23 @@ func jobBoardFactory() map[string]*JobBoard {
     //     logger,
     // )
 
-    jobBoardName := C.SES_JOB_LINK
+    // jobBoardName := C.SES_JOB_LINK
+    // logger    := utils.NewLogger(jobBoardName, filepath)
+    // jobBoards[jobBoardName] = NewJobBoard(
+    //     jobBoardName,
+    //     scraper.NewScraperSesJobLink(logger),
+    //     scraper.NewCallBacksSesJobLink(logger),
+    //     scraper.NewCallBacksSesJobLink(logger),
+    //     logger,
+    // )
+
+    jobBoardName := C.FreelanceStart
     logger    := utils.NewLogger(jobBoardName, filepath)
     jobBoards[jobBoardName] = NewJobBoard(
         jobBoardName,
-        scraper.NewScraperSesJobLink(logger),
-        scraper.NewCallBacksSesJobLink(logger),
-        scraper.NewCallBacksSesJobLink(logger),
+        scraper.NewScraperFreelanceStart(logger),
+        scraper.NewCallBacksFreelanceStart(logger),
+        scraper.NewCallBacksFreelanceStart(logger),
         logger,
     )
 

@@ -2,7 +2,6 @@ package scraper
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"regexp"
 	"strings"
@@ -20,15 +19,15 @@ import (
 	"github.com/kazGear/portfolio/goBatch/pkg/utils"
 )
 
-type CrawlerCrowdworksTech struct {
+type CrawlerAgeless struct {
     jScraper Crawler[*model.Job]
 }
 
-type CallBacksCrowdworksTech struct {
+type CallBacksAgeless struct {
     funcs CallBacks
 }
 
-func NewScraperCrowdworksTech(logger *log.Logger) Scraper[*model.Job] {
+func NewScraperAgeless(logger *log.Logger) Scraper[*model.Job] {
 	collector := colly.NewCollector(
 		colly.Async(true),
 		colly.MaxDepth(1),
@@ -37,7 +36,7 @@ func NewScraperCrowdworksTech(logger *log.Logger) Scraper[*model.Job] {
 		DomainGlob:  "*",
 		Parallelism: 1, // URL収集漏れが発生するため5に制限
 	})
-    return &CrawlerCrowdworksTech{
+    return &CrawlerAgeless{
         Crawler[*model.Job]{
             collector: collector,
             mutex:     &sync.Mutex{},
@@ -46,8 +45,8 @@ func NewScraperCrowdworksTech(logger *log.Logger) Scraper[*model.Job] {
     }
 }
 
-func NewCallBacksCrowdworksTech(logger *log.Logger) *CallBacksCrowdworksTech {
-    return &CallBacksCrowdworksTech{
+func NewCallBacksAgeless(logger *log.Logger) *CallBacksAgeless {
+    return &CallBacksAgeless{
         CallBacks{
             logger: logger,
         },
@@ -55,22 +54,22 @@ func NewCallBacksCrowdworksTech(logger *log.Logger) *CallBacksCrowdworksTech {
 }
 
 // CollectAttributesへ
-var _parentCtxCrowdworksTech context.Context
+var _parentCtxAgeless context.Context
 
-func (c *CrawlerCrowdworksTech) CollectLinks(parentCtx context.Context) ([]string, error) {
+func (c *CrawlerAgeless) CollectLinks(parentCtx context.Context) ([]string, error) {
     collector              := c.jScraper.collector
-    _parentCtxCrowdworksTech = parentCtx
+    _parentCtxAgeless = parentCtx
 
     // クロールログ収集
     crawlStats := &crawlStats{}
     statsCrawlLogs(collector ,crawlStats, c.jScraper.logger)
 
     // URL収集、クロール
-    visited := make(map[string]struct{}, 30000)
+    visited := make(map[string]struct{}, 10000)
     mutex   := &sync.Mutex{}
 
-    for pageId := 1; pageId <= 105000; pageId++ {
-        url := fmt.Sprintf("https://tech.crowdworks.jp/job_offers/%v", pageId)
+    for pageId := 1; pageId <= 10000; pageId++ {
+        url := fmt.Sprintf("https://freelance.ageless.co.jp/projects/%v", pageId)
         isFirstVisit(mutex, url, visited)
     }
 
@@ -80,17 +79,17 @@ func (c *CrawlerCrowdworksTech) CollectLinks(parentCtx context.Context) ([]strin
     return c.jScraper.urls, nil
 }
 
-func (c *CrawlerCrowdworksTech) Scrape(provider  PageProvider,
-                                       parser    ModelParser[*model.Job],
-                                       parentCtx context.Context,
+func (c *CrawlerAgeless) Scrape(provider  PageProvider,
+                                parser    ModelParser[*model.Job],
+                                parentCtx context.Context,
 ) []*model.Job {
     jobs := c.jScraper.scrapeFrame(provider, parser, parentCtx)
     return jobs
 }
 
-func (c *CallBacksCrowdworksTech) FetchDynamicPage(parentCtx context.Context) func(url string) (string, error) {
+func (c *CallBacksAgeless) FetchDynamicPage(parentCtx context.Context) func(url string) (string, error) {
     return func(url string) (string, error) {
-        if !isDetailPage(`^https://tech.crowdworks.jp/job_offers/\d+`, url) {
+        if !isDetailPage(`^https://freelance.ageless.co.jp/projects/\d+`, url) {
             return "", nil
         }
         // 無駄なchromedpの起動を回避
@@ -121,75 +120,58 @@ func (c *CallBacksCrowdworksTech) FetchDynamicPage(parentCtx context.Context) fu
     }
 }
 
-var _regCrowdworksTechPageId   = regexp.MustCompile(`\d{1,6}`)
-var _regCrowdworksTechMaxPrice = regexp.MustCompile(`\d{0,3},*\d{0,3},\d{0,3}`)
+var _regDeleteDescriptionAgeLess = regexp.MustCompile(`\{.*\}`)
 
-func (c *CallBacksCrowdworksTech) CollectAttributes() func(doc *goquery.Document, url string) []map[string]string {
+func (c *CallBacksAgeless) CollectAttributes() func(doc *goquery.Document, url string) []map[string]string {
     return func(doc *goquery.Document, url string) []map[string]string {
         dataset := make([]map[string]string, 0, 1)
-
-        // apiからJSON取得 > struct化
-        pageId   := _regCrowdworksTechPageId.FindString(url)
-        res, err := fetchApiData(
-            fmt.Sprintf("https://tech.crowdworks.jp/api/v1/users/job_offers/%v/detail", pageId),
-        )
-        if err != nil {
-            log.Println(err)
-            return []map[string]string{}
-        }
-        defer res.Body.Close()
-
-        var jsonModel model.ApiResponseCrowdworksTech
-
-        if err := json.NewDecoder(res.Body).Decode(&jsonModel); err != nil {
-            log.Printf(C.JsonDecodeError, err)
-            return []map[string]string{}
-        }
 
         data := map[string]string{}
 
         data[C.Url]         = url
-        data[C.Title]       = jsonModel.DetailedTitle
-        data[C.CompanyName] = jsonModel.ClientName // なぜか会社名だけ取得できない
+        data[C.Title]       = doc.Find(".project-card-ttl").Text()
+        data[C.CompanyName] = ""
         data[C.Location]    = "" // 別関数で抽出
 
-        maxSalaryAtMonth, _     := doc.Find(`meta[name="description"]`).Attr("content")
-        maxSalaryAtMonth         = _regCrowdworksTechMaxPrice.FindString(maxSalaryAtMonth)
-        data[C.MinSalaryAtMonth] = maxSalaryAtMonth
-        data[C.MaxSalaryAtMonth] = maxSalaryAtMonth
+        data[C.MinSalaryAtMonth] = doc.Find(".income-num").Text()
+        data[C.MaxSalaryAtMonth] = doc.Find(".income-num").Text()
 
-        data[C.Description]    = jsonModel.DetailedTitle + "\n" +
-                                 jsonModel.SpecificWorkContent + "\n" +
-                                 jsonModel.RelatedServicesProducts
+        description           := doc.Find("main").Text()
+        data[C.Description]    = _regDeleteDescriptionAgeLess.ReplaceAllString(description, "")
         data[C.EmploymentType] = "" // 別関数で抽出
         data[C.WorkPlace]      = "" // 別関数で抽出
-        // data[C.IsActive]       = isActiveCrowdworksTech(doc)
+        data[C.IsActive]       = isActiveAgeless(doc)
         // data[C.SimilarityScore] =
-        data[C.SourceSite]     = C.CrowdWorksTech
+        data[C.SourceSite]     = C.AGELESS
 
         // 案件の特徴を収集し、repositoryへ
-        features := salvageFeaturesCrowdWorksTech(data, data[C.Description])
+        features := salvageFeaturesAgeless(data, data[C.Description])
         repository.InjectionJobFeatures(features, url)
 
-        // 案件のオプションを収集し、repositoryへ
-        options := make([]*model.JobOption, 0, 20)
-
-        doc.Find(".job-point").Each(func(idx int, selector *goquery.Selection) {
-            option := &model.JobOption{
-                JobId: -1,
-                Option: selector.Text(),
-            }
-            options = append(options, option)
-        })
-        repository.InjectionJobOptions(options, url)
+        // 案件のオプションを収集し、repositoryへ（このサイトは無し）
 
         dataset = append(dataset, data)
         return dataset
     }
 }
 
+func isActiveAgeless(doc *goquery.Document) string {
+    isActive := "invalid"
+
+    title := doc.Find("title").Text()
+
+    if strings.Contains(title, "404") || strings.Contains(title, "４０４") {
+        isActive = "false"
+    } else if strings.Contains(doc.Find(".btn-disabled").Text(), "募集終了") {
+        isActive = "false"
+    } else {
+        isActive = "true"
+    }
+    return isActive
+}
+
 // 必要な情報を抽出する
-func salvageFeaturesCrowdWorksTech(data map[string]string, target string) []*model.JobFeature {
+func salvageFeaturesAgeless(data map[string]string, target string) []*model.JobFeature {
     normalizedTarget := normalizeForSearchFeature(target)
 
     data[C.Location]       = salvageLocation(normalizedTarget)
@@ -199,13 +181,13 @@ func salvageFeaturesCrowdWorksTech(data map[string]string, target string) []*mod
     return salvageJobData(normalizedTarget)
 }
 
-func (c *CallBacksCrowdworksTech) BuildModel(url string) func(data map[string]string) *model.Job {
+func (c *CallBacksAgeless) BuildModel(url string) func(data map[string]string) *model.Job {
     return func(data map[string]string) *model.Job {
         return buildJobFrame(data, c.funcs.logger)
     }
 }
 
-func (c *CallBacksCrowdworksTech) IsStaticPage() func(html string) bool {
+func (c *CallBacksAgeless) IsStaticPage() func(html string) bool {
     return func(html string) bool {
         return strings.Contains(html, "body")
     }

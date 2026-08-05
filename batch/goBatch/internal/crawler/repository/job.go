@@ -14,6 +14,7 @@ import (
 var (
     _jobFeatures map[string][]*model.JobFeature = make(map[string][]*model.JobFeature)
     _jobOptions  map[string][]*model.JobOption  = make(map[string][]*model.JobOption)
+    _invalidUrls map[string]struct{}            = make(map[string]struct{})
     _mutex       *sync.Mutex                    = &sync.Mutex{}
 )
 
@@ -108,42 +109,41 @@ func (r *jobRepository) updates(job *model.Job, savedFeatureJobIds map[int64]str
     if err != nil {
         return err
     }
+
     // すでに案件情報が保存されてるか確認し、保存済みであれば後続処理は不要
     // Features, optionsが共に無くても同様
     _, exists   := savedFeatureJobIds[jobId]
     features, _ := getJobFeatures(job.Url)
     options, _  := getJobOptions(job.Url)
 
+    // 処理済のデータは削除
+    defer removeJobData(job.Url)
+    defer removeJobOptions(job.Url)
+
     if exists || (len(features) <= 0 && len(options) <= 0) {
         return transaction.Commit()
     }
+
     // 付随情報をまとめてインサート(features ,options)
     sqlBulkInsertFeatures := createSqlBulkInsertFeatures(job.Url)
-    _, err = transaction.Exec(sqlBulkInsertFeatures)
 
-    if err != nil {
+    if _, err := transaction.Exec(sqlBulkInsertFeatures); err != nil {
         return err
     }
     sqlBulkInsertOptions := createSqlBulkInsertOptions(job.Url)
-    _, err = transaction.Exec(sqlBulkInsertOptions)
 
-    if err != nil {
+    if _, err := transaction.Exec(sqlBulkInsertOptions); err != nil {
         return err
     }
-    // 付随情報を保存したjobIdを記録
-    _, err = transaction.Exec(sql.InsertJobId(), jobId)
 
-    if err != nil {
+    // 付随情報を保存したjobIdを記録
+    if _, err := transaction.Exec(sql.InsertJobId(), jobId); err != nil {
         return err
     }
 
     if err := transaction.Commit(); err != nil {
         return err
     }
-
-    // 処理済のデータは削除
-    removeJobData(job.Url)
-    removeJobOptions(job.Url)
     return nil
 }
 
@@ -162,9 +162,7 @@ func upsert(job *model.Job, transaction *sqlx.Tx) error {
     }
     // UPDATE されてないなら INSERT
     if updateRows == 0 {
-        _, err := transaction.NamedExec(sql.InsertJob(), job)
-
-        if err != nil {
+        if _, err := transaction.NamedExec(sql.InsertJob(), job); err != nil {
             return err
         }
     }
@@ -199,9 +197,8 @@ func (r *jobRepository) selectSavedFeatureJobIds() (map[int64]struct{}, error) {
     savedFeatureJobIds := make(map[int64]struct{})
 
     var jobIds []int64
-    err := r.db.Select(&jobIds, sql.SelectCreatedFeatures())
 
-    if err != nil {
+    if err := r.db.Select(&jobIds, sql.SelectCreatedFeatures()); err != nil {
         return map[int64]struct{}{}, err
     }
 
@@ -224,12 +221,9 @@ func (r *jobRepository) selectCurrentJobId(job *model.Job, transaction *sqlx.Tx)
     }
     var jobId int64
 
-    err = rows.Scan(&jobId)
-
-    if err != nil {
+    if err := rows.Scan(&jobId); err != nil {
         return -1, err
     }
-
     return jobId, nil
 }
 

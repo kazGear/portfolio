@@ -288,7 +288,7 @@ func fetchApiData(apiURL string) (*http.Response, error) {
 
     if response.StatusCode != http.StatusOK {
         return nil, fmt.Errorf(
-            "unexpected http status code: %d %v",
+            "Unexpected HTTP status code: %d %v",
             response.StatusCode,
             apiURL,
         )
@@ -299,7 +299,7 @@ func fetchApiData(apiURL string) (*http.Response, error) {
 var _httpClient = &http.Client{ Timeout: 5 * time.Second }
 
 // return err: アクセス失敗、nil: アクセス成功
-func checkHttpStatus(client *http.Client, url string) error {
+func checkHttpStatusOK(client *http.Client, url string) error {
     response, err := client.Get(url)
 
     if err != nil {
@@ -307,9 +307,10 @@ func checkHttpStatus(client *http.Client, url string) error {
     }
     defer response.Body.Close()
 
-    if response.StatusCode != http.StatusOK {
+    // 200系は成功扱いとする
+    if response.StatusCode >= 300 {
         return fmt.Errorf(
-            "unexpected HTTP status: %d, url=%s",
+            "Unexpected HTTP status: %d, url=%s",
             response.StatusCode,
             url,
         )

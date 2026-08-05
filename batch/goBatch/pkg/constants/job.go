@@ -6,8 +6,6 @@ const (
 	Description      = "Description"
 	CompanyName      = "CompanyName"
 	Location         = "Location"
-	MinSalaryAtHour  = "MinSalaryAtHour"
-	MaxSalaryAtHour  = "MaxSalaryAtHour"
 	MinSalaryAtMonth = "MinSalaryAtMonth"
 	MaxSalaryAtMonth = "MaxSalaryAtMonth"
 	EmploymentType   = "EmploymentType"
@@ -17,6 +15,7 @@ const (
 	SourceSite       = "SourceSite"
 	CreatedAt        = "CreatedAt"
 	UpdatedAt        = "UpdatedAt"
+	LastSeenAt       = "LastSeenAt"
 )
 
 const (
@@ -33,4 +32,11 @@ const (
 	AI               = "AI"
 	JobLocation      = "JOBLOCATION"
 	Other            = "OTHER"
+)
+
+const (
+	CrowdWorksTech = "CrowdWorksTech"
+	AGELESS        = "AGELESS"
+	SES_JOB_LINK   = "SES_JOB_LINK"
+	FreelanceStart = "フリーランススタート"
 )

@@ -88,15 +88,35 @@ func (g *jobCrawlerService) RunCrawler() {
 func jobBoardFactory() map[string]*JobBoard {
     jobBoards := map[string]*JobBoard{}
 
-    filepath := "logs/job/%v_%v.log"
+    filepath := "internal/crawler/logs/job/%v_%v.log"
+//C:\repository\portfolio\batch\goBatch\internal\crawler\logs\job
+    // jobBoardName := C.CrowdWorksTech
+    // logger    := utils.NewLogger(jobBoardName, filepath)
+    // jobBoards[jobBoardName] = NewJobBoard(
+    //     jobBoardName,
+    //     scraper.NewScraperCrowdworksTech(logger),
+    //     scraper.NewCallBacksCrowdworksTech(logger),
+    //     scraper.NewCallBacksCrowdworksTech(logger),
+    //     logger,
+    // )
 
-    jobBoardName := "CrowdworksTech"
+    // jobBoardName := C.AGELESS
+    // logger    := utils.NewLogger(jobBoardName, filepath)
+    // jobBoards[jobBoardName] = NewJobBoard(
+    //     jobBoardName,
+    //     scraper.NewScraperAgeless(logger),
+    //     scraper.NewCallBacksAgeless(logger),
+    //     scraper.NewCallBacksAgeless(logger),
+    //     logger,
+    // )
+
+    jobBoardName := C.SES_JOB_LINK
     logger    := utils.NewLogger(jobBoardName, filepath)
     jobBoards[jobBoardName] = NewJobBoard(
         jobBoardName,
-        scraper.NewScraperCrowdworksTech(logger),
-        scraper.NewCallBacksCrowdworksTech(logger),
-        scraper.NewCallBacksCrowdworksTech(logger),
+        scraper.NewScraperSesJobLink(logger),
+        scraper.NewCallBacksSesJobLink(logger),
+        scraper.NewCallBacksSesJobLink(logger),
         logger,
     )
 

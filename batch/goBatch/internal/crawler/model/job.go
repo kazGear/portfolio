@@ -8,8 +8,6 @@ type Job struct {
 	Title               string     `db:"title"`
 	CompanyName         string     `db:"company_name"`
 	Location            string     `db:"location"`
-	MinSalaryAtHour     *int       `db:"min_salary_at_hour"`
-	MaxSalaryAtHour     *int       `db:"max_salary_at_hour"`
 	MinSalaryAtMonth    *int       `db:"min_salary_at_month"`
 	MaxSalaryAtMonth    *int       `db:"max_salary_at_month"`
 	Description         string     `db:"description"`
@@ -20,6 +18,7 @@ type Job struct {
 	SourceSite          string     `db:"source_site"`
 	CreatedAt           time.Time  `db:"created_at"`
 	UpdatedAt           *time.Time `db:"updated_at"`
+	LastSeenAt          *time.Time `db:"last_seen_at"`
 }
 
 type ApiResponseCrowdworksTech struct {

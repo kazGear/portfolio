@@ -5,6 +5,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 
 	"golang.org/x/text/unicode/norm"
 	"golang.org/x/text/width"
@@ -14,8 +15,10 @@ import (
 	"github.com/kazGear/portfolio/goBatch/pkg/utils"
 )
 
+var _jst, _ = time.LoadLocation("Asia/Tokyo")
+
 // 案件構造体の構築フレームワーク
-func buildJobFrame(data map[string]string, url string, logger *log.Logger) (*model.Job) {
+func buildJobFrame(data map[string]string, logger *log.Logger) (*model.Job) {
     job  := model.Job{}
     trim := utils.TrimSpace()
 
@@ -24,15 +27,6 @@ func buildJobFrame(data map[string]string, url string, logger *log.Logger) (*mod
     job.CompanyName = trim(data[C.CompanyName])
     job.Location    = trim(data[C.Location])
 
-    minSalaryAtHour, err := utils.ParsePrice(data[C.MinSalaryAtHour])
-
-    if err != nil {
-        logger.Println(err)
-        job.MinSalaryAtHour = nil
-    } else {
-        job.MinSalaryAtHour = &minSalaryAtHour
-    }
-
     minSalaryAtMonth, err := utils.ParsePrice(data[C.MinSalaryAtMonth])
 
     if err != nil {
@@ -40,15 +34,6 @@ func buildJobFrame(data map[string]string, url string, logger *log.Logger) (*mod
         job.MinSalaryAtMonth = nil
     } else {
         job.MinSalaryAtMonth = &minSalaryAtMonth
-    }
-
-    maxSalaryAtHour, err := utils.ParsePrice(data[C.MaxSalaryAtHour])
-
-    if err != nil {
-        logger.Println(err)
-        job.MaxSalaryAtHour = nil
-    } else {
-        job.MaxSalaryAtHour = &maxSalaryAtHour
     }
 
     maxSalaryAtMonth, err := utils.ParsePrice(data[C.MaxSalaryAtMonth])
@@ -75,12 +60,25 @@ func buildJobFrame(data map[string]string, url string, logger *log.Logger) (*mod
     job.SimilarityScore = nil
     job.SourceSite      = trim(data[C.SourceSite])
 
+    // 案件情報の更新日
+    updatedAt, err := time.ParseInLocation(
+        C.DateOnly,
+        data[C.UpdatedAt],
+        _jst,
+    )
+
+    if err != nil {
+        job.UpdatedAt = nil
+    } else {
+        job.UpdatedAt = &updatedAt
+    }
+
 	return &job
 }
 
 var _whitespaceRegex = regexp.MustCompile(`\s+`)
 
-// 文字列をスキル検索用に正規化する
+// 文字列をスキル等の検索用に正規化する
 func normalizeForSearchFeature(str string) string {
 	normalized := width.Narrow.String(str)
 	normalized  = strings.ToLower(normalized)
@@ -90,6 +88,142 @@ func normalizeForSearchFeature(str string) string {
 	normalized  = _whitespaceRegex.ReplaceAllString(normalized, " ") // 連続する空白・改行・タブを1スペースへv
 
 	return normalized
+}
+
+var (
+    _regJobPrice          = regexp.MustCompile(`\d{2,3}\s*万円\s*(〜|~|-|ー)\s*\d{2,3}\s*万円`)
+    _regJobPriceMin       = regexp.MustCompile(`\d{2,3}\s*万円\s*(〜|~|-|ー)\s*`)
+    _regJobPriceMax       = regexp.MustCompile(`\s*(〜|~|-|ー)\s*\d{2,3}\s*万円`)
+    _regJobPriceSeparator = regexp.MustCompile(`(〜|~|-|ー)`)
+    _regJobPriceMaxPrefix = regexp.MustCompile(`^(〜|~|-|ー)`)
+    _regJobPriceMinSuffix = regexp.MustCompile(`(〜|~|-|ー)$`)
+)
+
+func getJobPrice(text string) (min int, max int) {
+    price := ""
+
+    if price = _regJobPrice.FindString(text); price != "" {
+        return parseJobPrices(price)
+    }
+    if price = _regJobPriceMin.FindString(text); price != "" {
+        return parseJobPrices(price)
+    }
+    if price = _regJobPriceMax.FindString(text); price != "" {
+        return parseJobPrices(price)
+    }
+    return C.UndefinedPrice, C.UndefinedPrice
+}
+
+func parseJobPrices(price string) (min int, max int) {
+    price = normalizeJobPrice(price)
+    minPrice := C.UndefinedPrice
+    maxPrice := C.UndefinedPrice
+
+    // 最小価格 + 最大価格の解析
+    minPrice, maxPrice = parseJobPricesMinAndMax(price)
+
+    if minPrice > 0 && maxPrice > 0 {
+        return minPrice, maxPrice
+    }
+    // 最小価格の解析
+    minPrice, maxPrice = parseJobPricesMin(price)
+
+    if minPrice > 0 && maxPrice == C.UndefinedPrice {
+        return minPrice, maxPrice
+    }
+    // 最大価格の解析
+    minPrice, maxPrice = parseJobPricesMax(price)
+
+    if minPrice == C.UndefinedPrice && maxPrice > 0 {
+        return minPrice, maxPrice
+    }
+    return C.UndefinedPrice, C.UndefinedPrice
+}
+
+func normalizeJobPrice(price string) string {
+    price = width.Narrow.String(price)
+    price = strings.ReplaceAll(price, " ", "")
+    price = strings.ReplaceAll(price, ",", "")
+    price = strings.ReplaceAll(price, "\r\n", "")
+    price = strings.ReplaceAll(price, "\n", "")
+    price = strings.ReplaceAll(price, "万円", "0000")
+
+    return price
+}
+
+func parseJobPricesMin(price string) (int, int) {
+    if thisMin := _regJobPriceMinSuffix.MatchString(price); thisMin {
+        price          = _regJobPriceSeparator.ReplaceAllString(price, "")
+        minPrice, err := strconv.Atoi(price)
+
+        if err != nil {
+            return C.UndefinedPrice, C.UndefinedPrice
+        }
+        return  minPrice, C.UndefinedPrice
+    }
+    return C.UndefinedPrice, C.UndefinedPrice
+}
+
+func parseJobPricesMax(price string) (int, int) {
+    if thisMax := _regJobPriceMaxPrefix.MatchString(price); thisMax {
+        price          = _regJobPriceSeparator.ReplaceAllString(price, "")
+        maxPrice, err := strconv.Atoi(price)
+
+        if err != nil {
+            return C.UndefinedPrice, C.UndefinedPrice
+        }
+        return C.UndefinedPrice, maxPrice
+    }
+    return C.UndefinedPrice, C.UndefinedPrice
+}
+
+func parseJobPricesMinAndMax(price string) (int, int) {
+    prices := _regJobPriceSeparator.Split(price, 2)
+
+    if len(prices) == 2 {
+        minPrice, err := strconv.Atoi(prices[0])
+
+        if err != nil {
+            return C.UndefinedPrice, C.UndefinedPrice
+        }
+        maxPrice, err := strconv.Atoi(prices[1])
+
+        if err != nil {
+            return C.UndefinedPrice, C.UndefinedPrice
+        }
+        return minPrice, maxPrice
+    }
+    return C.UndefinedPrice, C.UndefinedPrice
+}
+
+func salvageJobData(target string) []*model.JobFeature {
+    jobFeatures := make([]*model.JobFeature, 0, 10)
+
+    languages          := salvageFeatures(target, languageDictionary)
+    frameworkLibraries := salvageFeatures(target, frameworkLibraryDictionary)
+    databases          := salvageFeatures(target, databaseDictionary)
+    clouds             := salvageFeatures(target, cloudDictionary)
+    infrastructures    := salvageFeatures(target, infrastructureDictionary)
+    tools              := salvageFeatures(target, toolDictionary)
+    tests              := salvageFeatures(target, testDictionary)
+    architectures      := salvageFeatures(target, architectureDictionary)
+    methodologies      := salvageFeatures(target, methodologyDictionary)
+    roles              := salvageFeatures(target, roleDictionary)
+    ais                := salvageFeatures(target, aiDictionary)
+
+    jobFeatures = append(jobFeatures, languages...)
+    jobFeatures = append(jobFeatures, frameworkLibraries...)
+    jobFeatures = append(jobFeatures, databases...)
+    jobFeatures = append(jobFeatures, clouds...)
+    jobFeatures = append(jobFeatures, infrastructures...)
+    jobFeatures = append(jobFeatures, tools...)
+    jobFeatures = append(jobFeatures, tests...)
+    jobFeatures = append(jobFeatures, architectures...)
+    jobFeatures = append(jobFeatures, methodologies...)
+    jobFeatures = append(jobFeatures, roles...)
+    jobFeatures = append(jobFeatures, ais...)
+
+    return jobFeatures
 }
 
 // csv形式で特徴を取得
@@ -228,11 +362,20 @@ var languageDictionary = []*SearchFeature{
         Category: C.Language,
         Keywords: []string{
             "C#",
+            "C#",
             "Ｃ＃",
             "csharp",
             "c sharp",
+            "unity",
+            ".net framework",
+            "dotnet framework",
+
         },
-        Patterns: []*regexp.Regexp{},
+        Patterns: []*regexp.Regexp{
+            regexp.MustCompile(`\b\.net\b`),
+            regexp.MustCompile(`\bdotnet\b`),
+
+        },
     },
     {
         Name:     "Python",
@@ -258,22 +401,13 @@ var languageDictionary = []*SearchFeature{
         },
     },
     {
-        Name:     "C",
+        Name:     "C/C++",
         Category: C.Language,
         Keywords: []string{
             "c言語",
             "ansi c",
             "ansi-c",
             "c language",
-        },
-        Patterns: []*regexp.Regexp{
-            regexp.MustCompile(`\bc\b`),
-        },
-    },
-    {
-        Name:     "C++",
-        Category: C.Language,
-        Keywords: []string{
             "c++",
             "c ++",
             "Ｃ＋＋",
@@ -282,10 +416,41 @@ var languageDictionary = []*SearchFeature{
             "c plusplus",
         },
         Patterns: []*regexp.Regexp{
+            regexp.MustCompile(`\bc\b`),
             regexp.MustCompile(`\bc\+\+\b`),
             regexp.MustCompile(`\bc \+\+\b`),
+
         },
     },
+    // {
+    //     Name:     "C",
+    //     Category: C.Language,
+    //     Keywords: []string{
+    //         "c言語",
+    //         "ansi c",
+    //         "ansi-c",
+    //         "c language",
+    //     },
+    //     Patterns: []*regexp.Regexp{
+    //         regexp.MustCompile(`\bc\b`),
+    //     },
+    // },
+    // {
+    //     Name:     "C++",
+    //     Category: C.Language,
+    //     Keywords: []string{
+    //         "c++",
+    //         "c ++",
+    //         "Ｃ＋＋",
+    //         "cpp",
+    //         "c plus plus",
+    //         "c plusplus",
+    //     },
+    //     Patterns: []*regexp.Regexp{
+    //         regexp.MustCompile(`\bc\+\+\b`),
+    //         regexp.MustCompile(`\bc \+\+\b`),
+    //     },
+    // },
     {
         Name:     "PHP",
         Category: C.Language,
@@ -584,7 +749,7 @@ var frameworkLibraryDictionary = []*SearchFeature{
         Patterns: []*regexp.Regexp{},
     },
     {
-        Name:     ".NET Framework (C#)",
+        Name:     ".NET Framework (C#/VB.NET)",
         Category: C.FrameworkLibrary,
         Keywords: []string{
             ".net framework",
@@ -593,13 +758,13 @@ var frameworkLibraryDictionary = []*SearchFeature{
         Patterns: []*regexp.Regexp{},
     },
     {
-        Name:     ".NET (C#)",
+        Name:     ".NET (C#/VB.NET)",
         Category: C.FrameworkLibrary,
-        Keywords: []string{
-            ".net",
-            "dotnet",
+        Keywords: []string{},
+        Patterns: []*regexp.Regexp{
+            regexp.MustCompile(`\b\.net\b`),
+            regexp.MustCompile(`\bdotnet\b`),
         },
-        Patterns: []*regexp.Regexp{},
     },
     {
         Name:     "Entity Framework (C#)",
@@ -1899,6 +2064,31 @@ var infrastructureDictionary = []*SearchFeature{
         },
     },
     {
+        Name:     "Windows",
+        Category: C.Infrastructure,
+        Keywords: []string{
+            "windows",
+            "windows server",
+            "win server",
+            "microsoft windows",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "macOS",
+        Category: C.Infrastructure,
+        Keywords: []string{
+            "macos",
+            "mac os",
+            "macbook",
+            "macbook pro",
+            "macbook air",
+        },
+        Patterns: []*regexp.Regexp{
+            regexp.MustCompile(`\bmac\b`),
+        },
+    },
+    {
         Name:     "Linux",
         Category: C.Infrastructure,
         Keywords: []string{
@@ -2370,14 +2560,6 @@ var toolDictionary = []*SearchFeature{
         Category: C.Tool,
         Keywords: []string{
             "selenium",
-        },
-        Patterns: []*regexp.Regexp{},
-    },
-    {
-        Name:     "Playwright",
-        Category: C.Tool,
-        Keywords: []string{
-            "playwright",
         },
         Patterns: []*regexp.Regexp{},
     },
@@ -3196,6 +3378,22 @@ var methodologyDictionary = []*SearchFeature{
             regexp.MustCompile(`\brad\b`),
         },
     },
+    {
+        Name:     "ローコード開発",
+        Category: C.Methodology,
+        Keywords: []string{
+            "ローコード",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "ノーコード開発",
+        Category: C.Methodology,
+        Keywords: []string{
+            "ノーコード",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
 }
 
 var roleDictionary = []*SearchFeature{
@@ -3320,7 +3518,8 @@ var roleDictionary = []*SearchFeature{
         Category: C.Role,
         Keywords: []string{
             "cloud engineer",
-            "クラウド",
+            "クラウド開発",
+            "クラウド環境",
         },
         Patterns: []*regexp.Regexp{},
     },
@@ -3330,6 +3529,14 @@ var roleDictionary = []*SearchFeature{
         Keywords: []string{
             "data engineer",
             "データエンジニア",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+    {
+        Name:     "データ移行",
+        Category: C.Role,
+        Keywords: []string{
+            "データ移行",
         },
         Patterns: []*regexp.Regexp{},
     },
@@ -3360,6 +3567,12 @@ var roleDictionary = []*SearchFeature{
             "test engineer",
             "テスター",
             "テストエンジニア",
+            "単体テスト",
+            "結合テスト",
+            "統合テスト",
+            "総合テスト",
+            "システムテスト",
+            "シナリオテスト",
         },
         Patterns: []*regexp.Regexp{},
     },
@@ -3436,13 +3649,14 @@ var roleDictionary = []*SearchFeature{
         Keywords: []string{
             "developer",
             "programmer",
-            "開発",
             "プログラマー",
             "プログラミング",
             "製造",
             "コーディング",
         },
-        Patterns: []*regexp.Regexp{},
+        Patterns: []*regexp.Regexp{
+            regexp.MustCompile(`\b開発\b`),
+        },
     },
     {
         Name:     "運用",
@@ -3465,6 +3679,16 @@ var roleDictionary = []*SearchFeature{
         },
         Patterns: []*regexp.Regexp{},
     },
+    {
+        Name:     "セキュリティ",
+        Category: C.Role,
+        Keywords: []string{
+            "セキュリティ",
+            "security",
+        },
+        Patterns: []*regexp.Regexp{},
+    },
+
     {
         Name:     "上流工程",
         Category: C.Role,

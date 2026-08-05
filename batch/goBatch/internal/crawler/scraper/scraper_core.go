@@ -307,7 +307,8 @@ func checkHttpStatusOK(client *http.Client, url string) error {
     }
     defer response.Body.Close()
 
-    if response.StatusCode != http.StatusOK {
+    // 200系は成功扱いとする
+    if response.StatusCode >= 300 {
         return fmt.Errorf(
             "Unexpected HTTP status: %d, url=%s",
             response.StatusCode,

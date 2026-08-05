@@ -115,7 +115,14 @@ func fetchPage(url string,
 // 静的HTMLを取得
 func fetchStaticPage(url string) string {
     var html string
-    c := colly.NewCollector()
+
+    c := colly.NewCollector(
+        colly.UserAgent( // ブラウザからのアクセスのように振る舞う
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) " +
+            "AppleWebKit/537.36 (KHTML, like Gecko) " +
+            "Chrome/142.0.0.0 Safari/537.36",
+    ),
+    )
 
     c.OnHTML("html", func(e *colly.HTMLElement) {
         var err error
@@ -126,6 +133,8 @@ func fetchStaticPage(url string) string {
         }
     })
     c.Visit(url)
+    c.Wait()
+
     return html
 }
 

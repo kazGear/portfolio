@@ -89,7 +89,7 @@ func jobBoardFactory() map[string]*JobBoard {
     jobBoards := map[string]*JobBoard{}
 
     filepath := "./batch/goBatch/internal/crawler/logs/job/%v_%v.log"
-//C:\repository\portfolio\batch\goBatch\internal\crawler\logs\job
+
     // jobBoardName := C.CrowdWorksTech
     // logger    := utils.NewLogger(jobBoardName, filepath)
     // jobBoards[jobBoardName] = NewJobBoard(
@@ -100,15 +100,15 @@ func jobBoardFactory() map[string]*JobBoard {
     //     logger,
     // )
 
-    jobBoardName := C.AGELESS
-    logger    := utils.NewLogger(jobBoardName, filepath)
-    jobBoards[jobBoardName] = NewJobBoard(
-        jobBoardName,
-        scraper.NewScraperAgeless(logger),
-        scraper.NewCallBacksAgeless(logger),
-        scraper.NewCallBacksAgeless(logger),
-        logger,
-    )
+    // jobBoardName := C.AGELESS
+    // logger    := utils.NewLogger(jobBoardName, filepath)
+    // jobBoards[jobBoardName] = NewJobBoard(
+    //     jobBoardName,
+    //     scraper.NewScraperAgeless(logger),
+    //     scraper.NewCallBacksAgeless(logger),
+    //     scraper.NewCallBacksAgeless(logger),
+    //     logger,
+    // )
 
     // jobBoardName := C.SES_JOB_LINK
     // logger    := utils.NewLogger(jobBoardName, filepath)
@@ -129,6 +129,16 @@ func jobBoardFactory() map[string]*JobBoard {
     //     scraper.NewCallBacksFreelanceStart(logger),
     //     logger,
     // )
+
+    jobBoardName := C.FreelanceJob
+    logger    := utils.NewLogger(jobBoardName, filepath)
+    jobBoards[jobBoardName] = NewJobBoard(
+        jobBoardName,
+        scraper.NewScraperFreelanceJob(logger),
+        scraper.NewCallBacksFreelanceJob(logger),
+        scraper.NewCallBacksFreelanceJob(logger),
+        logger,
+    )
 
     return jobBoards
 }

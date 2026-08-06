@@ -19,6 +19,11 @@ import (
 	"github.com/kazGear/portfolio/goBatch/pkg/utils"
 )
 
+var (
+    _httpClient = &http.Client{ Timeout: 5 * time.Second }
+    _regGetDate = regexp.MustCompile(`\d{4}(/|-)\d{2}(/|-)\d{2}`)
+)
+
 type Scraper[T any] interface {
 	Scrape(provider PageProvider, parser ModelParser[T], ctx context.Context) []T
 	CollectLinks(ctx context.Context) ([]string, error)
@@ -306,8 +311,6 @@ func fetchApiData(apiURL string) (*http.Response, error) {
     }
     return response, nil
 }
-
-var _httpClient = &http.Client{ Timeout: 5 * time.Second }
 
 // return err: アクセス失敗、nil: アクセス成功
 func checkHttpStatusOK(client *http.Client, url string) error {

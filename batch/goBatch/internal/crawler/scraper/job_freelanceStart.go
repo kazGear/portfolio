@@ -112,7 +112,7 @@ func (c *CallBacksFreelanceStart) FetchDynamicPage(parentCtx context.Context) fu
         // 404ページに対する対応
         isNotFount := isNotFountPage("職務内容", ctx)
 
-        if isNotFount { return "", fmt.Errorf("404ページです。url: %v", url)}
+        if isNotFount { return "", fmt.Errorf(C.This404page, url)}
 
         // クロームで対応
         var html string
@@ -145,6 +145,7 @@ func (c *CallBacksFreelanceStart) CollectAttributes() func(doc *goquery.Document
         data[C.Location]    = "" // 別関数で抽出
 
         minPrice, maxPrice      := getJobPrice(doc.Find(`.salary`).Text())
+log.Println("price text: ", doc.Find(`.salary`).Text())
         data[C.MinSalaryAtMonth] = strconv.Itoa(minPrice)
         data[C.MaxSalaryAtMonth] = strconv.Itoa(maxPrice)
 

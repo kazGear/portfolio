@@ -65,13 +65,15 @@ func (c *CrawlerCrowdworksTech) CollectLinks(parentCtx context.Context) ([]strin
     crawlStats := &crawlStats{}
     statsCrawlLogs(collector ,crawlStats, c.jScraper.logger)
 
-    // URL収集、クロール
-    visited := make(map[string]struct{}, 30000)
     mutex   := &sync.Mutex{}
 
+    // URL生成の設定
     pageIdFrom, pageIdTo := loadPageIdFromTo("PAGE_ID_FROM_CROWDWORKS_TECH", "PAGE_ID_TO_CROWDWORKS_TECH")
+    visited              := make(map[string]struct{}, pageIdTo - pageIdFrom)
+
     validatePageIdFromTo(pageIdFrom, pageIdTo)
 
+    // URL生成
     for pageId := pageIdFrom; pageId <= pageIdTo; pageId++ {
         url := fmt.Sprintf("https://tech.crowdworks.jp/job_offers/%v", pageId)
         isFirstVisit(mutex, url, visited)

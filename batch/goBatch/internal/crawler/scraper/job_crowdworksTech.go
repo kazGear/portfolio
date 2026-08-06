@@ -69,7 +69,10 @@ func (c *CrawlerCrowdworksTech) CollectLinks(parentCtx context.Context) ([]strin
     visited := make(map[string]struct{}, 30000)
     mutex   := &sync.Mutex{}
 
-    for pageId := 1; pageId <= 105000; pageId++ {
+    pageIdFrom, pageIdTo := loadPageIdFromTo("PAGE_ID_FROM_CROWDWORKS_TECH", "PAGE_ID_TO_CROWDWORKS_TECH")
+    validatePageIdFromTo(pageIdFrom, pageIdTo)
+
+    for pageId := pageIdFrom; pageId <= pageIdTo; pageId++ {
         url := fmt.Sprintf("https://tech.crowdworks.jp/job_offers/%v", pageId)
         isFirstVisit(mutex, url, visited)
     }

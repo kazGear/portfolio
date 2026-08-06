@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"regexp"
+	"strconv"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -292,12 +294,12 @@ func fetchApiData(apiURL string) (*http.Response, error) {
     response, err := http.Get(apiURL)
 
     if err != nil {
-        return nil, fmt.Errorf("failed to request job API: %w", err)
+        return nil, fmt.Errorf("failed to request job API: %w\n", err)
     }
 
     if response.StatusCode != http.StatusOK {
         return nil, fmt.Errorf(
-            "Unexpected HTTP status code: %d %v",
+            "Unexpected HTTP status code: %d %v\n",
             response.StatusCode,
             apiURL,
         )
@@ -325,4 +327,41 @@ func checkHttpStatusOK(client *http.Client, url string) error {
         )
     }
     return nil
+}
+
+// from: .envのPAGE_ID_FROM_..., to: .envのPAGE_ID_TO_...
+func loadPageIdFromTo(envKeyFrom string, envKeyTo string) (int, int) {
+    from := os.Getenv(envKeyFrom)
+    to   := os.Getenv(envKeyTo)
+
+    fromId, err:= strconv.Atoi(from)
+
+    if err != nil {
+        log.Fatalf("From pageId parse error: %v", err)
+    }
+    toId, err := strconv.Atoi(to)
+
+    if err != nil {
+        log.Fatalf("To pageId parse error: %v",err)
+    }
+    return fromId, toId
+}
+
+// 連番詳細ページIDの設定値が正しくなければ処理中止
+func validatePageIdFromTo(fromId int, toId int) {
+    if fromId > toId {
+        log.Fatalf(
+            "連番pageIdの設定値は from <= to である必要があります。from: %v, to: %v\n",
+            fromId,
+            toId,
+        )
+    }
+
+    if toId - fromId > 100000 {
+        log.Fatalf(
+            "クロール対象(pageIdの範囲)は 10万件以下 に設定してください。from: %v, to: %v\n",
+            fromId,
+            toId,
+        )
+    }
 }

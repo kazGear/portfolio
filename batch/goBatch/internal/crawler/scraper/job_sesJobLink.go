@@ -70,7 +70,10 @@ func (c *CrawlerSesJobLink) CollectLinks(parentCtx context.Context) ([]string, e
     visited := make(map[string]struct{}, 60000)
     mutex   := &sync.Mutex{}
 
-    for pageId := 1; pageId <= 60000; pageId++ {
+    pageIdFrom, pageIdTo := loadPageIdFromTo("PAGE_ID_FROM_SES_JOB_LINK", "PAGE_ID_TO_SES_JOB_LINK")
+    validatePageIdFromTo(pageIdFrom, pageIdTo)
+
+    for pageId := pageIdFrom; pageId <= pageIdTo; pageId++ {
         url := fmt.Sprintf("https://ses-job-link.com/projects/%v", pageId)
         isFirstVisit(mutex, url, visited)
     }

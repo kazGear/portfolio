@@ -68,7 +68,10 @@ func (c *CrawlerFreelanceStart) CollectLinks(parentCtx context.Context) ([]strin
     visited := make(map[string]struct{}, 20000)
     mutex   := &sync.Mutex{}
 
-    for pageId := 1667000; pageId <= 1685231; pageId++ {
+    pageIdFrom, pageIdTo := loadPageIdFromTo("PAGE_ID_FROM_FREELANCE_START", "PAGE_ID_TO_FREELANCE_START")
+    validatePageIdFromTo(pageIdFrom, pageIdTo)
+
+    for pageId := pageIdFrom; pageId <= pageIdTo; pageId++ {
         url := fmt.Sprintf("https://freelance-start.com/jobs/detail/%v", pageId)
         isFirstVisit(mutex, url, visited)
     }

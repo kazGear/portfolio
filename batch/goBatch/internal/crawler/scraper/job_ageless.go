@@ -68,7 +68,10 @@ func (c *CrawlerAgeless) CollectLinks(parentCtx context.Context) ([]string, erro
     visited := make(map[string]struct{}, 10000)
     mutex   := &sync.Mutex{}
 
-    for pageId := 1; pageId <= 10000; pageId++ {
+    pageIdFrom, pageIdTo := loadPageIdFromTo("PAGE_ID_FROM_AGELESS", "PAGE_ID_TO_AGELESS")
+    validatePageIdFromTo(pageIdFrom, pageIdTo)
+
+    for pageId := pageIdFrom; pageId <= pageIdTo; pageId++ {
         url := fmt.Sprintf("https://freelance.ageless.co.jp/projects/%v", pageId)
         isFirstVisit(mutex, url, visited)
     }

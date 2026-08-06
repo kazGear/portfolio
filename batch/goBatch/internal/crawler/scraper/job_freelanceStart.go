@@ -106,7 +106,7 @@ func (c *CallBacksFreelanceStart) FetchDynamicPage(parentCtx context.Context) fu
         tabCtx, tabCancel := chromedp.NewContext(parentCtx)
         defer tabCancel()
         // // タブにだけ timeout を付ける
-        ctx, cancel := context.WithTimeout(tabCtx, 2 * time.Second)
+        ctx, cancel := context.WithTimeout(tabCtx, 3 * time.Second)
         defer cancel()
 
         // 404ページに対する対応

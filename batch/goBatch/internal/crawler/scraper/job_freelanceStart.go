@@ -162,7 +162,7 @@ log.Println("price text: ", doc.Find(`.salary`).Text())
         features := salvageFeaturesFreelanceStart(data, data[C.Description])
         repository.InjectionJobFeatures(features, url)
 
-        // 案件のオプションを収集し、repositoryへ（このサイトは無し）
+        // 案件のオプションを収集し、repositoryへ
         options := collectOptionsFreelanceStart(doc)
         repository.InjectionJobOptions(options, url)
 

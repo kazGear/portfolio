@@ -109,6 +109,12 @@ func (c *CallBacksFreelanceStart) FetchDynamicPage(parentCtx context.Context) fu
         ctx, cancel := context.WithTimeout(tabCtx, 2 * time.Second)
         defer cancel()
 
+        // 404ページに対する対応
+        isNotFount := isNotFountPage("職務内容", ctx)
+
+        if isNotFount { return "", fmt.Errorf("404ページです。url: %v", url)}
+
+        // クロームで対応
         var html string
 
         err := chromedp.Run(ctx,

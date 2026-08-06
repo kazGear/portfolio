@@ -365,3 +365,48 @@ func validatePageIdFromTo(fromId int, toId int) {
         )
     }
 }
+
+// not found pageか調べる
+func isNotFountPage(searchWord string, ctx context.Context) bool {
+    // 確認は1.5秒間
+    for i := 0; i < 15; i++ {
+        var state int
+
+        err := chromedp.Evaluate(fmt.Sprintf(`
+            (() => {
+                const body = document.body;
+
+                if (!body) return 0;
+
+                const notFoundWords = [
+                    "404",
+                    "見つかりません",
+                    "募集終了",
+                    "掲載終了",
+                ];
+                const text = body.innerText;
+
+                if (notFoundWords.some(w => text.includes(w))) {
+                    return 1;
+                }
+
+                if (text.includes(%q)) {
+                    return -1;
+                }
+                return 0;
+            })()`, searchWord), &state).Do(ctx)
+
+        if err != nil { return false }
+
+        switch state {
+            case 1:
+                return true // not found page だった
+            case -1:
+                return false
+            case 0:
+                // まだ判定できていない、ループ継続
+        }
+        time.Sleep(100 * time.Millisecond)
+    }
+    return false
+}

@@ -88,7 +88,7 @@ func (g *jobCrawlerService) RunCrawler() {
 func jobBoardFactory() map[string]*JobBoard {
     jobBoards := map[string]*JobBoard{}
 
-    filepath := "internal/crawler/logs/job/%v_%v.log"
+    filepath := "./batch/goBatch/internal/crawler/logs/job/%v_%v.log"
 //C:\repository\portfolio\batch\goBatch\internal\crawler\logs\job
     // jobBoardName := C.CrowdWorksTech
     // logger    := utils.NewLogger(jobBoardName, filepath)
@@ -100,15 +100,15 @@ func jobBoardFactory() map[string]*JobBoard {
     //     logger,
     // )
 
-    // jobBoardName := C.AGELESS
-    // logger    := utils.NewLogger(jobBoardName, filepath)
-    // jobBoards[jobBoardName] = NewJobBoard(
-    //     jobBoardName,
-    //     scraper.NewScraperAgeless(logger),
-    //     scraper.NewCallBacksAgeless(logger),
-    //     scraper.NewCallBacksAgeless(logger),
-    //     logger,
-    // )
+    jobBoardName := C.AGELESS
+    logger    := utils.NewLogger(jobBoardName, filepath)
+    jobBoards[jobBoardName] = NewJobBoard(
+        jobBoardName,
+        scraper.NewScraperAgeless(logger),
+        scraper.NewCallBacksAgeless(logger),
+        scraper.NewCallBacksAgeless(logger),
+        logger,
+    )
 
     // jobBoardName := C.SES_JOB_LINK
     // logger    := utils.NewLogger(jobBoardName, filepath)
@@ -120,15 +120,15 @@ func jobBoardFactory() map[string]*JobBoard {
     //     logger,
     // )
 
-    jobBoardName := C.FreelanceStart
-    logger    := utils.NewLogger(jobBoardName, filepath)
-    jobBoards[jobBoardName] = NewJobBoard(
-        jobBoardName,
-        scraper.NewScraperFreelanceStart(logger),
-        scraper.NewCallBacksFreelanceStart(logger),
-        scraper.NewCallBacksFreelanceStart(logger),
-        logger,
-    )
+    // jobBoardName := C.FreelanceStart
+    // logger    := utils.NewLogger(jobBoardName, filepath)
+    // jobBoards[jobBoardName] = NewJobBoard(
+    //     jobBoardName,
+    //     scraper.NewScraperFreelanceStart(logger),
+    //     scraper.NewCallBacksFreelanceStart(logger),
+    //     scraper.NewCallBacksFreelanceStart(logger),
+    //     logger,
+    // )
 
     return jobBoards
 }

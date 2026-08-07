@@ -171,7 +171,7 @@ func NewLogger(makerName string, filepath string) *log.Logger {
     filename := fmt.Sprintf(filepath, makerName, date)
 
     // ディレクトリがなければ作成
-    os.MkdirAll("logs", 0755)
+    os.MkdirAll(filename, 0755)
 
     // メーカーごとにローテーション設定
     writer := &lumberjack.Logger{

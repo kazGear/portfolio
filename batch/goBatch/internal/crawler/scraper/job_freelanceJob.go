@@ -159,7 +159,7 @@ func (c *CallBacksFreelanceJob) CollectAttributes() func(doc *goquery.Document, 
         // data[C.SimilarityScore] =
         data[C.SourceSite]     = C.FreelanceJob
         data[C.UpdatedAt]      = getOpenDateFreelanceJob(doc)
-log.Printf("map: %+v", data)
+
         // 案件の特徴を収集し、repositoryへ
         features := salvageFeaturesFreelanceJob(data, data[C.Description])
         repository.InjectionJobFeatures(features, url)
@@ -211,19 +211,15 @@ func getOpenDateFreelanceJob(doc *goquery.Document) string {
 func isActiveFreelanceJob(doc *goquery.Document) string {
     isActive := "invalid"
 
-    // errorPage := doc.Find(`.error-page-hero`).Text()
+    errorText1 := doc.Find(`h1:contains("404")`).Text()
+    errorText2 := doc.Find(`p:contains("見つかりません")`).Text()
+    errorText3 := doc.Find(`button:contains("募集が終了")`).Text()
 
-    // if strings.Contains(errorPage, "404") {
-    //     isActive = "false"
-    // }
-    // buttonText := doc.Find(`.action-buttons`).Text()
-
-    // if strings.Contains(buttonText, "案件の話") {
-    //     isActive = "true"
-    // } else if strings.Contains(buttonText, "募集終了") {
-    //     isActive = "false"
-    // }
-
+    if errorText1 != "" || errorText2 != "" || errorText3 != "" {
+        isActive = "false"
+    } else {
+        isActive = "true"
+    }
     return isActive
 }
 

@@ -90,48 +90,48 @@ func jobBoardFactory() map[string]*JobBoard {
 
     filepath := "./batch/goBatch/internal/crawler/logs/job/%v_%v.log"
 
-    // jobBoardName := C.CrowdWorksTech
-    // logger    := utils.NewLogger(jobBoardName, filepath)
-    // jobBoards[jobBoardName] = NewJobBoard(
-    //     jobBoardName,
-    //     scraper.NewScraperCrowdworksTech(logger),
-    //     scraper.NewCallBacksCrowdworksTech(logger),
-    //     scraper.NewCallBacksCrowdworksTech(logger),
-    //     logger,
-    // )
+    jobBoardName := C.CrowdWorksTech
+    logger       := utils.NewLogger(jobBoardName, filepath)
+    jobBoards[jobBoardName] = NewJobBoard(
+        jobBoardName,
+        scraper.NewScraperCrowdworksTech(logger),
+        scraper.NewCallBacksCrowdworksTech(logger),
+        scraper.NewCallBacksCrowdworksTech(logger),
+        logger,
+    )
 
-    // jobBoardName := C.AGELESS
-    // logger    := utils.NewLogger(jobBoardName, filepath)
-    // jobBoards[jobBoardName] = NewJobBoard(
-    //     jobBoardName,
-    //     scraper.NewScraperAgeless(logger),
-    //     scraper.NewCallBacksAgeless(logger),
-    //     scraper.NewCallBacksAgeless(logger),
-    //     logger,
-    // )
+    jobBoardName = C.AGELESS
+    logger       = utils.NewLogger(jobBoardName, filepath)
+    jobBoards[jobBoardName] = NewJobBoard(
+        jobBoardName,
+        scraper.NewScraperAgeless(logger),
+        scraper.NewCallBacksAgeless(logger),
+        scraper.NewCallBacksAgeless(logger),
+        logger,
+    )
 
-    // jobBoardName := C.SES_JOB_LINK
-    // logger    := utils.NewLogger(jobBoardName, filepath)
-    // jobBoards[jobBoardName] = NewJobBoard(
-    //     jobBoardName,
-    //     scraper.NewScraperSesJobLink(logger),
-    //     scraper.NewCallBacksSesJobLink(logger),
-    //     scraper.NewCallBacksSesJobLink(logger),
-    //     logger,
-    // )
+    jobBoardName = C.SES_JOB_LINK
+    logger       = utils.NewLogger(jobBoardName, filepath)
+    jobBoards[jobBoardName] = NewJobBoard(
+        jobBoardName,
+        scraper.NewScraperSesJobLink(logger),
+        scraper.NewCallBacksSesJobLink(logger),
+        scraper.NewCallBacksSesJobLink(logger),
+        logger,
+    )
 
-    // jobBoardName := C.FreelanceStart
-    // logger    := utils.NewLogger(jobBoardName, filepath)
-    // jobBoards[jobBoardName] = NewJobBoard(
-    //     jobBoardName,
-    //     scraper.NewScraperFreelanceStart(logger),
-    //     scraper.NewCallBacksFreelanceStart(logger),
-    //     scraper.NewCallBacksFreelanceStart(logger),
-    //     logger,
-    // )
+    jobBoardName = C.FreelanceStart
+    logger       = utils.NewLogger(jobBoardName, filepath)
+    jobBoards[jobBoardName] = NewJobBoard(
+        jobBoardName,
+        scraper.NewScraperFreelanceStart(logger),
+        scraper.NewCallBacksFreelanceStart(logger),
+        scraper.NewCallBacksFreelanceStart(logger),
+        logger,
+    )
 
-    jobBoardName := C.FreelanceJob
-    logger    := utils.NewLogger(jobBoardName, filepath)
+    jobBoardName = C.FreelanceJob
+    logger       = utils.NewLogger(jobBoardName, filepath)
     jobBoards[jobBoardName] = NewJobBoard(
         jobBoardName,
         scraper.NewScraperFreelanceJob(logger),

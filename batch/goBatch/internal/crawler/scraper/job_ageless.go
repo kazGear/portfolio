@@ -64,11 +64,16 @@ func (c *CrawlerAgeless) CollectLinks(parentCtx context.Context) ([]string, erro
     crawlStats := &crawlStats{}
     statsCrawlLogs(collector ,crawlStats, c.jScraper.logger)
 
-    // URL収集、クロール
-    visited := make(map[string]struct{}, 10000)
     mutex   := &sync.Mutex{}
 
-    for pageId := 1; pageId <= 10000; pageId++ {
+    // URL生成の設定
+    pageIdFrom, pageIdTo := loadPageIdFromTo("PAGE_ID_FROM_AGELESS", "PAGE_ID_TO_AGELESS")
+    visited              := make(map[string]struct{}, pageIdTo - pageIdFrom)
+
+    validatePageIdFromTo(pageIdFrom, pageIdTo)
+
+    // URL生成
+    for pageId := pageIdFrom; pageId <= pageIdTo; pageId++ {
         url := fmt.Sprintf("https://freelance.ageless.co.jp/projects/%v", pageId)
         isFirstVisit(mutex, url, visited)
     }

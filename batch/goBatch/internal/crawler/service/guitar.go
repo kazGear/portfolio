@@ -88,7 +88,7 @@ func (g *guitarCrawlerService) RunCrawler() {
 func makersFactory() map[string]*Maker {
     makers := map[string]*Maker{}
 
-    filepath := "internal/crawler/logs/guitar/%v_%v.log"
+    filepath := "./batch/goBatch/internal/crawler/logs/guitar/%v_%v.log"
 
     makerName := "Momose"
     logger    := utils.NewLogger(makerName, filepath)

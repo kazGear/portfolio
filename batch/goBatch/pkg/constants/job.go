@@ -39,4 +39,5 @@ const (
 	AGELESS        = "AGELESS"
 	SES_JOB_LINK   = "SES_JOB_LINK"
 	FreelanceStart = "フリーランススタート"
+	FreelanceJob   = "フリーランスジョブ"
 )

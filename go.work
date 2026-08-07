@@ -1,0 +1,4 @@
+go 1.26.1
+
+// portfolio直下でgoBatchを起動したとき、./batch/goBatchのgo.modを読み込む
+use ./batch/goBatch

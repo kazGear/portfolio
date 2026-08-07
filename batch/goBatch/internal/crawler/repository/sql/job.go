@@ -5,9 +5,11 @@ func UpdateJob() string {
         UPDATE
                t_jobs
            SET
-               is_active    = :is_active,
-               updated_at   = :updated_at,
-               last_seen_at = NOW()
+               min_salary_at_month = :min_salary_at_month,
+               max_salary_at_month = :max_salary_at_month,
+               is_active           = :is_active,
+               updated_at          = :updated_at,
+               last_seen_at        = NOW()
          WHERE
                url = :url
              ;

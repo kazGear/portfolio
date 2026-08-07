@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"regexp"
+	"strconv"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -15,6 +17,11 @@ import (
 	"github.com/chromedp/chromedp"
 	"github.com/gocolly/colly/v2"
 	"github.com/kazGear/portfolio/goBatch/pkg/utils"
+)
+
+var (
+    _httpClient = &http.Client{ Timeout: 5 * time.Second }
+    _regGetDate = regexp.MustCompile(`\d{4}(/|-)\d{2}(/|-)\d{2}`)
 )
 
 type Scraper[T any] interface {
@@ -115,7 +122,14 @@ func fetchPage(url string,
 // 静的HTMLを取得
 func fetchStaticPage(url string) string {
     var html string
-    c := colly.NewCollector()
+
+    c := colly.NewCollector(
+        colly.UserAgent( // ブラウザからのアクセスのように振る舞う
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) " +
+            "AppleWebKit/537.36 (KHTML, like Gecko) " +
+            "Chrome/142.0.0.0 Safari/537.36",
+    ),
+    )
 
     c.OnHTML("html", func(e *colly.HTMLElement) {
         var err error
@@ -126,6 +140,8 @@ func fetchStaticPage(url string) string {
         }
     })
     c.Visit(url)
+    c.Wait()
+
     return html
 }
 
@@ -283,20 +299,18 @@ func fetchApiData(apiURL string) (*http.Response, error) {
     response, err := http.Get(apiURL)
 
     if err != nil {
-        return nil, fmt.Errorf("failed to request job API: %w", err)
+        return nil, fmt.Errorf("failed to request job API: %w\n", err)
     }
 
     if response.StatusCode != http.StatusOK {
         return nil, fmt.Errorf(
-            "Unexpected HTTP status code: %d %v",
+            "Unexpected HTTP status code: %d %v\n",
             response.StatusCode,
             apiURL,
         )
     }
     return response, nil
 }
-
-var _httpClient = &http.Client{ Timeout: 5 * time.Second }
 
 // return err: アクセス失敗、nil: アクセス成功
 func checkHttpStatusOK(client *http.Client, url string) error {
@@ -316,4 +330,86 @@ func checkHttpStatusOK(client *http.Client, url string) error {
         )
     }
     return nil
+}
+
+// from: .envのPAGE_ID_FROM_..., to: .envのPAGE_ID_TO_...
+func loadPageIdFromTo(envKeyFrom string, envKeyTo string) (int, int) {
+    from := os.Getenv(envKeyFrom)
+    to   := os.Getenv(envKeyTo)
+
+    fromId, err:= strconv.Atoi(from)
+
+    if err != nil {
+        log.Fatalf("From pageId parse error: %v", err)
+    }
+    toId, err := strconv.Atoi(to)
+
+    if err != nil {
+        log.Fatalf("To pageId parse error: %v",err)
+    }
+    return fromId, toId
+}
+
+// 連番詳細ページIDの設定値が正しくなければ処理中止
+func validatePageIdFromTo(fromId int, toId int) {
+    if fromId > toId {
+        log.Fatalf(
+            "連番pageIdの設定値は from <= to である必要があります。from: %v, to: %v\n",
+            fromId,
+            toId,
+        )
+    }
+
+    if toId - fromId > 100000 {
+        log.Fatalf(
+            "クロール対象(pageIdの範囲)は 10万件以下 に設定してください。from: %v, to: %v\n",
+            fromId,
+            toId,
+        )
+    }
+}
+
+// not found pageか調べる
+func isNotFountPage(searchWord string, ctx context.Context) bool {
+    // 確認は1.5秒間
+    for i := 0; i < 15; i++ {
+        var state int
+
+        err := chromedp.Evaluate(fmt.Sprintf(`
+            (() => {
+                const body = document.body;
+
+                if (!body) return 0;
+
+                const notFoundWords = [
+                    "404",
+                    "見つかりません",
+                    "募集終了",
+                    "掲載終了",
+                ];
+                const text = body.innerText;
+
+                if (notFoundWords.some(w => text.includes(w))) {
+                    return 1;
+                }
+
+                if (text.includes(%q)) {
+                    return -1;
+                }
+                return 0;
+            })()`, searchWord), &state).Do(ctx)
+
+        if err != nil { return false }
+
+        switch state {
+            case 1:
+                return true // not found page だった
+            case -1:
+                return false
+            case 0:
+                // まだ判定できていない、ループ継続
+        }
+        time.Sleep(100 * time.Millisecond)
+    }
+    return false
 }

@@ -91,15 +91,17 @@ func normalizeForSearchFeature(str string) string {
 }
 
 var (
-    _regJobPrice          = regexp.MustCompile(`\d{2,3}\s*万円\s*(〜|~|-|ー)\s*\d{2,3}\s*万円`)
-    _regJobPriceMin       = regexp.MustCompile(`\d{2,3}\s*万円\s*(〜|~|-|ー)\s*`)
-    _regJobPriceMax       = regexp.MustCompile(`\s*(〜|~|-|ー)\s*\d{2,3}\s*万円`)
-    _regJobPriceSeparator = regexp.MustCompile(`(〜|~|-|ー)`)
-    _regJobPriceMaxPrefix = regexp.MustCompile(`^(〜|~|-|ー)`)
-    _regJobPriceMinSuffix = regexp.MustCompile(`(〜|~|-|ー)$`)
+    _regJobPrice          = regexp.MustCompile(`\d{2,7}(万円)?(～|~|-)\d{2,7}(万円)?`)
+    _regJobPriceMin       = regexp.MustCompile(`\d{2,7}(万円)?(～|~|-)`)
+    _regJobPriceMax       = regexp.MustCompile(`(～|~|-)\d{2,7}(万円)?`)
+    _regJobSinglePrice    = regexp.MustCompile(`\d{2,7}(万円)?`)
+    _regJobPriceSeparator = regexp.MustCompile(`(～|~|-)`)
+    _regJobPriceMaxPrefix = regexp.MustCompile(`^(～|~|-)`)
+    _regJobPriceMinSuffix = regexp.MustCompile(`(～|~|-)$`)
 )
 
 func getJobPrice(text string) (min int, max int) {
+    text   = normalizeJobPrice(text)
     price := ""
 
     if price = _regJobPrice.FindString(text); price != "" {
@@ -111,11 +113,19 @@ func getJobPrice(text string) (min int, max int) {
     if price = _regJobPriceMax.FindString(text); price != "" {
         return parseJobPrices(price)
     }
+    if price = _regJobSinglePrice.FindString(text); price != "" {
+        price, err := strconv.Atoi(price)
+
+        if err != nil {
+            return C.UndefinedPrice, C.UndefinedPrice
+        }
+        return price, price
+    }
     return C.UndefinedPrice, C.UndefinedPrice
 }
 
 func parseJobPrices(price string) (min int, max int) {
-    price = normalizeJobPrice(price)
+    // price = normalizeJobPrice(price)
     minPrice := C.UndefinedPrice
     maxPrice := C.UndefinedPrice
 
@@ -143,6 +153,7 @@ func parseJobPrices(price string) (min int, max int) {
 func normalizeJobPrice(price string) string {
     price = width.Narrow.String(price)
     price = strings.ReplaceAll(price, " ", "")
+    price = strings.ReplaceAll(price, "　", "")
     price = strings.ReplaceAll(price, ",", "")
     price = strings.ReplaceAll(price, "\r\n", "")
     price = strings.ReplaceAll(price, "\n", "")
@@ -229,8 +240,11 @@ func salvageJobData(target string) []*model.JobFeature {
 // csv形式で特徴を取得
 func salvageFeatures(target string, features []*SearchFeature) []*model.JobFeature {
     jobFeatures := make([]*model.JobFeature, 0, len(features))
+    isFound     := false
 
     for _, feature := range features {
+        isFound = false
+
         // キーワード検索
         for _, keyword := range feature.Keywords {
             if strings.Contains(target, keyword) {
@@ -240,9 +254,12 @@ func salvageFeatures(target string, features []*SearchFeature) []*model.JobFeatu
                     Category: feature.Category,
                     RequirementType: "",
                 })
+                isFound = true
                 break
             }
         }
+        if isFound { continue } // 2重抽出防止
+
         // 正規表現検索
         for _, pattern := range feature.Patterns {
             if pattern.MatchString(target) {
@@ -330,7 +347,6 @@ var languageDictionary = []*SearchFeature{
         Category: C.Language,
         Keywords: []string{
             "javascript",
-            "js",
             "java script",
         },
         Patterns: []*regexp.Regexp{
@@ -338,11 +354,22 @@ var languageDictionary = []*SearchFeature{
         },
     },
     {
+        Name:     "Node.js",
+        Category: C.Language,
+        Keywords: []string{
+            "node.js",
+            "nodejs",
+            "node js",
+        },
+        Patterns: []*regexp.Regexp{
+            regexp.MustCompile(`(?i)\bnode\.?js\b`),
+        },
+    },
+    {
         Name:     "TypeScript",
         Category: C.Language,
         Keywords: []string{
             "typescript",
-            "ts",
             "type script",
         },
         Patterns: []*regexp.Regexp{
@@ -596,9 +623,11 @@ var languageDictionary = []*SearchFeature{
     {
         Name:     "SQL",
         Category: C.Language,
-        Keywords: []string{},
+        Keywords: []string{
+            "sql",
+        },
         Patterns: []*regexp.Regexp{
-            regexp.MustCompile(`\bsql\b`),
+            // regexp.MustCompile(`\bsql\b`),
         },
     },
     {

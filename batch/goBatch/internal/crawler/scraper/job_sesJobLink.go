@@ -66,11 +66,16 @@ func (c *CrawlerSesJobLink) CollectLinks(parentCtx context.Context) ([]string, e
     crawlStats := &crawlStats{}
     statsCrawlLogs(collector ,crawlStats, c.jScraper.logger)
 
-    // URL収集、クロール
-    visited := make(map[string]struct{}, 60000)
     mutex   := &sync.Mutex{}
 
-    for pageId := 1; pageId <= 60000; pageId++ {
+    // URL生成の設定
+    pageIdFrom, pageIdTo := loadPageIdFromTo("PAGE_ID_FROM_SES_JOB_LINK", "PAGE_ID_TO_SES_JOB_LINK")
+    visited              := make(map[string]struct{}, pageIdTo - pageIdFrom)
+
+    validatePageIdFromTo(pageIdFrom, pageIdTo)
+
+    // URL生成
+    for pageId := pageIdFrom; pageId <= pageIdTo; pageId++ {
         url := fmt.Sprintf("https://ses-job-link.com/projects/%v", pageId)
         isFirstVisit(mutex, url, visited)
     }

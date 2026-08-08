@@ -135,7 +135,7 @@ services:
       dockerfile: Dockerfile.dev
     restart: "no"
     volumes:
-      - ./infrastructure/db/backup:/home/kazuki/app/portfolio/infrastructure/db/backup
+      - ./infrastructure/db/backup:/app/backup
       - ./batch/goBatch/cron/dbArchiver.txt:/etc/cron.d/app-cron:ro
     environment:
       ENV_FILE: .env.dev

@@ -21,7 +21,7 @@ type DbArchiver struct {
 
 func NewDbArchiverService() *DbArchiver {
 	return &DbArchiver{
-		BackupDir:  "/home/kazuki/app/portfolio/infrastructure/db/backup",
+		BackupDir:  "/app/backup",
 		DBHost:     os.Getenv("DB_HOST"), // db
 		DBUser:     os.Getenv("DB_USER"),
 		DBPassword: os.Getenv("DB_PASSWORD"),

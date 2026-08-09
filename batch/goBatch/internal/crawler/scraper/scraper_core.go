@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"math/rand"
 	"net/http"
 	"os"
 	"regexp"
@@ -21,7 +22,7 @@ import (
 
 var (
     _httpClient = &http.Client{ Timeout: 5 * time.Second }
-    _regGetDate = regexp.MustCompile(`\d{4}(/|-)\d{2}(/|-)\d{2}`)
+    _regGetDate = regexp.MustCompile(`\d{4}(/|-|年)\d{1,2}(/|-|月)\d{1,2}`)
 )
 
 type Scraper[T any] interface {
@@ -68,6 +69,11 @@ func (g *Crawler[T]) scrapeFrame(provider PageProvider,
 
     for _, url := range g.urls {
         url := url
+
+        // アクセス感覚をずらし、bot感を薄める（0.5～3秒）
+        delay := time.Duration(rand.Int63n(int64(2500 * time.Millisecond))) + 500 * time.Millisecond
+        time.Sleep(delay)
+
         // 静的/動的を判定してHTMLを取得
         html := fetchPage(url, provider.IsStaticPage(), provider.FetchDynamicPage(ctx))
 

@@ -346,7 +346,7 @@ func checkHttpStatusOK(client *http.Client, url string) error {
 // 場合によってはクロールを止める
 func isShouldStopCrawler(httpStatus int) {
     if httpStatus == http.StatusForbidden {
-        log.Fatalf("Stop crawler. unexpected HTTP status: %v", httpStatus)
+        log.Fatalf("Stop crawler. unexpected HTTP status: %v\n", httpStatus)
     }
 }
 

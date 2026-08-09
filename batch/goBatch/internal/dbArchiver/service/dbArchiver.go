@@ -64,6 +64,11 @@ func (b *DbArchiver) Archive() error {
 	// pg_dumpの標準出力を先ほど作ったファイルに接続する
 	cmd.Stdout = file
 
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		return fmt.Errorf("pg_dump failed: %w: %s", err, output)
+	}
+
 	// 作成したコマンドを実行
 	if err := cmd.Run(); err != nil {
 		_ = os.Remove(backupFile)
@@ -72,8 +77,17 @@ func (b *DbArchiver) Archive() error {
 
 	fmt.Printf("Backup created: %s\n", backupFile)
 
+	if err := deleteOldBackup(b.BackupDir); err != nil {
+		return err
+	}
+	fmt.Println("Old backups deleted.")
+
+	return nil
+}
+
+func deleteOldBackup(backupDir string) error {
 	// バックアップファイル群
-	entries, err := os.ReadDir(b.BackupDir)
+	entries, err := os.ReadDir(backupDir)
 	if err != nil {
 		return err
 	}
@@ -95,13 +109,10 @@ func (b *DbArchiver) Archive() error {
 		// ラインより古い変更日か
 		if info.ModTime().Before(threshold) {
 			// 古いファイルを削除
-			if err := os.Remove(filepath.Join(b.BackupDir, entry.Name())); err != nil {
+			if err := os.Remove(filepath.Join(backupDir, entry.Name())); err != nil {
 				return err
 			}
 		}
 	}
-
-	fmt.Println("Old backups deleted.")
-
 	return nil
 }

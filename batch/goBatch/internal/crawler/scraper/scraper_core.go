@@ -308,9 +308,12 @@ func fetchApiData(apiURL string) (*http.Response, error) {
         return nil, fmt.Errorf("failed to request job API: %w\n", err)
     }
 
-    if response.StatusCode != http.StatusOK {
+    // 200系は成功扱いとする
+    if response.StatusCode < 200 || response.StatusCode >= 300 {
+        isShouldStopCrawler(response.StatusCode)
+
         return nil, fmt.Errorf(
-            "Unexpected HTTP status code: %d %v\n",
+            "Unexpected HTTP status: %d %v\n",
             response.StatusCode,
             apiURL,
         )
@@ -328,7 +331,9 @@ func checkHttpStatusOK(client *http.Client, url string) error {
     defer response.Body.Close()
 
     // 200系は成功扱いとする
-    if response.StatusCode >= 300 {
+    if response.StatusCode < 200 || response.StatusCode >= 300 {
+        isShouldStopCrawler(response.StatusCode)
+
         return fmt.Errorf(
             "Unexpected HTTP status: %d, url=%s",
             response.StatusCode,
@@ -336,6 +341,13 @@ func checkHttpStatusOK(client *http.Client, url string) error {
         )
     }
     return nil
+}
+
+// 場合によってはクロールを止める
+func isShouldStopCrawler(httpStatus int) {
+    if httpStatus == http.StatusForbidden {
+        log.Fatalf("Stop crawler. unexpected HTTP status: %v", httpStatus)
+    }
 }
 
 // from: .envのPAGE_ID_FROM_..., to: .envのPAGE_ID_TO_...

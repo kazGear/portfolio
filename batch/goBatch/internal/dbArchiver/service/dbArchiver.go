@@ -61,10 +61,9 @@ func (b *DbArchiver) Archive() error {
 
 	// 既存環境変数に環境変数を追加
 	cmd.Env = append(os.Environ(), "PGPASSWORD=" + b.DBPassword)
-	// pg_dumpの標準出力を先ほど作ったファイルに接続する
-	cmd.Stdout = file
 
 	output, err := cmd.CombinedOutput()
+
 	if err != nil {
 		return fmt.Errorf("pg_dump failed: %w: %s", err, output)
 	}

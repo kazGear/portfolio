@@ -70,8 +70,8 @@ func (g *Crawler[T]) scrapeFrame(provider PageProvider,
     for _, url := range g.urls {
         url := url
 
-        // アクセス感覚をずらし、bot感を薄める（0.5～3秒）
-        delay := time.Duration(rand.Int63n(int64(2500 * time.Millisecond))) + 500 * time.Millisecond
+        // アクセス間隔をずらし、bot感を薄める（ランダム待ち時間 + 最低待ち時間）
+        delay := time.Duration(rand.Int63n(int64(2750 * time.Millisecond))) + 250 * time.Millisecond
         time.Sleep(delay)
 
         // 静的/動的を判定してHTMLを取得

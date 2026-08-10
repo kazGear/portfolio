@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"math/rand"
 	"net/http"
 	"os"
 	"regexp"
@@ -21,7 +22,7 @@ import (
 
 var (
     _httpClient = &http.Client{ Timeout: 5 * time.Second }
-    _regGetDate = regexp.MustCompile(`\d{4}(/|-)\d{2}(/|-)\d{2}`)
+    _regGetDate = regexp.MustCompile(`\d{4}(/|-|年)\d{1,2}(/|-|月)\d{1,2}`)
 )
 
 type Scraper[T any] interface {
@@ -68,6 +69,11 @@ func (g *Crawler[T]) scrapeFrame(provider PageProvider,
 
     for _, url := range g.urls {
         url := url
+
+        // アクセス間隔をずらし、bot感を薄める（ランダム待ち時間 + 最低待ち時間）
+        delay := time.Duration(rand.Int63n(int64(2750 * time.Millisecond))) + 250 * time.Millisecond
+        time.Sleep(delay)
+
         // 静的/動的を判定してHTMLを取得
         html := fetchPage(url, provider.IsStaticPage(), provider.FetchDynamicPage(ctx))
 
@@ -302,9 +308,12 @@ func fetchApiData(apiURL string) (*http.Response, error) {
         return nil, fmt.Errorf("failed to request job API: %w\n", err)
     }
 
-    if response.StatusCode != http.StatusOK {
+    // 200系は成功扱いとする
+    if response.StatusCode < 200 || response.StatusCode >= 300 {
+        isShouldStopCrawler(response.StatusCode)
+
         return nil, fmt.Errorf(
-            "Unexpected HTTP status code: %d %v\n",
+            "Unexpected HTTP status: %d %v\n",
             response.StatusCode,
             apiURL,
         )
@@ -322,7 +331,9 @@ func checkHttpStatusOK(client *http.Client, url string) error {
     defer response.Body.Close()
 
     // 200系は成功扱いとする
-    if response.StatusCode >= 300 {
+    if response.StatusCode < 200 || response.StatusCode >= 300 {
+        isShouldStopCrawler(response.StatusCode)
+
         return fmt.Errorf(
             "Unexpected HTTP status: %d, url=%s",
             response.StatusCode,
@@ -330,6 +341,13 @@ func checkHttpStatusOK(client *http.Client, url string) error {
         )
     }
     return nil
+}
+
+// 場合によってはクロールを止める
+func isShouldStopCrawler(httpStatus int) {
+    if httpStatus == http.StatusForbidden {
+        log.Fatalf("Stop crawler. unexpected HTTP status: %v\n", httpStatus)
+    }
 }
 
 // from: .envのPAGE_ID_FROM_..., to: .envのPAGE_ID_TO_...

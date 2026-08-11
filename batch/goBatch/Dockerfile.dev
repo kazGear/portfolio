@@ -3,7 +3,7 @@ FROM golang:1.26.1
 RUN apt-get update && \
     apt-get install -y \
         cron \
-        postgresql-client && \
+        postgresql-client-17 && \
     rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app

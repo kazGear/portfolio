@@ -91,10 +91,10 @@ func normalizeForSearchFeatures(str string) string {
 }
 
 var (
-    _regJobPrice          = regexp.MustCompile(`\d{2,7}(万円)?(〜|～|~|-)\d{2,7}(万円)?`)
-    _regJobPriceMin       = regexp.MustCompile(`\d{2,7}(万円)?(〜|～|~|-)`)
-    _regJobPriceMax       = regexp.MustCompile(`(〜|～|~|-)\d{2,7}(万円)?`)
-    _regJobSinglePrice    = regexp.MustCompile(`\d{2,7}(万円)?`)
+    _regJobPrice          = regexp.MustCompile(`\d{2,7}(〜|～|~|-)\d{2,7}`)
+    _regJobPriceMin       = regexp.MustCompile(`\d{2,7}(〜|～|~|-)`)
+    _regJobPriceMax       = regexp.MustCompile(`(〜|～|~|-)\d{2,7}`)
+    _regJobSinglePrice    = regexp.MustCompile(`\d{2,7}`)
     _regJobPriceSeparator = regexp.MustCompile(`(〜|～|~|-)`)
     _regJobPriceMaxPrefix = regexp.MustCompile(`^(〜|～|~|-)`)
     _regJobPriceMinSuffix = regexp.MustCompile(`(〜|～|~|-)$`)
@@ -158,6 +158,7 @@ func normalizeJobPrice(price string) string {
     price = strings.ReplaceAll(price, "\r\n", "")
     price = strings.ReplaceAll(price, "\n", "")
     price = strings.ReplaceAll(price, "万円", "0000")
+    price = strings.ReplaceAll(price, "万", "0000")
 
     return price
 }

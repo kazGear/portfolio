@@ -95,7 +95,7 @@ func (c *CrawlerFreelanceJob) Scrape(provider  PageProvider,
 
 func (c *CallBacksFreelanceJob) FetchDynamicPage(parentCtx context.Context) func(url string) (string, error) {
     return func(url string) (string, error) {
-        if !isDetailPage(`^https://freelance-job.com/job/detail/\d+`, url) {
+        if !isDetailPage(``, url) {
             return "", nil
         }
         // 無駄なchromedpの起動を回避

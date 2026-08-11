@@ -95,7 +95,7 @@ func (c *CrawlerEngineerFactory) Scrape(provider  PageProvider,
 
 func (c *CallBacksEngineerFactory) FetchDynamicPage(parentCtx context.Context) func(url string) (string, error) {
     return func(url string) (string, error) {
-        if !isDetailPage(`^https://www.engineer-factory.com/freelance/jobs/\d+`, url) {
+        if !isDetailPage(``, url) {
             return "", nil
         }
         // 無駄なchromedpの起動を回避

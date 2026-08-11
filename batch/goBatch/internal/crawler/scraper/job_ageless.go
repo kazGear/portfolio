@@ -94,7 +94,7 @@ func (c *CrawlerAgeless) Scrape(provider  PageProvider,
 
 func (c *CallBacksAgeless) FetchDynamicPage(parentCtx context.Context) func(url string) (string, error) {
     return func(url string) (string, error) {
-        if !isDetailPage(`^https://freelance.ageless.co.jp/projects/\d+`, url) {
+        if !isDetailPage(``, url) {
             return "", nil
         }
         // 無駄なchromedpの起動を回避

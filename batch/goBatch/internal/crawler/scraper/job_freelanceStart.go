@@ -135,36 +135,41 @@ func (c *CallBacksFreelanceStart) CollectAttributes() func(doc *goquery.Document
     return func(doc *goquery.Document, url string) []map[string]string {
         dataset := make([]map[string]string, 0, 1)
 
-        data := map[string]string{}
+        description           := collectTextFreelanceStart(doc)
+        normalizedDescription := normalizeForSearchFeatures(description)
 
-        descriptionText := collectTextFreelanceStart(doc)
+        // 案件の特徴を収集し、repositoryへ
+        features := salvageFeaturesFreelanceStart(normalizedDescription)
+        // 保存するべき案件か
+        if len(features) <= 0 {
+            return []map[string]string{}
+        }
+        repository.InjectionJobFeatures(features, url)
+
+        // 案件のオプションを収集し、repositoryへ
+        options := collectOptionsFreelanceStart(doc)
+        repository.InjectionJobOptions(options, url)
+
+        data := map[string]string{}
 
         data[C.Url]         = url
         data[C.Title]       = doc.Find(`title`).Text()
         data[C.CompanyName] = ""
-        data[C.Location]    = "" // 別関数で抽出
+        data[C.Location]    = salvageLocation(normalizedDescription)
 
         minPrice, maxPrice      := getJobPrice(doc.Find(`.salary`).Text())
 
         data[C.MinSalaryAtMonth] = strconv.Itoa(minPrice)
         data[C.MaxSalaryAtMonth] = strconv.Itoa(maxPrice)
 
-        data[C.Description]    = descriptionText
-        data[C.EmploymentType] = "" // 別関数で抽出
-        data[C.WorkPlace]      = "" // 別関数で抽出
+        data[C.Description]    = description
+        data[C.EmploymentType] = salvageEmploymentType(normalizedDescription)
+        data[C.WorkPlace]      = salvageWorkPlace(normalizedDescription)
 
         data[C.IsActive]       = isActiveFreelanceStart(doc)
         // data[C.SimilarityScore] =
         data[C.SourceSite]     = C.FreelanceStart
         data[C.UpdatedAt]      = ""
-
-        // 案件の特徴を収集し、repositoryへ
-        features := salvageFeaturesFreelanceStart(data, data[C.Description])
-        repository.InjectionJobFeatures(features, url)
-
-        // 案件のオプションを収集し、repositoryへ
-        options := collectOptionsFreelanceStart(doc)
-        repository.InjectionJobOptions(options, url)
 
         dataset = append(dataset, data)
         return dataset
@@ -218,14 +223,8 @@ func isActiveFreelanceStart(doc *goquery.Document) string {
 }
 
 // 必要な情報を抽出する
-func salvageFeaturesFreelanceStart(data map[string]string, target string) []*model.JobFeature {
-    normalizedTarget := normalizeForSearchFeature(target)
-
-    data[C.Location]       = salvageLocation(normalizedTarget)
-    data[C.WorkPlace]      = salvageWorkPlace(normalizedTarget)
-    data[C.EmploymentType] = salvageEmploymentType(normalizedTarget)
-
-    return salvageJobData(normalizedTarget)
+func salvageFeaturesFreelanceStart(normalizedText string) []*model.JobFeature {
+    return salvageJobData(normalizedText, "")
 }
 
 func (c *CallBacksFreelanceStart) BuildModel(url string) func(data map[string]string) *model.Job {

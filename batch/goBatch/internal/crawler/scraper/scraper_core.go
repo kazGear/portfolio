@@ -71,7 +71,7 @@ func (g *Crawler[T]) scrapeFrame(provider PageProvider,
         url := url
 
         // アクセス間隔をずらし、bot感を薄める（ランダム待ち時間 + 最低待ち時間）
-        delay := time.Duration(rand.Int63n(int64(2750 * time.Millisecond))) + 250 * time.Millisecond
+        delay := time.Duration(rand.Int63n(int64(2250 * time.Millisecond))) + 250 * time.Millisecond
         time.Sleep(delay)
 
         // 静的/動的を判定してHTMLを取得

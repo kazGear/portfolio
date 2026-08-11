@@ -79,7 +79,7 @@ func buildJobFrame(data map[string]string, logger *log.Logger) (*model.Job) {
 var _whitespaceRegex = regexp.MustCompile(`\s+`)
 
 // 文字列をスキル等の検索用に正規化する
-func normalizeForSearchFeature(str string) string {
+func normalizeForSearchFeatures(str string) string {
 	normalized := width.Narrow.String(str)
 	normalized  = strings.ToLower(normalized)
 	normalized  = strings.ReplaceAll(normalized, "\r\n", "\n") // 改行コード統一
@@ -91,13 +91,13 @@ func normalizeForSearchFeature(str string) string {
 }
 
 var (
-    _regJobPrice          = regexp.MustCompile(`\d{2,7}(万円)?(～|~|-)\d{2,7}(万円)?`)
-    _regJobPriceMin       = regexp.MustCompile(`\d{2,7}(万円)?(～|~|-)`)
-    _regJobPriceMax       = regexp.MustCompile(`(～|~|-)\d{2,7}(万円)?`)
-    _regJobSinglePrice    = regexp.MustCompile(`\d{2,7}(万円)?`)
-    _regJobPriceSeparator = regexp.MustCompile(`(～|~|-)`)
-    _regJobPriceMaxPrefix = regexp.MustCompile(`^(～|~|-)`)
-    _regJobPriceMinSuffix = regexp.MustCompile(`(～|~|-)$`)
+    _regJobPrice          = regexp.MustCompile(`\d{2,7}(〜|～|~|-)\d{2,7}`)
+    _regJobPriceMin       = regexp.MustCompile(`\d{2,7}(〜|～|~|-)`)
+    _regJobPriceMax       = regexp.MustCompile(`(〜|～|~|-)\d{2,7}`)
+    _regJobSinglePrice    = regexp.MustCompile(`\d{2,7}`)
+    _regJobPriceSeparator = regexp.MustCompile(`(〜|～|~|-)`)
+    _regJobPriceMaxPrefix = regexp.MustCompile(`^(〜|～|~|-)`)
+    _regJobPriceMinSuffix = regexp.MustCompile(`(〜|～|~|-)$`)
 )
 
 func getJobPrice(text string) (min int, max int) {
@@ -158,7 +158,28 @@ func normalizeJobPrice(price string) string {
     price = strings.ReplaceAll(price, "\r\n", "")
     price = strings.ReplaceAll(price, "\n", "")
     price = strings.ReplaceAll(price, "万円", "0000")
+    price = strings.ReplaceAll(price, "万", "0000")
 
+    price = normalizeMinPrice(price)
+
+    return price
+}
+
+// 左側（最低価格）だけ2,3桁のままの可能性があり、万円単位に補正
+func normalizeMinPrice(price string) string {
+    // 最低価格と最高価格に分割
+    prices := _regJobPriceSeparator.Split(price, -1)
+
+    if len(prices) == 2 {
+        if minPrice, err := strconv.Atoi(prices[0]); err == nil {
+            // 最低価格が万円単位の金額でない
+            if len(prices[0]) == 2 || len(prices[0]) == 3 {
+                // 例：10 > 100,000, 130 > 1,300,000(カンマは実際には付されない)
+                prices[0] = strconv.Itoa(minPrice * 10000)
+                return strings.Join(prices, "~")
+            }
+        }
+    }
     return price
 }
 
@@ -207,20 +228,20 @@ func parseJobPricesMinAndMax(price string) (int, int) {
     return C.UndefinedPrice, C.UndefinedPrice
 }
 
-func salvageJobData(target string) []*model.JobFeature {
+func salvageJobData(target string, requirementType string) []*model.JobFeature {
     jobFeatures := make([]*model.JobFeature, 0, 10)
 
-    languages          := salvageFeatures(target, languageDictionary)
-    frameworkLibraries := salvageFeatures(target, frameworkLibraryDictionary)
-    databases          := salvageFeatures(target, databaseDictionary)
-    clouds             := salvageFeatures(target, cloudDictionary)
-    infrastructures    := salvageFeatures(target, infrastructureDictionary)
-    tools              := salvageFeatures(target, toolDictionary)
-    tests              := salvageFeatures(target, testDictionary)
-    architectures      := salvageFeatures(target, architectureDictionary)
-    methodologies      := salvageFeatures(target, methodologyDictionary)
-    roles              := salvageFeatures(target, roleDictionary)
-    ais                := salvageFeatures(target, aiDictionary)
+    languages          := salvageFeatures(target, languageDictionary, requirementType)
+    frameworkLibraries := salvageFeatures(target, frameworkLibraryDictionary, requirementType)
+    databases          := salvageFeatures(target, databaseDictionary, requirementType)
+    clouds             := salvageFeatures(target, cloudDictionary, requirementType)
+    infrastructures    := salvageFeatures(target, infrastructureDictionary, requirementType)
+    tools              := salvageFeatures(target, toolDictionary, requirementType)
+    tests              := salvageFeatures(target, testDictionary, requirementType)
+    architectures      := salvageFeatures(target, architectureDictionary, requirementType)
+    methodologies      := salvageFeatures(target, methodologyDictionary, requirementType)
+    roles              := salvageFeatures(target, roleDictionary, requirementType)
+    ais                := salvageFeatures(target, aiDictionary, requirementType)
 
     jobFeatures = append(jobFeatures, languages...)
     jobFeatures = append(jobFeatures, frameworkLibraries...)
@@ -238,7 +259,7 @@ func salvageJobData(target string) []*model.JobFeature {
 }
 
 // csv形式で特徴を取得
-func salvageFeatures(target string, features []*SearchFeature) []*model.JobFeature {
+func salvageFeatures(target string, features []*SearchFeature, requirementType string) []*model.JobFeature {
     jobFeatures := make([]*model.JobFeature, 0, len(features))
     isFound     := false
 
@@ -252,7 +273,7 @@ func salvageFeatures(target string, features []*SearchFeature) []*model.JobFeatu
                     JobId: -1,
                     FeatureName: feature.Name,
                     Category: feature.Category,
-                    RequirementType: "",
+                    RequirementType: requirementType,
                 })
                 isFound = true
                 break
@@ -267,7 +288,7 @@ func salvageFeatures(target string, features []*SearchFeature) []*model.JobFeatu
                     JobId: -1,
                     FeatureName: feature.Name,
                     Category: feature.Category,
-                    RequirementType: "",
+                    RequirementType: requirementType,
                 })
                 break
             }
@@ -285,6 +306,7 @@ var employmentTypes = []string{
     "準委任",
     "委託",
     "委任",
+    "フリーランス",
 }
 
 func salvageEmploymentType(target string) string {
@@ -391,6 +413,8 @@ var languageDictionary = []*SearchFeature{
             "C#",
             "C#",
             "Ｃ＃",
+            "C♯",
+            "C﹟",
             "csharp",
             "c sharp",
             "unity",
@@ -3659,6 +3683,7 @@ var roleDictionary = []*SearchFeature{
             "tech lead",
             "technical lead",
             "テックリード",
+            "テクニカルリード",
             "技術リー",
         },
         Patterns: []*regexp.Regexp{},
@@ -4078,12 +4103,20 @@ func salvageLocation(target string) string {
     return ""
 }
 
+
 var locationDictionary = []*SearchFeature{
     {
         Name:     "北海道",
         Category: C.JobLocation,
         Keywords: []string{
             "北海道",
+            "札幌",
+            "旭川",
+            "函館",
+            "小樽",
+            "帯広",
+            "釧路",
+            "苫小牧",
         },
         Patterns: []*regexp.Regexp{},
     },
@@ -4092,7 +4125,8 @@ var locationDictionary = []*SearchFeature{
         Category: C.JobLocation,
         Keywords: []string{
             "青森",
-            "青森県",
+            "弘前",
+            "八戸",
         },
         Patterns: []*regexp.Regexp{},
     },
@@ -4101,7 +4135,9 @@ var locationDictionary = []*SearchFeature{
         Category: C.JobLocation,
         Keywords: []string{
             "岩手",
-            "岩手県",
+            "盛岡",
+            "一関",
+            "花巻",
         },
         Patterns: []*regexp.Regexp{},
     },
@@ -4110,7 +4146,10 @@ var locationDictionary = []*SearchFeature{
         Category: C.JobLocation,
         Keywords: []string{
             "宮城",
-            "宮城県",
+            "仙台",
+            "石巻",
+            "名取",
+            "多賀城",
         },
         Patterns: []*regexp.Regexp{},
     },
@@ -4119,7 +4158,8 @@ var locationDictionary = []*SearchFeature{
         Category: C.JobLocation,
         Keywords: []string{
             "秋田",
-            "秋田県",
+            "横手",
+            "大館",
         },
         Patterns: []*regexp.Regexp{},
     },
@@ -4128,7 +4168,9 @@ var locationDictionary = []*SearchFeature{
         Category: C.JobLocation,
         Keywords: []string{
             "山形",
-            "山形県",
+            "米沢",
+            "酒田",
+            "鶴岡",
         },
         Patterns: []*regexp.Regexp{},
     },
@@ -4137,7 +4179,10 @@ var locationDictionary = []*SearchFeature{
         Category: C.JobLocation,
         Keywords: []string{
             "福島",
-            "福島県",
+            "郡山",
+            "いわき",
+            "会津若松",
+            "須賀川",
         },
         Patterns: []*regexp.Regexp{},
     },
@@ -4146,7 +4191,11 @@ var locationDictionary = []*SearchFeature{
         Category: C.JobLocation,
         Keywords: []string{
             "茨城",
-            "茨城県",
+            "水戸",
+            "つくば",
+            "土浦",
+            "日立",
+            "古河",
         },
         Patterns: []*regexp.Regexp{},
     },
@@ -4155,7 +4204,12 @@ var locationDictionary = []*SearchFeature{
         Category: C.JobLocation,
         Keywords: []string{
             "栃木",
-            "栃木県",
+            "宇都宮",
+            "小山",
+            "足利",
+            "那須",
+            "那須塩原",
+            "日光",
         },
         Patterns: []*regexp.Regexp{},
     },
@@ -4164,7 +4218,11 @@ var locationDictionary = []*SearchFeature{
         Category: C.JobLocation,
         Keywords: []string{
             "群馬",
-            "群馬県",
+            "前橋",
+            "高崎",
+            "太田",
+            "伊勢崎",
+            "桐生",
         },
         Patterns: []*regexp.Regexp{},
     },
@@ -4173,7 +4231,15 @@ var locationDictionary = []*SearchFeature{
         Category: C.JobLocation,
         Keywords: []string{
             "埼玉",
-            "埼玉県",
+            "さいたま",
+            "川口",
+            "川越",
+            "所沢",
+            "越谷",
+            "草加",
+            "熊谷",
+            "大宮",
+            "浦和",
         },
         Patterns: []*regexp.Regexp{},
     },
@@ -4182,7 +4248,13 @@ var locationDictionary = []*SearchFeature{
         Category: C.JobLocation,
         Keywords: []string{
             "千葉",
-            "千葉県",
+            "船橋",
+            "市川",
+            "柏",
+            "松戸",
+            "市原",
+            "浦安",
+            "成田",
         },
         Patterns: []*regexp.Regexp{},
     },
@@ -4191,7 +4263,37 @@ var locationDictionary = []*SearchFeature{
         Category: C.JobLocation,
         Keywords: []string{
             "東京",
-            "東京都",
+            "千代田区",
+            "中央区",
+            "港区",
+            "新宿区",
+            "文京区",
+            "台東区",
+            "墨田区",
+            "江東区",
+            "品川区",
+            "目黒区",
+            "大田区",
+            "世田谷区",
+            "渋谷区",
+            "中野区",
+            "杉並区",
+            "豊島区",
+            "北区",
+            "荒川区",
+            "板橋区",
+            "練馬区",
+            "足立区",
+            "葛飾区",
+            "江戸川区",
+            "立川",
+            "八王子",
+            "町田",
+            "府中",
+            "武蔵野",
+            "三鷹",
+            "調布",
+            "多摩",
         },
         Patterns: []*regexp.Regexp{},
     },
@@ -4200,7 +4302,18 @@ var locationDictionary = []*SearchFeature{
         Category: C.JobLocation,
         Keywords: []string{
             "神奈川",
-            "神奈川県",
+            "横浜",
+            "川崎",
+            "相模原",
+            "藤沢",
+            "鎌倉",
+            "茅ヶ崎",
+            "平塚",
+            "厚木",
+            "大和",
+            "小田原",
+            "横須賀",
+            "海老名",
         },
         Patterns: []*regexp.Regexp{},
     },
@@ -4209,7 +4322,10 @@ var locationDictionary = []*SearchFeature{
         Category: C.JobLocation,
         Keywords: []string{
             "新潟",
-            "新潟県",
+            "長岡",
+            "上越",
+            "三条",
+            "燕",
         },
         Patterns: []*regexp.Regexp{},
     },
@@ -4218,7 +4334,8 @@ var locationDictionary = []*SearchFeature{
         Category: C.JobLocation,
         Keywords: []string{
             "富山",
-            "富山県",
+            "高岡",
+            "射水",
         },
         Patterns: []*regexp.Regexp{},
     },
@@ -4227,7 +4344,10 @@ var locationDictionary = []*SearchFeature{
         Category: C.JobLocation,
         Keywords: []string{
             "石川",
-            "石川県",
+            "金沢",
+            "小松",
+            "白山",
+            "野々市",
         },
         Patterns: []*regexp.Regexp{},
     },
@@ -4236,7 +4356,9 @@ var locationDictionary = []*SearchFeature{
         Category: C.JobLocation,
         Keywords: []string{
             "福井",
-            "福井県",
+            "敦賀",
+            "越前",
+            "坂井",
         },
         Patterns: []*regexp.Regexp{},
     },
@@ -4245,7 +4367,9 @@ var locationDictionary = []*SearchFeature{
         Category: C.JobLocation,
         Keywords: []string{
             "山梨",
-            "山梨県",
+            "甲府",
+            "富士吉田",
+            "笛吹",
         },
         Patterns: []*regexp.Regexp{},
     },
@@ -4254,7 +4378,11 @@ var locationDictionary = []*SearchFeature{
         Category: C.JobLocation,
         Keywords: []string{
             "長野",
-            "長野県",
+            "松本",
+            "上田",
+            "飯田",
+            "佐久",
+            "軽井沢",
         },
         Patterns: []*regexp.Regexp{},
     },
@@ -4263,7 +4391,9 @@ var locationDictionary = []*SearchFeature{
         Category: C.JobLocation,
         Keywords: []string{
             "岐阜",
-            "岐阜県",
+            "大垣",
+            "各務原",
+            "高山",
         },
         Patterns: []*regexp.Regexp{},
     },
@@ -4272,7 +4402,11 @@ var locationDictionary = []*SearchFeature{
         Category: C.JobLocation,
         Keywords: []string{
             "静岡",
-            "静岡県",
+            "浜松",
+            "沼津",
+            "富士",
+            "三島",
+            "藤枝",
         },
         Patterns: []*regexp.Regexp{},
     },
@@ -4281,7 +4415,14 @@ var locationDictionary = []*SearchFeature{
         Category: C.JobLocation,
         Keywords: []string{
             "愛知",
-            "愛知県",
+            "名古屋",
+            "豊田",
+            "岡崎",
+            "一宮",
+            "豊橋",
+            "春日井",
+            "刈谷",
+            "安城",
         },
         Patterns: []*regexp.Regexp{},
     },
@@ -4290,7 +4431,12 @@ var locationDictionary = []*SearchFeature{
         Category: C.JobLocation,
         Keywords: []string{
             "三重",
-            "三重県",
+            "津",
+            "四日市",
+            "鈴鹿",
+            "桑名",
+            "松阪",
+            "伊勢",
         },
         Patterns: []*regexp.Regexp{},
     },
@@ -4299,7 +4445,10 @@ var locationDictionary = []*SearchFeature{
         Category: C.JobLocation,
         Keywords: []string{
             "滋賀",
-            "滋賀県",
+            "大津",
+            "草津",
+            "彦根",
+            "長浜",
         },
         Patterns: []*regexp.Regexp{},
     },
@@ -4308,7 +4457,10 @@ var locationDictionary = []*SearchFeature{
         Category: C.JobLocation,
         Keywords: []string{
             "京都",
-            "京都府",
+            "宇治",
+            "亀岡",
+            "長岡京",
+            "舞鶴",
         },
         Patterns: []*regexp.Regexp{},
     },
@@ -4317,7 +4469,14 @@ var locationDictionary = []*SearchFeature{
         Category: C.JobLocation,
         Keywords: []string{
             "大阪",
-            "大阪府",
+            "堺",
+            "豊中",
+            "吹田",
+            "高槻",
+            "枚方",
+            "茨木",
+            "八尾",
+            "東大阪",
         },
         Patterns: []*regexp.Regexp{},
     },
@@ -4326,7 +4485,13 @@ var locationDictionary = []*SearchFeature{
         Category: C.JobLocation,
         Keywords: []string{
             "兵庫",
-            "兵庫県",
+            "神戸",
+            "姫路",
+            "西宮",
+            "尼崎",
+            "明石",
+            "宝塚",
+            "芦屋",
         },
         Patterns: []*regexp.Regexp{},
     },
@@ -4335,7 +4500,9 @@ var locationDictionary = []*SearchFeature{
         Category: C.JobLocation,
         Keywords: []string{
             "奈良",
-            "奈良県",
+            "橿原",
+            "生駒",
+            "大和郡山",
         },
         Patterns: []*regexp.Regexp{},
     },
@@ -4344,7 +4511,9 @@ var locationDictionary = []*SearchFeature{
         Category: C.JobLocation,
         Keywords: []string{
             "和歌山",
-            "和歌山県",
+            "田辺",
+            "海南",
+            "新宮",
         },
         Patterns: []*regexp.Regexp{},
     },
@@ -4353,7 +4522,8 @@ var locationDictionary = []*SearchFeature{
         Category: C.JobLocation,
         Keywords: []string{
             "鳥取",
-            "鳥取県",
+            "米子",
+            "倉吉",
         },
         Patterns: []*regexp.Regexp{},
     },
@@ -4362,7 +4532,9 @@ var locationDictionary = []*SearchFeature{
         Category: C.JobLocation,
         Keywords: []string{
             "島根",
-            "島根県",
+            "松江",
+            "出雲",
+            "浜田",
         },
         Patterns: []*regexp.Regexp{},
     },
@@ -4371,7 +4543,8 @@ var locationDictionary = []*SearchFeature{
         Category: C.JobLocation,
         Keywords: []string{
             "岡山",
-            "岡山県",
+            "倉敷",
+            "津山",
         },
         Patterns: []*regexp.Regexp{},
     },
@@ -4380,7 +4553,10 @@ var locationDictionary = []*SearchFeature{
         Category: C.JobLocation,
         Keywords: []string{
             "広島",
-            "広島県",
+            "福山",
+            "呉",
+            "東広島",
+            "尾道",
         },
         Patterns: []*regexp.Regexp{},
     },
@@ -4389,7 +4565,10 @@ var locationDictionary = []*SearchFeature{
         Category: C.JobLocation,
         Keywords: []string{
             "山口",
-            "山口県",
+            "下関",
+            "宇部",
+            "周南",
+            "岩国",
         },
         Patterns: []*regexp.Regexp{},
     },
@@ -4398,7 +4577,8 @@ var locationDictionary = []*SearchFeature{
         Category: C.JobLocation,
         Keywords: []string{
             "徳島",
-            "徳島県",
+            "鳴門",
+            "阿南",
         },
         Patterns: []*regexp.Regexp{},
     },
@@ -4407,7 +4587,9 @@ var locationDictionary = []*SearchFeature{
         Category: C.JobLocation,
         Keywords: []string{
             "香川",
-            "香川県",
+            "高松",
+            "丸亀",
+            "坂出",
         },
         Patterns: []*regexp.Regexp{},
     },
@@ -4416,7 +4598,11 @@ var locationDictionary = []*SearchFeature{
         Category: C.JobLocation,
         Keywords: []string{
             "愛媛",
-            "愛媛県",
+            "松山",
+            "今治",
+            "新居浜",
+            "西条",
+            "宇和島",
         },
         Patterns: []*regexp.Regexp{},
     },
@@ -4425,7 +4611,8 @@ var locationDictionary = []*SearchFeature{
         Category: C.JobLocation,
         Keywords: []string{
             "高知",
-            "高知県",
+            "南国",
+            "四万十",
         },
         Patterns: []*regexp.Regexp{},
     },
@@ -4434,7 +4621,12 @@ var locationDictionary = []*SearchFeature{
         Category: C.JobLocation,
         Keywords: []string{
             "福岡",
-            "福岡県",
+            "北九州",
+            "久留米",
+            "飯塚",
+            "春日",
+            "大牟田",
+            "筑紫野",
         },
         Patterns: []*regexp.Regexp{},
     },
@@ -4443,7 +4635,8 @@ var locationDictionary = []*SearchFeature{
         Category: C.JobLocation,
         Keywords: []string{
             "佐賀",
-            "佐賀県",
+            "唐津",
+            "鳥栖",
         },
         Patterns: []*regexp.Regexp{},
     },
@@ -4452,7 +4645,9 @@ var locationDictionary = []*SearchFeature{
         Category: C.JobLocation,
         Keywords: []string{
             "長崎",
-            "長崎県",
+            "佐世保",
+            "諫早",
+            "大村",
         },
         Patterns: []*regexp.Regexp{},
     },
@@ -4461,7 +4656,9 @@ var locationDictionary = []*SearchFeature{
         Category: C.JobLocation,
         Keywords: []string{
             "熊本",
-            "熊本県",
+            "八代",
+            "玉名",
+            "合志",
         },
         Patterns: []*regexp.Regexp{},
     },
@@ -4470,7 +4667,9 @@ var locationDictionary = []*SearchFeature{
         Category: C.JobLocation,
         Keywords: []string{
             "大分",
-            "大分県",
+            "別府",
+            "中津",
+            "佐伯",
         },
         Patterns: []*regexp.Regexp{},
     },
@@ -4479,7 +4678,9 @@ var locationDictionary = []*SearchFeature{
         Category: C.JobLocation,
         Keywords: []string{
             "宮崎",
-            "宮崎県",
+            "都城",
+            "延岡",
+            "日向",
         },
         Patterns: []*regexp.Regexp{},
     },
@@ -4488,7 +4689,10 @@ var locationDictionary = []*SearchFeature{
         Category: C.JobLocation,
         Keywords: []string{
             "鹿児島",
-            "鹿児島県",
+            "霧島",
+            "薩摩川内",
+            "姶良",
+            "鹿屋",
         },
         Patterns: []*regexp.Regexp{},
     },
@@ -4497,7 +4701,11 @@ var locationDictionary = []*SearchFeature{
         Category: C.JobLocation,
         Keywords: []string{
             "沖縄",
-            "沖縄県",
+            "那覇",
+            "うるま",
+            "浦添",
+            "宜野湾",
+            "名護",
         },
         Patterns: []*regexp.Regexp{},
     },

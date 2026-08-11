@@ -96,7 +96,7 @@ func (c *CrawlerSesJobLink) Scrape(provider  PageProvider,
 
 func (c *CallBacksSesJobLink) FetchDynamicPage(parentCtx context.Context) func(url string) (string, error) {
     return func(url string) (string, error) {
-        if !isDetailPage(`^https://freelance.SesJobLink.co.jp/projects/\d+`, url) {
+        if !isDetailPage(``, url) {
             return "", nil
         }
         // 無駄なchromedpの起動を回避
@@ -131,31 +131,39 @@ func (c *CallBacksSesJobLink) CollectAttributes() func(doc *goquery.Document, ur
     return func(doc *goquery.Document, url string) []map[string]string {
         dataset := make([]map[string]string, 0, 1)
 
+        description           := doc.Find("#sys_project_detail_page").Text()
+        normalizedDescription := normalizeForSearchFeatures(description)
+
+        // 案件の特徴を収集し、repositoryへ
+        features := salvageFeaturesSesJobLink(normalizedDescription)
+        // 保存するべき案件か
+        if len(features) <= 0 {
+            return []map[string]string{}
+        }
+        repository.InjectionJobFeatures(features, url)
+
+        // 案件のオプションを収集し、repositoryへ（このサイトは無し）
+
+
         data := map[string]string{}
 
         data[C.Url]         = url
         data[C.Title]       = doc.Find(".project-title").Text()
         data[C.CompanyName] = ""
-        data[C.Location]    = "" // 別関数で抽出
+        data[C.Location]    = salvageLocation(normalizedDescription)
 
-        description := doc.Find("#sys_project_detail_page").Text()
+
         minPrice, maxPrice      := getJobPrice(description)
         data[C.MinSalaryAtMonth] = strconv.Itoa(minPrice)
         data[C.MaxSalaryAtMonth] = strconv.Itoa(maxPrice)
 
         data[C.Description]    = description
-        data[C.EmploymentType] = "" // 別関数で抽出
-        data[C.WorkPlace]      = "" // 別関数で抽出
+        data[C.EmploymentType] = salvageEmploymentType(normalizedDescription)
+        data[C.WorkPlace]      = salvageWorkPlace(normalizedDescription)
         data[C.IsActive]       = isActiveSesJobLink()
         // data[C.SimilarityScore] =
         data[C.SourceSite]     = C.SES_JOB_LINK
         data[C.UpdatedAt]      = getUpdatedAtSesJobLink(description)
-
-        // 案件の特徴を収集し、repositoryへ
-        features := salvageFeaturesSesJobLink(data, data[C.Description])
-        repository.InjectionJobFeatures(features, url)
-
-        // 案件のオプションを収集し、repositoryへ（このサイトは無し）
 
         dataset = append(dataset, data)
         return dataset
@@ -183,14 +191,8 @@ func getUpdatedAtSesJobLink(text string) string {
 }
 
 // 必要な情報を抽出する
-func salvageFeaturesSesJobLink(data map[string]string, target string) []*model.JobFeature {
-    normalizedTarget := normalizeForSearchFeature(target)
-
-    data[C.Location]       = salvageLocation(normalizedTarget)
-    data[C.WorkPlace]      = salvageWorkPlace(normalizedTarget)
-    data[C.EmploymentType] = salvageEmploymentType(normalizedTarget)
-
-    return salvageJobData(normalizedTarget)
+func salvageFeaturesSesJobLink(normalizedText string) []*model.JobFeature {
+    return salvageJobData(normalizedText, "")
 }
 
 func (c *CallBacksSesJobLink) BuildModel(url string) func(data map[string]string) *model.Job {

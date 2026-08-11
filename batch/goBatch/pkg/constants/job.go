@@ -35,9 +35,17 @@ const (
 )
 
 const (
-	CrowdWorksTech = "CrowdWorksTech"
-	AGELESS        = "AGELESS"
-	SES_JOB_LINK   = "SES_JOB_LINK"
-	FreelanceStart = "フリーランススタート"
-	FreelanceJob   = "フリーランスジョブ"
+	CrowdWorksTech  = "CrowdWorksTech"
+	AGELESS         = "AGELESS"
+	SES_JOB_LINK    = "SES_JOB_LINK"
+	FreelanceStart  = "フリーランススタート"
+	FreelanceJob    = "フリーランスジョブ"
+	FreelanceHub    = "freelance_hub"
+	EngineerFactory = "エンジニアファクトリー"
+)
+
+// スキル分類
+const (
+	Required = "required"
+	Optional = "optional"
 )

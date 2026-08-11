@@ -19,7 +19,7 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         cron \
         ca-certificates \
-        postgresql-client && \
+        postgresql-client-17 && \
     rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app

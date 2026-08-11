@@ -3,7 +3,7 @@ package scraper
 import (
 	"context"
 	"fmt"
-	"regexp"
+	"slices"
 	"strconv"
 	"strings"
 	"sync"
@@ -20,24 +20,24 @@ import (
 	"github.com/kazGear/portfolio/goBatch/pkg/utils"
 )
 
-type CrawlerFreelanceJob struct {
+type CrawlerEngineerFactory struct {
     jScraper Crawler[*model.Job]
 }
 
-type CallBacksFreelanceJob struct {
+type CallBacksEngineerFactory struct {
     funcs CallBacks
 }
 
-func NewScraperFreelanceJob(logger *log.Logger) Scraper[*model.Job] {
+func NewScraperEngineerFactory(logger *log.Logger) Scraper[*model.Job] {
 	collector := colly.NewCollector(
 		colly.Async(true),
 		colly.MaxDepth(1),
 	)
 	collector.Limit(&colly.LimitRule{
 		DomainGlob:  "*",
-		Parallelism: 1, // URL収集漏れが発生するため5に制限
+		Parallelism: 1,
 	})
-    return &CrawlerFreelanceJob{
+    return &CrawlerEngineerFactory{
         Crawler[*model.Job]{
             collector: collector,
             mutex:     &sync.Mutex{},
@@ -46,8 +46,8 @@ func NewScraperFreelanceJob(logger *log.Logger) Scraper[*model.Job] {
     }
 }
 
-func NewCallBacksFreelanceJob(logger *log.Logger) *CallBacksFreelanceJob {
-    return &CallBacksFreelanceJob{
+func NewCallBacksEngineerFactory(logger *log.Logger) *CallBacksEngineerFactory {
+    return &CallBacksEngineerFactory{
         CallBacks{
             logger: logger,
         },
@@ -55,11 +55,11 @@ func NewCallBacksFreelanceJob(logger *log.Logger) *CallBacksFreelanceJob {
 }
 
 // CollectAttributesへ
-var _parentCtxFreelanceJob context.Context
+var _parentCtxEngineerFactory context.Context
 
-func (c *CrawlerFreelanceJob) CollectLinks(parentCtx context.Context) ([]string, error) {
+func (c *CrawlerEngineerFactory) CollectLinks(parentCtx context.Context) ([]string, error) {
     collector              := c.jScraper.collector
-    _parentCtxFreelanceJob = parentCtx
+    _parentCtxEngineerFactory = parentCtx
 
     // クロールログ収集
     crawlStats := &crawlStats{}
@@ -68,14 +68,14 @@ func (c *CrawlerFreelanceJob) CollectLinks(parentCtx context.Context) ([]string,
     mutex   := &sync.Mutex{}
 
     // URL生成の設定
-    pageIdFrom, pageIdTo := loadPageIdFromTo("PAGE_ID_FROM_FREELANCE_JOB", "PAGE_ID_TO_FREELANCE_JOB")
+    pageIdFrom, pageIdTo := loadPageIdFromTo("PAGE_ID_FROM_ENGINEER_FACTORY", "PAGE_ID_TO_ENGINEER_FACTORY")
     visited              := make(map[string]struct{}, pageIdTo - pageIdFrom)
 
     validatePageIdFromTo(pageIdFrom, pageIdTo)
 
     // URL生成
     for pageId := pageIdFrom; pageId <= pageIdTo; pageId++ {
-        url := fmt.Sprintf("https://freelance-job.com/job/detail/%v", pageId)
+        url := fmt.Sprintf("https://www.engineer-factory.com/freelance/jobs/%v", pageId)
         isFirstVisit(mutex, url, visited)
     }
 
@@ -85,15 +85,15 @@ func (c *CrawlerFreelanceJob) CollectLinks(parentCtx context.Context) ([]string,
     return c.jScraper.urls, nil
 }
 
-func (c *CrawlerFreelanceJob) Scrape(provider  PageProvider,
-                                     parser    ModelParser[*model.Job],
-                                     parentCtx context.Context,
+func (c *CrawlerEngineerFactory) Scrape(provider  PageProvider,
+                                        parser    ModelParser[*model.Job],
+                                        parentCtx context.Context,
 ) []*model.Job {
     jobs := c.jScraper.scrapeFrame(provider, parser, parentCtx)
     return jobs
 }
 
-func (c *CallBacksFreelanceJob) FetchDynamicPage(parentCtx context.Context) func(url string) (string, error) {
+func (c *CallBacksEngineerFactory) FetchDynamicPage(parentCtx context.Context) func(url string) (string, error) {
     return func(url string) (string, error) {
         if !isDetailPage(``, url) {
             return "", nil
@@ -131,17 +131,15 @@ func (c *CallBacksFreelanceJob) FetchDynamicPage(parentCtx context.Context) func
     }
 }
 
-var _regFindPriceFreelanceJob = regexp.MustCompile(`(\d{0,3},?\d{0,3},\d{0,3})?\s*~\s*(\d{0,3},?\d{0,3},\d{0,3})?`)
-
-func (c *CallBacksFreelanceJob) CollectAttributes() func(doc *goquery.Document, url string) []map[string]string {
+func (c *CallBacksEngineerFactory) CollectAttributes() func(doc *goquery.Document, url string) []map[string]string {
     return func(doc *goquery.Document, url string) []map[string]string {
         dataset := make([]map[string]string, 0, 1)
 
-        description           := collectTextFreelanceJob(doc)
+        description           := collectTextEngineerFactory(doc)
         normalizedDescription := normalizeForSearchFeatures(description)
 
         // 案件の特徴を収集し、repositoryへ
-        features := salvageFeaturesFreelanceJob(normalizedDescription)
+        features := salvageFeaturesEngineerFactory(doc)
         // 保存するべき案件か
         if len(features) <= 0 {
             return []map[string]string{}
@@ -154,12 +152,11 @@ func (c *CallBacksFreelanceJob) CollectAttributes() func(doc *goquery.Document, 
         data := map[string]string{}
 
         data[C.Url]         = url
-        data[C.Title]       = doc.Find(`p:contains("業務委託")`).Parent().Parent().Prev().Children().Next().Text()
+        data[C.Title]       = doc.Find(`.modJobBlock__detailTitle`).Text()
         data[C.CompanyName] = ""
         data[C.Location]    = salvageLocation(normalizedDescription)
 
-        priceText               := doc.Find(`p:contains("業務委託")`).Parent().Next().Text()
-        minPrice, maxPrice      := getJobPrice(_regFindPriceFreelanceJob.FindString(priceText))
+        minPrice, maxPrice      := getJobPrice(normalizedDescription)
         data[C.MinSalaryAtMonth] = strconv.Itoa(minPrice)
         data[C.MaxSalaryAtMonth] = strconv.Itoa(maxPrice)
 
@@ -167,59 +164,55 @@ func (c *CallBacksFreelanceJob) CollectAttributes() func(doc *goquery.Document, 
         data[C.EmploymentType] = salvageEmploymentType(normalizedDescription)
         data[C.WorkPlace]      = salvageWorkPlace(normalizedDescription)
 
-        data[C.IsActive]       = isActiveFreelanceJob(doc)
+        data[C.IsActive]       = isActiveEngineerFactory(doc)
         // data[C.SimilarityScore] =
-        data[C.SourceSite]     = C.FreelanceJob
-        data[C.UpdatedAt]      = getOpenDateFreelanceJob(doc)
+        data[C.SourceSite]     = C.EngineerFactory
+        data[C.UpdatedAt]      = getOpenDateEngineerFactory(doc)
 
         dataset = append(dataset, data)
         return dataset
     }
 }
 
-func collectTextFreelanceJob(doc *goquery.Document) string {
+func collectTextEngineerFactory(doc *goquery.Document) string {
     builder := &strings.Builder{}
 
-    builder.WriteString(doc.Find(`dt:contains("案件詳細")`).Next().Text())
-
-    doc.Find(`dt:contains("開発言語")`).Next().Children().Children().Each(
-        func(idx int, selector *goquery.Selection) {
-            builder.WriteString(selector.Text())
-            builder.WriteString(" ")
-    })
-    builder.WriteString(doc.Find(`dt:contains("必須スキル・経験")`).Next().Text())
-    builder.WriteString(doc.Find(`dt:contains("尚可スキル・経験")`).Next().Text())
-
-    doc.Find(`dt:contains("職種・ポジション")`).Next().Children().Children().Each(
-        func(idx int, selector *goquery.Selection) {
-            builder.WriteString(selector.Text())
-            builder.WriteString(" ")
-    })
-    builder.WriteString(doc.Find(`dt:contains("業界")`).Next().Text())
-    builder.WriteString(doc.Find(`dt:contains("案件詳細")`).Next().Text())
-    builder.WriteString(doc.Find(`dt:contains("募集背景")`).Next().Text())
-    builder.WriteString(doc.Find(`dt:contains("開発環境")`).Next().Text())
-    builder.WriteString(doc.Find(`dt:contains("出社頻度")`).Next().Text())
-    builder.WriteString(doc.Find(`dt:contains("案件公開日時")`).Next().Text())
-    builder.WriteString(doc.Find(`span:contains("おすすめポイント")`).Parent().Next().Next().Text())
-    builder.WriteString(doc.Find(`p:contains("業務委託")`).Next().Text())
+    builder.WriteString(doc.Find(`.modJobBlock__detailTitle`).Text())
+    builder.WriteString("\n")
+    builder.WriteString(doc.Find(`.modJobBlock__update`).Text())
+    builder.WriteString("\n")
+    builder.WriteString(doc.Find(`dt:contains("単価")`).Next().Text())
+    builder.WriteString("\n")
+    builder.WriteString(doc.Find(`h3:contains("都道府県")`).Next().Text())
+    builder.WriteString("\n")
+    builder.WriteString(doc.Find(`h3:contains("最寄駅")`).Next().Text())
+    builder.WriteString("\n")
+    builder.WriteString(doc.Find(`h3:contains("契約形態")`).Next().Text())
+    builder.WriteString("\n")
+    builder.WriteString(doc.Find(`h3:contains("必須スキル")`).Next().Text())
+    builder.WriteString("\n")
+    builder.WriteString(doc.Find(`h3:contains("歓迎スキル")`).Next().Text())
+    builder.WriteString("\n")
+    builder.WriteString(doc.Find(`h3:contains("業務内容")`).Next().Text())
+    builder.WriteString("\n")
 
     return builder.String()
 }
 
-func getOpenDateFreelanceJob(doc *goquery.Document) string {
-    dateText := doc.Find(`dt:contains("案件公開日時")`).Next().Text()
+func getOpenDateEngineerFactory(doc *goquery.Document) string {
+    dateText := doc.Find(`.modJobBlock__update`).Text()
     dateText  = _regGetDate.FindString(dateText)
+    dateText  = strings.ReplaceAll(dateText, "/", "-")
 
-    return strings.ReplaceAll(dateText, "/", "-")
+    return dateText
 }
 
-func isActiveFreelanceJob(doc *goquery.Document) string {
+func isActiveEngineerFactory(doc *goquery.Document) string {
     isActive := "invalid"
 
     errorText1 := doc.Find(`h1:contains("404")`).Text()
-    errorText2 := doc.Find(`p:contains("見つかりません")`).Text()
-    errorText3 := doc.Find(`button:contains("募集が終了")`).Text()
+    errorText2 := doc.Find(`p:contains("お探しのページは見つかりません")`).Text()
+    errorText3 := doc.Find(`p:contains("案件は終了しました")`).Text()
 
     if errorText1 != "" || errorText2 != "" || errorText3 != "" {
         isActive = "false"
@@ -229,18 +222,26 @@ func isActiveFreelanceJob(doc *goquery.Document) string {
     return isActive
 }
 
-// 必要な情報を抽出する
-func salvageFeaturesFreelanceJob(normalizedText string) []*model.JobFeature {
-    return salvageJobData(normalizedText, "")
+func salvageFeaturesEngineerFactory(doc *goquery.Document) []*model.JobFeature {
+    requiredSkillText := doc.Find(`h3:contains("必須スキル")`).Next().Text()
+    optionalSkillText := doc.Find(`h3:contains("歓迎スキル")`).Next().Text()
+
+    requiredSkillText = normalizeForSearchFeatures(requiredSkillText)
+    optionalSkillText = normalizeForSearchFeatures(optionalSkillText)
+
+    requiredSkills := salvageJobData(requiredSkillText, C.Required)
+    optionalSkills := salvageJobData(optionalSkillText, C.Optional)
+
+    return slices.Concat(requiredSkills, optionalSkills)
 }
 
-func (c *CallBacksFreelanceJob) BuildModel(url string) func(data map[string]string) *model.Job {
+func (c *CallBacksEngineerFactory) BuildModel(url string) func(data map[string]string) *model.Job {
     return func(data map[string]string) *model.Job {
         return buildJobFrame(data, c.funcs.logger)
     }
 }
 
-func (c *CallBacksFreelanceJob) IsStaticPage() func(html string) bool {
+func (c *CallBacksEngineerFactory) IsStaticPage() func(html string) bool {
     return func(html string) bool {
         return strings.Contains(html, "body")
     }

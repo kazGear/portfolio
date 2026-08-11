@@ -151,29 +151,18 @@ func (c *CallBacksCrowdworksTech) CollectAttributes() func(doc *goquery.Document
             return []map[string]string{}
         }
 
-        data := map[string]string{}
+        description := jsonModel.DetailedTitle + "\n" +
+                       jsonModel.SpecificWorkContent + "\n" +
+                       jsonModel.RelatedServicesProducts
 
-        data[C.Url]         = url
-        data[C.Title]       = jsonModel.DetailedTitle
-        data[C.CompanyName] = jsonModel.ClientName // なぜか会社名だけ取得できない
-        data[C.Location]    = "" // 別関数で抽出
-
-        maxSalaryAtMonth, _     := doc.Find(`meta[name="description"]`).Attr("content")
-        maxSalaryAtMonth         = _regCrowdworksTechMaxPrice.FindString(maxSalaryAtMonth)
-        data[C.MinSalaryAtMonth] = maxSalaryAtMonth
-        data[C.MaxSalaryAtMonth] = maxSalaryAtMonth
-
-        data[C.Description]    = jsonModel.DetailedTitle + "\n" +
-                                 jsonModel.SpecificWorkContent + "\n" +
-                                 jsonModel.RelatedServicesProducts
-        data[C.EmploymentType] = "" // 別関数で抽出
-        data[C.WorkPlace]      = "" // 別関数で抽出
-        // data[C.IsActive]       = isActiveCrowdworksTech(doc)
-        // data[C.SimilarityScore] =
-        data[C.SourceSite]     = C.CrowdWorksTech
+        normalizedDescription := normalizeForSearchFeatures(description)
 
         // 案件の特徴を収集し、repositoryへ
-        features := salvageFeaturesCrowdWorksTech(data, data[C.Description])
+        features := salvageJobDataCrowdworksTech(normalizedDescription)
+        // 保存するべき案件か
+        if len(features) <= 0 {
+            return []map[string]string{}
+        }
         repository.InjectionJobFeatures(features, url)
 
         // 案件のオプションを収集し、repositoryへ
@@ -188,20 +177,33 @@ func (c *CallBacksCrowdworksTech) CollectAttributes() func(doc *goquery.Document
         })
         repository.InjectionJobOptions(options, url)
 
+        data := map[string]string{}
+
+        data[C.Url]         = url
+        data[C.Title]       = jsonModel.DetailedTitle
+        data[C.CompanyName] = jsonModel.ClientName // なぜか会社名だけ取得できない
+        data[C.Location]    = salvageLocation(normalizedDescription)
+
+        maxSalaryAtMonth, _     := doc.Find(`meta[name="description"]`).Attr("content")
+        maxSalaryAtMonth         = _regCrowdworksTechMaxPrice.FindString(maxSalaryAtMonth)
+        data[C.MinSalaryAtMonth] = maxSalaryAtMonth
+        data[C.MaxSalaryAtMonth] = maxSalaryAtMonth
+
+        data[C.Description]    = description
+
+        data[C.EmploymentType] = salvageEmploymentType(normalizedDescription)
+        data[C.WorkPlace]      = salvageWorkPlace(normalizedDescription)
+        // data[C.IsActive]       = isActiveCrowdworksTech(doc)
+        // data[C.SimilarityScore] =
+        data[C.SourceSite]     = C.CrowdWorksTech
+
         dataset = append(dataset, data)
         return dataset
     }
 }
 
-// 必要な情報を抽出する
-func salvageFeaturesCrowdWorksTech(data map[string]string, target string) []*model.JobFeature {
-    normalizedTarget := normalizeForSearchFeature(target)
-
-    data[C.Location]       = salvageLocation(normalizedTarget)
-    data[C.WorkPlace]      = salvageWorkPlace(normalizedTarget)
-    data[C.EmploymentType] = salvageEmploymentType(normalizedTarget)
-
-    return salvageJobData(normalizedTarget)
+func salvageJobDataCrowdworksTech(normalizedText string) []*model.JobFeature {
+    return salvageJobData(normalizedText, "")
 }
 
 func (c *CallBacksCrowdworksTech) BuildModel(url string) func(data map[string]string) *model.Job {

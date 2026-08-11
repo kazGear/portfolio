@@ -37,7 +37,8 @@ func InsertJob() string {
             similarity_score,
             source_site,
             created_at,
-            updated_at
+            updated_at,
+            last_seen_at
         )
         VALUES
         (
@@ -54,7 +55,8 @@ func InsertJob() string {
             :similarity_score,
             :source_site,
             NOW(),
-            :updated_at
+            :updated_at,
+            NOW()
         );
     `
 }

@@ -131,29 +131,37 @@ func (c *CallBacksAgeless) CollectAttributes() func(doc *goquery.Document, url s
     return func(doc *goquery.Document, url string) []map[string]string {
         dataset := make([]map[string]string, 0, 1)
 
+        description           := doc.Find("main").Text()
+        description            = _regDeleteDescriptionAgeLess.ReplaceAllString(description, "")
+        normalizedDescription := normalizeForSearchFeatures(description)
+
+        // 案件の特徴を収集し、repositoryへ
+        features := salvageFeaturesAgeless(normalizedDescription)
+        // 保存するべき案件か
+        if len(features) <= 0 {
+            return []map[string]string{}
+        }
+        repository.InjectionJobFeatures(features, url)
+
+        // 案件のオプションを収集し、repositoryへ（このサイトは無し）
+
+
         data := map[string]string{}
 
         data[C.Url]         = url
         data[C.Title]       = doc.Find(".project-card-ttl").Text()
         data[C.CompanyName] = ""
-        data[C.Location]    = "" // 別関数で抽出
+        data[C.Location]    = salvageLocation(normalizedDescription)
 
         data[C.MinSalaryAtMonth] = doc.Find(".income-num").Text()
         data[C.MaxSalaryAtMonth] = doc.Find(".income-num").Text()
 
-        description           := doc.Find("main").Text()
-        data[C.Description]    = _regDeleteDescriptionAgeLess.ReplaceAllString(description, "")
-        data[C.EmploymentType] = "" // 別関数で抽出
-        data[C.WorkPlace]      = "" // 別関数で抽出
+        data[C.Description]    = description
+        data[C.EmploymentType] = salvageEmploymentType(normalizedDescription)
+        data[C.WorkPlace]      = salvageWorkPlace(normalizedDescription)
         data[C.IsActive]       = isActiveAgeless(doc)
         // data[C.SimilarityScore] =
         data[C.SourceSite]     = C.AGELESS
-
-        // 案件の特徴を収集し、repositoryへ
-        features := salvageFeaturesAgeless(data, data[C.Description])
-        repository.InjectionJobFeatures(features, url)
-
-        // 案件のオプションを収集し、repositoryへ（このサイトは無し）
 
         dataset = append(dataset, data)
         return dataset
@@ -176,14 +184,8 @@ func isActiveAgeless(doc *goquery.Document) string {
 }
 
 // 必要な情報を抽出する
-func salvageFeaturesAgeless(data map[string]string, target string) []*model.JobFeature {
-    normalizedTarget := normalizeForSearchFeature(target)
-
-    data[C.Location]       = salvageLocation(normalizedTarget)
-    data[C.WorkPlace]      = salvageWorkPlace(normalizedTarget)
-    data[C.EmploymentType] = salvageEmploymentType(normalizedTarget)
-
-    return salvageJobData(normalizedTarget)
+func salvageFeaturesAgeless(normalizedText string) []*model.JobFeature {
+    return salvageJobData(normalizedText, "")
 }
 
 func (c *CallBacksAgeless) BuildModel(url string) func(data map[string]string) *model.Job {

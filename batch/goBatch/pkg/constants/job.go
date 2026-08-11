@@ -42,6 +42,8 @@ const (
 	FreelanceJob    = "フリーランスジョブ"
 	FreelanceHub    = "freelance_hub"
 	EngineerFactory = "エンジニアファクトリー"
+	TechReach       = "テックリーチ"
+	Midworks        = "Midworks"
 )
 
 // スキル分類

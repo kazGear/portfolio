@@ -79,7 +79,7 @@ func buildJobFrame(data map[string]string, logger *log.Logger) (*model.Job) {
 var _whitespaceRegex = regexp.MustCompile(`\s+`)
 
 // 文字列をスキル等の検索用に正規化する
-func normalizeForSearchFeature(str string) string {
+func normalizeForSearchFeatures(str string) string {
 	normalized := width.Narrow.String(str)
 	normalized  = strings.ToLower(normalized)
 	normalized  = strings.ReplaceAll(normalized, "\r\n", "\n") // 改行コード統一
@@ -91,13 +91,13 @@ func normalizeForSearchFeature(str string) string {
 }
 
 var (
-    _regJobPrice          = regexp.MustCompile(`\d{2,7}(万円)?(～|~|-)\d{2,7}(万円)?`)
-    _regJobPriceMin       = regexp.MustCompile(`\d{2,7}(万円)?(～|~|-)`)
-    _regJobPriceMax       = regexp.MustCompile(`(～|~|-)\d{2,7}(万円)?`)
+    _regJobPrice          = regexp.MustCompile(`\d{2,7}(万円)?(〜|～|~|-)\d{2,7}(万円)?`)
+    _regJobPriceMin       = regexp.MustCompile(`\d{2,7}(万円)?(〜|～|~|-)`)
+    _regJobPriceMax       = regexp.MustCompile(`(〜|～|~|-)\d{2,7}(万円)?`)
     _regJobSinglePrice    = regexp.MustCompile(`\d{2,7}(万円)?`)
-    _regJobPriceSeparator = regexp.MustCompile(`(～|~|-)`)
-    _regJobPriceMaxPrefix = regexp.MustCompile(`^(～|~|-)`)
-    _regJobPriceMinSuffix = regexp.MustCompile(`(～|~|-)$`)
+    _regJobPriceSeparator = regexp.MustCompile(`(〜|～|~|-)`)
+    _regJobPriceMaxPrefix = regexp.MustCompile(`^(〜|～|~|-)`)
+    _regJobPriceMinSuffix = regexp.MustCompile(`(〜|～|~|-)$`)
 )
 
 func getJobPrice(text string) (min int, max int) {
@@ -207,20 +207,20 @@ func parseJobPricesMinAndMax(price string) (int, int) {
     return C.UndefinedPrice, C.UndefinedPrice
 }
 
-func salvageJobData(target string) []*model.JobFeature {
+func salvageJobData(target string, requirementType string) []*model.JobFeature {
     jobFeatures := make([]*model.JobFeature, 0, 10)
 
-    languages          := salvageFeatures(target, languageDictionary)
-    frameworkLibraries := salvageFeatures(target, frameworkLibraryDictionary)
-    databases          := salvageFeatures(target, databaseDictionary)
-    clouds             := salvageFeatures(target, cloudDictionary)
-    infrastructures    := salvageFeatures(target, infrastructureDictionary)
-    tools              := salvageFeatures(target, toolDictionary)
-    tests              := salvageFeatures(target, testDictionary)
-    architectures      := salvageFeatures(target, architectureDictionary)
-    methodologies      := salvageFeatures(target, methodologyDictionary)
-    roles              := salvageFeatures(target, roleDictionary)
-    ais                := salvageFeatures(target, aiDictionary)
+    languages          := salvageFeatures(target, languageDictionary, requirementType)
+    frameworkLibraries := salvageFeatures(target, frameworkLibraryDictionary, requirementType)
+    databases          := salvageFeatures(target, databaseDictionary, requirementType)
+    clouds             := salvageFeatures(target, cloudDictionary, requirementType)
+    infrastructures    := salvageFeatures(target, infrastructureDictionary, requirementType)
+    tools              := salvageFeatures(target, toolDictionary, requirementType)
+    tests              := salvageFeatures(target, testDictionary, requirementType)
+    architectures      := salvageFeatures(target, architectureDictionary, requirementType)
+    methodologies      := salvageFeatures(target, methodologyDictionary, requirementType)
+    roles              := salvageFeatures(target, roleDictionary, requirementType)
+    ais                := salvageFeatures(target, aiDictionary, requirementType)
 
     jobFeatures = append(jobFeatures, languages...)
     jobFeatures = append(jobFeatures, frameworkLibraries...)
@@ -238,7 +238,7 @@ func salvageJobData(target string) []*model.JobFeature {
 }
 
 // csv形式で特徴を取得
-func salvageFeatures(target string, features []*SearchFeature) []*model.JobFeature {
+func salvageFeatures(target string, features []*SearchFeature, requirementType string) []*model.JobFeature {
     jobFeatures := make([]*model.JobFeature, 0, len(features))
     isFound     := false
 
@@ -252,7 +252,7 @@ func salvageFeatures(target string, features []*SearchFeature) []*model.JobFeatu
                     JobId: -1,
                     FeatureName: feature.Name,
                     Category: feature.Category,
-                    RequirementType: "",
+                    RequirementType: requirementType,
                 })
                 isFound = true
                 break
@@ -267,7 +267,7 @@ func salvageFeatures(target string, features []*SearchFeature) []*model.JobFeatu
                     JobId: -1,
                     FeatureName: feature.Name,
                     Category: feature.Category,
-                    RequirementType: "",
+                    RequirementType: requirementType,
                 })
                 break
             }
@@ -285,6 +285,7 @@ var employmentTypes = []string{
     "準委任",
     "委託",
     "委任",
+    "フリーランス",
 }
 
 func salvageEmploymentType(target string) string {
@@ -391,6 +392,8 @@ var languageDictionary = []*SearchFeature{
             "C#",
             "C#",
             "Ｃ＃",
+            "C♯",
+            "C﹟",
             "csharp",
             "c sharp",
             "unity",
@@ -3659,6 +3662,7 @@ var roleDictionary = []*SearchFeature{
             "tech lead",
             "technical lead",
             "テックリード",
+            "テクニカルリード",
             "技術リー",
         },
         Patterns: []*regexp.Regexp{},

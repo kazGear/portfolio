@@ -14,6 +14,11 @@ func TestGetJobPrice(t *testing.T) {
         wantMax  int
 	}{
 		{
+			price: "55 ~ 60万",
+            wantMin: 550000,
+            wantMax: 600000,
+		},
+		{
 			price: "55万 ~ 60万",
             wantMin: 550000,
             wantMax: 600000,

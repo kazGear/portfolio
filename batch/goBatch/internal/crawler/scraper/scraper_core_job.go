@@ -160,6 +160,26 @@ func normalizeJobPrice(price string) string {
     price = strings.ReplaceAll(price, "万円", "0000")
     price = strings.ReplaceAll(price, "万", "0000")
 
+    price = normalizeMinPrice(price)
+
+    return price
+}
+
+// 左側（最低価格）だけ2,3桁のままの可能性があり、万円単位に補正
+func normalizeMinPrice(price string) string {
+    // 最低価格と最高価格に分割
+    prices := _regJobPriceSeparator.Split(price, -1)
+
+    if len(prices) == 2 {
+        if minPrice, err := strconv.Atoi(prices[0]); err == nil {
+            // 最低価格が万円単位の金額でない
+            if len(prices[0]) == 2 || len(prices[0]) == 3 {
+                // 例：10 > 100,000, 130 > 1,300,000(カンマは実際には付されない)
+                prices[0] = strconv.Itoa(minPrice * 10000)
+                return strings.Join(prices, "~")
+            }
+        }
+    }
     return price
 }
 

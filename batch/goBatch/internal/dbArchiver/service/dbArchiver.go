@@ -1,6 +1,7 @@
 package service
 
 import (
+	"bytes"
 	"fmt"
 	"os"
 	"os/exec"
@@ -42,13 +43,26 @@ func (b *DbArchiver) Archive() error {
 
 	fmt.Println("PostgreSQL backup started.")
 
-	// dumpの出力先となる空ファイルを作成
 	file, err := os.Create(backupFile)
-
 	if err != nil {
-		return fmt.Errorf("Create backup file: %w", err)
+		return fmt.Errorf("create backup file: %w", err)
 	}
 	defer file.Close()
+
+// tmp start .........................................................
+path, err := exec.LookPath("pg_dump")
+if err != nil {
+	return fmt.Errorf("pg_dump not found: %w", err)
+}
+
+version, err := exec.Command("pg_dump", "--version").CombinedOutput()
+if err != nil {
+	return fmt.Errorf("pg_dump version check failed: %w", err)
+}
+
+fmt.Printf("pg_dump path: %s\n", path)
+fmt.Printf("pg_dump version: %s", version)
+// tmp end .........................................................
 
 	// コマンドを作成
 	cmd := exec.Command(
@@ -59,21 +73,21 @@ func (b *DbArchiver) Archive() error {
 		"-Fc",
 	)
 
-	// 既存環境変数に環境変数を追加
-	cmd.Env = append(os.Environ(), "PGPASSWORD=" + b.DBPassword)
+	cmd.Env = append(os.Environ(), "PGPASSWORD="+b.DBPassword)
 
-	output, err := cmd.CombinedOutput()
+	var stderr bytes.Buffer
+	cmd.Stdout = file
+	cmd.Stderr = &stderr
 
-	if err != nil {
-		return fmt.Errorf("pg_dump failed: %w: %s", err, output)
-	}
-
-	// 作成したコマンドを実行
 	if err := cmd.Run(); err != nil {
 		_ = os.Remove(backupFile)
-		return fmt.Errorf("pg_dump failed: %w", err)
-	}
 
+		return fmt.Errorf(
+			"pg_dump failed: %w: %s",
+			err,
+			stderr.String(),
+		)
+	}
 	fmt.Printf("Backup created: %s\n", backupFile)
 
 	if err := deleteOldBackup(b.BackupDir); err != nil {

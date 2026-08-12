@@ -152,8 +152,7 @@ func (c *CallBacksSesJobLink) CollectAttributes() func(doc *goquery.Document, ur
         data[C.CompanyName] = ""
         data[C.Location]    = salvageLocation(normalizedDescription)
 
-
-        minPrice, maxPrice      := getJobPrice(description)
+        minPrice, maxPrice      := getJobPrice(doc.Find(`span:contains("月額単価")`).Next().Text())
         data[C.MinSalaryAtMonth] = strconv.Itoa(minPrice)
         data[C.MaxSalaryAtMonth] = strconv.Itoa(maxPrice)
 

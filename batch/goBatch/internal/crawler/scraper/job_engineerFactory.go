@@ -153,7 +153,6 @@ func (c *CallBacksEngineerFactory) CollectAttributes() func(doc *goquery.Documen
 
         data[C.Url]         = url
         data[C.Title]       = doc.Find(`.modJobBlock__detailTitle`).Text()
-        data[C.CompanyName] = ""
         data[C.Location]    = salvageLocation(normalizedDescription)
 
         minPrice, maxPrice      := getJobPrice(normalizedDescription)
@@ -163,11 +162,9 @@ func (c *CallBacksEngineerFactory) CollectAttributes() func(doc *goquery.Documen
         data[C.Description]    = description
         data[C.EmploymentType] = salvageEmploymentType(normalizedDescription)
         data[C.WorkPlace]      = salvageWorkPlace(normalizedDescription)
-
-        data[C.IsActive]       = isActiveEngineerFactory(doc)
-        // data[C.SimilarityScore] =
         data[C.SourceSite]     = C.EngineerFactory
-        data[C.UpdatedAt]      = getOpenDateEngineerFactory(doc)
+
+        data[C.UpdatedAt] = getOpenDateEngineerFactory(doc)
 
         dataset = append(dataset, data)
         return dataset

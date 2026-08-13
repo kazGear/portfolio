@@ -11,9 +11,7 @@ func UpdateJob() string {
                max_salary_at_month = :max_salary_at_month,
                employment_type     = :employment_type,
                work_place          = :work_place,
-               is_active           = :is_active,
-               updated_at          = :updated_at,
-               last_seen_at        = NOW()
+               updated_at          = :updated_at
          WHERE
                url = :url
              ;
@@ -26,37 +24,29 @@ func InsertJob() string {
         (
             title,
             url,
-            company_name,
             location,
             min_salary_at_month,
             max_salary_at_month,
             description,
             employment_type,
             work_place,
-            is_active,
-            similarity_score,
             source_site,
             created_at,
-            updated_at,
-            last_seen_at
+            updated_at
         )
         VALUES
         (
             :title,
             :url,
-            :company_name,
             :location,
             :min_salary_at_month,
             :max_salary_at_month,
             :description,
             :employment_type,
             :work_place,
-            :is_active,
-            :similarity_score,
             :source_site,
             NOW(),
-            :updated_at,
-            NOW()
+            :updated_at
         );
     `
 }

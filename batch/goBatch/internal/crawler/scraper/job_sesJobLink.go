@@ -149,7 +149,6 @@ func (c *CallBacksSesJobLink) CollectAttributes() func(doc *goquery.Document, ur
 
         data[C.Url]         = url
         data[C.Title]       = doc.Find(".project-title").Text()
-        data[C.CompanyName] = ""
         data[C.Location]    = salvageLocation(normalizedDescription)
 
         minPrice, maxPrice      := getJobPrice(doc.Find(`span:contains("月額単価")`).Next().Text())
@@ -159,19 +158,13 @@ func (c *CallBacksSesJobLink) CollectAttributes() func(doc *goquery.Document, ur
         data[C.Description]    = description
         data[C.EmploymentType] = salvageEmploymentType(normalizedDescription)
         data[C.WorkPlace]      = salvageWorkPlace(normalizedDescription)
-        data[C.IsActive]       = isActiveSesJobLink()
-        // data[C.SimilarityScore] =
         data[C.SourceSite]     = C.SES_JOB_LINK
-        data[C.UpdatedAt]      = getUpdatedAtSesJobLink(description)
+
+        data[C.UpdatedAt] = getUpdatedAtSesJobLink(description)
 
         dataset = append(dataset, data)
         return dataset
     }
-}
-
-func isActiveSesJobLink() string {
-    isActive := "invalid"
-    return isActive
 }
 
 var _regUpdatedAtSesJobLink = regexp.MustCompile(`\d{4}-\d{2}-\d{2}`)

@@ -90,8 +90,48 @@ func jobBoardFactory() map[string]*JobBoard {
 
     filepath := "./batch/goBatch/internal/crawler/logs/job/%v_%v.log"
 
-    jobBoardName := C.CrowdWorksTech
+    jobBoardName := C.Midworks
     logger       := utils.NewLogger(jobBoardName, filepath)
+    jobBoards[jobBoardName] = NewJobBoard(
+        jobBoardName,
+        scraper.NewScraperMidworks(logger),
+        scraper.NewCallBacksMidworks(logger),
+        scraper.NewCallBacksMidworks(logger),
+        logger,
+    )
+
+    jobBoardName = C.TechReach
+    logger       = utils.NewLogger(jobBoardName, filepath)
+    jobBoards[jobBoardName] = NewJobBoard(
+        jobBoardName,
+        scraper.NewScraperTechReach(logger),
+        scraper.NewCallBacksTechReach(logger),
+        scraper.NewCallBacksTechReach(logger),
+        logger,
+    )
+
+    jobBoardName = C.EngineerFactory
+    logger       = utils.NewLogger(jobBoardName, filepath)
+    jobBoards[jobBoardName] = NewJobBoard(
+        jobBoardName,
+        scraper.NewScraperEngineerFactory(logger),
+        scraper.NewCallBacksEngineerFactory(logger),
+        scraper.NewCallBacksEngineerFactory(logger),
+        logger,
+    )
+
+    jobBoardName = C.FreelanceHub
+    logger       = utils.NewLogger(jobBoardName, filepath)
+    jobBoards[jobBoardName] = NewJobBoard(
+        jobBoardName,
+        scraper.NewScraperFreelanceHub(logger),
+        scraper.NewCallBacksFreelanceHub(logger),
+        scraper.NewCallBacksFreelanceHub(logger),
+        logger,
+    )
+
+    jobBoardName = C.CrowdWorksTech
+    logger       = utils.NewLogger(jobBoardName, filepath)
     jobBoards[jobBoardName] = NewJobBoard(
         jobBoardName,
         scraper.NewScraperCrowdworksTech(logger),

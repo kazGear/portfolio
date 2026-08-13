@@ -150,7 +150,6 @@ func (c *CallBacksAgeless) CollectAttributes() func(doc *goquery.Document, url s
 
         data[C.Url]         = url
         data[C.Title]       = doc.Find(".project-card-ttl").Text()
-        data[C.CompanyName] = ""
         data[C.Location]    = salvageLocation(normalizedDescription)
 
         data[C.MinSalaryAtMonth] = doc.Find(".income-num").Text()
@@ -159,28 +158,13 @@ func (c *CallBacksAgeless) CollectAttributes() func(doc *goquery.Document, url s
         data[C.Description]    = description
         data[C.EmploymentType] = salvageEmploymentType(normalizedDescription)
         data[C.WorkPlace]      = salvageWorkPlace(normalizedDescription)
-        data[C.IsActive]       = isActiveAgeless(doc)
-        // data[C.SimilarityScore] =
         data[C.SourceSite]     = C.AGELESS
+
+        data[C.UpdatedAt] = ""
 
         dataset = append(dataset, data)
         return dataset
     }
-}
-
-func isActiveAgeless(doc *goquery.Document) string {
-    isActive := "invalid"
-
-    title := doc.Find("title").Text()
-
-    if strings.Contains(title, "404") || strings.Contains(title, "４０４") {
-        isActive = "false"
-    } else if strings.Contains(doc.Find(".btn-disabled").Text(), "募集終了") {
-        isActive = "false"
-    } else {
-        isActive = "true"
-    }
-    return isActive
 }
 
 // 必要な情報を抽出する

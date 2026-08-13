@@ -24,7 +24,6 @@ func buildJobFrame(data map[string]string, logger *log.Logger) (*model.Job) {
 
 	job.Url         = trim(data[C.Url])
 	job.Title       = trim(data[C.Title])
-    job.CompanyName = trim(data[C.CompanyName])
     job.Location    = trim(data[C.Location])
 
     minSalaryAtMonth, err := utils.ParsePrice(data[C.MinSalaryAtMonth])
@@ -48,17 +47,7 @@ func buildJobFrame(data map[string]string, logger *log.Logger) (*model.Job) {
     job.Description    = trim(data[C.Description])
     job.EmploymentType = trim(data[C.EmploymentType])
     job.WorkPlace      = trim(data[C.WorkPlace])
-
-    isActive, err := strconv.ParseBool(data[C.IsActive])
-
-    if err != nil {
-        job.IsActive = nil
-    } else {
-        job.IsActive = &isActive
-    }
-
-    job.SimilarityScore = nil
-    job.SourceSite      = trim(data[C.SourceSite])
+    job.SourceSite     = trim(data[C.SourceSite])
 
     // 案件情報の更新日
     updatedAt, err := time.ParseInLocation(

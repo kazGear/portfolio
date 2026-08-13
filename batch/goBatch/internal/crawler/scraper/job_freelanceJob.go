@@ -155,7 +155,6 @@ func (c *CallBacksFreelanceJob) CollectAttributes() func(doc *goquery.Document, 
 
         data[C.Url]         = url
         data[C.Title]       = doc.Find(`p:contains("業務委託")`).Parent().Parent().Prev().Children().Next().Text()
-        data[C.CompanyName] = ""
         data[C.Location]    = salvageLocation(normalizedDescription)
 
         priceText               := doc.Find(`p:contains("業務委託")`).Parent().Next().Text()
@@ -166,11 +165,9 @@ func (c *CallBacksFreelanceJob) CollectAttributes() func(doc *goquery.Document, 
         data[C.Description]    = description
         data[C.EmploymentType] = salvageEmploymentType(normalizedDescription)
         data[C.WorkPlace]      = salvageWorkPlace(normalizedDescription)
-
-        data[C.IsActive]       = isActiveFreelanceJob(doc)
-        // data[C.SimilarityScore] =
         data[C.SourceSite]     = C.FreelanceJob
-        data[C.UpdatedAt]      = getOpenDateFreelanceJob(doc)
+
+        data[C.UpdatedAt] = getOpenDateFreelanceJob(doc)
 
         dataset = append(dataset, data)
         return dataset
@@ -212,21 +209,6 @@ func getOpenDateFreelanceJob(doc *goquery.Document) string {
     dateText  = _regGetDate.FindString(dateText)
 
     return strings.ReplaceAll(dateText, "/", "-")
-}
-
-func isActiveFreelanceJob(doc *goquery.Document) string {
-    isActive := "invalid"
-
-    errorText1 := doc.Find(`h1:contains("404")`).Text()
-    errorText2 := doc.Find(`p:contains("見つかりません")`).Text()
-    errorText3 := doc.Find(`button:contains("募集が終了")`).Text()
-
-    if errorText1 != "" || errorText2 != "" || errorText3 != "" {
-        isActive = "false"
-    } else {
-        isActive = "true"
-    }
-    return isActive
 }
 
 // 必要な情報を抽出する

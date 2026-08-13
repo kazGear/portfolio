@@ -153,7 +153,6 @@ func (c *CallBacksTechReach) CollectAttributes() func(doc *goquery.Document, url
 
         data[C.Url]         = url
         data[C.Title]       = doc.Find(`.m-info-head__ttl`).Text()
-        data[C.CompanyName] = ""
         data[C.Location]    = salvageLocation(normalizedDescription)
 
         minPrice, maxPrice      := getJobPrice(doc.Find(`dt:contains("単価")`).Next().Text())
@@ -163,11 +162,9 @@ func (c *CallBacksTechReach) CollectAttributes() func(doc *goquery.Document, url
         data[C.Description]    = description
         data[C.EmploymentType] = salvageEmploymentType(normalizedDescription)
         data[C.WorkPlace]      = salvageWorkPlace(normalizedDescription)
-
-        data[C.IsActive]       = isActiveTechReach(doc)
-        // data[C.SimilarityScore] =
         data[C.SourceSite]     = C.TechReach
-        data[C.UpdatedAt]      = getOpenDateTechReach(doc)
+
+        data[C.UpdatedAt] = getOpenDateTechReach(doc)
 
         dataset = append(dataset, data)
         return dataset
@@ -214,21 +211,6 @@ func getOpenDateTechReach(doc *goquery.Document) string {
     dateText  = _regGetDate.FindString(dateText)
 
     return dateText
-}
-
-func isActiveTechReach(doc *goquery.Document) string {
-    isActive := "invalid"
-
-    errorText1 := doc.Find(`h2:contains("404")`).Text()
-    errorText2 := doc.Find(`h2:contains("Not Found")`).Text()
-    errorText3 := doc.Find(`h3:contains("該当ページがございません")`).Text()
-
-    if errorText1 != "" || errorText2 != "" || errorText3 != "" {
-        isActive = "false"
-    } else {
-        isActive = "true"
-    }
-    return isActive
 }
 
 func salvageFeaturesTechReach(doc *goquery.Document) []*model.JobFeature {

@@ -154,22 +154,18 @@ func (c *CallBacksFreelanceStart) CollectAttributes() func(doc *goquery.Document
 
         data[C.Url]         = url
         data[C.Title]       = doc.Find(`title`).Text()
-        data[C.CompanyName] = ""
         data[C.Location]    = salvageLocation(normalizedDescription)
 
         minPrice, maxPrice      := getJobPrice(doc.Find(`.salary`).Text())
-
         data[C.MinSalaryAtMonth] = strconv.Itoa(minPrice)
         data[C.MaxSalaryAtMonth] = strconv.Itoa(maxPrice)
 
         data[C.Description]    = description
         data[C.EmploymentType] = salvageEmploymentType(normalizedDescription)
         data[C.WorkPlace]      = salvageWorkPlace(normalizedDescription)
-
-        data[C.IsActive]       = isActiveFreelanceStart(doc)
-        // data[C.SimilarityScore] =
         data[C.SourceSite]     = C.FreelanceStart
-        data[C.UpdatedAt]      = ""
+
+        data[C.UpdatedAt] = ""
 
         dataset = append(dataset, data)
         return dataset
@@ -201,25 +197,6 @@ func collectOptionsFreelanceStart(doc *goquery.Document) []*model.JobOption {
         }
     }
     return optionsArr
-}
-
-func isActiveFreelanceStart(doc *goquery.Document) string {
-    isActive := "invalid"
-
-    errorPage := doc.Find(`.error-page-hero`).Text()
-
-    if strings.Contains(errorPage, "404") {
-        isActive = "false"
-    }
-    buttonText := doc.Find(`.action-buttons`).Text()
-
-    if strings.Contains(buttonText, "案件の話") {
-        isActive = "true"
-    } else if strings.Contains(buttonText, "募集終了") {
-        isActive = "false"
-    }
-
-    return isActive
 }
 
 // 必要な情報を抽出する

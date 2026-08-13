@@ -181,7 +181,6 @@ func (c *CallBacksCrowdworksTech) CollectAttributes() func(doc *goquery.Document
 
         data[C.Url]         = url
         data[C.Title]       = jsonModel.DetailedTitle
-        data[C.CompanyName] = jsonModel.ClientName // なぜか会社名だけ取得できない
         data[C.Location]    = salvageLocation(normalizedDescription)
 
         maxSalaryAtMonth, _     := doc.Find(`meta[name="description"]`).Attr("content")
@@ -190,12 +189,11 @@ func (c *CallBacksCrowdworksTech) CollectAttributes() func(doc *goquery.Document
         data[C.MaxSalaryAtMonth] = maxSalaryAtMonth
 
         data[C.Description]    = description
-
         data[C.EmploymentType] = salvageEmploymentType(normalizedDescription)
         data[C.WorkPlace]      = salvageWorkPlace(normalizedDescription)
-        // data[C.IsActive]       = isActiveCrowdworksTech(doc)
-        // data[C.SimilarityScore] =
         data[C.SourceSite]     = C.CrowdWorksTech
+
+        data[C.UpdatedAt] = ""
 
         dataset = append(dataset, data)
         return dataset

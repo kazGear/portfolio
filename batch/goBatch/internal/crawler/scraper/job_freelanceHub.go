@@ -162,7 +162,6 @@ func (c *CallBacksFreelanceHub) CollectAttributes() func(doc *goquery.Document, 
 
         data[C.Url]         = url
         data[C.Title]       = doc.Find(`h2.Detail_Title`).Text()
-        data[C.CompanyName] = ""
         data[C.Location]    = salvageLocation(normalizedDescription)
 
         minPrice, maxPrice      := getJobPrice(doc.Find(`.Detail_SummaryItem--money`).Text())
@@ -172,11 +171,9 @@ func (c *CallBacksFreelanceHub) CollectAttributes() func(doc *goquery.Document, 
         data[C.Description]    = description
         data[C.EmploymentType] = salvageEmploymentType(normalizedDescription)
         data[C.WorkPlace]      = salvageWorkPlace(normalizedDescription)
-
-        data[C.IsActive]       = isActiveFreelanceHub(doc)
-        // data[C.SimilarityScore] =
         data[C.SourceSite]     = C.FreelanceHub
-        data[C.UpdatedAt]      = getOpenDateFreelanceHub(doc)
+
+        data[C.UpdatedAt] = getOpenDateFreelanceHub(doc)
 
         dataset = append(dataset, data)
         return dataset
@@ -227,19 +224,6 @@ func getOpenDateFreelanceHub(doc *goquery.Document) string {
     dateText  = strings.ReplaceAll(dateText, "月", "-")
 
     return dateText
-}
-
-func isActiveFreelanceHub(doc *goquery.Document) string {
-    isActive := "invalid"
-
-    errorText := doc.Find(`a:contains("エージェントに相談する")`).Text()
-
-    if errorText != ""  {
-        isActive = "false"
-    } else {
-        isActive = "true"
-    }
-    return isActive
 }
 
 func salvageFeaturesFreelanceHub(doc *goquery.Document) []*model.JobFeature {

@@ -207,7 +207,11 @@ func isFirstVisit(mutex *sync.Mutex, url string, visited map[string]struct{}) bo
 
 // 詳細データが載っているページであるか判定
 func isDetailPage(pattern string, url string) bool {
-    matched, _ := regexp.MatchString(pattern, url)
+    matched, err := regexp.MatchString(pattern, url)
+
+    if err != nil {
+        return false
+    }
     return matched
 }
 

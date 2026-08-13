@@ -3,7 +3,6 @@ package scraper
 import (
 	"context"
 	"fmt"
-	"regexp"
 	"strconv"
 	"strings"
 	"sync"
@@ -18,27 +17,26 @@ import (
 	"github.com/kazGear/portfolio/goBatch/internal/crawler/repository"
 	C "github.com/kazGear/portfolio/goBatch/pkg/constants"
 	"github.com/kazGear/portfolio/goBatch/pkg/utils"
-	"golang.org/x/text/width"
 )
 
-type CrawlerSesJobLink struct {
+type CrawlerMidworks struct {
     jScraper Crawler[*model.Job]
 }
 
-type CallBacksSesJobLink struct {
+type CallBacksMidworks struct {
     funcs CallBacks
 }
 
-func NewScraperSesJobLink(logger *log.Logger) Scraper[*model.Job] {
+func NewScraperMidworks(logger *log.Logger) Scraper[*model.Job] {
 	collector := colly.NewCollector(
 		colly.Async(true),
 		colly.MaxDepth(1),
 	)
 	collector.Limit(&colly.LimitRule{
 		DomainGlob:  "*",
-		Parallelism: 1, // URL収集漏れが発生するため5に制限
+		Parallelism: 1,
 	})
-    return &CrawlerSesJobLink{
+    return &CrawlerMidworks{
         Crawler[*model.Job]{
             collector: collector,
             mutex:     &sync.Mutex{},
@@ -47,8 +45,8 @@ func NewScraperSesJobLink(logger *log.Logger) Scraper[*model.Job] {
     }
 }
 
-func NewCallBacksSesJobLink(logger *log.Logger) *CallBacksSesJobLink {
-    return &CallBacksSesJobLink{
+func NewCallBacksMidworks(logger *log.Logger) *CallBacksMidworks {
+    return &CallBacksMidworks{
         CallBacks{
             logger: logger,
         },
@@ -56,11 +54,11 @@ func NewCallBacksSesJobLink(logger *log.Logger) *CallBacksSesJobLink {
 }
 
 // CollectAttributesへ
-var _parentCtxSesJobLink context.Context
+var _parentCtxMidworks context.Context
 
-func (c *CrawlerSesJobLink) CollectLinks(parentCtx context.Context) ([]string, error) {
+func (c *CrawlerMidworks) CollectLinks(parentCtx context.Context) ([]string, error) {
     collector              := c.jScraper.collector
-    _parentCtxSesJobLink = parentCtx
+    _parentCtxMidworks = parentCtx
 
     // クロールログ収集
     crawlStats := &crawlStats{}
@@ -69,14 +67,14 @@ func (c *CrawlerSesJobLink) CollectLinks(parentCtx context.Context) ([]string, e
     mutex   := &sync.Mutex{}
 
     // URL生成の設定
-    pageIdFrom, pageIdTo := loadPageIdFromTo("PAGE_ID_FROM_SES_JOB_LINK", "PAGE_ID_TO_SES_JOB_LINK")
+    pageIdFrom, pageIdTo := loadPageIdFromTo("PAGE_ID_FROM_MIDWORKS", "PAGE_ID_TO_MIDWORKS")
     visited              := make(map[string]struct{}, pageIdTo - pageIdFrom)
 
     validatePageIdFromTo(pageIdFrom, pageIdTo)
 
     // URL生成
     for pageId := pageIdFrom; pageId <= pageIdTo; pageId++ {
-        url := fmt.Sprintf("https://ses-job-link.com/projects/%v", pageId)
+        url := fmt.Sprintf("https://mid-works.com/projects/%v", pageId)
         isFirstVisit(mutex, url, visited)
     }
 
@@ -86,17 +84,17 @@ func (c *CrawlerSesJobLink) CollectLinks(parentCtx context.Context) ([]string, e
     return c.jScraper.urls, nil
 }
 
-func (c *CrawlerSesJobLink) Scrape(provider  PageProvider,
-                                   parser    ModelParser[*model.Job],
-                                   parentCtx context.Context,
+func (c *CrawlerMidworks) Scrape(provider  PageProvider,
+                                 parser    ModelParser[*model.Job],
+                                 parentCtx context.Context,
 ) []*model.Job {
     jobs := c.jScraper.scrapeFrame(provider, parser, parentCtx)
     return jobs
 }
 
-func (c *CallBacksSesJobLink) FetchDynamicPage(parentCtx context.Context) func(url string) (string, error) {
+func (c *CallBacksMidworks) FetchDynamicPage(parentCtx context.Context) func(url string) (string, error) {
     return func(url string) (string, error) {
-        if !isDetailPage(``, url) {
+        if !isDetailPage(`https://mid-works.com/projects/\d+`, url) {
             return "", nil
         }
         // 無駄なchromedpの起動を回避
@@ -108,14 +106,19 @@ func (c *CallBacksSesJobLink) FetchDynamicPage(parentCtx context.Context) func(u
         tabCtx, tabCancel := chromedp.NewContext(parentCtx)
         defer tabCancel()
         // // タブにだけ timeout を付ける
-        ctx, cancel := context.WithTimeout(tabCtx, 10 * time.Second)
+        ctx, cancel := context.WithTimeout(tabCtx, 2 * time.Second)
         defer cancel()
 
+        // 404ページに対する対応
+        isNotFount := isNotFountPage("業務内容", ctx)
+
+        if isNotFount { return "", fmt.Errorf(C.This404page, url)}
+
+        // クロームで対応
         var html string
 
         err := chromedp.Run(ctx,
             chromedp.Navigate(url),
-            chromedp.WaitReady(".job-btn", chromedp.ByQuery), // 求める要素が出るまで待つ
             chromedp.OuterHTML("html", &html, chromedp.ByQuery), // 最終的なHTML出力
         )
 
@@ -127,15 +130,15 @@ func (c *CallBacksSesJobLink) FetchDynamicPage(parentCtx context.Context) func(u
     }
 }
 
-func (c *CallBacksSesJobLink) CollectAttributes() func(doc *goquery.Document, url string) []map[string]string {
+func (c *CallBacksMidworks) CollectAttributes() func(doc *goquery.Document, url string) []map[string]string {
     return func(doc *goquery.Document, url string) []map[string]string {
         dataset := make([]map[string]string, 0, 1)
 
-        description           := doc.Find("#sys_project_detail_page").Text()
+        description           := collectTextMidworks(doc)
         normalizedDescription := normalizeForSearchFeatures(description)
 
         // 案件の特徴を収集し、repositoryへ
-        features := salvageFeaturesSesJobLink(normalizedDescription)
+        features := salvageFeaturesMidworks(doc)
         // 保存するべき案件か
         if len(features) <= 0 {
             return []map[string]string{}
@@ -148,59 +151,80 @@ func (c *CallBacksSesJobLink) CollectAttributes() func(doc *goquery.Document, ur
         data := map[string]string{}
 
         data[C.Url]         = url
-        data[C.Title]       = doc.Find(".project-title").Text()
+        data[C.Title]       = doc.Find(`.p-jobBoard__title`).Text()
         data[C.CompanyName] = ""
         data[C.Location]    = salvageLocation(normalizedDescription)
 
-        minPrice, maxPrice      := getJobPrice(doc.Find(`span:contains("月額単価")`).Next().Text())
+        minPrice, maxPrice      := getJobPrice(doc.Find(`.p-jobBoard__salary`).Text())
         data[C.MinSalaryAtMonth] = strconv.Itoa(minPrice)
         data[C.MaxSalaryAtMonth] = strconv.Itoa(maxPrice)
 
         data[C.Description]    = description
         data[C.EmploymentType] = salvageEmploymentType(normalizedDescription)
         data[C.WorkPlace]      = salvageWorkPlace(normalizedDescription)
-        data[C.IsActive]       = isActiveSesJobLink()
+
+        data[C.IsActive]       = isActiveMidworks(doc)
         // data[C.SimilarityScore] =
-        data[C.SourceSite]     = C.SES_JOB_LINK
-        data[C.UpdatedAt]      = getUpdatedAtSesJobLink(description)
+        data[C.SourceSite]     = C.Midworks
+        data[C.UpdatedAt]      = getOpenDateMidworks(doc)
 
         dataset = append(dataset, data)
         return dataset
     }
 }
 
-func isActiveSesJobLink() string {
+func collectTextMidworks(doc *goquery.Document) string {
+    builder := &strings.Builder{}
+
+    builder.WriteString(doc.Find(`.p-jobBoard__title`).Text())
+    builder.WriteString("\n")
+    builder.WriteString(doc.Find(`.p-jobBoard__salary`).Text())
+    builder.WriteString("\n")
+    builder.WriteString(doc.Find(`dt:contains("勤務地")`).Next().Text())
+    builder.WriteString("\n")
+    builder.WriteString(doc.Find(`h2:contains("業務内容")`).Parent().Next().Text())
+    builder.WriteString("\n")
+    builder.WriteString(doc.Find(`h2:contains("求めるスキル")`).Parent().Next().Text())
+    builder.WriteString("\n")
+
+    remote := doc.Find(`#remote_working`).Text()
+    builder.WriteString(strings.ReplaceAll(remote, "可", "一部リモート"))
+    builder.WriteString("\n")
+
+    return builder.String()
+}
+
+func getOpenDateMidworks(doc *goquery.Document) string {
+    return ""
+}
+
+func isActiveMidworks(doc *goquery.Document) string {
     isActive := "invalid"
+
+    errorText1 := doc.Find(`p:contains("お探しのページが")`).Text()
+    errorText2 := doc.Find(`p:contains("URLにお間違いがないか")`).Text()
+
+    if errorText1 != "" || errorText2 != "" {
+        isActive = "false"
+    }
     return isActive
 }
 
-var _regUpdatedAtSesJobLink = regexp.MustCompile(`\d{4}-\d{2}-\d{2}`)
+func salvageFeaturesMidworks(doc *goquery.Document) []*model.JobFeature {
+    skillText := doc.Find(`h2:contains("求めるスキル")`).Parent().Next().Text()
+    skillText  = normalizeForSearchFeatures(skillText)
+    skills    := salvageJobData(skillText, "")
 
-func getUpdatedAtSesJobLink(text string) string {
-    text = width.Narrow.String(text)
-    text = strings.ReplaceAll(text, "\r\n", "")
-    text = strings.ReplaceAll(text, "\n", "")
-    text = strings.ReplaceAll(text, " ", "")
-    text = strings.ReplaceAll(text, "年", "-")
-    text = strings.ReplaceAll(text, "月", "-")
-
-    updatedAt := _regUpdatedAtSesJobLink.FindString(text)
-
-    return updatedAt
+    return skills
 }
 
-// 必要な情報を抽出する
-func salvageFeaturesSesJobLink(normalizedText string) []*model.JobFeature {
-    return salvageJobData(normalizedText, "")
-}
-
-func (c *CallBacksSesJobLink) BuildModel(url string) func(data map[string]string) *model.Job {
+func (c *CallBacksMidworks) BuildModel(url string) func(data map[string]string) *model.Job {
     return func(data map[string]string) *model.Job {
         return buildJobFrame(data, c.funcs.logger)
     }
 }
 
-func (c *CallBacksSesJobLink) IsStaticPage() func(html string) bool {
+func (c *CallBacksMidworks) IsStaticPage() func(html string) bool {
     return func(html string) bool {
         return strings.Contains(html, "body")
     }

@@ -10,6 +10,7 @@ import ToShopPageBlock from "../components/indexPage/ToShopPageBlock";
 import ToEditPageBlock from "../components/indexPage/ToEditPageBlock";
 import ToGuitarGalleryBlock from "../components/indexPage/ToGuitarGalleryBlock";
 import ToCareerPageBlock from "../components/indexPage/ToCareerPageBlock";
+import ToJobBlock from "../components/indexPage/ToJobBlock";
 
 const LinkFrame = styled.div`
     width: 90%;
@@ -54,6 +55,11 @@ const IndexPage = () => {
                 <ContentsFrame>
                     {/* ギターギャラリー */}
                     <ToGuitarGalleryBlock />
+                </ContentsFrame>
+
+                <ContentsFrame>
+                    {/* 案件検索 */}
+                    <ToJobBlock />
                 </ContentsFrame>
             </div>
 

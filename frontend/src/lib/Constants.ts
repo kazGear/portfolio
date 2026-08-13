@@ -134,6 +134,8 @@ export const URLS = {
     FETCH_EDIT_SKILLS: `${PRIVATE_API_BASE_URL}/api/edit/FecthEditSkills`,
     FETCH_ALL_SKILLS: `${PRIVATE_API_BASE_URL}/api/edit/fecthAllSkills`,
     CHANGE_MONSTER_SKILLS: `${PRIVATE_API_BASE_URL}/api/edit/UpdateMonsterSkills`,
+    // 案件系
+    FETCH_JOBS: `${PRIVATE_API_BASE_URL}/api/job/get`,
     // その他
     UPLOAD_IMAGE: `${PRIVATE_API_BASE_URL}/api/common/imgUpload`
 } as const;

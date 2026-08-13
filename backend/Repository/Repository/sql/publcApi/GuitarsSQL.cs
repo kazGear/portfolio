@@ -35,6 +35,7 @@ public static class GuitarsSQL
                    guitars.src                AS Src,
                    guitars.weight             AS Weight,
                    substring(guitars.updated::text, 1, 16) AS Updated
+
               FROM
                    t_guitars AS guitars
         INNER JOIN
@@ -55,13 +56,13 @@ public static class GuitarsSQL
                    {conditions}
         /* 動的検索
                    AND maker = @maker
-                   AND name ilike '%' || @name || '%'
-                   AND series ilike '%' || @series || '%'
-                   AND color_cd = @color_cd
-                   AND body_material_top = @body_material_top_cd
+                   AND name           ilike '%' || @name || '%'
+                   AND series         ilike '%' || @series || '%'
+                   AND color_cd           = @color_cd
+                   AND body_material_top  = @body_material_top_cd
                    AND body_material_back = @body_material_back_cd
-                   AND price >= @min_price
-                   AND price <= @max_price */
+                   AND price             >= @min_price
+                   AND price             <= @max_price */
 
                    {sort}
       /* 動的ソート 

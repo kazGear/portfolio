@@ -57,7 +57,8 @@ func buildJobFrame(data map[string]string, logger *log.Logger) (*model.Job) {
     )
 
     if err != nil {
-        job.UpdatedAt = nil
+        now := time.Now().In(_jst)
+        job.UpdatedAt = &now
     } else {
         job.UpdatedAt = &updatedAt
     }

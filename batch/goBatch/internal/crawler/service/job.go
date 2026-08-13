@@ -40,7 +40,7 @@ func NewJobBoard(name     string,
 }
 
 func (g *jobCrawlerService) RunCrawler() {
-    parallelCount, _ := strconv.Atoi(os.Getenv("PARALLEL_COUNT"))
+    parallelCount, _ := strconv.Atoi(os.Getenv("PARALLEL_COUNT_JOB"))
     queue := make(chan struct{}, parallelCount) // 並列数制御
 
     jobBoards := jobBoardFactory()

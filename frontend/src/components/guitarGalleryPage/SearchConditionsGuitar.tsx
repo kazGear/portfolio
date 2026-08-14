@@ -41,13 +41,13 @@ interface ArgProps {
     callback:      (gParams: GuitarParams) => Promise<void>;
 }
 
-const SearchConditions = ({guitarRes,
-                           guitarParams,
-                           makers,
-                           series,
-                           colors,
-                           bodyMaterials,
-                           callback}: ArgProps
+const SearchConditionsGuitar = ({guitarRes,
+                                 guitarParams,
+                                 makers,
+                                 series,
+                                 colors,
+                                 bodyMaterials,
+                                 callback}: ArgProps
 ) => {
     const gParams = guitarParams;
 
@@ -128,4 +128,4 @@ const SearchConditions = ({guitarRes,
     );
 }
 
-export default SearchConditions;
+export default SearchConditionsGuitar;

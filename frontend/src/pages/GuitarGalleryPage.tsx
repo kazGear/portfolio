@@ -6,7 +6,7 @@ import { useGuitarParams } from "../hooks/useGuitarParams";
 import { createQueryParams } from "../components/guitarGalleryPage/GuitarFuncs";
 import CommonFrame from "../components/common/CommonFrame";
 import GuitarCards from "../components/guitarGalleryPage/GuitarCards";
-import SearchConditions from "../components/guitarGalleryPage/SearchConditions";
+import SearchConditionsGuitar from "../components/guitarGalleryPage/SearchConditionsGuitar";
 import DetailModal from "../components/guitarGalleryPage/DetailModal";
 import { PUBLIC_API_BASE_URL } from "../config/env"
 import useApiErrorHandler from "../hooks/useApiErrorHandler";
@@ -72,14 +72,14 @@ const GuitarGalleryPage = () => {
     return (
         <div style={{display: "flex"}}>
             <CommonFrame styleObj={{width: "20%", minWidth: "280px", height: "87vh", marginLeft: "20px"}}>
-                <SearchConditions guitarRes={guitars}
-                                  guitarParams={gParams}
-                                  makers={makers}
-                                  colors={colors}
-                                  series={series}
-                                  bodyMaterials={bodyMaterials}
-                                  callback={guitarSearchHandler}
-                                  />
+                <SearchConditionsGuitar guitarRes={guitars}
+                                        guitarParams={gParams}
+                                        makers={makers}
+                                        colors={colors}
+                                        series={series}
+                                        bodyMaterials={bodyMaterials}
+                                        callback={guitarSearchHandler}
+                                        />
             </CommonFrame>
             <CommonFrame styleObj={{width: "80%", minWidth: "280px",height: "87vh", margin: "20px 20px 0px 10px"}}>
                 <GuitarCards guitarsRes={guitars}

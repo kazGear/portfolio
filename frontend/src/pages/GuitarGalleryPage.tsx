@@ -71,7 +71,7 @@ const GuitarGalleryPage = () => {
 
     return (
         <div style={{display: "flex"}}>
-            <CommonFrame styleObj={{width: "20%", minWidth: "280px", height: "87vh", marginLeft: "20px"}}>
+            <CommonFrame styleObj={{width: "20%", minWidth: "280px", height: "87vh", margin: "20px 0px 0px 20px"}}>
                 <SearchConditionsGuitar guitarRes={guitars}
                                         guitarParams={gParams}
                                         makers={makers}

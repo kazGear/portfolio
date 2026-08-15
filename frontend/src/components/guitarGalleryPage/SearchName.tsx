@@ -15,7 +15,7 @@ const SearchName = ({guitarParams, callback, styleObj}: ArgProps) => {
         gParams.setName(e.currentTarget.value);
     }
 
-    // カラーを選択した時点で検索実行
+    // 名称を入力した時点で検索実行
     useEffect(() => {
         callback(gParams)
         gParams.setPage(1)

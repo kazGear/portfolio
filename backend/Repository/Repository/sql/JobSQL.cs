@@ -78,23 +78,12 @@
         public static string GetTotalCount(string conditions)
         {
             string SQL = @$"
-                SELECT count(v.*)
-                  FROM 
-                  (
-                   SELECT
-                          string_agg(DISTINCT f.feature_name, ','),
-                          string_agg(DISTINCT o.option, ',')
- 
-                     FROM
-                          t_jobs AS j
-               INNER JOIN
-                          t_job_features AS f
-                       ON j.id = f.job_id
-          LEFT OUTER JOIN
-                          t_job_options AS o
-                       ON j.id = o.job_id
- 
-                    WHERE TRUE
+                SELECT
+                       count(*)
+                  FROM
+                       t_jobs
+                 WHERE
+                       TRUE
 
        /* 動的検索条件 AND title            iLIKE '%' || @title || '%'
                       AND location             = @location
@@ -104,12 +93,6 @@
                       AND max_salary_at_month <= @max_salary_at_month_specified_max
                       AND work_place           = @work_place
                       AND source_site          = @source_site */
-
-                 GROUP BY
-                          j.url
-                  ) AS v
-
-                 WHERE TRUE
 
     /* 動的検索条件 AND EXISTS (
                            SELECT 1

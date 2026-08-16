@@ -113,5 +113,23 @@
             ";
             return SQL;
         }
+
+        public static string GetFeatures()
+        {
+            string SQL = @$"
+                SELECT
+                       feature_name
+                  FROM
+                       t_job_features
+                 WHERE
+                       category = @category
+              GROUP BY
+                       feature_name
+              ORDER BY
+                       feature_name ASC
+                     ;
+            ";
+            return SQL;
+        }
     }
 }

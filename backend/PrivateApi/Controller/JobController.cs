@@ -17,11 +17,18 @@ namespace PublicApi.Controllers
             _service = new JobService(configuration);
         }
 
-        [HttpGet("api/job/get")]
-        public async Task<IActionResult> Get([FromQuery] JobsRequest req)
+        [HttpGet("api/jobs/get")]
+        public async Task<IActionResult> GetJobs([FromQuery] JobsRequest req)
         {
-            JobsResponse jobs = await _service.Get(req);
+            JobsResponse jobs = await _service.GetJobs(req);
             return StatusCode(HttpStatus.OK, jobs);
+        }
+
+        [HttpGet("api/languages/get")]
+        public async Task<IActionResult> GetLanguages([FromQuery] JobsRequest req)
+        {
+            IEnumerable<string> features = await _service.GetLanguages(req);
+            return StatusCode(HttpStatus.OK, features);
         }
     }
 }

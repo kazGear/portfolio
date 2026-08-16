@@ -13,35 +13,35 @@ namespace PrivateApi.Domain.DTO
         [FromQuery(Name = "location")]
         public string? Location { get; init; }
 
-        [Range(0, 10000000)]
-        [FromQuery(Name = "min_salary_at_month_specified_min")]
+        [Range(-3, 10000000)]
+        [FromQuery(Name = "minSalaryAtMonthSpecifiedMin")]
         public string? MinSalaryAtMonthSpecifiedMin { get; init; }
 
-        [Range(0, 10000000)]
-        [FromQuery(Name = "min_salary_at_month_specified_max")]
+        [Range(-3, 10000000)]
+        [FromQuery(Name = "minSalaryAtMonthSpecifiedMax")]
         public string? MinSalaryAtMonthSpecifiedMax { get; init; }
 
-        [Range(0, 10000000)]
-        [FromQuery(Name = "max_salary_at_month_specified_min")]
+        [Range(-3, 10000000)]
+        [FromQuery(Name = "maxSalaryAtMonthSpecifiedMin")]
         public string? MaxSalaryAtMonthSpecifiedMin { get; init; }
 
-        [Range(0, 10000000)]
-        [FromQuery(Name = "max_salary_at_month_specified_max")]
+        [Range(-3, 10000000)]
+        [FromQuery(Name = "maxSalaryAtMonthSpecifiedMax")]
         public string? MaxSalaryAtMonthSpecifiedMax { get; init; }
 
         [MaxLength(10)]
-        [FromQuery(Name = "work_place")]
+        [FromQuery(Name = "workPlace")]
         public string? WorkPlace { get; init; }
 
         [MaxLength(20)]
-        [FromQuery(Name = "source_site")]
+        [FromQuery(Name = "sourceSite")]
         public string? SourceSite { get; init; }
 
-        [FromQuery(Name = "feature_name")]
-        public IEnumerable<string>? FeatureName { get; init; }
+        [FromQuery(Name = "featureNames")]
+        public IEnumerable<string>? FeatureNames { get; set; }
 
         [FromQuery(Name = "options")]
-        public IEnumerable<string>? Options { get; init; }
+        public IEnumerable<string>? Options { get; set; }
 
         [Range(1, 100)]
         [FromQuery(Name = "page")]

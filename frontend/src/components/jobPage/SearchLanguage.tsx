@@ -1,0 +1,38 @@
+import { JobParams } from "../../types/Job";
+import { ChangeEvent, useEffect } from "react";
+import CommonBreadcrumbsList from "../common/CommonBreadcrumbsList";
+import { elemAddOrRemove } from "../../lib/CommonLogic";
+
+interface ArgProps {
+    jobParams:      JobParams;
+    languages:      string[] | null;
+    searchHandler: (jParams: JobParams) => Promise<void>;
+    styleObj?:      React.CSSProperties;
+}
+
+const SearchLanguage = ({jobParams, languages, searchHandler, styleObj}: ArgProps) => {
+
+    const clickLanguageHandler = (e: ChangeEvent<HTMLInputElement>) => {
+        const clicked = e.currentTarget.value;
+        let languages = jobParams.featureNames;
+
+        languages = elemAddOrRemove(languages, clicked);
+
+        jobParams.setFeatureNames([...languages]);
+    }
+
+    // 所在地を選択した時点で検索実行
+    useEffect(() => {
+        searchHandler(jobParams)
+        jobParams.setPage(1)
+    }, [jobParams.featureNames])
+
+    return (
+        languages?.map(elem =>
+                <CommonBreadcrumbsList key={elem} value={elem} onChange={clickLanguageHandler} >
+                    {elem}
+                </CommonBreadcrumbsList>
+            )
+    );
+}
+export default SearchLanguage;

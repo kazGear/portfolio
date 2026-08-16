@@ -30,3 +30,15 @@ export const calcAge = (date: string): number => {
 
     return age;
 }
+
+/** elem: 新規要素なら追加、既存要素なら削除 */
+export const elemAddOrRemove = (array: string[], elem: string): string[] => {
+    if (array.includes(elem)) {
+        // 要素を排除
+        array = array.filter(e => e !== elem);
+    } else {
+        // 要素を追加
+        array = [...array, elem];
+    }
+    return array;
+}

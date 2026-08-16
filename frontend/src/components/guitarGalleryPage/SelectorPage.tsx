@@ -33,7 +33,7 @@ const SelectorPage = ({guitarRes, guitarParams, callback, styleObj}: ArgProps) =
                           hasPrev={res !== null ? res.hasPrev : false}
                           hasNext={res !== null ? res.hasNext : false}
                           styleObj={styleObj}>
-            <span> {res?.page} / {res?.totalPages} </span>
+            <span><input type="number" min={1} value={res?.page}/> {res?.page} / {res?.totalPages} </span>
         </CommonPagination>
     );
 }

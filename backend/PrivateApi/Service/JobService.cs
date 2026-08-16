@@ -16,7 +16,7 @@ namespace PrivateApi.Service
             _posgre = new PostgreSQL(ConnectionString.Get(Configuration));
         }
 
-        public async Task<JobsResponse> Get(JobsRequest req)
+        public async Task<JobsResponse> GetJobs(JobsRequest req)
         {
             // SQL パーツ構築
             string conditions = CreateConditions(req);
@@ -153,5 +153,16 @@ namespace PrivateApi.Service
         //    }
         //    return sortResult;
         //}
+
+        public async Task<IEnumerable<string>> GetLanguages(JobsRequest req)
+        {
+            var param = new DynamicParameters();
+            param.Add("category", "LANGUAGE");
+
+            IEnumerable<string> features =
+                await _posgre.Select<string>(JobSQL.GetFeatures(), param);
+            
+            return features;
+        }
     }
 }

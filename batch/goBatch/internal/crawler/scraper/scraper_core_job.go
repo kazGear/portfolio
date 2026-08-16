@@ -359,8 +359,8 @@ var workPlaces = []*SearchFeature{
 		Keywords: []string{
 			"客先常駐",
 			"常駐",
-			"顧客先常駐",
-			"クライアント先常駐",
+			"顧客先",
+			"クライアント先",
 			"現場常駐",
 		},
 		Patterns: []*regexp.Regexp{},

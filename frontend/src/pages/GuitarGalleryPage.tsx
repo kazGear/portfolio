@@ -3,7 +3,7 @@ import { Code } from "../types/Code";
 import { api } from "../lib/apiClient";
 import { Guitar, GuitarParams, GuitarsResponse } from "../types/Guitar";
 import { useGuitarParams } from "../hooks/useGuitarParams";
-import { createQueryParams } from "../components/guitarGalleryPage/GuitarFuncs";
+import { createQueryParamsGuitar } from "../components/guitarGalleryPage/GuitarFuncs";
 import CommonFrame from "../components/common/CommonFrame";
 import GuitarCards from "../components/guitarGalleryPage/GuitarCards";
 import SearchConditionsGuitar from "../components/guitarGalleryPage/SearchConditionsGuitar";
@@ -56,7 +56,7 @@ const GuitarGalleryPage = () => {
 
     // ギターデータ取得
     const guitarSearchHandler = useCallback( async (gParams: GuitarParams) => {
-        const queryParams = createQueryParams(gParams);
+        const queryParams = createQueryParamsGuitar(gParams);
         const resGuitars  = await api.GET<GuitarsResponse>(
             `${PUBLIC_API_BASE_URL}/public/v1/guitars?${queryParams.toString()}`
         );

@@ -316,7 +316,7 @@ func salvageWorkPlace(target string) string {
             }
         }
     }
-    return ""
+    return "常駐"
 }
 
 // 案件特徴（スキル、ロール等）

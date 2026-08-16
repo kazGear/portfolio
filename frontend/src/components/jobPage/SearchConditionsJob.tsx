@@ -1,18 +1,4 @@
-import { GuitarParams, GuitarsResponse } from "../../types/Guitar";
-import { Code } from "../../types/Code";
-// import SearchMaker from "./SearchMaker";
-// import SearchColor from "./SearchColor";
-// import SearchSeries from "./SearchSeries";
-// import SearchName from "./SearchName";
-// import SearchMaterialTop from "./SearchMaterialTop";
-// import SearchMaterialBack from "./SearchMaterialBack";
-// import SearchMinPrice from "./SearchMinPrice";
-// import SearchMaxPrice from "./SearchMaxPrice";
 import styled from "styled-components";
-// import SelectorOrder from "./SelectorOrder";
-// import SelectorSort from "./SelectorSort";
-// import SelectorPage from "./SelectorPage";
-// import SelectorPageSize from "./SelectorPageSize";
 import CommonBorderTr from "../common/CommonBorderTr";
 import { JobParams, JobsResponse } from "../../types/Job";
 import SearchTitle from "./SearchTitle";
@@ -23,7 +9,7 @@ import SearchMinSalarySpecifiedMin from "./SearchMinSalarySpecifiedMin";
 import SearchMaxSalarySpecifiedMin from "./SearchMaxSalarySpecifiedMin";
 import SearchMaxSalarySpecifiedMax from "./SearchMaxSalarySpecifiedMax";
 import SearchSourceSite from "./SearchSourceSite";
-import SearchLanguage from "./SearchLanguage";
+import SearchFeatures from "./SearchFeatures";
 import SelectorPageSize from "./SelectorPageSize";
 import SelectorPage from "./SelectorPage";
 
@@ -44,15 +30,25 @@ const styleObj = {
 }
 
 interface ArgProps {
-    jobsRes:        JobsResponse | null;
-    jobParams:      JobParams;
-    languages:      string[] | null;
+    jobsRes:          JobsResponse | null;
+    jobParams:        JobParams;
+    languages:        string[] | null;
+    frameworkLibrary: string[] | null;
+    role:             string[] | null;
+    infrastructure:   string[] | null;
+    database:         string[] | null;
+    cloud:            string[] | null;
     searchHandler: (jParams: JobParams) => Promise<void>;
 }
 
 const SearchConditionsJob = ({jobsRes,
                               jobParams,
                               languages,
+                              frameworkLibrary,
+                              role,
+                              infrastructure,
+                              database,
+                              cloud,
                               searchHandler
 }: ArgProps) => {
 
@@ -132,8 +128,48 @@ const SearchConditionsJob = ({jobsRes,
                     <CommonBorderTr>
                         <Th>言語</Th>
                         <Td>
-                            <SearchLanguage jobParams={jobParams}
-                                            languages={languages}
+                            <SearchFeatures jobParams={jobParams}
+                                            features={languages}
+                                            searchHandler={searchHandler} />
+                        </Td>
+                    </CommonBorderTr>
+                    <CommonBorderTr>
+                        <Th>ロール</Th>
+                        <Td>
+                            <SearchFeatures jobParams={jobParams}
+                                            features={role}
+                                            searchHandler={searchHandler} />
+                        </Td>
+                    </CommonBorderTr>
+                    <CommonBorderTr>
+                        <Th>インフラ</Th>
+                        <Td>
+                            <SearchFeatures jobParams={jobParams}
+                                            features={infrastructure}
+                                            searchHandler={searchHandler} />
+                        </Td>
+                    </CommonBorderTr>
+                    <CommonBorderTr>
+                        <Th>DB</Th>
+                        <Td>
+                            <SearchFeatures jobParams={jobParams}
+                                            features={database}
+                                            searchHandler={searchHandler} />
+                        </Td>
+                    </CommonBorderTr>
+                    <CommonBorderTr>
+                        <Th>クラウド</Th>
+                        <Td>
+                            <SearchFeatures jobParams={jobParams}
+                                            features={cloud}
+                                            searchHandler={searchHandler} />
+                        </Td>
+                    </CommonBorderTr>
+                    <CommonBorderTr>
+                        <Th>frame and library</Th>
+                        <Td>
+                            <SearchFeatures jobParams={jobParams}
+                                            features={frameworkLibrary}
                                             searchHandler={searchHandler} />
                         </Td>
                     </CommonBorderTr>

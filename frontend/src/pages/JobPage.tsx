@@ -1,4 +1,3 @@
-import styled from "styled-components";
 import { URLS } from "../lib/Constants";
 import { useCallback, useEffect, useState } from "react";
 import { api } from "../lib/apiClient";
@@ -11,9 +10,15 @@ import { useJobParams } from "../hooks/useJobParams";
 import { createQueryParamsJob } from "../components/jobPage/JobFuncs";
 
 const JobPage = () => {
-    const [jobs, setJobs]         = useState<JobsResponse | null>(null);
-    const [languages, setLanguages] = useState<string[] | null>([]);
-    const jobParams: JobParams    = useJobParams();
+    const [jobs, setJobs]                         = useState<JobsResponse | null>(null);
+    const [languages, setLanguages]               = useState<string[] | null>([]);
+    const [frameworkLibrary, setFrameworkLibrary] = useState<string[] | null>([]);
+    const [role, setRole]                         = useState<string[] | null>([]);
+    const [infrastructure, setInfrastructure]     = useState<string[] | null>([]);
+    const [database, setDatabase]                 = useState<string[] | null>([]);
+    const [cloud, setCloud]                       = useState<string[] | null>([]);
+
+    const jobParams: JobParams = useJobParams();
 
     const errorHandler = useApiErrorHandler();
 
@@ -22,7 +27,25 @@ const JobPage = () => {
      */
     useEffect(() => {
         api.GET<JobsResponse>(URLS.FETCH_JOBS).then(result => setJobs(result)).catch(errorHandler);
-        api.GET<string[]>(URLS.FETCH_LANGUAGE).then(result => setLanguages(result)).catch(errorHandler);
+
+        api.GET<string[]>(URLS.FETCH_FEATURES + "?category=LANGUAGE")
+           .then(result => setLanguages(result))
+           .catch(errorHandler);
+        api.GET<string[]>(URLS.FETCH_FEATURES + "?category=FRAMEWORK_LIBRARY")
+           .then(result => setFrameworkLibrary(result))
+           .catch(errorHandler);
+        api.GET<string[]>(URLS.FETCH_FEATURES + "?category=ROLE")
+           .then(result => setRole(result))
+           .catch(errorHandler);
+        api.GET<string[]>(URLS.FETCH_FEATURES + "?category=INFRASTRUCTURE")
+           .then(result => setInfrastructure(result))
+           .catch(errorHandler);
+        api.GET<string[]>(URLS.FETCH_FEATURES + "?category=DATABASE")
+           .then(result => setDatabase(result))
+           .catch(errorHandler);
+        api.GET<string[]>(URLS.FETCH_FEATURES + "?category=CLOUD")
+           .then(result => setCloud(result))
+           .catch(errorHandler);
     }, []);
 
     // 案件データ取得
@@ -38,6 +61,11 @@ const JobPage = () => {
                 <SearchConditionsJob jobsRes={jobs}
                                      jobParams={jobParams}
                                      languages={languages}
+                                     frameworkLibrary={frameworkLibrary}
+                                     role={role}
+                                     infrastructure={infrastructure}
+                                     database={database}
+                                     cloud={cloud}
                                      searchHandler={jobSearchHandler}/>
             </CommonFrame>
             <CommonFrame styleObj={{width: "60%", minWidth: "360px",height: "87vh", margin: "20px 20px 0px 10px"}}>

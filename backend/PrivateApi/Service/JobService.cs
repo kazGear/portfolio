@@ -154,10 +154,10 @@ namespace PrivateApi.Service
         //    return sortResult;
         //}
 
-        public async Task<IEnumerable<string>> GetLanguages(JobsRequest req)
+        public async Task<IEnumerable<string>> GetFeatures(string category)
         {
             var param = new DynamicParameters();
-            param.Add("category", "LANGUAGE");
+            param.Add("category", category);
 
             IEnumerable<string> features =
                 await _posgre.Select<string>(JobSQL.GetFeatures(), param);

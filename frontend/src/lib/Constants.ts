@@ -136,7 +136,7 @@ export const URLS = {
     CHANGE_MONSTER_SKILLS: `${PRIVATE_API_BASE_URL}/api/edit/UpdateMonsterSkills`,
     // 案件系
     FETCH_JOBS: `${PRIVATE_API_BASE_URL}/api/jobs/get`,
-    FETCH_LANGUAGE: `${PRIVATE_API_BASE_URL}/api/languages/get`,
+    FETCH_FEATURES: `${PRIVATE_API_BASE_URL}/api/features/get`,
     // その他
     UPLOAD_IMAGE: `${PRIVATE_API_BASE_URL}/api/common/imgUpload`
 } as const;

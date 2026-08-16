@@ -5,12 +5,12 @@ import { elemAddOrRemove } from "../../lib/CommonLogic";
 
 interface ArgProps {
     jobParams:      JobParams;
-    languages:      string[] | null;
+    features:       string[] | null;
     searchHandler: (jParams: JobParams) => Promise<void>;
     styleObj?:      React.CSSProperties;
 }
 
-const SearchLanguage = ({jobParams, languages, searchHandler, styleObj}: ArgProps) => {
+const SearchFeatures = ({jobParams, features, searchHandler, styleObj}: ArgProps) => {
 
     const clickLanguageHandler = (e: ChangeEvent<HTMLInputElement>) => {
         const clicked = e.currentTarget.value;
@@ -28,11 +28,11 @@ const SearchLanguage = ({jobParams, languages, searchHandler, styleObj}: ArgProp
     }, [jobParams.featureNames])
 
     return (
-        languages?.map(elem =>
+        features?.map(elem =>
                 <CommonBreadcrumbsList key={elem} value={elem} onChange={clickLanguageHandler} >
                     {elem}
                 </CommonBreadcrumbsList>
             )
     );
 }
-export default SearchLanguage;
+export default SearchFeatures;

@@ -24,10 +24,10 @@ namespace PublicApi.Controllers
             return StatusCode(HttpStatus.OK, jobs);
         }
 
-        [HttpGet("api/languages/get")]
-        public async Task<IActionResult> GetLanguages([FromQuery] JobsRequest req)
+        [HttpGet("api/features/get")]
+        public async Task<IActionResult> GetFeatures([FromQuery] string category)
         {
-            IEnumerable<string> features = await _service.GetLanguages(req);
+            IEnumerable<string> features = await _service.GetFeatures(category);
             return StatusCode(HttpStatus.OK, features);
         }
     }

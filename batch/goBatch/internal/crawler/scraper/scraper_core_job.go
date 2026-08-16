@@ -354,7 +354,7 @@ var workPlaces = []*SearchFeature{
 		Patterns: []*regexp.Regexp{},
 	},
 	{
-		Name:     "客先常駐",
+		Name:     "常駐",
 		Category: C.Language,
 		Keywords: []string{
 			"客先常駐",

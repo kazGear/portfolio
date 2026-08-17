@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { COLORS } from "../../lib/Constants";
 import { Guitar } from "../../types/Guitar";
-import { getColorString, parsePrice } from "./GuitarFuncs";
+import { getColorString, parseGuitarPrice } from "./GuitarFuncs";
 
 const CardFrame = styled.div`
     font-weight: 900;
@@ -69,7 +69,7 @@ const GuitarCard = ({guitar, callback}: ArgProps) => {
                         {guitar?.name}
                     </H3>
                     <P>{guitar?.color}</P>
-                    <p>{parsePrice(guitar?.price)}</p>
+                    <p>{parseGuitarPrice(guitar?.price)}</p>
                 </div>
             </CardFrame>
         </Button>

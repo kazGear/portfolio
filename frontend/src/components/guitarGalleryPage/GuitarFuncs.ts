@@ -46,7 +46,7 @@ export const createQueryParamsGuitar = (gParams: GuitarParams): URLSearchParams 
     return uParams;
 }
 
-export const parsePrice = (price: number | undefined): string => {
+export const parseGuitarPrice = (price: number | undefined): string => {
     if (price === undefined) return String(price);
 
     let result: string;

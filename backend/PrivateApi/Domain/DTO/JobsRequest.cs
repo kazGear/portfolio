@@ -50,5 +50,8 @@ namespace PrivateApi.Domain.DTO
         [Range(10, 100)]
         [FromQuery(Name = "pageSize")]
         public int PageSize { get; init; } = 50; // 大量取得防止
+
+        [FromQuery(Name = "isHideOldJob")]
+        public bool IsHideOldJob { get; init; } = true;
     }
 }

@@ -5,10 +5,10 @@
     /// </summary>
     public static class JobSQL
     {
-        public static string SelectJobs()
+        public static string SelectJobs(string conditions, string featureConditions)
         {
             // 検索結果の案件カード用
-            string SQL = @"
+            string SQL = @$"
                 SELECT v.*
                   FROM 
                   (
@@ -32,26 +32,30 @@
                INNER JOIN
                           t_job_features AS f
                        ON j.id = f.job_id
+        
           LEFT OUTER JOIN
                           t_job_options AS o
                        ON j.id = o.job_id
  
                     WHERE TRUE
+                         {conditions}
 
        /* 動的検索条件 AND title            iLIKE '%' || @title || '%'
-                      AND location             = @location
-                      AND min_salary_at_month >= @min_salary_at_month_specified_min
-                      AND min_salary_at_month <= @min_salary_at_month_specified_max
-                      AND max_salary_at_month >= @max_salary_at_month_specified_min
-                      AND max_salary_at_month <= @max_salary_at_month_specified_max
-                      AND work_place           = @work_place
-                      AND source_site          = @source_site */
+                      AND location              = @location
+                      AND min_salary_at_month  >= @min_salary_at_month_specified_min
+                      AND min_salary_at_month  <= @min_salary_at_month_specified_max
+                      AND max_salary_at_month  >= @max_salary_at_month_specified_min
+                      AND max_salary_at_month  <= @max_salary_at_month_specified_max
+                      AND work_place            = @work_place
+                      AND source_site           = @source_site 
+                      AND NOW() - j.updated_at <= '3 month' */
 
                  GROUP BY
                           j.url
                   ) AS v
 
                  WHERE TRUE
+                      {featureConditions}
 
     /* 動的検索条件 AND EXISTS (
                            SELECT 1
@@ -61,52 +65,42 @@
                      )
                      ... */
 
-    /* 動的検索条件 AND EXISTS (
-                           SELECT 1
-                             FROM t_job_options AS o
-                            WHERE v.id = o.job_id
-                              AND o.option = @options
-                     )
-                     ... */
-
-                 LIMIT 50 --:limit
+                 LIMIT
+                       @page_size
+                OFFSET
+                       (@page - 1) * @page_size -- ページネーション
                      ;
             ";
             return SQL;
         }
 
-        public static string GetTotalCount(string conditions)
+        public static string GetTotalCount(string conditions, string featureConditions)
         {
             string SQL = @$"
                 SELECT
                        count(*)
                   FROM
-                       t_jobs
+                       t_jobs AS v -- サブクエリのテーブル名に合わせておく
                  WHERE
                        TRUE
+                      {conditions}
 
        /* 動的検索条件 AND title            iLIKE '%' || @title || '%'
-                      AND location             = @location
-                      AND min_salary_at_month >= @min_salary_at_month_specified_min
-                      AND min_salary_at_month <= @min_salary_at_month_specified_max
-                      AND max_salary_at_month >= @max_salary_at_month_specified_min
-                      AND max_salary_at_month <= @max_salary_at_month_specified_max
-                      AND work_place           = @work_place
-                      AND source_site          = @source_site */
+                      AND location              = @location
+                      AND min_salary_at_month  >= @min_salary_at_month_specified_min
+                      AND min_salary_at_month  <= @min_salary_at_month_specified_max
+                      AND max_salary_at_month  >= @max_salary_at_month_specified_min
+                      AND max_salary_at_month  <= @max_salary_at_month_specified_max
+                      AND work_place            = @work_place
+                      AND source_site           = @source_site 
+                      AND NOW() - j.updated_at <= '3 month' */
 
+                      {featureConditions}
     /* 動的検索条件 AND EXISTS (
                            SELECT 1
                              FROM t_job_features AS f
                             WHERE v.id = f.job_id
                               AND f.feature_name = @feature_name
-                     )
-                     ... */
-
-    /* 動的検索条件 AND EXISTS (
-                           SELECT 1
-                             FROM t_job_options AS o
-                            WHERE v.id = o.job_id
-                              AND o.option = @options
                      )
                      ... */
                      ;

@@ -19,19 +19,20 @@ namespace PrivateApi.Service
         public async Task<JobsResponse> GetJobs(JobsRequest req)
         {
             // SQL パーツ構築
-            string conditions = CreateConditions(req);
-            //string order = CreateOrder(req);
-            //string sort = CreateSortTarget(req, order);
+            string conditions        = CreateConditions(req);
+            string featureConditions = CreateFeatureConditions(req);
 
             DynamicParameters param = CreateParams(req);
 
             // 案件情報取得
             IEnumerable<JobDTO> jobs =
-                await _posgre.Select<JobDTO>(JobSQL.SelectJobs()/*, param*/);
+                await _posgre.Select<JobDTO>(
+                    JobSQL.SelectJobs(conditions, featureConditions), param);
 
             // 検索総件数
             int totalCount =
-                (await _posgre.Select<int>(JobSQL.GetTotalCount(conditions), param)).First();
+                (await _posgre.Select<int>(
+                    JobSQL.GetTotalCount(conditions, featureConditions), param)).First();
 
             // csvを分離する
             SplitFeatures(jobs);
@@ -72,17 +73,22 @@ namespace PrivateApi.Service
         {
             var param = new DynamicParameters();
 
-            //param.Add("maker", req.MakerCd);
-            //param.Add("name", string.IsNullOrWhiteSpace(req.Name) ? null : $"%{req.Name}%");
-            //param.Add("series", string.IsNullOrWhiteSpace(req.Series) ? null : $"%{req.Series}%");
-            //param.Add("color_cd", req.ColorCd);
-            //param.Add("body_material_top_cd", req.BodyMaterialTopCd);
-            //param.Add("body_material_back_cd", req.BodyMaterialBackCd);
-            //param.Add("min_price", req.MinPrice);
-            //param.Add("max_price", req.MaxPrice);
-            //param.Add("page", req.Page);
-            //param.Add("page_size", req.PageSize);
+            param.Add("title", $"%{req.Title}%");
+            param.Add("location", req.Location);
+            param.Add("min_salary_at_month_specified_min", req.MinSalaryAtMonthSpecifiedMin);
+            param.Add("min_salary_at_month_specified_max", req.MinSalaryAtMonthSpecifiedMax);
+            param.Add("max_salary_at_month_specified_min", req.MaxSalaryAtMonthSpecifiedMin);
+            param.Add("max_salary_at_month_specified_max", req.MaxSalaryAtMonthSpecifiedMax);
+            param.Add("Work_place", req.WorkPlace);
+            param.Add("source_site", req.SourceSite);
+            param.Add("page", req.Page);
+            param.Add("page_size", req.PageSize);
+            param.Add("is_hide_old_job", req.IsHideOldJob);
 
+            foreach (string feature in req.FeatureNames)
+            {
+                param.Add(feature, feature);
+            }
             return param;
         }
 
@@ -90,69 +96,66 @@ namespace PrivateApi.Service
         {
             StringBuilder conditions = new StringBuilder();
 
-            //if (req.MakerCd != null)
-            //{
-            //    conditions.AppendLine("AND maker = @maker");
-            //}
-            //if (!string.IsNullOrWhiteSpace(req.Name))
-            //{
-            //    conditions.AppendLine($"AND guitars.name ilike @name");
-            //}
-            //if (!string.IsNullOrWhiteSpace(req.Series))
-            //{
-            //    conditions.AppendLine("AND series ilike @series");
-            //}
-            //if (req.ColorCd != null)
-            //{
-            //    conditions.AppendLine("AND color_cd = @color_cd");
-            //}
-            //if (req.BodyMaterialTopCd != null && req.BodyMaterialTopCd >= 0)
-            //{
-            //    conditions.AppendLine("AND body_material_top = @body_material_top_cd");
-            //}
-            //if (req.BodyMaterialBackCd != null && req.BodyMaterialBackCd >= 0)
-            //{
-            //    conditions.AppendLine("AND body_material_back = @body_material_back_cd");
-            //}
-            //if (req.MinPrice != null)
-            //{
-            //    conditions.AppendLine("AND price >= @min_price");
-            //}
-            //if (req.MaxPrice != null)
-            //{
-            //    conditions.AppendLine("AND price <= @max_price");
-            //}
+            if (!string.IsNullOrWhiteSpace(req.Title))
+            {
+                conditions.AppendLine("AND title iLIKE @title");
+            }
+            if (!string.IsNullOrWhiteSpace(req.Location))
+            {
+                conditions.AppendLine($"AND location = @location");
+            }
+            if (!string.IsNullOrWhiteSpace(req.MinSalaryAtMonthSpecifiedMin))
+            {
+                conditions.AppendLine("AND min_salary_at_month >= @min_salary_at_month_specified_min::int");
+            }
+            if (!string.IsNullOrWhiteSpace(req.MinSalaryAtMonthSpecifiedMax))
+            {
+                conditions.AppendLine("AND min_salary_at_month <= @min_salary_at_month_specified_max::int");
+            }
+            if (!string.IsNullOrWhiteSpace(req.MaxSalaryAtMonthSpecifiedMin))
+            {
+                conditions.AppendLine("AND max_salary_at_month >= @max_salary_at_month_specified_min::int");
+            }
+            if (!string.IsNullOrWhiteSpace(req.MaxSalaryAtMonthSpecifiedMax))
+            {
+                conditions.AppendLine("AND max_salary_at_month <= @max_salary_at_month_specified_max::int");
+            }
+            if (!string.IsNullOrWhiteSpace(req.WorkPlace))
+            {
+                conditions.AppendLine($"AND work_place = @work_place");
+            }
+            if (!string.IsNullOrWhiteSpace(req.SourceSite))
+            {
+                conditions.AppendLine($"AND source_site = @source_site");
+            }
+            if (req.IsHideOldJob)
+            {
+                // 掲載するのは更新日（取得日）から○○ヵ月以内の案件
+                conditions.AppendLine($"AND NOW() - updated_at <= '3 month'");
+            }
             return conditions.ToString();
         }
 
-        //private string CreateOrder(GuitarsRequest req)
-        //{
-        //    // 基本は昇順
-        //    return req.Order == "DESC" ? "DESC" : "ASC";
-        //}
+        private string CreateFeatureConditions(JobsRequest req)
+        {
+            StringBuilder conditions = new StringBuilder();
 
-        //private string CreateSortTarget(GuitarsRequest req, string order)
-        //{
-        //    string sortResult = string.Empty;
+            foreach (string feature in req.FeatureNames)
+            {
+                string SQL = @$"
+                    AND EXISTS
+                        (
+                           SELECT 1
+                             FROM t_job_features AS f
+                            WHERE v.id = f.job_id
+                              AND f.feature_name = @{feature}
+                        )
+                ";
+                conditions.AppendLine(SQL);
+            }
 
-        //    if (req.Sort == "maker")
-        //    {
-        //        sortResult = $" ORDER BY maker {order}, name ASC ";
-        //    }
-        //    else if (req.Sort == "name")
-        //    {
-        //        sortResult = $" ORDER BY name {order} ";
-        //    }
-        //    else if (req.Sort == "price")
-        //    {
-        //        sortResult = $" ORDER BY price {order}, name ASC  ";
-        //    }
-        //    else
-        //    {
-        //        sortResult = $" ORDER BY name ASC ";
-        //    }
-        //    return sortResult;
-        //}
+            return conditions.ToString();
+        }
 
         public async Task<IEnumerable<string>> GetFeatures(string category)
         {

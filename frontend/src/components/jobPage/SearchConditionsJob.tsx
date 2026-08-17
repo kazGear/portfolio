@@ -12,6 +12,7 @@ import SearchSourceSite from "./SearchSourceSite";
 import SearchFeatures from "./SearchFeatures";
 import SelectorPageSize from "./SelectorPageSize";
 import SelectorPage from "./SelectorPage";
+import HideOldJob from "./HideOldJob";
 
 const Th = styled.th`
     text-align: left;
@@ -64,6 +65,14 @@ const SearchConditionsJob = ({jobsRes,
                     </CommonBorderTr>
                 </thead>
                 <tbody>
+                    <CommonBorderTr>
+                        <Th>古い案件</Th>
+                        <Td>
+                            <HideOldJob jobParams={jobParams}
+                                         searchHandler={searchHandler}
+                                         styleObj={{margin: "7px 0px 7px 20px"}} />
+                        </Td>
+                    </CommonBorderTr>
                     <CommonBorderTr>
                         <Th>タイトル</Th>
                         <Td>

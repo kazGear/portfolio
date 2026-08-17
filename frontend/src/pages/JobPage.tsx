@@ -52,6 +52,7 @@ const JobPage = () => {
     const jobSearchHandler = useCallback( async (jobParams: JobParams) => {
         const queryParams = createQueryParamsJob(jobParams);
         const resJobs     = await api.GET<JobsResponse>(`${URLS.FETCH_JOBS}?${queryParams.toString()}`);
+
         setJobs(resJobs);
     }, []);
 
@@ -69,7 +70,6 @@ const JobPage = () => {
                                      searchHandler={jobSearchHandler}/>
             </CommonFrame>
             <CommonFrame styleObj={{width: "60%", minWidth: "360px",height: "87vh", margin: "20px 20px 0px 10px"}}>
-
                 <JobCards jobsRes={jobs} />
             </CommonFrame>
         </div>

@@ -42,6 +42,8 @@ export const createQueryParamsJob = (jobParams: JobParams): URLSearchParams => {
     if (10 <= jobParams.pageSize && jobParams.pageSize <= 100)
         uParams.append("pageSize", jobParams.pageSize.toString());
 
+    uParams.append("isHideOldJob", jobParams.isHideOldJob.toString());
+
     // 複数の同一キーで登録した場合、フレームによっては配列として受け取れる
     jobParams.featureNames.forEach(feature => uParams.append("featureNames", feature));
 

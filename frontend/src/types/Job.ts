@@ -39,6 +39,7 @@ export type JobParams = {
     options:      string[];
     page:         number;
     pageSize:     number;
+    isHideOldJob: boolean;
 
     setTitle:        React.Dispatch<React.SetStateAction<string>>;
     setLocation:     React.Dispatch<React.SetStateAction<string>>;
@@ -52,4 +53,5 @@ export type JobParams = {
     setOptions:      React.Dispatch<React.SetStateAction<string[]>>;
     setPage:         React.Dispatch<React.SetStateAction<number>>;
     setPageSize:     React.Dispatch<React.SetStateAction<number>>;
+    setIsHideOldJob: React.Dispatch<React.SetStateAction<boolean>>;
 };

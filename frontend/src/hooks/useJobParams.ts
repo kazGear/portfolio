@@ -15,6 +15,7 @@ export const useJobParams = () => {
     const [options, setOptions]           = useState<string[]>([]);
     const [page, setPage]                 = useState<number>(1);
     const [pageSize, setPageSize]         = useState<number>(50);
+    const [isHideOldJob, setIsHideOldJob] = useState<boolean>(true); // チェックボックスもONにしておく
 
     const params: JobParams = {
         title:        title,
@@ -29,6 +30,7 @@ export const useJobParams = () => {
         options:      options,
         page:         page,
         pageSize:     pageSize,
+        isHideOldJob: isHideOldJob,
 
         setTitle:        setTitle,
         setLocation:     setLocation,
@@ -42,6 +44,7 @@ export const useJobParams = () => {
         setOptions:      setOptions,
         setPage:         setPage,
         setPageSize:     setPageSize,
+        setIsHideOldJob: setIsHideOldJob,
     };
     return params;
 }

@@ -20,6 +20,9 @@ namespace PublicApi.Controllers
         [HttpGet("api/jobs/get")]
         public async Task<IActionResult> GetJobs([FromQuery] JobsRequest req)
         {
+            // nullÉKÅ[Éh
+            req.FeatureNames = req.FeatureNames ?? [];
+
             JobsResponse jobs = await _service.GetJobs(req);
             return StatusCode(HttpStatus.OK, jobs);
         }

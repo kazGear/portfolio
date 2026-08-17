@@ -78,7 +78,7 @@ const GuitarGalleryPage = () => {
                                         colors={colors}
                                         series={series}
                                         bodyMaterials={bodyMaterials}
-                                        callback={guitarSearchHandler}
+                                        searchHandler={guitarSearchHandler}
                                         />
             </CommonFrame>
             <CommonFrame styleObj={{width: "80%", minWidth: "280px",height: "87vh", margin: "20px 20px 0px 10px"}}>

@@ -3,11 +3,11 @@ import CommonSelect from "../common/CommonSelect";
 import { ChangeEvent, useEffect } from "react";
 
 interface ArgProps {
-    guitarParams: GuitarParams;
-    callback:     (gParams: GuitarParams) => Promise<void>;
+    guitarParams:   GuitarParams;
+    searchHandler: (gParams: GuitarParams) => Promise<void>;
 }
 
-const SelectorSort = ({guitarParams, callback}: ArgProps) => {
+const SelectorSort = ({guitarParams, searchHandler}: ArgProps) => {
     const gParams = guitarParams;
 
     const changeSortHandler = (e: ChangeEvent<HTMLSelectElement>) => {
@@ -16,7 +16,7 @@ const SelectorSort = ({guitarParams, callback}: ArgProps) => {
 
     // ソートを設定した時点で検索実行
     useEffect(() => {
-        callback(gParams)
+        searchHandler(gParams)
     }, [gParams.sort])
 
     return (

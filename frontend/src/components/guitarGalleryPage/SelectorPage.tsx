@@ -3,14 +3,14 @@ import { GuitarParams, GuitarsResponse } from "../../types/Guitar";
 import CommonPagination from "../common/CommonPagination";
 
 interface ArgProps {
-    guitarRes:    GuitarsResponse | null;
-    guitarParams: GuitarParams;
-    callback:     (gParams: GuitarParams) => Promise<void>;
-    styleObj?   : React.CSSProperties;
+    guitarRes:      GuitarsResponse | null;
+    guitarParams:   GuitarParams;
+    searchHandler: (gParams: GuitarParams) => Promise<void>;
+    styleObj?:      React.CSSProperties;
 
 }
 
-const SelectorPage = ({guitarRes, guitarParams, callback, styleObj}: ArgProps) => {
+const SelectorPage = ({guitarRes, guitarParams, searchHandler, styleObj}: ArgProps) => {
     const res     = guitarRes;
     const gParams = guitarParams;
 
@@ -24,7 +24,7 @@ const SelectorPage = ({guitarRes, guitarParams, callback, styleObj}: ArgProps) =
 
     // ページを変更した時点で検索実行
     useEffect(() => {
-        callback(gParams)
+        searchHandler(gParams)
     }, [gParams.page])
 
     return (
@@ -33,7 +33,7 @@ const SelectorPage = ({guitarRes, guitarParams, callback, styleObj}: ArgProps) =
                           hasPrev={res !== null ? res.hasPrev : false}
                           hasNext={res !== null ? res.hasNext : false}
                           styleObj={styleObj}>
-            <span><input type="number" min={1} value={res?.page}/> {res?.page} / {res?.totalPages} </span>
+            <span> {res?.page} / {res?.totalPages} </span>
         </CommonPagination>
     );
 }

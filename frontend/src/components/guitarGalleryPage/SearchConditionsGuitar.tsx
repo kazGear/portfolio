@@ -38,7 +38,7 @@ interface ArgProps {
     series:        Code[] | null;
     colors:        Code[] | null;
     bodyMaterials: Code[] | null;
-    callback:      (gParams: GuitarParams) => Promise<void>;
+    searchHandler: (gParams: GuitarParams) => Promise<void>;
 }
 
 const SearchConditionsGuitar = ({guitarRes,
@@ -47,12 +47,12 @@ const SearchConditionsGuitar = ({guitarRes,
                                  series,
                                  colors,
                                  bodyMaterials,
-                                 callback}: ArgProps
+                                 searchHandler}: ArgProps
 ) => {
     const gParams = guitarParams;
 
     return (
-        <div style={{margin: "10px", overflow: "hidden"}}>
+        <div style={{margin: "10px"}}>
             <table>
                 <thead>
                     <CommonBorderTr>
@@ -63,57 +63,85 @@ const SearchConditionsGuitar = ({guitarRes,
                 <tbody>
                     <CommonBorderTr>
                         <Th>メーカー</Th>
-                        <Td><SearchMaker guitarParams={gParams} makers={makers} callback={callback}/></Td>
+                        <Td>
+                            <SearchMaker guitarParams={gParams}
+                                         makers={makers}
+                                         searchHandler={searchHandler}/>
+                        </Td>
                     </CommonBorderTr>
                     <CommonBorderTr>
                         <Th>カラー</Th>
-                        <Td><SearchColor guitarParams={gParams} colors={colors} callback={callback}/></Td>
+                        <Td>
+                            <SearchColor guitarParams={gParams}
+                                         colors={colors}
+                                         searchHandler={searchHandler}/>
+                        </Td>
                     </CommonBorderTr>
                     <CommonBorderTr>
                         <Th>シリーズ</Th>
-                        <Td><SearchSeries guitarParams={gParams} series={series} callback={callback}/></Td>
+                        <Td>
+                            <SearchSeries guitarParams={gParams}
+                                          series={series}
+                                          searchHandler={searchHandler}/>
+                        </Td>
                     </CommonBorderTr>
                     <CommonBorderTr>
                         <Th>ギター名</Th>
-                        <Td><SearchName guitarParams={gParams} callback={callback} styleObj={styleObj}/></Td>
+                        <Td>
+                            <SearchName guitarParams={gParams}
+                                        searchHandler={searchHandler}
+                                        styleObj={styleObj}/>
+                        </Td>
                     </CommonBorderTr>
                     <CommonBorderTr>
                         <Th>トップ材</Th>
                         <Td><SearchMaterialTop guitarParams={gParams}
                                                materials={bodyMaterials}
-                                               callback={callback}/></Td>
+                                               searchHandler={searchHandler}/></Td>
                     </CommonBorderTr>
                     <CommonBorderTr>
                         <Th>ボディ材</Th>
                         <Td><SearchMaterialBack guitarParams={gParams}
                                                 materials={bodyMaterials}
-                                                callback={callback}/></Td>
+                                                searchHandler={searchHandler}/></Td>
                     </CommonBorderTr>
                     <CommonBorderTr>
                         <Th>最低価格</Th>
-                        <Td><SearchMinPrice guitarParams={gParams} callback={callback} styleObj={styleObj}/></Td>
+                        <Td>
+                            <SearchMinPrice guitarParams={gParams}
+                                            searchHandler={searchHandler}
+                                            styleObj={styleObj}/>
+                        </Td>
                     </CommonBorderTr>
                     <CommonBorderTr>
                         <Th>最大価格</Th>
-                        <Td><SearchMaxPrice guitarParams={gParams} callback={callback} styleObj={styleObj}/></Td>
+                        <Td>
+                            <SearchMaxPrice guitarParams={gParams}
+                                            searchHandler={searchHandler}
+                                            styleObj={styleObj}/>
+                        </Td>
                     </CommonBorderTr>
                     <CommonBorderTr>
                         <Th>ソート</Th>
-                        <Td><SelectorSort guitarParams={gParams} callback={callback}/></Td>
+                        <Td><SelectorSort guitarParams={gParams} searchHandler={searchHandler}/></Td>
                     </CommonBorderTr>
                     <CommonBorderTr>
                         <Th>並び順</Th>
-                        <Td><SelectorOrder guitarParams={gParams} callback={callback}/></Td>
+                        <Td><SelectorOrder guitarParams={gParams} searchHandler={searchHandler}/></Td>
                     </CommonBorderTr>
                     <CommonBorderTr>
                         <Th>ページサイズ</Th>
-                        <Td><SelectorPageSize guitarParams={gParams} callback={callback} styleObj={styleObj}/></Td>
+                        <Td>
+                            <SelectorPageSize guitarParams={gParams}
+                                              searchHandler={searchHandler}
+                                              styleObj={styleObj}/>
+                        </Td>
                     </CommonBorderTr>
                     <CommonBorderTr>
                         <Th>選択ページ</Th>
                         <Td><SelectorPage guitarParams={gParams}
                                           guitarRes={guitarRes}
-                                          callback={callback}
+                                          searchHandler={searchHandler}
                                           styleObj={{margin: "0px 0px 6px 15px"}}/></Td>
                     </CommonBorderTr>
                     <CommonBorderTr>

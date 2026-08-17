@@ -3,11 +3,11 @@ import CommonSelect from "../common/CommonSelect";
 import { ChangeEvent, useEffect } from "react";
 
 interface ArgProps {
-    guitarParams: GuitarParams;
-    callback:     (gParams: GuitarParams) => Promise<void>;
+    guitarParams:   GuitarParams;
+    searchHandler: (gParams: GuitarParams) => Promise<void>;
 }
 
-const SelectorOrder = ({guitarParams, callback}: ArgProps) => {
+const SelectorOrder = ({guitarParams, searchHandler}: ArgProps) => {
     const gParams = guitarParams;
 
     const changeOrderHandler = (e: ChangeEvent<HTMLSelectElement>) => {
@@ -16,7 +16,7 @@ const SelectorOrder = ({guitarParams, callback}: ArgProps) => {
 
     // 並び順を設定した時点で検索実行
     useEffect(() => {
-        callback(gParams)
+        searchHandler(gParams)
     }, [gParams.order])
 
     return (

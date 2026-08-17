@@ -4,12 +4,12 @@ import CommonSelect from "../common/CommonSelect";
 import { ChangeEvent, useEffect } from "react";
 
 interface ArgProps {
-    guitarParams: GuitarParams;
-    materials:    Code[] | null;
-    callback:     (gParams: GuitarParams) => Promise<void>;
+    guitarParams:   GuitarParams;
+    materials:      Code[] | null;
+    searchHandler: (gParams: GuitarParams) => Promise<void>;
 }
 
-const SearchMaterialBack = ({guitarParams, materials, callback}: ArgProps) => {
+const SearchMaterialBack = ({guitarParams, materials, searchHandler}: ArgProps) => {
     const gParams = guitarParams;
 
     const changeMaterialBackHandler = (e: ChangeEvent<HTMLSelectElement>) => {
@@ -18,7 +18,7 @@ const SearchMaterialBack = ({guitarParams, materials, callback}: ArgProps) => {
 
     // カラーを選択した時点で検索実行
     useEffect(() => {
-        callback(gParams)
+        searchHandler(gParams)
         gParams.setPage(1)
     }, [gParams.bodyMaterialBackCd])
 

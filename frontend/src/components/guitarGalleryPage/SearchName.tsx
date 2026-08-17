@@ -3,12 +3,12 @@ import { GuitarParams } from "../../types/Guitar";
 import CommonInput from "../common/CommonInput";
 
 interface ArgProps {
-    guitarParams: GuitarParams;
-    callback:     (gParams: GuitarParams) => Promise<void>;
-    styleObj?:    React.CSSProperties;
+    guitarParams:   GuitarParams;
+    searchHandler: (gParams: GuitarParams) => Promise<void>;
+    styleObj?:      React.CSSProperties;
 }
 
-const SearchName = ({guitarParams, callback, styleObj}: ArgProps) => {
+const SearchName = ({guitarParams, searchHandler, styleObj}: ArgProps) => {
     const gParams = guitarParams;
 
     const changeNameHandler = (e: React.FocusEvent<HTMLInputElement>) => {
@@ -17,7 +17,7 @@ const SearchName = ({guitarParams, callback, styleObj}: ArgProps) => {
 
     // 名称を入力した時点で検索実行
     useEffect(() => {
-        callback(gParams)
+        searchHandler(gParams)
         gParams.setPage(1)
     }, [gParams.name])
 

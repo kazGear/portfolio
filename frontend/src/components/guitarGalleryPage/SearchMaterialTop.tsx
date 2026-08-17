@@ -4,12 +4,12 @@ import CommonSelect from "../common/CommonSelect";
 import { ChangeEvent, useEffect } from "react";
 
 interface ArgProps {
-    guitarParams: GuitarParams;
-    materials:    Code[] | null;
-    callback:     (gParams: GuitarParams) => Promise<void>;
+    guitarParams:   GuitarParams;
+    materials:      Code[] | null;
+    searchHandler: (gParams: GuitarParams) => Promise<void>;
 }
 
-const SearchMaterialTop = ({guitarParams, materials, callback}: ArgProps) => {
+const SearchMaterialTop = ({guitarParams, materials, searchHandler}: ArgProps) => {
     const gParams = guitarParams;
 
     const changeMaterialTopHandler = (e: ChangeEvent<HTMLSelectElement>) => {
@@ -18,7 +18,7 @@ const SearchMaterialTop = ({guitarParams, materials, callback}: ArgProps) => {
 
     // 木材を選択した時点で検索実行
     useEffect(() => {
-        callback(gParams)
+        searchHandler(gParams)
         gParams.setPage(1)
     }, [gParams.bodyMaterialTopCd])
 

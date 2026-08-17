@@ -4,12 +4,12 @@ import CommonSelect from "../common/CommonSelect";
 import { ChangeEvent, useEffect } from "react";
 
 interface ArgProps {
-    guitarParams: GuitarParams;
-    makers:       Code[] | null;
-    callback:     (gParams: GuitarParams) => Promise<void>;
+    guitarParams:   GuitarParams;
+    makers:         Code[] | null;
+    searchHandler: (gParams: GuitarParams) => Promise<void>;
 }
 
-const SearchMaker = ({guitarParams, makers, callback}: ArgProps) => {
+const SearchMaker = ({guitarParams, makers, searchHandler}: ArgProps) => {
     const gParams = guitarParams;
 
     const changeMakerHandler = (e: ChangeEvent<HTMLSelectElement>) => {
@@ -18,7 +18,7 @@ const SearchMaker = ({guitarParams, makers, callback}: ArgProps) => {
 
     // メーカーを選択した時点で検索実行
     useEffect(() => {
-        callback(gParams)
+        searchHandler(gParams)
         gParams.setPage(1)
     }, [gParams.makerCd])
 

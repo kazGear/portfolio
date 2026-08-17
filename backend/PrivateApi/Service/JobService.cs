@@ -41,12 +41,12 @@ namespace PrivateApi.Service
             JobsResponse res = new JobsResponse()
             {
                 TotalCount = totalCount,
-                Page = req.Page,
-                PageSize = req.PageSize,
+                Page       = req.Page,
+                PageSize   = req.PageSize,
                 TotalPages = (int)Math.Ceiling((decimal)totalCount / (decimal)req.PageSize),
-                HasPrev = req.Page > 1,
-                HasNext = req.Page * req.PageSize < totalCount,
-                Jobs = jobs,
+                HasPrev    = req.Page > 1,
+                HasNext    = req.Page * req.PageSize < totalCount,
+                Jobs       = jobs,
             };
             return res;
         }

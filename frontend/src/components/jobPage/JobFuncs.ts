@@ -50,18 +50,25 @@ export const createQueryParamsJob = (jobParams: JobParams): URLSearchParams => {
     return uParams;
 }
 
-export const parsePrice = (price: number | undefined): string => {
-    // if (price === undefined) return String(price);
+export const parseJobPrice = (minPrice: number | undefined,
+                              maxPrice: number | undefined
+): string => {
+    const undefinedPrice = "スキル見合い or 未確定";
+    const separator      = " ～ "
+    const yen            = " 円";
 
-    // let result: string;
+    if (minPrice !== undefined && maxPrice !== undefined) {
+        if (minPrice < 0 && maxPrice < 0)
+            return undefinedPrice;
 
-    // if (price === GUITAR.OPEN_PRICE) {
-    //     result = "OPEN PRICE";
-    // } else if (price <= GUITAR.UNDEFINED_PRICE) {
-    //     result = "???,??? 円";
-    // } else {
-    //     result = price.toLocaleString("ja-JP") + " 円"; // 3桁区切り
-    // }
-    // return result;
-    return "";
+        if (minPrice > 0 && maxPrice > 0)
+            return minPrice.toLocaleString("ja-JP") + separator + maxPrice.toLocaleString("ja-JP") + yen;
+
+        if (minPrice > 0 && maxPrice < 0)
+            return minPrice.toLocaleString("ja-JP") + separator + yen;
+
+        if (minPrice < 0 && maxPrice > 0)
+            return separator + maxPrice.toLocaleString("ja-JP") + yen;
+    }
+    return undefinedPrice;
 }

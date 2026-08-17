@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { COLORS } from "../../lib/Constants";
 import { Job } from "../../types/Job";
 import { Link } from "react-router-dom";
+import { parseJobPrice } from "./JobFuncs";
 
 const CardFrame = styled.div`
     font-weight: 900;
@@ -64,7 +65,7 @@ const JobCard = ({ job }: ArgProps) => {
                         </tr>
                         <tr>
                             <Th>報酬</Th>
-                            <td><P>{job?.MinSalaryAtMonth}&nbsp;～&nbsp;{job?.MaxSalaryAtMonth}&nbsp;円</P></td>
+                            <td><P>{parseJobPrice(job?.MinSalaryAtMonth, job?.MaxSalaryAtMonth)}</P></td>
                         </tr>
                         <tr>
                             <Th>特徴</Th>

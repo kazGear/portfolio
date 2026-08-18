@@ -10,7 +10,7 @@ const JobAnalyzePage = () => {
         <div>
             <h1 style={{background: "white", paddingLeft: "40px"}}>案件分析ページ</h1>
             <CommonFrame styleObj={{margin: "0px 20px", height: "75vh"}}>
-                <h1 style={{padding: "40px"}}>実装中</h1>
+                <h1 style={{padding: "40px"}}>👷実装中👷</h1>
             </CommonFrame>
         </div>
     )

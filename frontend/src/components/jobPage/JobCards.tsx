@@ -9,8 +9,8 @@ const JobCards = ({jobsRes: res}: ArgProps) => {
     return (
         <>
             <p style={{marginLeft: "15px", fontWeight: "bolder"}}>
-                検索結果 {res?.TotalCount} 件<br/>
-                ページ {res?.Page} / {res?.TotalPages} @{res?.PageSize}件
+                検索結果 {res?.TotalCount.toLocaleString("ja-JP")} 件<br/>
+                ページ {res?.Page} / {res?.TotalPages.toLocaleString("ja-JP")} @{res?.PageSize}件
             </p>
             <div style={{margin: "15px"}}>
                 {

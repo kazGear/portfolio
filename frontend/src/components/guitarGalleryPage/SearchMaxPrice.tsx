@@ -1,14 +1,12 @@
-import { useEffect } from "react";
 import { GuitarParams } from "../../types/Guitar";
 import CommonInput from "../common/CommonInput";
 
 interface ArgProps {
-    guitarParams:   GuitarParams;
-    searchHandler: (gParams: GuitarParams) => Promise<void>;
-    styleObj?:      React.CSSProperties;
+    guitarParams: GuitarParams;
+    styleObj?:    React.CSSProperties;
 }
 
-const SearchMaxPrice = ({guitarParams, searchHandler, styleObj}: ArgProps) => {
+const SearchMaxPrice = ({guitarParams, styleObj}: ArgProps) => {
     const gParams = guitarParams;
 
     const changeMaxPriceHandler = (e: React.FocusEvent<HTMLInputElement>) => {
@@ -19,12 +17,6 @@ const SearchMaxPrice = ({guitarParams, searchHandler, styleObj}: ArgProps) => {
             gParams.setMaxPrice(Number(e.currentTarget.value));
         }
     }
-
-   // 価格を設定した時点で検索実行
-    useEffect(() => {
-        searchHandler(gParams)
-        gParams.setPage(1)
-    }, [gParams.maxPrice])
 
     return (
         <CommonInput inputType="number"

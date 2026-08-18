@@ -1,16 +1,13 @@
-import { useEffect } from "react";
 import { GuitarParams, GuitarsResponse } from "../../types/Guitar";
 import CommonPagination from "../common/CommonPagination";
 
 interface ArgProps {
-    guitarRes:      GuitarsResponse | null;
-    guitarParams:   GuitarParams;
-    searchHandler: (gParams: GuitarParams) => Promise<void>;
-    styleObj?:      React.CSSProperties;
-
+    guitarRes:    GuitarsResponse | null;
+    guitarParams: GuitarParams;
+    styleObj?:    React.CSSProperties;
 }
 
-const SelectorPage = ({guitarRes, guitarParams, searchHandler, styleObj}: ArgProps) => {
+const SelectorPage = ({guitarRes, guitarParams, styleObj}: ArgProps) => {
     const res     = guitarRes;
     const gParams = guitarParams;
 
@@ -21,11 +18,6 @@ const SelectorPage = ({guitarRes, guitarParams, searchHandler, styleObj}: ArgPro
     const changeNextPageHandler = () => {
         gParams.setPage(gParams.page + 1);
     }
-
-    // ページを変更した時点で検索実行
-    useEffect(() => {
-        searchHandler(gParams)
-    }, [gParams.page])
 
     return (
         <CommonPagination changePrevPageHandler={changePrevPageHandler}

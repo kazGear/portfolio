@@ -1,26 +1,19 @@
 import { GuitarParams } from "../../types/Guitar";
 import { Code } from "../../types/Code";
 import CommonSelect from "../common/CommonSelect";
-import { ChangeEvent, useEffect } from "react";
+import { ChangeEvent } from "react";
 
 interface ArgProps {
-    guitarParams:   GuitarParams;
-    makers:         Code[] | null;
-    searchHandler: (gParams: GuitarParams) => Promise<void>;
+    guitarParams: GuitarParams;
+    makers:       Code[] | null;
 }
 
-const SearchMaker = ({guitarParams, makers, searchHandler}: ArgProps) => {
+const SearchMaker = ({guitarParams, makers}: ArgProps) => {
     const gParams = guitarParams;
 
     const changeMakerHandler = (e: ChangeEvent<HTMLSelectElement>) => {
         gParams.setMakerCd(Number(e.target.value));
     }
-
-    // メーカーを選択した時点で検索実行
-    useEffect(() => {
-        searchHandler(gParams)
-        gParams.setPage(1)
-    }, [gParams.makerCd])
 
     return (
         <CommonSelect onChange={changeMakerHandler} >

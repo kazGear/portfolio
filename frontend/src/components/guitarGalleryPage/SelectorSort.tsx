@@ -1,23 +1,17 @@
 import { GuitarParams } from "../../types/Guitar";
 import CommonSelect from "../common/CommonSelect";
-import { ChangeEvent, useEffect } from "react";
+import { ChangeEvent } from "react";
 
 interface ArgProps {
-    guitarParams:   GuitarParams;
-    searchHandler: (gParams: GuitarParams) => Promise<void>;
+    guitarParams: GuitarParams;
 }
 
-const SelectorSort = ({guitarParams, searchHandler}: ArgProps) => {
+const SelectorSort = ({guitarParams}: ArgProps) => {
     const gParams = guitarParams;
 
     const changeSortHandler = (e: ChangeEvent<HTMLSelectElement>) => {
         gParams.setSort(e.target.value);
     }
-
-    // ソートを設定した時点で検索実行
-    useEffect(() => {
-        searchHandler(gParams)
-    }, [gParams.sort])
 
     return (
         <CommonSelect onChange={changeSortHandler} >

@@ -1,26 +1,18 @@
-import { useEffect } from "react";
 import { GuitarParams } from "../../types/Guitar";
 import CommonInput from "../common/CommonInput";
 
 interface ArgProps {
-    guitarParams:   GuitarParams;
-    searchHandler: (gParams: GuitarParams) => Promise<void>;
-    styleObj?:      React.CSSProperties;
+    guitarParams: GuitarParams;
+    styleObj?:    React.CSSProperties;
 
 }
 
-const SelectorPageSize = ({guitarParams, searchHandler, styleObj}: ArgProps) => {
+const SelectorPageSize = ({guitarParams, styleObj}: ArgProps) => {
     const gParams = guitarParams;
 
     const changePageSizeHandler = (e: React.FocusEvent<HTMLInputElement>) => {
         gParams.setPageSize(Number(e.currentTarget.value));
     }
-
-    // ページサイズを設定した時点で検索実行
-    useEffect(() => {
-        searchHandler(gParams)
-        gParams.setPage(1)
-    }, [gParams.pageSize])
 
     return (
         <CommonInput inputType="number"

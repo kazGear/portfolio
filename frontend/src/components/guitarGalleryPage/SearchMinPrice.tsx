@@ -1,15 +1,13 @@
-import { useEffect } from "react";
 import { GUITAR } from "../../lib/Constants";
 import { GuitarParams } from "../../types/Guitar";
 import CommonInput from "../common/CommonInput";
 
 interface ArgProps {
-    guitarParams:   GuitarParams;
-    searchHandler: (gParams: GuitarParams) => Promise<void>;
-    styleObj?:      React.CSSProperties;
+    guitarParams: GuitarParams;
+    styleObj?:    React.CSSProperties;
 }
 
-const SearchMinPrice = ({guitarParams, searchHandler, styleObj}: ArgProps) => {
+const SearchMinPrice = ({guitarParams, styleObj}: ArgProps) => {
     const gParams = guitarParams;
 
     const changeMinPriceHandler = (e: React.FocusEvent<HTMLInputElement>) => {
@@ -20,12 +18,6 @@ const SearchMinPrice = ({guitarParams, searchHandler, styleObj}: ArgProps) => {
             gParams.setMinPrice(Number(e.currentTarget.value));
         }
     }
-
-    // 価格を設定した時点で検索実行
-    useEffect(() => {
-        searchHandler(gParams)
-        gParams.setPage(1)
-    }, [gParams.minPrice])
 
     return (
         <CommonInput inputType="number"

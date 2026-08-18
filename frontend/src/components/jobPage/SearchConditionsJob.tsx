@@ -16,7 +16,7 @@ import HideOldJob from "./HideOldJob";
 
 const Th = styled.th`
     text-align: left;
-    min-width: 80px;
+    min-width: 100px;
     font-size: 14px;
     font-weight: bolder;
 `;
@@ -39,7 +39,6 @@ interface ArgProps {
     infrastructure:   string[] | null;
     database:         string[] | null;
     cloud:            string[] | null;
-    searchHandler: (jParams: JobParams) => Promise<void>;
 }
 
 const SearchConditionsJob = ({jobsRes,
@@ -49,8 +48,7 @@ const SearchConditionsJob = ({jobsRes,
                               role,
                               infrastructure,
                               database,
-                              cloud,
-                              searchHandler
+                              cloud
 }: ArgProps) => {
 
     return (
@@ -67,120 +65,75 @@ const SearchConditionsJob = ({jobsRes,
                 <tbody>
                     <CommonBorderTr>
                         <Th>古い案件</Th>
-                        <Td>
-                            <HideOldJob jobParams={jobParams}
-                                         searchHandler={searchHandler}
-                                         styleObj={{margin: "7px 0px 7px 20px"}} />
-                        </Td>
+                        <Td><HideOldJob jobParams={jobParams} styleObj={{margin: "7px 0px 7px 20px"}} /></Td>
                     </CommonBorderTr>
                     <CommonBorderTr>
                         <Th>タイトル</Th>
-                        <Td>
-                            <SearchTitle jobParams={jobParams}
-                                         searchHandler={searchHandler}
-                                         styleObj={{margin: "7px 0px 7px 20px"}} />
-                        </Td>
+                        <Td><SearchTitle jobParams={jobParams} styleObj={{margin: "7px 0px 7px 20px"}} /></Td>
                     </CommonBorderTr>
                     <CommonBorderTr>
                         <Th>所在地</Th>
-                        <Td><SearchLocation jobParams={jobParams} searchHandler={searchHandler} /></Td>
+                        <Td><SearchLocation jobParams={jobParams} /></Td>
                     </CommonBorderTr>
                     <CommonBorderTr>
                         <Th>勤務地</Th>
-                        <Td><SearchWorkPlace jobParams={jobParams} searchHandler={searchHandler} /></Td>
+                        <Td><SearchWorkPlace jobParams={jobParams} /></Td>
                     </CommonBorderTr>
                     <CommonBorderTr>
                         <Th>最低報酬</Th>
                         <Td>
-                            <SearchMinSalarySpecifiedMin jobParams={jobParams}
-                                                         searchHandler={searchHandler}
-                                                         styleObj={styleObj}/>
+                            <SearchMinSalarySpecifiedMin jobParams={jobParams} styleObj={styleObj}/>
                             <br/>&emsp;&emsp;～<br/>
-                            <SearchMinSalarySpecifiedMax jobParams={jobParams}
-                                                         searchHandler={searchHandler}
-                                                         styleObj={styleObj}/>
+                            <SearchMinSalarySpecifiedMax jobParams={jobParams} styleObj={styleObj}/>
                         </Td>
                     </CommonBorderTr>
                     <CommonBorderTr>
                         <Th>最高報酬</Th>
                         <Td>
-                            <SearchMaxSalarySpecifiedMin jobParams={jobParams}
-                                                         searchHandler={searchHandler}
-                                                         styleObj={styleObj}/>
+                            <SearchMaxSalarySpecifiedMin jobParams={jobParams} styleObj={styleObj}/>
                             <br/>&emsp;&emsp;～<br/>
-                            <SearchMaxSalarySpecifiedMax jobParams={jobParams}
-                                                         searchHandler={searchHandler}
-                                                         styleObj={styleObj}/>
+                            <SearchMaxSalarySpecifiedMax jobParams={jobParams} styleObj={styleObj}/>
                         </Td>
                     </CommonBorderTr>
                     <CommonBorderTr>
                         <Th>ソースサイト</Th>
-                        <Td><SearchSourceSite jobParams={jobParams} searchHandler={searchHandler} /></Td>
+                        <Td><SearchSourceSite jobParams={jobParams} /></Td>
                     </CommonBorderTr>
                     <CommonBorderTr>
                         <Th>ページサイズ</Th>
-                        <Td>
-                            <SelectorPageSize jobParams={jobParams}
-                                              searchHandler={searchHandler}
-                                              styleObj={styleObj}/>
-                        </Td>
+                        <Td><SelectorPageSize jobParams={jobParams} styleObj={styleObj}/></Td>
                     </CommonBorderTr>
                     <CommonBorderTr>
                         <Th>選択ページ</Th>
                         <Td>
                             <SelectorPage jobParams={jobParams}
                                           jobsRes={jobsRes}
-                                          searchHandler={searchHandler}
                                           styleObj={{margin: "0px 0px 6px 15px"}}/>
                         </Td>
                     </CommonBorderTr>
                     <CommonBorderTr>
                         <Th>言語</Th>
-                        <Td>
-                            <SearchFeatures jobParams={jobParams}
-                                            features={languages}
-                                            searchHandler={searchHandler} />
-                        </Td>
+                        <Td><SearchFeatures jobParams={jobParams} features={languages} /></Td>
                     </CommonBorderTr>
                     <CommonBorderTr>
                         <Th>ロール</Th>
-                        <Td>
-                            <SearchFeatures jobParams={jobParams}
-                                            features={role}
-                                            searchHandler={searchHandler} />
-                        </Td>
+                        <Td><SearchFeatures jobParams={jobParams} features={role} /></Td>
                     </CommonBorderTr>
                     <CommonBorderTr>
                         <Th>インフラ</Th>
-                        <Td>
-                            <SearchFeatures jobParams={jobParams}
-                                            features={infrastructure}
-                                            searchHandler={searchHandler} />
-                        </Td>
+                        <Td><SearchFeatures jobParams={jobParams} features={infrastructure} /></Td>
                     </CommonBorderTr>
                     <CommonBorderTr>
                         <Th>DB</Th>
-                        <Td>
-                            <SearchFeatures jobParams={jobParams}
-                                            features={database}
-                                            searchHandler={searchHandler} />
-                        </Td>
+                        <Td><SearchFeatures jobParams={jobParams} features={database} /></Td>
                     </CommonBorderTr>
                     <CommonBorderTr>
                         <Th>クラウド</Th>
-                        <Td>
-                            <SearchFeatures jobParams={jobParams}
-                                            features={cloud}
-                                            searchHandler={searchHandler} />
-                        </Td>
+                        <Td><SearchFeatures jobParams={jobParams} features={cloud} /></Td>
                     </CommonBorderTr>
                     <CommonBorderTr>
                         <Th>frame and library</Th>
-                        <Td>
-                            <SearchFeatures jobParams={jobParams}
-                                            features={frameworkLibrary}
-                                            searchHandler={searchHandler} />
-                        </Td>
+                        <Td><SearchFeatures jobParams={jobParams} features={frameworkLibrary} /></Td>
                     </CommonBorderTr>
                 </tbody>
             </table>

@@ -1,16 +1,14 @@
-import { useEffect } from "react";
 import { JobParams, JobsResponse } from "../../types/Job";
 import CommonPagination from "../common/CommonPagination";
 
 interface ArgProps {
-    jobsRes:         JobsResponse | null;
-    jobParams:      JobParams;
-    searchHandler: (jobParams: JobParams) => Promise<void>;
-    styleObj?:      React.CSSProperties;
+    jobsRes:   JobsResponse | null;
+    jobParams: JobParams;
+    styleObj?: React.CSSProperties;
 
 }
 
-const SelectorPage = ({jobsRes, jobParams, searchHandler, styleObj}: ArgProps) => {
+const SelectorPage = ({jobsRes, jobParams, styleObj}: ArgProps) => {
     const changePrevPageHandler = () => {
         jobParams.setPage(jobParams.page - 1);
     }
@@ -18,11 +16,6 @@ const SelectorPage = ({jobsRes, jobParams, searchHandler, styleObj}: ArgProps) =
     const changeNextPageHandler = () => {
         jobParams.setPage(jobParams.page + 1);
     }
-
-    // ページを変更した時点で検索実行
-    useEffect(() => {
-        searchHandler(jobParams)
-    }, [jobParams.page])
 
     return (
         <CommonPagination changePrevPageHandler={changePrevPageHandler}

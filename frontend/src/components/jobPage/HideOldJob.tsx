@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { JobParams } from "../../types/Job";
-import React, { ChangeEvent, useEffect } from "react";
+import React, { ChangeEvent } from "react";
 
 const Label = styled.label`
     display: inline-block;
@@ -9,12 +9,11 @@ const Label = styled.label`
 `;
 
 interface ArgProps {
-    jobParams:      JobParams;
-    searchHandler: (jParams: JobParams) => Promise<void>;
-    styleObj?:      React.CSSProperties;
+    jobParams: JobParams;
+    styleObj?: React.CSSProperties;
 }
 
-const HideOldJob = ({jobParams, searchHandler, styleObj}: ArgProps) => {
+const HideOldJob = ({jobParams, styleObj}: ArgProps) => {
 
     const toggleHideHandler = (e: ChangeEvent<HTMLInputElement>) => {
         const isHide = jobParams.isHideOldJob;
@@ -26,12 +25,6 @@ const HideOldJob = ({jobParams, searchHandler, styleObj}: ArgProps) => {
             jobParams.setIsHideOldJob(true);
         }
     }
-
-    // タイトルを入力した時点で検索実行
-    useEffect(() => {
-        searchHandler(jobParams)
-        jobParams.setPage(1)
-    }, [jobParams.isHideOldJob])
 
     return (
         <Label>

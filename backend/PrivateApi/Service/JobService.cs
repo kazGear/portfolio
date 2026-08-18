@@ -85,9 +85,11 @@ namespace PrivateApi.Service
             param.Add("page_size", req.PageSize);
             param.Add("is_hide_old_job", req.IsHideOldJob);
 
+            int id = 0;
             foreach (string feature in req.FeatureNames)
             {
-                param.Add(feature, feature);
+                param.Add($"feature_{id}", feature);
+                id ++;
             }
             return param;
         }
@@ -140,6 +142,7 @@ namespace PrivateApi.Service
         {
             StringBuilder conditions = new StringBuilder();
 
+            int id = 0;
             foreach (string feature in req.FeatureNames)
             {
                 string SQL = @$"
@@ -147,11 +150,12 @@ namespace PrivateApi.Service
                         (
                            SELECT 1
                              FROM t_job_features AS f
-                            WHERE v.id = f.job_id
-                              AND f.feature_name = @{feature}
+                            WHERE v.id           = f.job_id
+                              AND f.feature_name = @feature_{id}
                         )
                 ";
                 conditions.AppendLine(SQL);
+                id ++;
             }
 
             return conditions.ToString();

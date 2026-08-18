@@ -1,5 +1,5 @@
 import { URLS } from "../lib/Constants";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { api } from "../lib/apiClient";
 import useApiErrorHandler from "../hooks/useApiErrorHandler";
 import { JobParams, JobsResponse } from "../types/Job";
@@ -8,6 +8,7 @@ import JobCards from "../components/jobPage/JobCards";
 import SearchConditionsJob from "../components/jobPage/SearchConditionsJob";
 import { useJobParams } from "../hooks/useJobParams";
 import { createQueryParamsJob } from "../components/jobPage/JobFuncs";
+import CommonNowLoading from "../components/common/CommonNowLoading";
 
 const JobPage = () => {
     const [jobs, setJobs]                         = useState<JobsResponse | null>(null);
@@ -49,12 +50,37 @@ const JobPage = () => {
     }, []);
 
     // 案件データ取得
-    const jobSearchHandler = useCallback( async (jobParams: JobParams) => {
+    const jobSearchHandler = async (jobParams: JobParams) => {
         const queryParams = createQueryParamsJob(jobParams);
-        const resJobs     = await api.GET<JobsResponse>(`${URLS.FETCH_JOBS}?${queryParams.toString()}`);
+        setJobs(null); // 案件表示エリアにローディングアイコンを表示するため
+
+        const resJobs = await api.GET<JobsResponse>(`${URLS.FETCH_JOBS}?${queryParams.toString()}`);
 
         setJobs(resJobs);
-    }, []);
+    };
+
+    // 条件を変更した時点で検索実行
+    useEffect(() => {
+        jobSearchHandler(jobParams);
+        jobParams.setPage(1);
+    }, [
+        jobParams.title,
+        jobParams.location,
+        jobParams.workPlace,
+        jobParams.minSalaryAtMonthSpecifiedMin,
+        jobParams.minSalaryAtMonthSpecifiedMax,
+        jobParams.maxSalaryAtMonthSpecifiedMin,
+        jobParams.maxSalaryAtMonthSpecifiedMax,
+        jobParams.sourceSite,
+        jobParams.pageSize,
+        jobParams.isHideOldJob,
+        jobParams.featureNames,
+    ]);
+
+    // ページ送り
+    useEffect(() => {
+        jobSearchHandler(jobParams);
+    }, [jobParams.page]);
 
     return (
         <div style={{ display: "flex" }}>
@@ -66,11 +92,18 @@ const JobPage = () => {
                                      role={role}
                                      infrastructure={infrastructure}
                                      database={database}
-                                     cloud={cloud}
-                                     searchHandler={jobSearchHandler}/>
+                                     cloud={cloud} />
             </CommonFrame>
             <CommonFrame styleObj={{width: "60%", minWidth: "360px",height: "87vh", margin: "20px 20px 0px 10px"}}>
-                <JobCards jobsRes={jobs} />
+                {
+                    jobs !== null ? (
+                        <JobCards jobsRes={jobs} />
+                    ) : (
+                        <div style={{textAlign: "center", marginTop: "40%"}}>
+                            <CommonNowLoading alt="各案件データ" size="300" />
+                        </div>
+                    )
+                }
             </CommonFrame>
         </div>
     )

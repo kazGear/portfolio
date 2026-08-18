@@ -84,7 +84,7 @@ const JobPage = () => {
 
     return (
         <div style={{ display: "flex" }}>
-            <CommonFrame styleObj={{width: "40%", minWidth: "360px", height: "87vh", margin: "20px 0px 0px 20px"}}>
+            <CommonFrame styleObj={{width: "30%", minWidth: "360px", height: "87vh", margin: "20px 0px 0px 20px"}}>
                 <SearchConditionsJob jobsRes={jobs}
                                      jobParams={jobParams}
                                      languages={languages}
@@ -94,7 +94,7 @@ const JobPage = () => {
                                      database={database}
                                      cloud={cloud} />
             </CommonFrame>
-            <CommonFrame styleObj={{width: "60%", minWidth: "360px",height: "87vh", margin: "20px 20px 0px 10px"}}>
+            <CommonFrame styleObj={{width: "70%", minWidth: "360px",height: "87vh", margin: "20px 20px 0px 10px"}}>
                 {
                     jobs !== null ? (
                         <JobCards jobsRes={jobs} />

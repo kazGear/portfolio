@@ -10,7 +10,7 @@ const GuitarCards = ({guitarsRes: res, callback: callBack}: ArgProps) => {
     return (
         <>
             <p style={{marginLeft: "15px", fontWeight: "bolder"}}>
-                検索結果 {res?.totalCount} 件<br/>
+                検索結果 {res?.totalCount.toLocaleString("ja-JP")} 件<br/>
                 ページ {res?.page} / {res?.totalPages} @{res?.pageSize}件
             </p>
             <div style={{display: "flex", flexWrap: "wrap", justifyContent: "space-evenly", margin: "15px"}}>

@@ -1,17 +1,15 @@
-import { GuitarParams } from "../../types/Guitar";
+import { JobParams } from "../../types/Job";
 import CommonInput from "../common/CommonInput";
 
 interface ArgProps {
-    guitarParams: GuitarParams;
-    styleObj?:    React.CSSProperties;
+    jobParams: JobParams;
+    styleObj?: React.CSSProperties;
 
 }
 
-const SelectorPageSize = ({guitarParams, styleObj}: ArgProps) => {
-    const gParams = guitarParams;
-
+const SelectorPageSize = ({jobParams, styleObj}: ArgProps) => {
     const changePageSizeHandler = (e: React.FocusEvent<HTMLInputElement>) => {
-        gParams.setPageSize(Number(e.currentTarget.value));
+        jobParams.setPageSize(Number(e.currentTarget.value));
     }
 
     return (

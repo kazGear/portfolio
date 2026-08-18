@@ -1,17 +1,15 @@
-
-import { GuitarParams } from "../../types/Guitar";
 import CommonInput from "../common/CommonInput";
+import { JobParams } from "../../types/Job";
 
 interface ArgProps {
-    guitarParams: GuitarParams;
-    styleObj?:    React.CSSProperties;
+    jobParams: JobParams;
+    styleObj?: React.CSSProperties;
 }
 
-const SearchName = ({guitarParams, styleObj}: ArgProps) => {
-    const gParams = guitarParams;
+const SearchTitle = ({jobParams, styleObj}: ArgProps) => {
 
     const changeNameHandler = (e: React.FocusEvent<HTMLInputElement>) => {
-        gParams.setName(e.currentTarget.value);
+        jobParams.setTitle(e.currentTarget.value);
     }
 
     return (
@@ -21,4 +19,4 @@ const SearchName = ({guitarParams, styleObj}: ArgProps) => {
                      styleObj={styleObj}/>
     );
 }
-export default SearchName;
+export default SearchTitle;

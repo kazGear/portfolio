@@ -1,0 +1,41 @@
+import styled from "styled-components";
+import { JobParams } from "../../types/Job";
+import React, { ChangeEvent } from "react";
+
+const Label = styled.label`
+    display: inline-block;
+    margin: 6px 0px 0px 16px;
+    height: 25px;
+`;
+
+interface ArgProps {
+    jobParams: JobParams;
+    styleObj?: React.CSSProperties;
+}
+
+const HideOldJob = ({jobParams, styleObj}: ArgProps) => {
+
+    const toggleHideHandler = (e: ChangeEvent<HTMLInputElement>) => {
+        const isHide = jobParams.isHideOldJob;
+
+        // 反対の状態に切り替え
+        if (isHide) {
+            jobParams.setIsHideOldJob(false);
+        } else {
+            jobParams.setIsHideOldJob(true);
+        }
+    }
+
+    return (
+        <Label>
+            <input type="checkbox"
+                   onChange={toggleHideHandler}
+                   defaultChecked={true}
+                   />
+            <span style={{display: "inline-block", transform: "translateY(-2px)"}}>
+                古い案件を表示しない
+            </span>
+        </Label>
+    );
+}
+export default HideOldJob;

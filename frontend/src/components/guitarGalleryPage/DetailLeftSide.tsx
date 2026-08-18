@@ -1,6 +1,6 @@
 import { Guitar } from "../../types/Guitar";
 import CommonZoomableImage from "../common/CommonZoomableImage";
-import { parsePrice } from "./GuitarFuncs";
+import { parseGuitarPrice } from "./GuitarFuncs";
 
 interface ArgProps {
     selectedGuitars: Guitar | null;
@@ -20,7 +20,7 @@ const DetailLeftSide = ({selectedGuitars}: ArgProps) => {
                                  zoomRate={400}/>
 
             <h2 style={{margin: "0px"}}>
-                price:&emsp;{parsePrice(guitar?.price!)}
+                price:&emsp;{parseGuitarPrice(guitar?.price!)}
             </h2>
 
             <p>comment.</p>

@@ -58,9 +58,9 @@ func buildJobFrame(data map[string]string, logger *log.Logger) (*model.Job) {
 
     if err != nil {
         now := time.Now().In(_jst)
-        job.UpdatedAt = &now
+        job.UpdatedAt = now
     } else {
-        job.UpdatedAt = &updatedAt
+        job.UpdatedAt = updatedAt
     }
 
 	return &job
@@ -308,23 +308,15 @@ func salvageEmploymentType(target string) string {
     return ""
 }
 
-var workPlaces = []string{
-    "フルリモート",
-    "ハイブリッド",
-    "リモート併用",
-    "一部リモート",
-    "客先常駐",
-    "リモート",
-    "常駐",
-}
-
 func salvageWorkPlace(target string) string {
     for _, workPlace := range workPlaces {
-        if strings.Contains(target, workPlace) {
-            return workPlace
+        for _, workPlace := range workPlace.Keywords {
+            if strings.Contains(target, workPlace) {
+                return workPlace
+            }
         }
     }
-    return ""
+    return "常駐"
 }
 
 // 案件特徴（スキル、ロール等）
@@ -333,6 +325,46 @@ type SearchFeature struct {
     Category string
     Keywords []string // 大文字・小文字等で区分けする必要はない（検索対象が正規化済の前提）
     Patterns []*regexp.Regexp // 短いキーワードの誤検出防止用
+}
+
+var workPlaces = []*SearchFeature{
+	{
+		Name:     "フルリモート",
+		Category: C.Language,
+		Keywords: []string{
+			"フルリモート",
+			"完全リモート",
+			"完全在宅",
+			"フル在宅",
+			"完全在宅勤務",
+			"原則リモート",
+			"原則在宅",
+		},
+		Patterns: []*regexp.Regexp{},
+	},
+	{
+		Name:     "ハイブリッド",
+		Category: C.Language,
+		Keywords: []string{
+			"リモート併用",
+			"一部リモート",
+			"リモート",
+			"在宅可",
+		},
+		Patterns: []*regexp.Regexp{},
+	},
+	{
+		Name:     "常駐",
+		Category: C.Language,
+		Keywords: []string{
+			"客先常駐",
+			"常駐",
+			"顧客先",
+			"クライアント先",
+			"現場常駐",
+		},
+		Patterns: []*regexp.Regexp{},
+	},
 }
 
 var languageDictionary = []*SearchFeature{

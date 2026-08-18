@@ -18,7 +18,7 @@ const ToCareerPageBlock = () => {
     return (
         <div>
             <SLink to={"/CareerPage"}>
-                <CommonMenuTitle title={"📖職務経歴書"} className={classOfAnime} />
+                <CommonMenuTitle title={"職務経歴書"} className={classOfAnime} />
             </SLink>
 
             <CommonFrame>

@@ -14,7 +14,7 @@ type Job struct {
 	WorkPlace           string     `db:"work_place"`
 	SourceSite          string     `db:"source_site"`
 	CreatedAt           time.Time  `db:"created_at"`
-	UpdatedAt           *time.Time `db:"updated_at"`
+	UpdatedAt           time.Time `db:"updated_at"`
 }
 
 type JobFeature struct {

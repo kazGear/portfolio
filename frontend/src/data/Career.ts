@@ -1,26 +1,35 @@
 /***********************************************************
  * JsonData, ArrayData
- ************************************************************/
+ ***********************************************************/
 
 /**
  * メタデータ
  */
-export const metaData = {
+type MetaData = {
+    lastUpdate: string;
+};
+
+export const metaData: MetaData = {
     "lastUpdate": "2026/07/25",
-}
+};
 
 /**
  * 基本情報
  */
-export const profile = {
+type Profile = {
+    myName: string;
+    myAddress: string;
+};
+
+export const profile: Profile = {
     "myName": "K.O",
     "myAddress": "福岡県朝倉市在住　最寄り駅：甘木（西鉄甘木線）"
-}
+};
 
 /**
  * スキルデータ
  */
-export const skills = [
+export const skills: string[] = [
     "HTML",
     "CSS",
     "JavaScript(jQuery)",
@@ -48,7 +57,7 @@ export const skills = [
 /**
  * スキルデータ(習熟度低め・練習中・関心事)
  */
-export const littleSkills = [
+export const littleSkills: string[] = [
     "クリーンアーキテクチャ",
     "テーブル設計",
     "SQLチューニング",
@@ -59,7 +68,7 @@ export const littleSkills = [
 /**
  * 使用ツール
  */
-export const useTools = [
+export const useTools: string[] = [
     "Windows",
     "Cursor",
     "WinMerge",
@@ -74,7 +83,7 @@ export const useTools = [
 /**
  * 読んだ本
  */
-export const readBooks = [
+export const readBooks: string[] = [
     "Go言語 プログラミングエッセンス",
     "一流プログラマが教える Go言語 大全",
     "SQLパズル",
@@ -107,7 +116,15 @@ export const readBooks = [
 /**
  * ポートフォリオ
  */
-export const portfolio = {
+type Portfolio = {
+    appURLCaption: string;
+    appURL: string;
+    sourceURLCaption: string;
+    sourceURL: string;
+    comment: string[];
+};
+
+export const portfolio: Portfolio = {
     "appURLCaption": "成果物・webで稼働中のアプリケーション",
     "appURL": "https://kazapp-trial.com",
     "sourceURLCaption": "ソース（React, TypeScript, C#/ASP.NET CORE, Go言語, PostgreSQL, docker）",
@@ -149,12 +166,12 @@ export const portfolio = {
         "API、サーバ処理に異常があった場合も、その旨を通知します。",
         "いずれの場合も、管理者のスマホにプッシュ通知が届きますので、即座にエラーを検知できます。",
     ]
-}
+};
 
 /**
  * 得意分野
  */
-export const specialty = [
+export const specialty: string[] = [
     "フロントエンド、API、データベース、バッチ処理まで一貫したシステム設計・開発・運用",
     "Java（Spring Boot）、C#（ASP.NET Core）を用いたWebアプリケーション・Web API開発",
     "React、TypeScriptを用いたSPA開発（レスポンシブ）",
@@ -168,7 +185,12 @@ export const specialty = [
 /**
  * PR事項
  */
-export const prPoint = [
+type PrPoint = {
+    point: string;
+    comment: string;
+};
+
+export const prPoint: PrPoint[] = [
     {
         "point": "設計・保守性・品質を意識した開発",
         "comment":
@@ -210,9 +232,9 @@ export const prPoint = [
         "comment":
             "腰が低いので接しやすいと思います。<br/>" +
             "技術的背景を踏まえて状況を整理し、必要な情報を簡潔に共有することを意識しています。<br/>" +
-            "仕様や要件の意図を確認しながら進めるため、認識齟齬を減らします。"
+            "仕様や要件の意図を確認しながら進めるため、認識齟齬を減らします."
     },
-]
+];
 
 /**
  * 職務経歴データ
@@ -231,7 +253,16 @@ export const prPoint = [
     ]
 }
  */
-export const career = [
+type Career = {
+    historyTitle: string;
+    period: string;
+    industry: string;
+    scale: string;
+    programmingLanguages: string;
+    jobContents: string[];
+};
+
+export const career: Career[] = [
     {
         "historyTitle": "基幹システム（リプレイス）",
         "period": "2025.04 ~ 2025.06",

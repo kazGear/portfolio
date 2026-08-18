@@ -3,10 +3,10 @@ import { Code } from "../types/Code";
 import { api } from "../lib/apiClient";
 import { Guitar, GuitarParams, GuitarsResponse } from "../types/Guitar";
 import { useGuitarParams } from "../hooks/useGuitarParams";
-import { createQueryParams } from "../components/guitarGalleryPage/GuitarFuncs";
+import { createQueryParamsGuitar } from "../components/guitarGalleryPage/GuitarFuncs";
 import CommonFrame from "../components/common/CommonFrame";
 import GuitarCards from "../components/guitarGalleryPage/GuitarCards";
-import SearchConditions from "../components/guitarGalleryPage/SearchConditions";
+import SearchConditionsGuitar from "../components/guitarGalleryPage/SearchConditionsGuitar";
 import DetailModal from "../components/guitarGalleryPage/DetailModal";
 import { PUBLIC_API_BASE_URL } from "../config/env"
 import useApiErrorHandler from "../hooks/useApiErrorHandler";
@@ -55,13 +55,13 @@ const GuitarGalleryPage = () => {
     }, [gParams.makerCd])
 
     // ギターデータ取得
-    const guitarSearchHandler = useCallback( async (gParams: GuitarParams) => {
-        const queryParams = createQueryParams(gParams);
+    const guitarSearchHandler = async (gParams: GuitarParams) => {
+        const queryParams = createQueryParamsGuitar(gParams);
         const resGuitars  = await api.GET<GuitarsResponse>(
             `${PUBLIC_API_BASE_URL}/public/v1/guitars?${queryParams.toString()}`
         );
         setGuitars(resGuitars);
-    }, []);
+    };
 
     // 選択ギターpk取得
     const getSelectedGuitarHandler = useCallback((guitar: Guitar | null) => {
@@ -69,19 +69,43 @@ const GuitarGalleryPage = () => {
         setIsShowDetail(true)
     }, []);
 
+    // 検索条件を選択した時点で検索実行
+    useEffect(() => {
+        guitarSearchHandler(gParams)
+        gParams.setPage(1)
+    }, [
+        gParams.makerCd,
+        gParams.colorCd,
+        gParams.series,
+        gParams.name,
+        gParams.bodyMaterialTopCd,
+        gParams.bodyMaterialBackCd,
+        gParams.minPrice,
+        gParams.maxPrice,
+        gParams.pageSize,
+    ])
+
+    // ページ初期化なしの検索
+    useEffect(() => {
+        guitarSearchHandler(gParams)
+    }, [
+        gParams.sort,
+        gParams.order,
+        gParams.page,
+    ])
+
     return (
         <div style={{display: "flex"}}>
-            <CommonFrame styleObj={{width: "20%", minWidth: "280px", height: "85vh", marginLeft: "20px"}}>
-                <SearchConditions guitarRes={guitars}
-                                  guitarParams={gParams}
-                                  makers={makers}
-                                  colors={colors}
-                                  series={series}
-                                  bodyMaterials={bodyMaterials}
-                                  callback={guitarSearchHandler}
-                                  />
+            <CommonFrame styleObj={{width: "20%", minWidth: "280px", height: "87vh", margin: "20px 0px 0px 20px"}}>
+                <SearchConditionsGuitar guitarRes={guitars}
+                                        guitarParams={gParams}
+                                        makers={makers}
+                                        colors={colors}
+                                        series={series}
+                                        bodyMaterials={bodyMaterials}
+                                        />
             </CommonFrame>
-            <CommonFrame styleObj={{width: "80%", minWidth: "280px",height: "85vh", margin: "20px 20px 0px 10px"}}>
+            <CommonFrame styleObj={{width: "80%", minWidth: "280px",height: "87vh", margin: "20px 20px 0px 10px"}}>
                 <GuitarCards guitarsRes={guitars}
                              callback={getSelectedGuitarHandler}>
                 </GuitarCards>

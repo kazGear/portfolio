@@ -2,7 +2,7 @@ import { isEmpty } from "../../lib/CommonLogic";
 import { GUITAR, GUITAR_COLORS } from "../../lib/Constants";
 import { GuitarParams } from "../../types/Guitar";
 
-export const createQueryParams = (gParams: GuitarParams): URLSearchParams => {
+export const createQueryParamsGuitar = (gParams: GuitarParams): URLSearchParams => {
     const uParams = new URLSearchParams();
 
     if (gParams.makerCd !== 0)
@@ -46,7 +46,7 @@ export const createQueryParams = (gParams: GuitarParams): URLSearchParams => {
     return uParams;
 }
 
-export const parsePrice = (price: number | undefined): string => {
+export const parseGuitarPrice = (price: number | undefined): string => {
     if (price === undefined) return String(price);
 
     let result: string;

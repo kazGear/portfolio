@@ -1,26 +1,19 @@
 import { GuitarParams } from "../../types/Guitar";
 import { Code } from "../../types/Code";
 import CommonSelect from "../common/CommonSelect";
-import { ChangeEvent, useEffect } from "react";
+import { ChangeEvent } from "react";
 
 interface ArgProps {
     guitarParams: GuitarParams;
     materials:    Code[] | null;
-    callback:     (gParams: GuitarParams) => Promise<void>;
 }
 
-const SearchMaterialBack = ({guitarParams, materials, callback}: ArgProps) => {
+const SearchMaterialBack = ({guitarParams, materials}: ArgProps) => {
     const gParams = guitarParams;
 
     const changeMaterialBackHandler = (e: ChangeEvent<HTMLSelectElement>) => {
         gParams.setBodyMaterialBackCd(Number(e.target.value));
     }
-
-    // カラーを選択した時点で検索実行
-    useEffect(() => {
-        callback(gParams)
-        gParams.setPage(1)
-    }, [gParams.bodyMaterialBackCd])
 
     return (
         <CommonSelect onChange={changeMaterialBackHandler} >

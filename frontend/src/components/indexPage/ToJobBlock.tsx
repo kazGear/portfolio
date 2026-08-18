@@ -17,17 +17,18 @@ const classOfAnime: string = "noneAnimation";
 const ToGuitarGalleryBlock = () => {
     return (
         <div>
-            <Slink to={"/GuitarGalleryPage"}>
-                <MenuTitle title={"Guitar gallery"} className={classOfAnime} />
+            <Slink to={"/JobPage"}>
+                <MenuTitle title={"案件検索"} className={classOfAnime} />
             </Slink>
 
             <CommonFrame>
                 <Description>
-                    様々なギターを眺めて楽しめます。<br/><br/>
-                    ギター毎に、詳細スペックもご覧いただけます。<br/><br/>
-                    情報を検索可能で、メーカー、シリーズ、カラー、ボディ材、価格帯などの条件で絞り込み検索が可能です。
-                    <br/><br/>
-                    自動検索で快適に表示を変更できます。
+                    様々なIT案件を検索できます。<br/><br/>
+                    多様な条件から案件を探すことができます。<br/>
+                    表示されるのは案件の概要ですが、
+                    詳細を知りたい場合は案件カードをクリックすることで
+                    案件の掲載元を参照できます。<br/><br/>
+                    定期的に案件数は増加していきます。
                 </Description>
             </CommonFrame>
         </div>

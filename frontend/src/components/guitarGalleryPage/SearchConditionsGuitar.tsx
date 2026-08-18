@@ -22,6 +22,7 @@ const Th = styled.th`
     font-weight: bolder;
 `;
 const Td = styled.td`
+
     text-align: left;
     font-size: 13px;
     font-weight: bolder;
@@ -38,21 +39,19 @@ interface ArgProps {
     series:        Code[] | null;
     colors:        Code[] | null;
     bodyMaterials: Code[] | null;
-    callback:      (gParams: GuitarParams) => Promise<void>;
 }
 
-const SearchConditions = ({guitarRes,
-                           guitarParams,
-                           makers,
-                           series,
-                           colors,
-                           bodyMaterials,
-                           callback}: ArgProps
+const SearchConditionsGuitar = ({guitarRes,
+                                 guitarParams,
+                                 makers,
+                                 series,
+                                 colors,
+                                 bodyMaterials}: ArgProps
 ) => {
     const gParams = guitarParams;
 
     return (
-        <div style={{margin: "10px", overflow: "hidden"}}>
+        <div style={{margin: "10px", overflowX: "hidden"}}>
             <table>
                 <thead>
                     <CommonBorderTr>
@@ -63,58 +62,55 @@ const SearchConditions = ({guitarRes,
                 <tbody>
                     <CommonBorderTr>
                         <Th>メーカー</Th>
-                        <Td><SearchMaker guitarParams={gParams} makers={makers} callback={callback}/></Td>
+                        <Td><SearchMaker guitarParams={gParams} makers={makers} /></Td>
                     </CommonBorderTr>
                     <CommonBorderTr>
                         <Th>カラー</Th>
-                        <Td><SearchColor guitarParams={gParams} colors={colors} callback={callback}/></Td>
+                        <Td><SearchColor guitarParams={gParams} colors={colors} /></Td>
                     </CommonBorderTr>
                     <CommonBorderTr>
                         <Th>シリーズ</Th>
-                        <Td><SearchSeries guitarParams={gParams} series={series} callback={callback}/></Td>
+                        <Td><SearchSeries guitarParams={gParams} series={series} /></Td>
                     </CommonBorderTr>
                     <CommonBorderTr>
                         <Th>ギター名</Th>
-                        <Td><SearchName guitarParams={gParams} callback={callback} styleObj={styleObj}/></Td>
+                        <Td><SearchName guitarParams={gParams} styleObj={styleObj}/></Td>
                     </CommonBorderTr>
                     <CommonBorderTr>
                         <Th>トップ材</Th>
-                        <Td><SearchMaterialTop guitarParams={gParams}
-                                               materials={bodyMaterials}
-                                               callback={callback}/></Td>
+                        <Td><SearchMaterialTop guitarParams={gParams} materials={bodyMaterials} /></Td>
                     </CommonBorderTr>
                     <CommonBorderTr>
                         <Th>ボディ材</Th>
-                        <Td><SearchMaterialBack guitarParams={gParams}
-                                                materials={bodyMaterials}
-                                                callback={callback}/></Td>
+                        <Td><SearchMaterialBack guitarParams={gParams}materials={bodyMaterials} /></Td>
                     </CommonBorderTr>
                     <CommonBorderTr>
                         <Th>最低価格</Th>
-                        <Td><SearchMinPrice guitarParams={gParams} callback={callback} styleObj={styleObj}/></Td>
+                        <Td><SearchMinPrice guitarParams={gParams} styleObj={styleObj}/></Td>
                     </CommonBorderTr>
                     <CommonBorderTr>
                         <Th>最大価格</Th>
-                        <Td><SearchMaxPrice guitarParams={gParams} callback={callback} styleObj={styleObj}/></Td>
+                        <Td><SearchMaxPrice guitarParams={gParams} styleObj={styleObj}/></Td>
                     </CommonBorderTr>
                     <CommonBorderTr>
                         <Th>ソート</Th>
-                        <Td><SelectorSort guitarParams={gParams} callback={callback}/></Td>
+                        <Td><SelectorSort guitarParams={gParams} /></Td>
                     </CommonBorderTr>
                     <CommonBorderTr>
                         <Th>並び順</Th>
-                        <Td><SelectorOrder guitarParams={gParams} callback={callback}/></Td>
+                        <Td><SelectorOrder guitarParams={gParams} /></Td>
                     </CommonBorderTr>
                     <CommonBorderTr>
                         <Th>ページサイズ</Th>
-                        <Td><SelectorPageSize guitarParams={gParams} callback={callback} styleObj={styleObj}/></Td>
+                        <Td><SelectorPageSize guitarParams={gParams} styleObj={styleObj}/></Td>
                     </CommonBorderTr>
                     <CommonBorderTr>
                         <Th>選択ページ</Th>
-                        <Td><SelectorPage guitarParams={gParams}
+                        <Td>
+                            <SelectorPage guitarParams={gParams}
                                           guitarRes={guitarRes}
-                                          callback={callback}
-                                          styleObj={{margin: "0px 0px 6px 15px"}}/></Td>
+                                          styleObj={{margin: "0px 0px 6px 15px"}}/>
+                            </Td>
                     </CommonBorderTr>
                     <CommonBorderTr>
                         <Th>検索方法</Th>
@@ -128,4 +124,4 @@ const SearchConditions = ({guitarRes,
     );
 }
 
-export default SearchConditions;
+export default SearchConditionsGuitar;

@@ -91,30 +91,26 @@ const CommonAppHeader = ({title}: ArgProps) => {
                         width={125}
                         onClick={() => navigate("/BattlePage")}
                         disabled={!validToken}/>
-                <CommonButton text="Guitar gallery"
-                        width={120}
-                        onClick={() => navigate("/GuitarGalleryPage")}
-                        disabled={false}/>
                 <CommonButton text="闘技場戦績"
                         width={90}
                         onClick={() => navigate("/BattleResultPage")}
                         disabled={!validToken}/>
+                <CommonButton text="Guitar gallery"
+                        width={120}
+                        onClick={() => navigate("/GuitarGalleryPage")}
+                        disabled={false}/>
                 <CommonButton text="経歴書"
                         width={60}
                         onClick={() => navigate("/CareerPage")}
                         disabled={false}/>
-                <CommonButton text="ユーザーページ"
-                        width={120}
-                        onClick={() => navigate("/UserPage")}
-                        disabled={!validToken}/>
+                <CommonButton text="案件検索"
+                        width={80}
+                        onClick={() => navigate("/JobPage")}
+                        disabled={false}/>
                 <CommonButton text="ショップ"
                         width={80}
                         onClick={() => navigate("/ShopPage")}
                         disabled={!validToken}/>
-                {/* <CommonButton text="設定"
-                        width={60}
-                        onClick={() => navigate("/EditPage")}
-                        disabled={!validToken || !isAdmin}/> */}
             </CommonButtonFrame>
 
             <div style={{display: "flex", alignItems: "center"}}>

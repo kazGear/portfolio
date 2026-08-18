@@ -80,3 +80,4 @@ infrastructure/db/backup/*.dump
 # ============================
 /certbot/conf/*
 /certbot/www/*
+infrastructure/db/init/init.sql

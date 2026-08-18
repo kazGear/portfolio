@@ -21,9 +21,15 @@ const ContentsFrame = styled.div`
     margin: 0 20px 0 20px;
 `;
 
-const fontColor: string = COLORS.MAIN_FONT;
-const backColor: string = COLORS.MENU_DISABLED;
+const Div = styled.div`
+    display: flex;
+    justify-content: space-around;
+`;
+
+const fontColor: string    = COLORS.MAIN_FONT;
+const backColor: string    = COLORS.MENU_DISABLED;
 const classOfAnime: string = "noneAnimation";
+
 const titleStyle: {} = {
     color: fontColor,
     background: backColor,
@@ -46,12 +52,7 @@ const IndexPage = () => {
 
     return (
         <LinkFrame>
-            <div style={{display: "flex"}}>
-                <ContentsFrame>
-                    {/* ログインページ */}
-                    <ToLoginPageBlock />
-                </ContentsFrame>
-
+            <Div>
                 <ContentsFrame>
                     {/* ギターギャラリー */}
                     <ToGuitarGalleryBlock />
@@ -61,9 +62,9 @@ const IndexPage = () => {
                     {/* 案件検索 */}
                     <ToJobBlock />
                 </ContentsFrame>
-            </div>
+            </Div>
 
-            <div style={{display: "flex"}}>
+            <Div>
                 <ContentsFrame>
                     {/* 戦闘ページ */}
                     <ToBattlePageBlock validToken={validToken}
@@ -75,9 +76,16 @@ const IndexPage = () => {
                     {/* 経歴書ページ */}
                     <ToCareerPageBlock/>
                 </ContentsFrame>
-            </div>
+            </Div>
 
-            <div style={{display: "flex"}}>
+            <Div>
+                <ContentsFrame>
+                    {/* ログインページ */}
+                    <ToLoginPageBlock />
+                </ContentsFrame>
+            </Div>
+
+            <Div>
                 <ContentsFrame>
                     {/* 戦闘レポートページ */}
                     <ToBattleResultPageBlock validToken={validToken}
@@ -91,9 +99,9 @@ const IndexPage = () => {
                                      classOfAnime={classOfAnime}
                                      titleStyle={titleStyle}/>
                 </ContentsFrame>
-            </div>
+            </Div>
 
-            <div style={{display: "flex"}}>
+            <Div>
                 <ContentsFrame>
                     {/* ユーザーページ */}
                     <ToUserPageBlock validToken={validToken}
@@ -107,7 +115,7 @@ const IndexPage = () => {
                                      classOfAnime={classOfAnime}
                                      titleStyle={titleStyle}/>
                 </ContentsFrame>
-            </div>
+            </Div>
 
             <h3 style={{
                 color: `${COLORS.ACCENT_FONT_PINK}`,

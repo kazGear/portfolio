@@ -20,7 +20,9 @@ const CommonBreadcrumbsList = ({children, value, onChange}: ArgProps) => {
     return (
         <label style={{display: "inline-block"}}>
             <Checkbox type="checkbox" value={value} onChange={onChange} />
-            {children}
+            <span style={{display: "inline-block", transform: "translateY(-2px)"}}>
+                {children}
+            </span>
         </label>
     );
 }

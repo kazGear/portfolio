@@ -12,6 +12,7 @@ import EditPage from "./pages/EditPage";
 import GuitarGalleryPage from "./pages/GuitarGalleryPage";
 import CareerPage from "./pages/CareerPage";
 import JobPage from "./pages/JobPage";
+import JobAnalyzePage from "./pages/JobAnalyzePage";
 import ErrorPage from "./pages/ErrorPage";
 import CommonErrorBoundary from "./components/common/CommonErrorBoundary";
 import { SIZE } from "./lib/Constants";
@@ -35,6 +36,7 @@ function App() {
                     <Route path={"/GuitarGalleryPage"} element={<GuitarGalleryPage />} />
                     <Route path={"/CareerPage"} element={<CareerPage />} />
                     <Route path={"/JobPage"} element={<JobPage />} />
+                    <Route path={"/JobAnalyzePage"} element={<JobAnalyzePage />} />
                     <Route path={"/ErrorPage"} element={<ErrorPage />} />
                 </Routes>
             </main>

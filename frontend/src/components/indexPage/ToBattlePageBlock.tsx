@@ -23,13 +23,15 @@ const ToBattleResultPageBlock = ({validToken, classOfAnime, titleStyle}: ArgProp
         <div>
             <SLink to={validToken ? "/BattlePage" : "/"} >
                 <CommonMenuTitle title={"モンスター闘技場"}
-                           className={validToken ? classOfAnime : ""}
-                           styleObj={validToken ? {} : titleStyle}/>
+                                 className={validToken ? classOfAnime : ""}
+                                 styleObj={validToken ? {} : titleStyle}/>
             </SLink>
 
             <CommonOutSideFrame>
                 <Description>
-                    某RPGカジノ風のモンスター闘技場です。どのモンスターが勝ち残るか当ててみてください。<br/><br/>
+                    某RPGカジノ風のモンスター闘技場です。<br/><br/>
+                    最大80種のモンスターたちが、約70種のスキルを駆使して戦います。<br/>
+                    どのモンスターが勝ち残るか当ててみてください。<br/><br/>
                     ※バッチ処理でも日々強制的に戦わされています。
                 </Description>
             </CommonOutSideFrame>

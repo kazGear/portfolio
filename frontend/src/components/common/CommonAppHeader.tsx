@@ -107,6 +107,10 @@ const CommonAppHeader = ({title}: ArgProps) => {
                         width={80}
                         onClick={() => navigate("/JobPage")}
                         disabled={false}/>
+                <CommonButton text="案件分析"
+                        width={80}
+                        onClick={() => navigate("/JobAnalyzePage")}
+                        disabled={false}/>
                 <CommonButton text="ショップ"
                         width={80}
                         onClick={() => navigate("/ShopPage")}

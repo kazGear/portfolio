@@ -125,5 +125,29 @@
             ";
             return SQL;
         }
+
+        public static string SelectProjectUsageByLanguage()
+        {
+            string SQL = @$"
+                SELECT
+                       f.feature_name                                   AS FeatureName,
+                       count(*)                                         AS JobCount,
+                       trunc(count(*) / sum(count(*)) OVER (), 4) * 100 AS Ratio
+                  FROM
+                       t_job_features AS f
+            INNER JOIN
+                       t_jobs AS j
+                    ON j.id = f.job_id
+
+                 WHERE
+                       f.category = 'LANGUAGE' --'FRAMEWORK_LIBRARY' 'LANGUAGE' 'ROLE' 'INFRASTRUCTURE' 'DATABASE' 'CLOUD' @category
+              GROUP BY
+                       f.feature_name
+              ORDER BY
+                       feature_name DESC
+                ;
+            ";
+            return SQL;
+        }
     }
 }

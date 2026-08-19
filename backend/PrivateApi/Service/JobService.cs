@@ -171,5 +171,16 @@ namespace PrivateApi.Service
             
             return features;
         }
+
+        public async Task<IEnumerable<ProjectUsageByLanguageDTO>> GetProjectUsageByLanguage()
+        {
+            var param = new DynamicParameters();
+            //param.Add("category", "");
+
+            IEnumerable<ProjectUsageByLanguageDTO> features =
+                await _posgre.Select<ProjectUsageByLanguageDTO>(JobSQL.SelectProjectUsageByLanguage(), param);
+
+            return features;
+        }
     }
 }

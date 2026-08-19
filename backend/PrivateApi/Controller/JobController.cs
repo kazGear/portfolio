@@ -33,5 +33,12 @@ namespace PublicApi.Controllers
             IEnumerable<string> features = await _service.GetFeatures(category);
             return StatusCode(HttpStatus.OK, features);
         }
+
+        [HttpGet("api/projectUsageByLanguage/get")]
+        public async Task<IActionResult> GetProjectUsageByLanguage()
+        {
+            IEnumerable<ProjectUsageByLanguageDTO> features = await _service.GetProjectUsageByLanguage();
+            return StatusCode(HttpStatus.OK, features);
+        }
     }
 }

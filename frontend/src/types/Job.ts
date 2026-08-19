@@ -55,3 +55,9 @@ export type JobParams = {
     setPageSize:     React.Dispatch<React.SetStateAction<number>>;
     setIsHideOldJob: React.Dispatch<React.SetStateAction<boolean>>;
 };
+
+export type ProjectUsageByLanguage = {
+    FeatureName: string;
+    JobCount:    number;
+    Ratio:       number;
+}

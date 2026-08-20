@@ -32,7 +32,7 @@ const JobAnalyzePage = () => {
     return (
         <div>
             <h1 style={{background: "white", paddingLeft: "40px"}}>👷実装中👷</h1>
-            <CommonFrame styleObj={{margin: "0px 20px", height: "75vh"}}>
+            <CommonFrame styleObj={{margin: "0px 20px", height: "75vh", overflowX: "hidden"}}>
                 <ResponsiveBar
                     data={data}
                     keys={["JobCount"]}
@@ -57,7 +57,7 @@ const JobAnalyzePage = () => {
                     ]}
                     axisBottom={{ legend: '利用状況', legendOffset: 32 }}
                     axisLeft={{ legend: '', legendOffset: 0 }}
-                    margin={{ top: 50, right: 150, bottom: 50, left: 80 }}
+                    margin={{ top: 30, right: 120, bottom: 50, left: 90 }}
                 />
             </CommonFrame>
         </div>

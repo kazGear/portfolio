@@ -241,6 +241,19 @@ find
 tail
 less
 
+# ClaudeCode
+
+cd C:\repository\portfolio
+claude
+
+/clear	会話履歴をリセットしてコンテキストをゼロにする
+/compact 会話を要約してコンテキストウィンドウを節約する
+/rewind 以前のチェックポイントに戻る
+/help 利用できるコマンドを表示する
+/init 自動生成
+
+CLAUDE.md で Claude に記憶させる。一度書いておけば、以降は何も説明しなくていい。
+
 # todos
 
 - 企画 EC・商品系サービスの検討(トレンド、価格遷移、在庫等様々な分析)

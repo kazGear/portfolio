@@ -19,10 +19,10 @@ const customLabel = (data: ComputedDatum<ProjectUsageByLanguage>): string => {
 const ProjectUsageByFeature = ({ category }: ArgProps) => {
     const [data, setData]                     = useState<ProjectUsageByLanguage[]>([]);
     const [marginLeftBase, setMarginLeftBase] = useState<number>(0);
-    const errorHandler    = useApiErrorHandler();
+
+    const errorHandler = useApiErrorHandler();
 
     useEffect(() => {
-        console.log("useEffect発火", "ProjectUsageByFeature");
         api.GET<ProjectUsageByLanguage[]>(`${URLS.FETCH_PROJECT_USAGE_BY_FEATURE}?category=${category}`)
            .then(data => setData(data ?? []))
            .catch(errorHandler);

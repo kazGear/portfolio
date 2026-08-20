@@ -1,5 +1,5 @@
 import CommonFrame from "../components/common/CommonFrame";
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, useState } from 'react';
 import ProjectUsageByFeature from '../components/JobAnalyzePage/ProjectUsageByFeature';
 import CommonSelect from '../components/common/CommonSelect';
 
@@ -9,10 +9,6 @@ const JobAnalyzePage = () => {
     const selectHandler = (e: ChangeEvent<HTMLSelectElement>) => {
         setSelectedAnalyze(e.currentTarget.value);
     }
-
-    useEffect(() => {
-        console.log("useEffect発火", "JobAnalyzePage");
-    }, []);
 
     return (
         <div>

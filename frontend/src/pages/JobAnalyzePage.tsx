@@ -1,64 +1,46 @@
-import { ResponsiveBar } from '@nivo/bar'
-import type { ComputedDatum } from "@nivo/bar";
-import useApiErrorHandler from "../hooks/useApiErrorHandler";
-import CommonNowLoading from "../components/common/CommonNowLoading";
 import CommonFrame from "../components/common/CommonFrame";
-import { useEffect, useState } from 'react';
-import { ProjectUsageByLanguage } from '../types/Job';
-import { api } from '../lib/apiClient';
-import { URLS } from '../lib/Constants';
-
-type LanguageData = {
-    jobCount: number;
-    ratio: number;
-};
-
-const customLabel = (data: ComputedDatum<ProjectUsageByLanguage>): string => {
-    return (
-        `${data.data.JobCount?.toLocaleString()}件 ${data.data.Ratio?.toFixed(2)}%`
-    )
-};
+import { ChangeEvent, useEffect, useState } from 'react';
+import ProjectUsageByFeature from '../components/JobAnalyzePage/ProjectUsageByFeature';
+import CommonSelect from '../components/common/CommonSelect';
 
 const JobAnalyzePage = () => {
-    const [data, setData] = useState<ProjectUsageByLanguage[]>([])
-    const errorHandler    = useApiErrorHandler();
+    const [selectedAnalyze, setSelectedAnalyze] = useState<string>("projectUsageByFeature");
+
+    const selectHandler = (e: ChangeEvent<HTMLSelectElement>) => {
+        setSelectedAnalyze(e.currentTarget.value);
+    }
 
     useEffect(() => {
-        api.GET<ProjectUsageByLanguage[]>(URLS.FETCH_PROJECT_USAGE_BY_LANGUAGE)
-           .then(data => setData(data ?? []))
-           .catch(errorHandler);
+        console.log("useEffect発火", "JobAnalyzePage");
     }, []);
 
     return (
         <div>
-            <h1 style={{background: "white", paddingLeft: "40px"}}>👷実装中👷</h1>
+            <CommonFrame styleObj={{margin: "20px", overflowX: "hidden"}}>
+                <CommonSelect title="分析内容選択" styleObj={{width: "300px"}} onChange={selectHandler}>
+                    <option value="">選択してください</option>
+                    <option value="projectUsageByLanguage">採用状況&emsp;（言語別）</option>
+                    <option value="projectUsageByFrameworkLibrary">採用状況&emsp;（フレーム、ライブラリ別）</option>
+                    <option value="projectUsageByRole">採用状況&emsp;（職能別）</option>
+                    <option value="projectUsageByInfrastructure">採用状況&emsp;（インフラ別）</option>
+                    <option value="projectUsageByDatabase">採用状況&emsp;（DB別）</option>
+                    <option value="projectUsageByCloud">採用状況&emsp;（クラウド別）</option>
+                </CommonSelect>
+            </CommonFrame>
             <CommonFrame styleObj={{margin: "0px 20px", height: "75vh", overflowX: "hidden"}}>
-                <ResponsiveBar
-                    data={data}
-                    keys={["JobCount"]}
-                    indexBy="FeatureName"
-                    colors={{"scheme": "dark2"}}
-                    layout="horizontal"
-                    label={customLabel}
-                    labelPosition="end"
-                    labelOffset={10}
-                    labelSkipWidth={12}
-                    labelSkipHeight={12}
-                    legends={[
-                        {
-                            dataFrom: 'keys',
-                            anchor: 'bottom-right',
-                            direction: 'column',
-                            translateX: 120,
-                            itemsSpacing: 3,
-                            itemWidth: 100,
-                            itemHeight: 16
-                        }
-                    ]}
-                    axisBottom={{ legend: '利用状況', legendOffset: 32 }}
-                    axisLeft={{ legend: '', legendOffset: 0 }}
-                    margin={{ top: 30, right: 120, bottom: 50, left: 90 }}
-                />
+                { selectedAnalyze === "projectUsageByLanguage" ?
+                    <ProjectUsageByFeature category="LANGUAGE" /> : "" }
+                { selectedAnalyze === "projectUsageByFrameworkLibrary" ?
+                    <ProjectUsageByFeature category="FRAMEWORK_LIBRARY" /> : "" }
+                { selectedAnalyze === "projectUsageByRole" ?
+                    <ProjectUsageByFeature category="ROLE" /> : "" }
+                { selectedAnalyze === "projectUsageByInfrastructure" ?
+                    <ProjectUsageByFeature category="INFRASTRUCTURE" /> : "" }
+                { selectedAnalyze === "projectUsageByDatabase" ?
+                    <ProjectUsageByFeature category="DATABASE" /> : "" }
+                { selectedAnalyze === "projectUsageByCloud" ?
+                    <ProjectUsageByFeature category="CLOUD" /> : "" }
+
             </CommonFrame>
         </div>
     )

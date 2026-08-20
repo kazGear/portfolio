@@ -57,7 +57,7 @@ export type JobParams = {
 };
 
 export type ProjectUsageByLanguage = {
-    FeatureName: string;
-    JobCount:    number;
-    Ratio:       number;
+    FeatureName:  string;
+    FeatureCount: number;
+    Ratio:        number;
 }

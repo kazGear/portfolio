@@ -137,7 +137,7 @@ export const URLS = {
     // 案件系
     FETCH_JOBS: `${PRIVATE_API_BASE_URL}/api/jobs/get`,
     FETCH_FEATURES: `${PRIVATE_API_BASE_URL}/api/features/get`,
-    FETCH_PROJECT_USAGE_BY_LANGUAGE: `${PRIVATE_API_BASE_URL}/api/projectUsageByLanguage/get`,
+    FETCH_PROJECT_USAGE_BY_FEATURE: `${PRIVATE_API_BASE_URL}/api/projectUsageByFeature/get`,
     // その他
     UPLOAD_IMAGE: `${PRIVATE_API_BASE_URL}/api/common/imgUpload`
 } as const;

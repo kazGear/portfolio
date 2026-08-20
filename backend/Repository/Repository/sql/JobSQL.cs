@@ -126,12 +126,12 @@
             return SQL;
         }
 
-        public static string SelectProjectUsageByLanguage()
+        public static string SelectProjectUsageByFeature()
         {
             string SQL = @$"
                 SELECT
                        f.feature_name                                   AS FeatureName,
-                       count(*)                                         AS JobCount,
+                       count(*)                                         AS FeatureCount,
                        trunc(count(*) / sum(count(*)) OVER (), 4) * 100 AS Ratio
                   FROM
                        t_job_features AS f
@@ -140,7 +140,7 @@
                     ON j.id = f.job_id
 
                  WHERE
-                       f.category = 'LANGUAGE' --'FRAMEWORK_LIBRARY' 'LANGUAGE' 'ROLE' 'INFRASTRUCTURE' 'DATABASE' 'CLOUD' @category
+                       f.category = @category -- 'LANGUAGE' 'FRAMEWORK_LIBRARY' 'ROLE' 'INFRASTRUCTURE' 'DATABASE' 'CLOUD'
               GROUP BY
                        f.feature_name
               ORDER BY

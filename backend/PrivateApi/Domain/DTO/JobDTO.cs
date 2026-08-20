@@ -33,11 +33,11 @@
         public IEnumerable<string> Options { get; set; } = [];
     }
 
-    public record ProjectUsageByLanguageDTO
+    public record ProjectUsageByFeatureDTO
     {
         public string FeatureName { get; init; } = string.Empty;
 
-        public int JobCount { get; init; }
+        public int FeatureCount { get; init; }
 
         public double Ratio { get; init; }
     }

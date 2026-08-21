@@ -65,4 +65,17 @@ namespace PrivateApi.Domain.DTO
 
         public double SalaryHigher { get; set; }
     }
+
+    public record SavedJobDataStatusDTO
+    {
+        public string SourceSite { get; init; } = string.Empty;
+
+        public int SavedPageIdMin { get; init; }
+
+        public int SavedPageIdMax { get; init; }
+
+        public int JobCount { get; init; }
+
+        public double ExistRatio { get; init; }
+    }
 }

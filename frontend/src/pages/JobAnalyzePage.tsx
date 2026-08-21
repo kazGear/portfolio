@@ -4,6 +4,7 @@ import ProjectUsageByFeature from '../components/JobAnalyzePage/ProjectUsageByFe
 import CommonSelect from '../components/common/CommonSelect';
 import WorkPlaceByPrefecture from "../components/JobAnalyzePage/WorkPlaceByPrefecture";
 import SalaryRangeByFeature from "../components/JobAnalyzePage/SalaryRangeByFeature";
+import SavedJobDataStatus from "../components/JobAnalyzePage/SavedJobDataStatus";
 
 const JobAnalyzePage = () => {
     const [selectedAnalyze, setSelectedAnalyze] = useState<string>("projectUsageByFeature");
@@ -19,6 +20,8 @@ const JobAnalyzePage = () => {
                     <option value="">選択してください</option>
 
                     <option value="workPlaceByPrefecture">勤務形態&emsp;（都道府県別）</option>
+
+                    <option value="savedJobDataStatus">案件保存状態&emsp;（運用者用）</option>
 
                     <option value="projectUsageByLanguage">採用状況&emsp;（言語別）</option>
                     <option value="projectUsageByFrameworkLibrary">採用状況&emsp;（フレーム＆ライブラリ別）</option>
@@ -37,6 +40,9 @@ const JobAnalyzePage = () => {
             </CommonFrame>
             <CommonFrame styleObj={{margin: "0px 20px", height: "75vh", overflowX: "hidden"}}>
                 { selectedAnalyze === "workPlaceByPrefecture" ? <WorkPlaceByPrefecture /> : "" }
+
+
+                { selectedAnalyze === "savedJobDataStatus" ? <SavedJobDataStatus /> : "" }
 
 
                 { selectedAnalyze === "projectUsageByLanguage" ?

@@ -75,3 +75,11 @@ export type SalaryRange = {
     SalaryMedian: number;
     SalaryHigher: number;
 }
+
+export type SavedJobData = {
+    SourceSite:     string;
+    SavedPageIdMin: number;
+    SavedPageIdMax: number;
+    JobCount:       number;
+    ExistRatio:     number;
+}

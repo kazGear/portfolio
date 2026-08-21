@@ -9,49 +9,50 @@
         {
             // 検索結果の案件カード用
             string SQL = @$"
-                SELECT v.*
+                SELECT
+                       v.*
                   FROM 
-                  (
-                   SELECT
-                          max(j.id)                                AS Id,
-                          max(j.url)                               AS Url,
-                          max(j.title)                             AS Title,
-                          max(j.location)                          AS Location,
-                          max(j.min_salary_at_month)               AS MinSalaryAtMonth,
-                          max(j.max_salary_at_month)               AS MaxSalaryAtMonth,
-                          max(j.employment_type)                   AS EmploymentType,
-                          max(j.work_place)                        AS WorkPlace,
-                          max(j.source_site)                       AS SourceSite, 
-                          max(j.created_at)                        AS CreatedAt,
-                          max(j.updated_at)                        AS UpdatedAt,
-                          string_agg(DISTINCT f.feature_name, ',') AS FeatureNamesCSV,
-                          string_agg(DISTINCT o.option, ',')       AS OptionsCSV
+                      (
+                       SELECT
+                              max(j.id)                                AS Id,
+                              max(j.url)                               AS Url,
+                              max(j.title)                             AS Title,
+                              max(j.location)                          AS Location,
+                              max(j.min_salary_at_month)               AS MinSalaryAtMonth,
+                              max(j.max_salary_at_month)               AS MaxSalaryAtMonth,
+                              max(j.employment_type)                   AS EmploymentType,
+                              max(j.work_place)                        AS WorkPlace,
+                              max(j.source_site)                       AS SourceSite, 
+                              max(j.created_at)                        AS CreatedAt,
+                              max(j.updated_at)                        AS UpdatedAt,
+                              string_agg(DISTINCT f.feature_name, ',') AS FeatureNamesCSV,
+                              string_agg(DISTINCT o.option, ',')       AS OptionsCSV
  
-                     FROM
-                          t_jobs AS j
-               INNER JOIN
-                          t_job_features AS f
-                       ON j.id = f.job_id
+                         FROM
+                              t_jobs AS j
+                   INNER JOIN
+                              t_job_features AS f
+                           ON j.id = f.job_id
         
-          LEFT OUTER JOIN
-                          t_job_options AS o
-                       ON j.id = o.job_id
+              LEFT OUTER JOIN
+                              t_job_options AS o
+                           ON j.id = o.job_id
  
-                    WHERE TRUE
-                         {conditions}
+                        WHERE TRUE
+                             {conditions}
 
-       /* 動的検索条件 AND title            iLIKE '%' || @title || '%'
-                      AND location              = @location
-                      AND min_salary_at_month  >= @min_salary_at_month_specified_min
-                      AND min_salary_at_month  <= @min_salary_at_month_specified_max
-                      AND max_salary_at_month  >= @max_salary_at_month_specified_min
-                      AND max_salary_at_month  <= @max_salary_at_month_specified_max
-                      AND work_place            = @work_place
-                      AND source_site           = @source_site 
-                      AND NOW() - j.updated_at <= '3 month' */
+           /* 動的検索条件 AND title            iLIKE '%' || @title || '%'
+                          AND location              = @location
+                          AND min_salary_at_month  >= @min_salary_at_month_specified_min
+                          AND min_salary_at_month  <= @min_salary_at_month_specified_max
+                          AND max_salary_at_month  >= @max_salary_at_month_specified_min
+                          AND max_salary_at_month  <= @max_salary_at_month_specified_max
+                          AND work_place            = @work_place
+                          AND source_site           = @source_site 
+                          AND NOW() - j.updated_at <= '3 month' */
 
-                 GROUP BY
-                          j.url
+                     GROUP BY
+                              j.url
                   ) AS v
 
                  WHERE TRUE
@@ -249,6 +250,33 @@
                        f.feature_name
               ORDER BY
                        f.feature_name DESC
+                     ;
+            ";
+            return SQL;
+        }
+
+        public static string SelectSavedJobDataStatus()
+        {
+            string SQL = @"
+                SELECT
+                       source_site    AS SourceSite,
+                       min(v.page_id) AS SavedPageIdMin,
+                       max(v.page_id) AS SavedPageIdMax,
+                       count(*)       AS JobCount,
+                       trunc(count(*)::DECIMAL / (max(v.page_id) - min(v.page_id) + 1)::DECIMAL, 4) * 100 AS ExistRatio
+                  FROM 
+                    (
+                        -- regexp_match()は配列で結果取得する。[1]で最初の要素にアクセス
+                        SELECT
+                               source_site, (regexp_match(url, '\d{1,7}'))[1]::INT AS page_id
+                          FROM
+                               t_jobs
+                    ) AS v
+
+              GROUP BY
+                       source_site
+              ORDER BY
+                       source_site ASC 
                      ;
             ";
             return SQL;

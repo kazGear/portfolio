@@ -54,5 +54,13 @@ namespace PublicApi.Controllers
             IEnumerable<SalaryRangeByFeatureDTO> salaries = await _service.GetSalaryRangeByFeature(category);
             return StatusCode(HttpStatus.OK, salaries);
         }
+
+        [HttpGet("api/savedJobDataStatus/get")]
+        public async Task<IActionResult> GetSavedJobDataStatus()
+        {
+            IEnumerable<SavedJobDataStatusDTO> status = await _service.GetSavedJobDataStatus();
+            return StatusCode(HttpStatus.OK, status);
+        }
+
     }
 }

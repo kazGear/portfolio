@@ -213,5 +213,13 @@ namespace PrivateApi.Service
             }
             return salaries;
         }
+
+        public async Task<IEnumerable<SavedJobDataStatusDTO>> GetSavedJobDataStatus()
+        {
+            IEnumerable<SavedJobDataStatusDTO> status =
+                await _posgre.Select<SavedJobDataStatusDTO>(JobSQL.SelectSavedJobDataStatus());
+
+            return status;
+        }
     }
 }

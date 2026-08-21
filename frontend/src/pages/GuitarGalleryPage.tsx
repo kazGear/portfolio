@@ -10,13 +10,14 @@ import SearchConditionsGuitar from "../components/guitarGalleryPage/SearchCondit
 import DetailModal from "../components/guitarGalleryPage/DetailModal";
 import { PUBLIC_API_BASE_URL } from "../config/env"
 import useApiErrorHandler from "../hooks/useApiErrorHandler";
+import CommonNowLoading from "../components/common/CommonNowLoading";
 
 const GuitarGalleryPage = () => {
     // プルダウン用 params
-    const [makers, setMakers]               = useState<Code[] | null>([]);
-    const [series, setSeries]               = useState<Code[] | null>([]);
-    const [colors, setColors]               = useState<Code[] | null>([]);
-    const [bodyMaterials, setBodyMaterials] = useState<Code[] | null>([]);
+    const [makers, setMakers]               = useState<Code[]>([]);
+    const [series, setSeries]               = useState<Code[]>([]);
+    const [colors, setColors]               = useState<Code[]>([]);
+    const [bodyMaterials, setBodyMaterials] = useState<Code[]>([]);
 
     const [selectedGuitar, setSelectedGuitar] = useState<Guitar | null>(null);
     const [guitars, setGuitars]               = useState<GuitarsResponse | null>(null);
@@ -28,15 +29,20 @@ const GuitarGalleryPage = () => {
 
     // プルダウンデータ等取得
     useEffect(() => {
-        api.GET<Code[]>(`${PUBLIC_API_BASE_URL}/public/v1/makers`).then(result => setMakers(result))
-                                                                  .catch(errorHandler);
-        api.GET<Code[]>(`${PUBLIC_API_BASE_URL}/public/v1/Colors`).then(result => setColors(result))
-                                                                  .catch(errorHandler);
-        api.GET<Code[]>(`${PUBLIC_API_BASE_URL}/public/v1/bodyMaterials`).then(result => setBodyMaterials(result))
-                                                                         .catch(errorHandler)
-        // 初期画面用、条件なし検索
-        api.GET<GuitarsResponse>(`${PUBLIC_API_BASE_URL}/public/v1/guitars?`).then(result => setGuitars(result))
-                                                                             .catch(errorHandler);
+        api.GET<Code[]>(`${PUBLIC_API_BASE_URL}/public/v1/makers`)
+           .then(result => setMakers(result ?? []))
+           .catch(errorHandler);
+        api.GET<Code[]>(`${PUBLIC_API_BASE_URL}/public/v1/Colors`)
+           .then(result => setColors(result ?? []))
+           .catch(errorHandler);
+        api.GET<Code[]>(`${PUBLIC_API_BASE_URL}/public/v1/bodyMaterials`)
+           .then(result => setBodyMaterials(result ?? []))
+           .catch(errorHandler)
+
+           // 初期画面用、条件なし検索
+        api.GET<GuitarsResponse>(`${PUBLIC_API_BASE_URL}/public/v1/guitars?`)
+           .then(result => setGuitars(result))
+           .catch(errorHandler);
     }, [])
 
     // 変動プルダウンデータ取得
@@ -46,10 +52,10 @@ const GuitarGalleryPage = () => {
             gParams.setSeries("")
             return;
         }
-        api.GET<Code[]>(
-            `${PUBLIC_API_BASE_URL}/public/v1/series?makerCd=${gParams.makerCd}`
-        ).then(result => setSeries(result))
-         .catch(errorHandler);
+
+        api.GET<Code[]>(`${PUBLIC_API_BASE_URL}/public/v1/series?makerCd=${gParams.makerCd}`)
+           .then(result => setSeries(result ?? []))
+           .catch(errorHandler);
 
         gParams.setSeries("") // 初期化しないと、他メーカーのシリーズを選択したままになってしまう。
     }, [gParams.makerCd])
@@ -106,9 +112,16 @@ const GuitarGalleryPage = () => {
                                         />
             </CommonFrame>
             <CommonFrame styleObj={{width: "80%", minWidth: "280px",height: "87vh", margin: "20px 20px 0px 10px"}}>
-                <GuitarCards guitarsRes={guitars}
-                             callback={getSelectedGuitarHandler}>
-                </GuitarCards>
+                {
+                    guitars !== null ? (
+                        <GuitarCards guitarsRes={guitars}
+                                    callback={getSelectedGuitarHandler}>
+                        </GuitarCards>
+                    ) : (
+                        <div style={{textAlign: "center", marginTop: "35%"}}>
+                            <CommonNowLoading alt="guitar cards"/>
+                        </div>
+                    )}
             </CommonFrame>
 
             <DetailModal selectedGuitars={selectedGuitar}

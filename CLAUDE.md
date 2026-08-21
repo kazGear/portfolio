@@ -106,6 +106,18 @@ pg_restore -h localhost -p 5432 -U postgres -d kaz_app .\infrastructure\db\backu
 
 `infrastructure/db/init/` はコンテナ初回起動時のみ実行される（`pg-data` ボリュームが空のとき）。
 
+### DBスキーマ
+
+命名は `m_*`（マスタ）/ `t_*`（トランザクション・蓄積データ）。`init.sql` に入っているのは16テーブルで、
+モンスターバトル系（`m_monster`, `m_monster_skills`, `m_skill`, `m_item`, `m_shop*`, `m_user`,
+`t_battle_result`, `t_my_item`）、コード値マスタ `m_code`、ギター `t_guitars`、
+バッチ基盤（`m_batch_config`, `t_batch_execution`）。
+`m_monster_origin` / `m_monster_skills_origin` は編集リセット用の初期値。
+
+**案件（Job）系のテーブルは `init.sql` に含まれていない**（`t_jobs`, `t_job_features`,
+`t_job_features_created` — Go側が投入、C#側が参照）。空ボリュームから起動したDBでは案件機能が動かないため、
+dumpからのリストアか手動DDLが必要。`init.sql` を再生成すれば取り込まれる。
+
 ## アーキテクチャ
 
 ### リクエストの流れ
@@ -141,6 +153,20 @@ prodのcomposeに frontend サービスは存在しない。HTTPSはnginxで終�
   React StrictModeの二重呼び出し対策として `notifyKey`（時刻時単位+パス+例外種別）で重複通知を抑止している。
 - PrivateApi のみ `Startup` クラス構成（`Program.cs` 内）。JWT設定・CORS許可オリジンもここ。
   PublicApi は minimal hosting の `Program.cs`。
+- コード値（属性・状態・対象種別など）は `m_code` テーブル ＋ `CSLib/Const/C*.cs`（`Enumeration<T>` 派生の
+  `static readonly` 定数）の対応で管理。フロントへは `/api/common/FetchElementCode` で配る。
+
+### 認証フロー（既存の実装に合わせること）
+
+`POST /api/auth/login` → `AuthService.AuthenticateUser` → `Jwt.GenerateJwtToken` でトークン発行し、
+`UserDTO.Token` として返す → フロントが localStorage（`KEYS.TOKEN`）に保存 →
+`apiClient` が全リクエストの `Authorization` ヘッダに**生のトークン（`Bearer ` 接頭辞なし）**を載せる →
+有効性確認は `POST /api/auth/checkToken` で `Jwt.IsValidToken()` を自前で呼ぶ（`useHooksOfCommon` /
+`useHooksOfIndex` から実行）。
+
+`AddJwtBearer` の設定はしてあるが `[Authorize]` 属性はどこにも付いていないため、
+エンドポイントの保護はフレームワークではなく上記の自前チェックで行っている。
+`[Authorize]` を後から付ける場合、ヘッダが `Bearer ` 形式でないため `apiClient` 側も直す必要がある。
 
 ### Go クローラー（抽象化フレーム + メーカー別実装）
 
@@ -153,8 +179,13 @@ prodのcomposeに frontend サービスは存在しない。HTTPSはnginxで終�
   `service/guitar.go` の `makersFactory()` または `service/job.go` の `jobBoardFactory()` に登録する。
 - 静的HTMLは colly、JSレンダリングが必要なページは chromedp を使い分ける。判定手順は `_docs/memo.md` の
   「SPA判定基準」参照。デバッグ時は `service_core.go` の `createChromedpCtxDebug()`（headless=false）に差し替える。
+- 抽出値は `map[string]string` に詰めて受け渡す。キーは `pkg/constants`（`C` エイリアスでimport）の
+  定数名（`C.Title`, `C.MinSalaryAtMonth` など）を使い、`BuildModel` がそこからモデルを組む。
+  項目を増やすときは constants → model → `repository/sql` の3箇所を揃える。
 - 並列数は `PARALLEL_COUNT_GUITAR` / `PARALLEL_COUNT_JOB`、ログ保持数は `LOGS_KEEP_COUNT` で制御。
   メーカーごとに `utils.NewLogger` でログファイルを分ける。
+- 案件サイトは商品ページのURLが連番のため、`.env` の `PAGE_ID_FROM_*` 〜 `PAGE_ID_TO_*` で
+  巡回範囲を指定する方式（サイト追加時はこのペアも追加）。
 - 各バッチは開始時に `batchLogger` でDBへ開始ログを入れ、`recover()` でpanicを捕まえて
   エラーステータスを記録する。`cmd/batchMonitor` がそのログを見て未実行・異常をDiscord通知する。
 
@@ -183,7 +214,14 @@ cronファイルは**末尾を改行（LF）で終わらせる**こと。CRLFが
   受け側は `useApiErrorHandler`（500系は `/ErrorPage` へ遷移）で処理し、
   最上位は `CommonErrorBoundary` で包む。
 - エンドポイントURLは `src/lib/Constants.ts` に集約（`config/env.ts` のbase URLと連結）。色・サイズもここ。
+  API を追加したら Controller / `Constants.ts` / `src/types/` の3点セットで更新する。
 - スタイルは styled-components。インデントは4スペース（`.prettierrc` / `.vscode/settings.json`）。
+- グラフは `@nivo/bar`。案件分析の各グラフは `src/components/JobAnalyzePage/`
+  （`ProjectUsageByFeature` / `WorkPlaceByPrefecture` / `SalaryRangeByFeature`）で、
+  対応APIは `/api/projectUsageByFeature/get`・`/api/workPlaceByPrefecture/get`・
+  `/api/salaryRangeByFeature/get`（いずれも `JobController`）。
+  集計は基本SQL側（`JobSQL`）で行い、フロントは描画に寄せる。
+  なおこのディレクトリのみPascalCase、他のページ配下は `jobPage/` のようなcamelCase。
 
 ## 開発・デプロイフロー
 

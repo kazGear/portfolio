@@ -11,6 +11,7 @@ import ToEditPageBlock from "../components/indexPage/ToEditPageBlock";
 import ToGuitarGalleryBlock from "../components/indexPage/ToGuitarGalleryBlock";
 import ToCareerPageBlock from "../components/indexPage/ToCareerPageBlock";
 import ToJobBlock from "../components/indexPage/ToJobBlock";
+import ToJobAnalyzeBlock from "../components/indexPage/ToJobAnalyzeBlock";
 
 const LinkFrame = styled.div`
     width: 90%;
@@ -59,26 +60,31 @@ const IndexPage = () => {
                 </ContentsFrame>
 
                 <ContentsFrame>
-                    {/* 案件検索 */}
-                    <ToJobBlock />
-                </ContentsFrame>
-            </Div>
-
-            <Div>
-                <ContentsFrame>
                     {/* 戦闘ページ */}
                     <ToBattlePageBlock validToken={validToken}
                                        classOfAnime={classOfAnime}
                                        titleStyle={titleStyle}/>
                 </ContentsFrame>
+            </Div>
+
+            <Div>
+                <ContentsFrame>
+                    {/* 案件検索 */}
+                    <ToJobBlock />
+                </ContentsFrame>
 
                 <ContentsFrame>
-                    {/* 経歴書ページ */}
-                    <ToCareerPageBlock/>
+                    {/* 案件分析 */}
+                    <ToJobAnalyzeBlock />
                 </ContentsFrame>
             </Div>
 
             <Div>
+                <ContentsFrame>
+                    {/* 経歴書ページ */}
+                    <ToCareerPageBlock/>
+                </ContentsFrame>
+
                 <ContentsFrame>
                     {/* ログインページ */}
                     <ToLoginPageBlock />

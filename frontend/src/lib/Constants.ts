@@ -137,6 +137,10 @@ export const URLS = {
     // 案件系
     FETCH_JOBS: `${PRIVATE_API_BASE_URL}/api/jobs/get`,
     FETCH_FEATURES: `${PRIVATE_API_BASE_URL}/api/features/get`,
+    FETCH_PROJECT_USAGE_BY_FEATURE: `${PRIVATE_API_BASE_URL}/api/projectUsageByFeature/get`,
+    FETCH_WORK_PLACE_BY_PREFECTURE: `${PRIVATE_API_BASE_URL}/api/workPlaceByPrefecture/get`,
+    FETCH_SALARY_RANGE_BY_FEATURE: `${PRIVATE_API_BASE_URL}/api/salaryRangeByFeature/get`,
+    FETCH_SAVED_JOB_DATA_STATUS: `${PRIVATE_API_BASE_URL}/api/savedJobDataStatus/get`,
     // その他
     UPLOAD_IMAGE: `${PRIVATE_API_BASE_URL}/api/common/imgUpload`
 } as const;

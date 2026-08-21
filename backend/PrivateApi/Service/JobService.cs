@@ -171,5 +171,55 @@ namespace PrivateApi.Service
             
             return features;
         }
+
+        public async Task<IEnumerable<ProjectUsageByFeatureDTO>> GetProjectUsageByFeature(string category)
+        {
+            var param = new DynamicParameters();
+            param.Add("category", category);
+
+            IEnumerable<ProjectUsageByFeatureDTO> features =
+                await _posgre.Select<ProjectUsageByFeatureDTO>(JobSQL.SelectProjectUsageByFeature(), param);
+
+            return features;
+        }
+
+        public async Task<IEnumerable<WorkPlaceByPrefectureDTO>> GetWorkPlaceByPrefecture()
+        {
+            IEnumerable<WorkPlaceByPrefectureDTO> workPlaces =
+                await _posgre.Select<WorkPlaceByPrefectureDTO>(JobSQL.SelectWorkPlaceByPrefecture());
+
+            foreach (WorkPlaceByPrefectureDTO dto in workPlaces)
+            {   
+                // 所在地不明に対してラベル付け
+                if (string.IsNullOrWhiteSpace(dto.Location)) dto.Location = "？？？";
+            }
+            return workPlaces;
+        }
+
+        public async Task<IEnumerable<SalaryRangeByFeatureDTO>> GetSalaryRangeByFeature(string category)
+        {
+            var param = new DynamicParameters();
+            param.Add("category", category);
+
+            IEnumerable<SalaryRangeByFeatureDTO> salaries =
+                await _posgre.Select<SalaryRangeByFeatureDTO>(JobSQL.SelectSalaryRangeByFeature(), param);
+
+            foreach (SalaryRangeByFeatureDTO dto in salaries)
+            {
+                // 小数点以下切り捨て
+                dto.SalaryLower  = Math.Truncate(dto.SalaryLower);
+                dto.SalaryMedian = Math.Truncate(dto.SalaryMedian);
+                dto.SalaryHigher = Math.Truncate(dto.SalaryHigher);
+            }
+            return salaries;
+        }
+
+        public async Task<IEnumerable<SavedJobDataStatusDTO>> GetSavedJobDataStatus()
+        {
+            IEnumerable<SavedJobDataStatusDTO> status =
+                await _posgre.Select<SavedJobDataStatusDTO>(JobSQL.SelectSavedJobDataStatus());
+
+            return status;
+        }
     }
 }

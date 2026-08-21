@@ -55,3 +55,31 @@ export type JobParams = {
     setPageSize:     React.Dispatch<React.SetStateAction<number>>;
     setIsHideOldJob: React.Dispatch<React.SetStateAction<boolean>>;
 };
+
+export type ProjectUsage = {
+    FeatureName:  string;
+    FeatureCount: number;
+    Ratio:        number;
+}
+
+export type WorkPlace = {
+    Location:   string;
+    FullRemote: number;
+    Hybrid:     number;
+    OnSite:     number;
+}
+
+export type SalaryRange = {
+    FeatureName:  string;
+    SalaryLower:  number;
+    SalaryMedian: number;
+    SalaryHigher: number;
+}
+
+export type SavedJobData = {
+    SourceSite:     string;
+    SavedPageIdMin: number;
+    SavedPageIdMax: number;
+    JobCount:       number;
+    ExistRatio:     number;
+}

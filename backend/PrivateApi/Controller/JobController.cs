@@ -33,5 +33,34 @@ namespace PublicApi.Controllers
             IEnumerable<string> features = await _service.GetFeatures(category);
             return StatusCode(HttpStatus.OK, features);
         }
+
+        [HttpGet("api/projectUsageByFeature/get")]
+        public async Task<IActionResult> GetProjectUsageByFeature([FromQuery] string category)
+        {
+            IEnumerable<ProjectUsageByFeatureDTO> features = await _service.GetProjectUsageByFeature(category);
+            return StatusCode(HttpStatus.OK, features);
+        }
+
+        [HttpGet("api/workPlaceByPrefecture/get")]
+        public async Task<IActionResult> GetWorkPlaceByPrefecture()
+        {
+            IEnumerable<WorkPlaceByPrefectureDTO> workPlaces = await _service.GetWorkPlaceByPrefecture();
+            return StatusCode(HttpStatus.OK, workPlaces);
+        }
+
+        [HttpGet("api/salaryRangeByFeature/get")]
+        public async Task<IActionResult> GetSalaryRangeByFeature([FromQuery] string category)
+        {
+            IEnumerable<SalaryRangeByFeatureDTO> salaries = await _service.GetSalaryRangeByFeature(category);
+            return StatusCode(HttpStatus.OK, salaries);
+        }
+
+        [HttpGet("api/savedJobDataStatus/get")]
+        public async Task<IActionResult> GetSavedJobDataStatus()
+        {
+            IEnumerable<SavedJobDataStatusDTO> status = await _service.GetSavedJobDataStatus();
+            return StatusCode(HttpStatus.OK, status);
+        }
+
     }
 }

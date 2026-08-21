@@ -1,4 +1,6 @@
-﻿namespace PrivateApi.Domain.DTO
+﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+
+namespace PrivateApi.Domain.DTO
 {
     public record JobDTO
     {
@@ -31,5 +33,49 @@
         public IEnumerable<string> FeatureNames { get; set; } = [];
 
         public IEnumerable<string> Options { get; set; } = [];
+    }
+
+    public record ProjectUsageByFeatureDTO
+    {
+        public string FeatureName { get; init; } = string.Empty;
+
+        public int FeatureCount { get; init; }
+
+        public double Ratio { get; init; }
+    }
+
+    public record WorkPlaceByPrefectureDTO
+    {
+        public string Location { get; set; } = string.Empty;
+
+        public int FullRemote { get; init; }
+
+        public int Hybrid { get; init; }
+
+        public int OnSite { get; init; }
+    }
+
+    public record SalaryRangeByFeatureDTO
+    {
+        public string FeatureName { get; init; } = string.Empty;
+
+        public double SalaryLower { get; set; }
+
+        public double SalaryMedian { get; set; }
+
+        public double SalaryHigher { get; set; }
+    }
+
+    public record SavedJobDataStatusDTO
+    {
+        public string SourceSite { get; init; } = string.Empty;
+
+        public int SavedPageIdMin { get; init; }
+
+        public int SavedPageIdMax { get; init; }
+
+        public int JobCount { get; init; }
+
+        public double ExistRatio { get; init; }
     }
 }

@@ -23,7 +23,7 @@ const ToGuitarGalleryBlock = () => {
 
             <CommonFrame>
                 <Description>
-                    様々なIT案件を検索できます。<br/><br/>
+                    様々なITエンジニア案件を検索できます。<br/><br/>
                     多様な条件から案件を探すことができます。<br/>
                     表示されるのは案件の概要ですが、
                     詳細を知りたい場合は案件カードをクリックすることで

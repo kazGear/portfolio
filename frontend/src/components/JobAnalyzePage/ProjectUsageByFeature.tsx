@@ -3,27 +3,27 @@ import type { ComputedDatum } from "@nivo/bar";
 import { useEffect, useState } from 'react';
 import { URLS } from '../../lib/Constants';
 import { api } from '../../lib/apiClient';
-import { UsageByFeature } from '../../types/Job';
+import { ProjectUsage } from '../../types/Job';
 import useApiErrorHandler from '../../hooks/useApiErrorHandler';
 
 interface ArgProps {
     category: string
 }
 
-const customLabel = (data: ComputedDatum<UsageByFeature>): string => {
+const customLabel = (data: ComputedDatum<ProjectUsage>): string => {
     return (
         `${data.data.FeatureCount?.toLocaleString()}件 ${data.data.Ratio?.toFixed(2)}%`
     )
 };
 
 const ProjectUsageByFeature = ({ category }: ArgProps) => {
-    const [data, setData]                     = useState<UsageByFeature[]>([]);
+    const [data, setData]                     = useState<ProjectUsage[]>([]);
     const [marginLeftBase, setMarginLeftBase] = useState<number>(0);
 
     const errorHandler = useApiErrorHandler();
 
     useEffect(() => {
-        api.GET<UsageByFeature[]>(`${URLS.FETCH_PROJECT_USAGE_BY_FEATURE}?category=${category}`)
+        api.GET<ProjectUsage[]>(`${URLS.FETCH_PROJECT_USAGE_BY_FEATURE}?category=${category}`)
            .then(data => setData(data ?? []))
            .catch(errorHandler);
 

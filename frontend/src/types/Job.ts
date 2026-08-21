@@ -56,7 +56,7 @@ export type JobParams = {
     setIsHideOldJob: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export type UsageByFeature = {
+export type ProjectUsage = {
     FeatureName:  string;
     FeatureCount: number;
     Ratio:        number;

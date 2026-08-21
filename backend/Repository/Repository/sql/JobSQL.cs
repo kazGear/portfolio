@@ -140,7 +140,7 @@
                     ON j.id = f.job_id
 
                  WHERE
-                       f.category = @category -- 'LANGUAGE' 'FRAMEWORK_LIBRARY' 'ROLE' 'INFRASTRUCTURE' 'DATABASE' 'CLOUD'
+                       f.category          = @category
                    AND NOW() - updated_at <= '3 month'
 
               GROUP BY
@@ -218,6 +218,37 @@
                        location
               ORDER BY
                        sort_key DESC
+                     ;
+            ";
+            return SQL;
+        }
+
+        public static string SelectSalaryRangeByFeature()
+        {
+            string SQL = @$"
+                SELECT
+                       f.feature_name AS FeatureName,
+                      (percentile_cont(0.2) WITHIN GROUP (ORDER BY j.min_salary_at_month) +
+                       percentile_cont(0.2) WITHIN GROUP (ORDER BY j.max_salary_at_month)) / 2 AS SalaryLower,
+                      (percentile_cont(0.5) WITHIN GROUP (ORDER BY j.min_salary_at_month) +
+                       percentile_cont(0.5) WITHIN GROUP (ORDER BY j.max_salary_at_month)) / 2 AS SalaryMedian,
+                      (percentile_cont(0.8) WITHIN GROUP (ORDER BY j.min_salary_at_month) +
+                       percentile_cont(0.8) WITHIN GROUP (ORDER BY j.max_salary_at_month)) / 2 AS SalaryHigher
+                  FROM
+                       t_job_features AS f
+            INNER JOIN
+                       t_jobs AS j
+                    ON j.id = f.job_id
+
+                 WHERE
+                       f.category           = @category
+                   AND NOW() - updated_at  <= '3 month'
+                   AND min_salary_at_month >  0 AND max_salary_at_month > 0
+
+              GROUP BY
+                       f.feature_name
+              ORDER BY
+                       f.feature_name DESC
                      ;
             ";
             return SQL;

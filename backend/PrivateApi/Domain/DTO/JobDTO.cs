@@ -54,4 +54,15 @@ namespace PrivateApi.Domain.DTO
 
         public int OnSite { get; init; }
     }
+
+    public record SalaryRangeByFeatureDTO
+    {
+        public string FeatureName { get; init; } = string.Empty;
+
+        public double SalaryLower { get; set; }
+
+        public double SalaryMedian { get; set; }
+
+        public double SalaryHigher { get; set; }
+    }
 }

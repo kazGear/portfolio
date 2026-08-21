@@ -68,3 +68,10 @@ export type WorkPlace = {
     Hybrid:     number;
     OnSite:     number;
 }
+
+export type SalaryRange = {
+    FeatureName:  string;
+    SalaryLower:  number;
+    SalaryMedian: number;
+    SalaryHigher: number;
+}

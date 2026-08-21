@@ -195,5 +195,23 @@ namespace PrivateApi.Service
             }
             return workPlaces;
         }
+
+        public async Task<IEnumerable<SalaryRangeByFeatureDTO>> GetSalaryRangeByFeature(string category)
+        {
+            var param = new DynamicParameters();
+            param.Add("category", category);
+
+            IEnumerable<SalaryRangeByFeatureDTO> salaries =
+                await _posgre.Select<SalaryRangeByFeatureDTO>(JobSQL.SelectSalaryRangeByFeature(), param);
+
+            foreach (SalaryRangeByFeatureDTO dto in salaries)
+            {
+                // 小数点以下切り捨て
+                dto.SalaryLower  = Math.Truncate(dto.SalaryLower);
+                dto.SalaryMedian = Math.Truncate(dto.SalaryMedian);
+                dto.SalaryHigher = Math.Truncate(dto.SalaryHigher);
+            }
+            return salaries;
+        }
     }
 }

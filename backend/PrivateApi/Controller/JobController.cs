@@ -47,5 +47,12 @@ namespace PublicApi.Controllers
             IEnumerable<WorkPlaceByPrefectureDTO> workPlaces = await _service.GetWorkPlaceByPrefecture();
             return StatusCode(HttpStatus.OK, workPlaces);
         }
+
+        [HttpGet("api/salaryRangeByFeature/get")]
+        public async Task<IActionResult> GetSalaryRangeByFeature([FromQuery] string category)
+        {
+            IEnumerable<SalaryRangeByFeatureDTO> salaries = await _service.GetSalaryRangeByFeature(category);
+            return StatusCode(HttpStatus.OK, salaries);
+        }
     }
 }

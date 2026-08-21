@@ -1,4 +1,6 @@
-﻿namespace PrivateApi.Domain.DTO
+﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+
+namespace PrivateApi.Domain.DTO
 {
     public record JobDTO
     {
@@ -40,5 +42,16 @@
         public int FeatureCount { get; init; }
 
         public double Ratio { get; init; }
+    }
+
+    public record WorkPlaceByPrefectureDTO
+    {
+        public string Location { get; set; } = string.Empty;
+
+        public int FullRemote { get; init; }
+
+        public int Hybrid { get; init; }
+
+        public int OnSite { get; init; }
     }
 }

@@ -138,6 +138,7 @@ export const URLS = {
     FETCH_JOBS: `${PRIVATE_API_BASE_URL}/api/jobs/get`,
     FETCH_FEATURES: `${PRIVATE_API_BASE_URL}/api/features/get`,
     FETCH_PROJECT_USAGE_BY_FEATURE: `${PRIVATE_API_BASE_URL}/api/projectUsageByFeature/get`,
+    FETCH_WORK_PLACE_BY_PREFECTURE: `${PRIVATE_API_BASE_URL}/api/workPlaceByPrefecture/get`,
     // その他
     UPLOAD_IMAGE: `${PRIVATE_API_BASE_URL}/api/common/imgUpload`
 } as const;

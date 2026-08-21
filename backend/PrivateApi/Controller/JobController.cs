@@ -40,5 +40,12 @@ namespace PublicApi.Controllers
             IEnumerable<ProjectUsageByFeatureDTO> features = await _service.GetProjectUsageByFeature(category);
             return StatusCode(HttpStatus.OK, features);
         }
+
+        [HttpGet("api/workPlaceByPrefecture/get")]
+        public async Task<IActionResult> GetWorkPlaceByPrefecture()
+        {
+            IEnumerable<WorkPlaceByPrefectureDTO> workPlaces = await _service.GetWorkPlaceByPrefecture();
+            return StatusCode(HttpStatus.OK, workPlaces);
+        }
     }
 }

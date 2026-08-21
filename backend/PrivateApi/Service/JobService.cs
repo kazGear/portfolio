@@ -182,5 +182,18 @@ namespace PrivateApi.Service
 
             return features;
         }
+
+        public async Task<IEnumerable<WorkPlaceByPrefectureDTO>> GetWorkPlaceByPrefecture()
+        {
+            IEnumerable<WorkPlaceByPrefectureDTO> workPlaces =
+                await _posgre.Select<WorkPlaceByPrefectureDTO>(JobSQL.SelectWorkPlaceByPrefecture());
+
+            foreach (WorkPlaceByPrefectureDTO dto in workPlaces)
+            {   
+                // 所在地不明に対してラベル付け
+                if (string.IsNullOrWhiteSpace(dto.Location)) dto.Location = "？？？";
+            }
+            return workPlaces;
+        }
     }
 }

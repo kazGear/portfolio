@@ -61,3 +61,10 @@ export type UsageByFeature = {
     FeatureCount: number;
     Ratio:        number;
 }
+
+export type WorkPlace = {
+    Location:   string;
+    FullRemote: number;
+    Hybrid:     number;
+    OnSite:     number;
+}

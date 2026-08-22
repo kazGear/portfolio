@@ -10,7 +10,7 @@ type MetaData = {
 };
 
 export const metaData: MetaData = {
-    "lastUpdate": "2026/07/25",
+    "lastUpdate": "2026/08/12",
 };
 
 /**
@@ -30,18 +30,20 @@ export const profile: Profile = {
  * スキルデータ
  */
 export const skills: string[] = [
-    "HTML",
-    "CSS",
-    "JavaScript(jQuery)",
-    "TypeScript",
-    "React(Vite)",
-    "C#(ASP.NET Core)",
-    "Java(Spring Boot)",
-    "Go言語",
-    "PostgreSQL",
-    "SQL Server",
-    "My SQL",
-    "VBA",
+    "HTML: 3年",
+    "CSS: 3年",
+    "JavaScript(jQuery): 3年",
+    "TypeScript: 1年",
+    "React(Vite): 1年",
+    "C#(ASP.NET Core): 1.5年",
+    "Java(Spring Boot): 2.5年",
+    "Go言語: 0.5年",
+    "PostgreSQL: 3年",
+    "SQL Server: 1.5年",
+    "VBA: 1年",
+    "REST API",
+    "バッチ処理",
+    "Webスクレイピング",
     "基本設計",
     "詳細設計",
     "正規表現",
@@ -51,7 +53,6 @@ export const skills: string[] = [
     "リーダブルコーディング",
     "レイヤードアーキテクチャ",
     "テーブルドリブンテスト",
-    "【 得意言語：java, C#, SQL 】"
 ];
 
 /**
@@ -59,7 +60,6 @@ export const skills: string[] = [
  */
 export const littleSkills: string[] = [
     "クリーンアーキテクチャ",
-    "テーブル設計",
     "SQLチューニング",
     "docker",
     "Linux(ubunts)"
@@ -117,11 +117,11 @@ export const readBooks: string[] = [
  * ポートフォリオ
  */
 type Portfolio = {
-    appURLCaption: string;
-    appURL: string;
+    appURLCaption:    string;
+    appURL:           string;
     sourceURLCaption: string;
-    sourceURL: string;
-    comment: string[];
+    sourceURL:        string;
+    comment:          string[];
 };
 
 export const portfolio: Portfolio = {
@@ -131,6 +131,7 @@ export const portfolio: Portfolio = {
     "sourceURL": "https://github.com/kazGear/portfolio",
     "comment": [
         "--- メインコンテンツ ---",
+        "◆ IT案件検索・分析サービス",
         "◆ Guitar Gallery（観賞用、自動検索）",
         "◆ Guitar REST API（ギターデータ取得API）",
         "◆ Monster Battle Arena（とある複数のミニゲームをブラウザ上で表現）",
@@ -139,16 +140,23 @@ export const portfolio: Portfolio = {
         "<br/>",
         "《 システム構成要素 》",
         "React(Vite + HTML + CSS + TypeScript), C#(ASP.NET Core Web API), Go言語, PostgreSQL, REST API, Webスクレイピング, バッチ処理, Docker Compose, Nginx(リバースプロキシ), HTTPS(Let's Encrypt), レンタルVPS, GitHub Actions(CI/CD・自動デプロイ), ログ管理, 共通エラーハンドリング基盤, API・バッチ監視(異常検知, Discord通知), システム運用基盤(自動デプロイエラー、他各種エラー検知等)",
-        "<br/>",
+
         "保守性・拡張性を意識しながら断続的にリファクタリングを行っています。",
         "開発したものを動かして終わりではなく、デプロイ後・障害発生後・バッチ異常時まで含めた運用を自分で考え、改善を継続します。",
-        "<br/>",
-        "担当範囲： 要件定義、設計、実装、スクレイピング、データベース設計、API開発、フロントエンド、テスト、改善、デプロイまで全て。",
-        "<br/>",
+
+        "担当範囲： 要件整理 ⇒ 設計 ⇒ 実装 ⇒ スクレイピング ⇒ データベース設計 ⇒ API開発 ⇒ フロントエンド ⇒ テスト ⇒ 改善 ⇒ デプロイまで全て。",
+
         "※PCでのchrome, edge推奨。iPad横画面対応",
         "<br/>",
+        "◆ IT案件検索・分析サービス ◆",
+        "複数の求人サイトからIT案件情報を収集・蓄積し、案件の検索と市場分析を行えるWebサービスです。",
+        "案件データは20万件以上、比較的新しい案件や終了案件を含むデータでは約14万件を保持しています。",
+        "案件に紐づく技術・条件等のfeatureデータは100万件以上を蓄積しています。",
+        "複数条件による案件検索に加え、言語・フレームワーク・ライブラリ・職能・インフラ・DB・クラウド等の採用状況、技術・職能等の給与レンジ、都道府県別の勤務形態などをグラフで分析できます。",
+        "Goによるスクレイピング・データ収集、データ正規化、PostgreSQLへの蓄積、ASP.NET Core Web API、React / TypeScriptによる画面まで一貫して実装しています。",
+        "<br/>",
         "◆ Guitar Gallery ◆",
-        "複数メーカーのギター情報を横断検索できるWebサービスです。",
+        "複数メーカーのギター情報を横断検索できるWebサービスです。4,000本以上のギターデータを蓄積。",
         "スクレイピングによるデータ収集基盤を構築し、それによる収集物がギターのデータソースとなります。",
         "検索条件を設定するだけで自動的にギターを検索します。検索ボタンを押す手間などかかりません。",
         "ページネーションやソートにも対応しています。",
@@ -174,11 +182,11 @@ export const portfolio: Portfolio = {
 export const specialty: string[] = [
     "フロントエンド、API、データベース、バッチ処理まで一貫したシステム設計・開発・運用",
     "Java（Spring Boot）、C#（ASP.NET Core）を用いたWebアプリケーション・Web API開発",
-    "React、TypeScriptを用いたSPA開発（レスポンシブ）",
+    "React、TypeScriptを用いたSPA開発",
     "複雑なSQLの設計・実装(複雑な検索・集計処理等)、およびデータベース設計",
     "複雑な業務ロジックの実装",
     "保守性・可読性・拡張性を意識した設計・リファクタリング",
-    "スクレイピング、データ加工・正規化、データベース登録までを含むデータ収集基盤の設計・構築",
+    "スクレイピング（Go言語）、データ加工・正規化、データベース登録までを含むデータ収集基盤の設計・構築",
     "要件整理から設計・実装・テスト・デプロイ・運用・改善まで一貫した開発"
 ];
 
@@ -203,13 +211,15 @@ export const prPoint: PrPoint[] = [
             "・抽象化<br/>" +
             "・仕組化<br/>" +
             "・責務の意識<br/>" +
-            "・はまる箇所にはデザインパターンの適用<br/>"
+            "・はまる箇所にはデザインパターンの適用<br/>" +
+            "・大量データを扱うことを前提としたDB・SQL設計<br/>"
     },
     {
         "point": "問題解決能力",
         "comment":
             "あるプロジェクトでは、参画中は延々とバグ潰しをしておりました。個人開発でもバグはでるもので、都度自身で対応しています。<br/>" +
-            "論理的に問題を切り分け、仮説を検証し、ログを調べ、設定を確認し、複数レイヤーの課題でも解決することに努めます。"
+            "論理的に問題を切り分け、仮説を検証し、ログを調べ、設定を確認し、複数レイヤーの課題でも解決することに努めます。<br/>" +
+            "個人開発では、クローラーのアクセス制限、大量データを扱うSQL、Docker・VPS環境、API連携など、複数レイヤーにまたがる問題についても原因を切り分けながら対応しています。"
     },
     {
         "point": "学習・キャッチアップ能力",
@@ -273,7 +283,8 @@ export const career: Career[] = [
         "jobContents": [
             "・障害対応",
             "・バグ対応チーム配属。",
-            "・対応バグ件数: 25件（件数としては1位～2位をキープ）"
+            "・対応バグ件数: 25件（件数としては1位～2位をキープ）",
+            "・評価され、派遣元は要員受注の増加に繋がる。"
         ]
     },
     {
@@ -286,6 +297,7 @@ export const career: Career[] = [
             "・詳細設計～単体テスト",
             "・新規機能の開発を担当。",
             "・要件等が複雑であったため、リファクタリングしながら丁寧にコーディング。",
+            "・テスト項目：1000件近く",
             "・製造範囲：WebUI、サーバ処理、SQL",
             "・2022.01 ~ 2022.08 , 2023.01 ~ 2024.03 の期間と同じ現場で3度目の現場入り。"
         ]
@@ -300,7 +312,7 @@ export const career: Career[] = [
             "総合テスト、障害調査、障害対応",
             "・障害発見件数：16件",
             "・障害対応件数：85件以上 ※コーディング、単体テスト",
-            "・元々は2カ月で終了予定。"
+            "・元々は2カ月で終了予定。9か月へ延長・他PJでの稼働も依頼を受ける。"
         ]
     },
     {
@@ -362,10 +374,10 @@ export const career: Career[] = [
         "scale": "1名",
         "programmingLanguages": "html, css, javaScript, C#, VB.net, ASP.net Core, postgreSQL",
         "jobContents": [
+            "・初現場。顧客側はIT技術者0人 + 単独での常駐であるためプロとしての経験とは言えず。（但し、単独で乗り切る）",
             "・要求分析～結合テスト、保守",
             "・VB.NETで作成された既存アプリに対し、機能の追加や改修を行った。",
-            "・WEBアプリ（案件管理用）を新規に作成。WebUI、サーバ処理、DB処理、サーバの構築などを行った。",
-            "・初現場。顧客側はIT技術者0人 + 単独での常駐であるためプロとしての経験とは言えない。"
+            "・WEBアプリ（案件管理用）を新規に作成。WebUI、サーバ処理、DB処理、サーバの構築などを実施。",
         ]
     },
     {

@@ -127,7 +127,7 @@ type Portfolio = {
 export const portfolio: Portfolio = {
     "appURLCaption": "成果物・webで稼働中のアプリケーション",
     "appURL": "https://kazapp-trial.com",
-    "sourceURLCaption": "ソース（React, TypeScript, C#/ASP.NET CORE, Go言語, PostgreSQL, docker）",
+    "sourceURLCaption": "ソース（React, TypeScript, C#/ASP.NET CORE, Go言語等）",
     "sourceURL": "https://github.com/kazGear/portfolio",
     "comment": [
         "--- メインコンテンツ ---",

@@ -113,9 +113,7 @@ func fetchPage(url string,
 ) string {
     var html string
 
-    log.Printf("[Static fetch page start] %s", url)
     html = fetchStaticPage(url)
-    log.Printf("[Static fetch page end] %s", url)
 
     if !isStaticPage(html) {
         var err error

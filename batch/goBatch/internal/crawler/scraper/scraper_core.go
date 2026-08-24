@@ -112,7 +112,10 @@ func fetchPage(url string,
                fetchDynamicPage func(string) (string, error),
 ) string {
     var html string
+
+    log.Printf("[Static fetch page start] %s", url)
     html = fetchStaticPage(url)
+    log.Printf("[Static fetch page end] %s", url)
 
     if !isStaticPage(html) {
         var err error
@@ -134,8 +137,9 @@ func fetchStaticPage(url string) string {
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) " +
             "AppleWebKit/537.36 (KHTML, like Gecko) " +
             "Chrome/142.0.0.0 Safari/537.36",
-    ),
-    )
+    ),)
+
+    c.SetRequestTimeout(10 * time.Second)
 
     c.OnHTML("html", func(e *colly.HTMLElement) {
         var err error
@@ -145,7 +149,11 @@ func fetchStaticPage(url string) string {
             log.Printf("[fetchStaticPage failed]: %v", err)
         }
     })
-    c.Visit(url)
+    err := c.Visit(url)
+
+    if err != nil {
+        log.Printf("[Colly Visit failed] url=%s err=%v", url, err)
+    }
     c.Wait()
 
     return html

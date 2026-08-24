@@ -40,7 +40,13 @@ func NewMaker(name     string,
 }
 
 func (g *guitarCrawlerService) RunCrawler() {
-    parallelCount, _ := strconv.Atoi(os.Getenv("PARALLEL_COUNT_GUITAR"))
+    envName            := "PARALLEL_COUNT_GUITAR"
+    parallelCount, err := strconv.Atoi(os.Getenv(envName))
+
+    if err != nil || parallelCount <= 0 {
+        log.Panicf("%v must be a positive integer.", envName)
+    }
+
     queue := make(chan struct{}, parallelCount) // 並列数制御
 
     makers := makersFactory()

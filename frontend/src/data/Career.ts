@@ -127,7 +127,7 @@ type Portfolio = {
 export const portfolio: Portfolio = {
     "appURLCaption": "成果物・webで稼働中のアプリケーション",
     "appURL": "https://kazapp-trial.com",
-    "sourceURLCaption": "ソース（React, TypeScript, C#/ASP.NET CORE, Go言語, PostgreSQL, docker）",
+    "sourceURLCaption": "ソース（React, TypeScript, C#/ASP.NET CORE, Go言語等）",
     "sourceURL": "https://github.com/kazGear/portfolio",
     "comment": [
         "--- メインコンテンツ ---",
@@ -219,7 +219,7 @@ export const prPoint: PrPoint[] = [
         "comment":
             "あるプロジェクトでは、参画中は延々とバグ潰しをしておりました。個人開発でもバグはでるもので、都度自身で対応しています。<br/>" +
             "論理的に問題を切り分け、仮説を検証し、ログを調べ、設定を確認し、複数レイヤーの課題でも解決することに努めます。<br/>" +
-            "個人開発では、クローラーのアクセス制限、大量データを扱うSQL、Docker・VPS環境、API連携など、複数レイヤーにまたがる問題についても原因を切り分けながら対応しています。"
+            "個人開発では、クローラーのアクセス制限、大量データを扱うSQL、Docker・VPS環境、API連携など、横断的な問題についても原因を切り分けながら対応しています。"
     },
     {
         "point": "学習・キャッチアップ能力",
@@ -235,8 +235,7 @@ export const prPoint: PrPoint[] = [
             "ある程度のことは自分調べ、意思決定をします。<br/>" +
             "相談することは、方針の迷いや認識の擦り合わせが多いです。<br/><br/>" +
             "個人開発のdocker等インフラ周りだけでも、何十回とエラーと遭遇しました。なんとか乗り越え、<br/>" +
-            "複数サービスを含んだDocker compose起動、HTTPS化、VPSでのweb公開まで辿りつけました。<br/>" +
-            "納期にもよりますが、中々「もういいや」とはなりません。"
+            "複数サービスを含んだDocker compose起動、HTTPS化、VPSでのweb公開まで辿りつけました。"
     },
     {
         "point": "コミュニケーション",

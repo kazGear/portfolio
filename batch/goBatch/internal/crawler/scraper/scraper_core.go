@@ -36,8 +36,8 @@ type PageProvider interface {
 }
 
 type ModelParser[T any] interface {
-    CollectAttributes()    func(doc *goquery.Document, url string)  []map[string]string
-    BuildModel(url string) func(spec map[string]string)             T
+    CollectAttributes()    func(doc *goquery.Document, url string) []map[string]string
+    BuildModel(url string) func(spec map[string]string) T
 }
 
 type Crawler[T any] struct {

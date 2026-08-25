@@ -83,12 +83,8 @@ func buildGuitarFrame(spec map[string]string, url string) (*model.Guitar) {
         guitar.Src = fullPass
     }
 
-    var errWeight error
-    guitar.Weight, errWeight = utils.ParseWight(trim(spec[C.Weight]))
+    guitar.Weight = utils.ParseWeight(trim(spec[C.Weight]))
 
-    if errWeight != nil {
-        // log.Println(errWeight)
-    }
 	return &guitar
 }
 

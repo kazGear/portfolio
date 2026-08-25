@@ -332,7 +332,7 @@ func TestConvertColorCd(t *testing.T) {
 	}
 }
 
-func TestParseWight(t *testing.T) {
+func TestParseWeight(t *testing.T) {
 	weights := []struct {
 		weight string
 		want   float64
@@ -344,7 +344,7 @@ func TestParseWight(t *testing.T) {
 			weight: "２.３０ +/- 10% Kg", want: 2.3,
 		},
 		{
-			weight: "2 +/- 10% Kg", want: -1,
+			weight: "2 +/- 10% Kg", want: float64(C.ParseErrorPrice),
 		},
 		{
 			weight: "2.30 +/- 10%", want: 2.3,
@@ -353,7 +353,7 @@ func TestParseWight(t *testing.T) {
 
 	for _, w := range weights {
 		w := w
-		actual, _ := ParseWight(w.weight)
+		actual := ParseWeight(w.weight)
 		assert.Equal(t, w.want, actual)
 	}
 }

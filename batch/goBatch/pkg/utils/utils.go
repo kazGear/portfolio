@@ -307,16 +307,16 @@ func TrimSpace() func(string) string {
 
 var regWight = regexp.MustCompile(`\d\.\d{1,2}`)
 // 重量を抽出する（Kg単位）
-func ParseWight(weight string) (float64, error) {
+func ParseWeight(weight string) float64 {
 	w := width.Narrow.String(weight)
 	w  = regWight.FindString(w)
 
 	result, err := strconv.ParseFloat(w, 64)
 
 	if err != nil {
-		return -1, fmt.Errorf("[Weight parse error] %v %w\n", weight, err)
+		return float64(C.ParseErrorPrice)
 	}
-	return result, nil
+	return result
 }
 
 // サイトの項目名をフィールド名に変換

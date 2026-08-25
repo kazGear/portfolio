@@ -249,9 +249,9 @@ func (g *CrawlerPRS) Scrape(provider  PageProvider,
 
 func mergePrice(guitars []*model.Guitar, priceSet map[string]string) {
     for _, guitar := range guitars {
-        guitarName     := utils.NormalizeString(guitar.Name)
-        price          := priceSet[guitarName]
-        guitar.Price, _ = utils.ParsePrice(price)
+        guitarName  := utils.NormalizeString(guitar.Name)
+        price       := priceSet[guitarName]
+        guitar.Price = utils.ParsePrice(price)
     }
 }
 

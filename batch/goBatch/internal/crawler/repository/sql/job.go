@@ -78,3 +78,15 @@ func InsertJobId() string {
         INSERT INTO t_job_features_created (job_id) VALUES ($1);
     `
 }
+
+func SelectSavedPageIds() string {
+	return `
+        SELECT
+              (regexp_match(url, '\d{1,7}'))[1]::INT AS page_id
+          FROM
+               t_jobs
+         WHERE
+               source_site = $1 -- :source_site
+             ;
+    `
+}

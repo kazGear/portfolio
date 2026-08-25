@@ -2,6 +2,7 @@ package repository
 
 import (
 	"fmt"
+	"log"
 	"strings"
 	"sync"
 	"unicode/utf8"
@@ -22,7 +23,7 @@ type jobRepository struct {
     db *sqlx.DB
 }
 
-func NewJobRepository(db *sqlx.DB) Repository[*model.Job] {
+func NewJobRepository(db *sqlx.DB) JobRepository {
     return &jobRepository{ db: db }
 }
 
@@ -292,4 +293,18 @@ func createSqlBulkInsertOptions(url string) string {
     builder.WriteString(";")
 
     return builder.String()
+}
+
+func (r *jobRepository) Select(sourceSite string) map[int64]struct{} {
+    var tmpPageIds []int64
+
+    if err := r.db.Select(&tmpPageIds, sql.SelectSavedPageIds(), sourceSite); err != nil {
+        log.Panic(err)
+    }
+    pageIds := make(map[int64]struct{}, len(tmpPageIds))
+
+    for _, id := range tmpPageIds {
+        pageIds[id] = struct{}{}
+    }
+    return pageIds
 }

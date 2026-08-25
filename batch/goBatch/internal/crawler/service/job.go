@@ -14,10 +14,10 @@ import (
 )
 
 type jobCrawlerService struct {
-    repository repository.Repository[*model.Job]
+    repository repository.JobRepository
 }
 
-func NewJobCrawlerService(repository repository.Repository[*model.Job]) CrawlerService {
+func NewJobCrawlerService(repository repository.JobRepository) CrawlerService {
     return &jobCrawlerService{ repository: repository }
 }
 
@@ -36,7 +36,7 @@ func NewJobBoard(name     string,
     return &JobBoard{ name, scraper, provider, parser }
 }
 
-func (g *jobCrawlerService) RunCrawler() {
+func (j *jobCrawlerService) RunCrawler() {
     envName            := "PARALLEL_COUNT_JOB"
     parallelCount, err := strconv.Atoi(os.Getenv(envName))
 
@@ -47,7 +47,7 @@ func (g *jobCrawlerService) RunCrawler() {
     queue := make(chan struct{}, parallelCount) // 並列数制御
 
     jobBoards := jobBoardFactory()
-    wg     := &sync.WaitGroup{}
+    wg        := &sync.WaitGroup{}
 
     // クロール + スクレイピング + DB保存
     for _, jobBoard := range jobBoards {
@@ -71,7 +71,7 @@ func (g *jobCrawlerService) RunCrawler() {
             // クローラー起動
             jobBoard.scraper.CollectLinks(parentCtx)
             jobs := jobBoard.scraper.Scrape(jobBoard.provider, jobBoard.parser, parentCtx)
-            okCnt, ngCnt, errs := g.repository.Save(jobs)
+            okCnt, ngCnt, errs := j.repository.Save(jobs)
 
             // ログ
             log.Printf("[Upsert result %v]: OK %v 件, NG %v 件", jobBoard.name, okCnt, ngCnt)

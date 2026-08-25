@@ -14,10 +14,10 @@ import (
 )
 
 type guitarCrawlerService struct {
-    repository repository.Repository[*model.Guitar]
+    repository repository.GuitarRepository
 }
 
-func NewGuitarCrawlerService(repository repository.Repository[*model.Guitar]) CrawlerService {
+func NewGuitarCrawlerService(repository repository.GuitarRepository) CrawlerService {
     return &guitarCrawlerService{ repository: repository }
 }
 

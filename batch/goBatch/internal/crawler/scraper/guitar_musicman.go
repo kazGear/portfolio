@@ -7,8 +7,6 @@ import (
 	"sync"
 	"time"
 
-	"log"
-
 	"github.com/PuerkitoBio/goquery"
 	"github.com/chromedp/chromedp"
 	"github.com/gocolly/colly/v2"
@@ -18,6 +16,7 @@ import (
 )
 
 type CrawlerMusicMan struct {
+    name     string
     gScraper Crawler[*model.Guitar]
 }
 
@@ -25,7 +24,7 @@ type CallBacksMusicMan struct {
     funcs CallBacks
 }
 
-func NewScraperMusicMan(logger *log.Logger) Scraper[*model.Guitar] {
+func NewScraperMusicMan() Scraper[*model.Guitar] {
 	collector := colly.NewCollector(
 		colly.Async(true),
 		colly.MaxDepth(3),
@@ -35,19 +34,17 @@ func NewScraperMusicMan(logger *log.Logger) Scraper[*model.Guitar] {
 		Parallelism: 5, // URL収集漏れが発生するため5に制限
 	})
     return &CrawlerMusicMan{
+        "MusicMan",
         Crawler[*model.Guitar]{
             collector: collector,
             mutex:     &sync.Mutex{},
-            logger:    logger,
         },
     }
 }
 
-func NewCallBacksMusicMan(logger *log.Logger) *CallBacksMusicMan {
+func NewCallBacksMusicMan() *CallBacksMusicMan {
     return &CallBacksMusicMan{
-        CallBacks{
-            logger: logger,
-        },
+        CallBacks{},
     }
 }
 
@@ -56,7 +53,7 @@ func (g *CrawlerMusicMan) CollectLinks(parentCtx context.Context) ([]string, err
 
     // クロールログ収集
     crawlStats := &crawlStats{}
-    statsCrawlLogs(c ,crawlStats, g.gScraper.logger)
+    collectStatsCrawl(c ,crawlStats)
 
     // URL収集、クロール
     visited := make(map[string]struct{}, 130)
@@ -72,7 +69,7 @@ func (g *CrawlerMusicMan) CollectLinks(parentCtx context.Context) ([]string, err
     c.Visit("https://shop.music-man.com/instruments.html")
     c.Wait()
 
-    loggingCrawlStats(crawlStats, g.gScraper.logger)
+    loggingCrawlStats(g.name, crawlStats)
 
     g.gScraper.urls = utils.MapToSliceUrl(visited)
     return g.gScraper.urls, nil
@@ -156,7 +153,7 @@ func (c *CallBacksMusicMan) CollectAttributes() func(doc *goquery.Document, url 
 
 func (c *CallBacksMusicMan) BuildModel(url string) func(spec map[string]string) *model.Guitar {
     return func(spec map[string]string) *model.Guitar {
-        return buildGuitarFrame(spec, url, c.funcs.logger)
+        return buildGuitarFrame(spec, url)
     }
 }
 

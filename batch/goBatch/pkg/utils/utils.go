@@ -181,13 +181,6 @@ func NewLogger(makerName string, filepath string) *log.Logger {
     return log.New(writer, "", log.LstdFlags)
 }
 
-// 取得したリンクを表示
-func LoggingCollectedLinks(links []string, logger *log.Logger) {
-	for _, link := range links {
-		logger.Printf("[Collected link]: %v\n", link)
-	}
-}
-
 // スレッドセーフなappend 注：mutexに直接&sync.Mutex{}を渡すのは禁止
 func LockedAppend[T any](mutex *sync.Mutex, slice []T, elem ...T) []T {
 	mutex.Lock()

@@ -20,6 +20,7 @@ import (
 )
 
 type CrawlerAgeless struct {
+    name     string
     jScraper Crawler[*model.Job]
 }
 
@@ -27,7 +28,7 @@ type CallBacksAgeless struct {
     funcs CallBacks
 }
 
-func NewScraperAgeless(logger *log.Logger) Scraper[*model.Job] {
+func NewScraperAgeless() Scraper[*model.Job] {
 	collector := colly.NewCollector(
 		colly.Async(true),
 		colly.MaxDepth(1),
@@ -37,19 +38,17 @@ func NewScraperAgeless(logger *log.Logger) Scraper[*model.Job] {
 		Parallelism: 1, // URL収集漏れが発生するため5に制限
 	})
     return &CrawlerAgeless{
+        "Ageless",
         Crawler[*model.Job]{
             collector: collector,
             mutex:     &sync.Mutex{},
-            logger:    logger,
         },
     }
 }
 
-func NewCallBacksAgeless(logger *log.Logger) *CallBacksAgeless {
+func NewCallBacksAgeless() *CallBacksAgeless {
     return &CallBacksAgeless{
-        CallBacks{
-            logger: logger,
-        },
+        CallBacks{},
     }
 }
 
@@ -62,7 +61,7 @@ func (c *CrawlerAgeless) CollectLinks(parentCtx context.Context) ([]string, erro
 
     // クロールログ収集
     crawlStats := &crawlStats{}
-    statsCrawlLogs(collector ,crawlStats, c.jScraper.logger)
+    collectStatsCrawl(collector ,crawlStats)
 
     mutex   := &sync.Mutex{}
 
@@ -78,7 +77,7 @@ func (c *CrawlerAgeless) CollectLinks(parentCtx context.Context) ([]string, erro
         isFirstVisit(mutex, url, visited)
     }
 
-    loggingCrawlStats(crawlStats, c.jScraper.logger)
+    loggingCrawlStats(c.name, crawlStats)
 
     c.jScraper.urls = utils.MapToSliceUrl(visited)
     return c.jScraper.urls, nil
@@ -174,7 +173,7 @@ func salvageFeaturesAgeless(normalizedText string) []*model.JobFeature {
 
 func (c *CallBacksAgeless) BuildModel(url string) func(data map[string]string) *model.Job {
     return func(data map[string]string) *model.Job {
-        return buildJobFrame(data, c.funcs.logger)
+        return buildJobFrame(data)
     }
 }
 

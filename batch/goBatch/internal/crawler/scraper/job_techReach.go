@@ -21,6 +21,7 @@ import (
 )
 
 type CrawlerTechReach struct {
+    name     string
     jScraper Crawler[*model.Job]
 }
 
@@ -28,7 +29,7 @@ type CallBacksTechReach struct {
     funcs CallBacks
 }
 
-func NewScraperTechReach(logger *log.Logger) Scraper[*model.Job] {
+func NewScraperTechReach() Scraper[*model.Job] {
 	collector := colly.NewCollector(
 		colly.Async(true),
 		colly.MaxDepth(1),
@@ -38,19 +39,17 @@ func NewScraperTechReach(logger *log.Logger) Scraper[*model.Job] {
 		Parallelism: 1,
 	})
     return &CrawlerTechReach{
+        "TechReach",
         Crawler[*model.Job]{
             collector: collector,
             mutex:     &sync.Mutex{},
-            logger:    logger,
         },
     }
 }
 
-func NewCallBacksTechReach(logger *log.Logger) *CallBacksTechReach {
+func NewCallBacksTechReach() *CallBacksTechReach {
     return &CallBacksTechReach{
-        CallBacks{
-            logger: logger,
-        },
+        CallBacks{},
     }
 }
 
@@ -63,7 +62,7 @@ func (c *CrawlerTechReach) CollectLinks(parentCtx context.Context) ([]string, er
 
     // クロールログ収集
     crawlStats := &crawlStats{}
-    statsCrawlLogs(collector ,crawlStats, c.jScraper.logger)
+    collectStatsCrawl(collector ,crawlStats)
 
     mutex   := &sync.Mutex{}
 
@@ -79,7 +78,7 @@ func (c *CrawlerTechReach) CollectLinks(parentCtx context.Context) ([]string, er
         isFirstVisit(mutex, url, visited)
     }
 
-    loggingCrawlStats(crawlStats, c.jScraper.logger)
+    loggingCrawlStats(c.name, crawlStats)
 
     c.jScraper.urls = utils.MapToSliceUrl(visited)
     return c.jScraper.urls, nil
@@ -228,7 +227,7 @@ func salvageFeaturesTechReach(doc *goquery.Document) []*model.JobFeature {
 
 func (c *CallBacksTechReach) BuildModel(url string) func(data map[string]string) *model.Job {
     return func(data map[string]string) *model.Job {
-        return buildJobFrame(data, c.funcs.logger)
+        return buildJobFrame(data)
     }
 }
 

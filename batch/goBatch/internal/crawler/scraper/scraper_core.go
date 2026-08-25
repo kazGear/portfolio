@@ -44,12 +44,9 @@ type Crawler[T any] struct {
     urls      []string
 	collector *colly.Collector
     mutex     *sync.Mutex
-    logger    *log.Logger
 }
 
-type CallBacks struct {
-    logger *log.Logger
-}
+type CallBacks struct {}
 
 // スクレイピング実行のフレームワーク
 func (g *Crawler[T]) scrapeFrame(provider PageProvider,
@@ -59,12 +56,9 @@ func (g *Crawler[T]) scrapeFrame(provider PageProvider,
     var models = make([]T, 0, 400)
 
     if len(g.urls) <= 0 {
-        g.logger.Println("None URL for crawling...")
+        log.Println("None URL for crawling...")
         return []T{}
     }
-    utils.LoggingCollectedLinks(g.urls, g.logger)
-    g.logger.Printf("[Urls count]: %v 件\n", len(g.urls))
-
     wg := &sync.WaitGroup{}
 
     for _, url := range g.urls {
@@ -87,7 +81,7 @@ func (g *Crawler[T]) scrapeFrame(provider PageProvider,
             doc, err := goquery.NewDocumentFromReader(strings.NewReader(html))
 
             if err != nil {
-                g.logger.Println("[Goquery error]:", err)
+                log.Println("[Goquery error]:", err)
                 return
             }
             funcCollectAttributes := parser.CollectAttributes()
@@ -278,10 +272,7 @@ type crawlStats struct {
 }
 
 // クロールの req,res,err の数を集計する
-func statsCrawlLogs (c      *colly.Collector,
-                     stats  *crawlStats,
-                     logger *log.Logger,
-) {
+func collectStatsCrawl (c *colly.Collector, stats *crawlStats) {
     c.OnRequest(func(c *colly.Request) {
         stats.requests.Add(1)
     })
@@ -291,7 +282,7 @@ func statsCrawlLogs (c      *colly.Collector,
     c.OnError(func(c *colly.Response, err error) {
         stats.errors.Add(1)
 
-        logger.Printf(
+        log.Printf(
             "[Crawl error]: status=%d url=%s err=%v\n",
             c.StatusCode,
             c.Request.URL,
@@ -301,9 +292,10 @@ func statsCrawlLogs (c      *colly.Collector,
 }
 
 // クロールのロギング
-func loggingCrawlStats(stats *crawlStats, logger *log.Logger) {
-    logger.Printf(
-        "[Crawl stats]: requests=%d responses=%d errors=%d\n",
+func loggingCrawlStats(name string, stats *crawlStats) {
+    log.Printf(
+        "[Crawl stats %v]: requests=%d responses=%d errors=%d\n",
+        name,
         stats.requests.Load(),
         stats.responses.Load(),
         stats.errors.Load(),
@@ -356,7 +348,7 @@ func checkHttpStatusOK(client *http.Client, url string) error {
 // 場合によってはクロールを止める
 func isShouldStopCrawler(httpStatus int) {
     if httpStatus == http.StatusForbidden {
-        log.Fatalf("Stop crawler. unexpected HTTP status: %v\n", httpStatus)
+        log.Panicf("Stop crawler. unexpected HTTP status: %v\n", httpStatus)
     }
 }
 
@@ -368,12 +360,12 @@ func loadPageIdFromTo(envKeyFrom string, envKeyTo string) (int, int) {
     fromId, err:= strconv.Atoi(from)
 
     if err != nil {
-        log.Fatalf("From pageId parse error: %v", err)
+        log.Panicf("From pageId parse error: %v", err)
     }
     toId, err := strconv.Atoi(to)
 
     if err != nil {
-        log.Fatalf("To pageId parse error: %v",err)
+        log.Panicf("To pageId parse error: %v",err)
     }
     return fromId, toId
 }
@@ -381,7 +373,7 @@ func loadPageIdFromTo(envKeyFrom string, envKeyTo string) (int, int) {
 // 連番詳細ページIDの設定値が正しくなければ処理中止
 func validatePageIdFromTo(fromId int, toId int) {
     if fromId > toId {
-        log.Fatalf(
+        log.Panicf(
             "連番pageIdの設定値は from <= to である必要があります。from: %v, to: %v\n",
             fromId,
             toId,
@@ -389,7 +381,7 @@ func validatePageIdFromTo(fromId int, toId int) {
     }
 
     if toId - fromId > 100000 {
-        log.Fatalf(
+        log.Panicf(
             "クロール対象(pageIdの範囲)は 10万件以下 に設定してください。from: %v, to: %v\n",
             fromId,
             toId,

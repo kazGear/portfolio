@@ -8,8 +8,6 @@ import (
 	"sync"
 	"time"
 
-	"log"
-
 	"github.com/PuerkitoBio/goquery"
 	"github.com/chromedp/chromedp"
 	"github.com/gocolly/colly/v2"
@@ -19,6 +17,7 @@ import (
 )
 
 type CrawlerMomose struct {
+    name     string
     gScraper Crawler[*model.Guitar]
 }
 
@@ -27,7 +26,7 @@ type CallBacksMomose struct {
 }
 
 
-func NewScraperMomose(logger *log.Logger) Scraper[*model.Guitar] {
+func NewScraperMomose() Scraper[*model.Guitar] {
 	collector := colly.NewCollector(
 		colly.Async(true),
 		colly.MaxDepth(4),
@@ -37,19 +36,17 @@ func NewScraperMomose(logger *log.Logger) Scraper[*model.Guitar] {
 		Parallelism: 5, // URL収集漏れが発生するため5に制限
 	})
     return &CrawlerMomose{
+        "Momose",
         Crawler[*model.Guitar]{
             collector: collector,
             mutex:     &sync.Mutex{},
-            logger:    logger,
         },
     }
 }
 
-func NewCallBacksMomose(logger *log.Logger) *CallBacksMomose {
+func NewCallBacksMomose() *CallBacksMomose {
     return &CallBacksMomose{
-        CallBacks{
-            logger: logger,
-        },
+        CallBacks{},
     }
 }
 
@@ -58,7 +55,7 @@ func (g *CrawlerMomose) CollectLinks(parentCtx context.Context) ([]string, error
 
     // クロールログ収集
     crawlStats := &crawlStats{}
-    statsCrawlLogs(c ,crawlStats, g.gScraper.logger)
+    collectStatsCrawl(c ,crawlStats)
 
     // URL収集、クロール
     visited := make(map[string]struct{}, 500)
@@ -103,7 +100,7 @@ func (g *CrawlerMomose) CollectLinks(parentCtx context.Context) ([]string, error
     c.Visit("https://www.deviser.co.jp/momose")
     c.Wait()
 
-    loggingCrawlStats(crawlStats, g.gScraper.logger)
+    loggingCrawlStats(g.name, crawlStats)
 
     g.gScraper.urls = utils.MapToSliceUrl(visited)
     return g.gScraper.urls, nil
@@ -192,7 +189,7 @@ func (c *CallBacksMomose) CollectAttributes() func(doc *goquery.Document, url st
 
 func (c *CallBacksMomose) BuildModel(url string) func(spec map[string]string) *model.Guitar {
     return func(spec map[string]string) *model.Guitar {
-        return buildGuitarFrame(spec, url, c.funcs.logger)
+        return buildGuitarFrame(spec, url)
     }
 }
 

@@ -12,7 +12,7 @@ import (
 )
 
 // ギター構造体の構築フレームワーク
-func buildGuitarFrame(spec map[string]string, url string, logger *log.Logger) (*model.Guitar) {
+func buildGuitarFrame(spec map[string]string, url string) (*model.Guitar) {
 	guitar := model.Guitar{}
     trim   := utils.TrimSpace()
 
@@ -21,7 +21,7 @@ func buildGuitarFrame(spec map[string]string, url string, logger *log.Logger) (*
 	guitar.Name            = trim(spec[C.Name])
 
     if errMaker != nil {
-        logger.Printf("[Maker convert error]: %v", errMaker)
+        log.Printf("[Maker convert error]: %v", errMaker)
         return &model.Guitar{}
 	}
 	guitar.BodyFinish = trim(spec[C.BodyFinish])
@@ -48,7 +48,7 @@ func buildGuitarFrame(spec map[string]string, url string, logger *log.Logger) (*
 	fretCount                     := trim(spec[C.FretCount])
     guitar.FretCount, errFretCount = utils.GetFretCount(fretCount)
     if errFretCount != nil {
-        // logger.Println(errFretCount)
+        // log.Println(errFretCount)
     }
 	guitar.Inlays       = trim(spec[C.Inlays])
 	guitar.Joint        = trim(spec[C.Joint])
@@ -69,19 +69,20 @@ func buildGuitarFrame(spec map[string]string, url string, logger *log.Logger) (*
 	guitar.Price, errPrice = utils.ParsePrice(spec[C.Price])
 
     if errPrice != nil {
-        // logger.Println(errPrice)
+        // log.Println(errPrice)
     }
     scaleLengthMM       := trim(spec[C.ScaleLengthMM])
     guitar.ScaleLengthMM = int(utils.ParseScale(scaleLengthMM))
 	guitar.Series        = trim(spec[C.Series])
 
     guitar.Src           = trim(spec[C.Src])
-    // 画像の相対パスをフルパスへ
+
+	// 画像の相対パスをフルパスへ
     if strings.HasPrefix(guitar.Src, "/") {
         fullPass, err := utils.CreateImagePath(url, guitar.Src)
 
         if err != nil {
-            logger.Println(err)
+            log.Println(err)
         }
         guitar.Src = fullPass
     }
@@ -90,7 +91,7 @@ func buildGuitarFrame(spec map[string]string, url string, logger *log.Logger) (*
     guitar.Weight, errWeight = utils.ParseWight(trim(spec[C.Weight]))
 
     if errWeight != nil {
-        // logger.Println(errWeight)
+        // log.Println(errWeight)
     }
 	return &guitar
 }

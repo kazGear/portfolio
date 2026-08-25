@@ -11,7 +11,6 @@ import (
 	"github.com/kazGear/portfolio/goBatch/internal/crawler/repository"
 	"github.com/kazGear/portfolio/goBatch/internal/crawler/scraper"
 	C "github.com/kazGear/portfolio/goBatch/pkg/constants"
-	"github.com/kazGear/portfolio/goBatch/pkg/utils"
 )
 
 type jobCrawlerService struct {
@@ -27,16 +26,14 @@ type JobBoard struct {
     scraper  scraper.Scraper[*model.Job]
     provider scraper.PageProvider
     parser   scraper.ModelParser[*model.Job]
-    logger   *log.Logger
 }
 
 func NewJobBoard(name     string,
                  scraper  scraper.Scraper[*model.Job],
                  provider scraper.PageProvider,
                  parser   scraper.ModelParser[*model.Job],
-                 logger   *log.Logger,
 ) *JobBoard {
-    return &JobBoard{ name, scraper, provider, parser ,logger }
+    return &JobBoard{ name, scraper, provider, parser }
 }
 
 func (g *jobCrawlerService) RunCrawler() {
@@ -67,7 +64,7 @@ func (g *jobCrawlerService) RunCrawler() {
             defer cancelAlloc()
             defer cancelParent()
 
-            jobBoard.logger.Printf(C.DecoLabel, "Started job crawler " + jobBoard.name)
+            log.Printf(C.DecoLabel, "Started job crawler " + jobBoard.name)
 
             startTime := time.Now() // 処理時間計測開始
 
@@ -77,14 +74,13 @@ func (g *jobCrawlerService) RunCrawler() {
             okCnt, ngCnt, errs := g.repository.Save(jobs)
 
             // ログ
-            jobBoard.logger.Printf("[Upsert result %v]: OK %v 件, NG %v 件", jobBoard.name, okCnt, ngCnt)
-            log.Printf("[Upsert result %v]: OK %v 件, NG %v 件", jobBoard.name, okCnt, ngCnt) // コンソール用
+            log.Printf("[Upsert result %v]: OK %v 件, NG %v 件", jobBoard.name, okCnt, ngCnt)
 
             for _, err := range errs {
-                jobBoard.logger.Println(err)
+                log.Println(err)
             }
-            jobBoard.logger.Printf(C.DecoLabel, "Finished job crawler " + jobBoard.name)
-            jobBoard.logger.Printf("Job crawler processing time: %v\n", time.Since(startTime))
+            log.Printf(C.DecoLabel, "Finished job crawler " + jobBoard.name)
+            log.Printf("%v crawler processing time: %v\n", jobBoard.name, time.Since(startTime))
         }(*jobBoard)
     }
     wg.Wait()
@@ -94,96 +90,76 @@ func (g *jobCrawlerService) RunCrawler() {
 func jobBoardFactory() map[string]*JobBoard {
     jobBoards := map[string]*JobBoard{}
 
-    filepath := "./batch/goBatch/internal/crawler/logs/job/%v_%v.log"
-
     jobBoardName := C.Midworks
-    logger       := utils.NewLogger(jobBoardName, filepath)
     jobBoards[jobBoardName] = NewJobBoard(
         jobBoardName,
-        scraper.NewScraperMidworks(logger),
-        scraper.NewCallBacksMidworks(logger),
-        scraper.NewCallBacksMidworks(logger),
-        logger,
+        scraper.NewScraperMidworks(),
+        scraper.NewCallBacksMidworks(),
+        scraper.NewCallBacksMidworks(),
     )
 
     jobBoardName = C.TechReach
-    logger       = utils.NewLogger(jobBoardName, filepath)
     jobBoards[jobBoardName] = NewJobBoard(
         jobBoardName,
-        scraper.NewScraperTechReach(logger),
-        scraper.NewCallBacksTechReach(logger),
-        scraper.NewCallBacksTechReach(logger),
-        logger,
+        scraper.NewScraperTechReach(),
+        scraper.NewCallBacksTechReach(),
+        scraper.NewCallBacksTechReach(),
     )
 
     jobBoardName = C.EngineerFactory
-    logger       = utils.NewLogger(jobBoardName, filepath)
     jobBoards[jobBoardName] = NewJobBoard(
         jobBoardName,
-        scraper.NewScraperEngineerFactory(logger),
-        scraper.NewCallBacksEngineerFactory(logger),
-        scraper.NewCallBacksEngineerFactory(logger),
-        logger,
+        scraper.NewScraperEngineerFactory(),
+        scraper.NewCallBacksEngineerFactory(),
+        scraper.NewCallBacksEngineerFactory(),
     )
 
     jobBoardName = C.FreelanceHub
-    logger       = utils.NewLogger(jobBoardName, filepath)
     jobBoards[jobBoardName] = NewJobBoard(
         jobBoardName,
-        scraper.NewScraperFreelanceHub(logger),
-        scraper.NewCallBacksFreelanceHub(logger),
-        scraper.NewCallBacksFreelanceHub(logger),
-        logger,
+        scraper.NewScraperFreelanceHub(),
+        scraper.NewCallBacksFreelanceHub(),
+        scraper.NewCallBacksFreelanceHub(),
     )
 
     jobBoardName = C.CrowdWorksTech
-    logger       = utils.NewLogger(jobBoardName, filepath)
     jobBoards[jobBoardName] = NewJobBoard(
         jobBoardName,
-        scraper.NewScraperCrowdworksTech(logger),
-        scraper.NewCallBacksCrowdworksTech(logger),
-        scraper.NewCallBacksCrowdworksTech(logger),
-        logger,
+        scraper.NewScraperCrowdworksTech(),
+        scraper.NewCallBacksCrowdworksTech(),
+        scraper.NewCallBacksCrowdworksTech(),
     )
 
     jobBoardName = C.AGELESS
-    logger       = utils.NewLogger(jobBoardName, filepath)
     jobBoards[jobBoardName] = NewJobBoard(
         jobBoardName,
-        scraper.NewScraperAgeless(logger),
-        scraper.NewCallBacksAgeless(logger),
-        scraper.NewCallBacksAgeless(logger),
-        logger,
+        scraper.NewScraperAgeless(),
+        scraper.NewCallBacksAgeless(),
+        scraper.NewCallBacksAgeless(),
     )
 
     jobBoardName = C.SES_JOB_LINK
-    logger       = utils.NewLogger(jobBoardName, filepath)
     jobBoards[jobBoardName] = NewJobBoard(
         jobBoardName,
-        scraper.NewScraperSesJobLink(logger),
-        scraper.NewCallBacksSesJobLink(logger),
-        scraper.NewCallBacksSesJobLink(logger),
-        logger,
+        scraper.NewScraperSesJobLink(),
+        scraper.NewCallBacksSesJobLink(),
+        scraper.NewCallBacksSesJobLink(),
     )
 
     jobBoardName = C.FreelanceStart
-    logger       = utils.NewLogger(jobBoardName, filepath)
     jobBoards[jobBoardName] = NewJobBoard(
         jobBoardName,
-        scraper.NewScraperFreelanceStart(logger),
-        scraper.NewCallBacksFreelanceStart(logger),
-        scraper.NewCallBacksFreelanceStart(logger),
-        logger,
+        scraper.NewScraperFreelanceStart(),
+        scraper.NewCallBacksFreelanceStart(),
+        scraper.NewCallBacksFreelanceStart(),
     )
 
     jobBoardName = C.FreelanceJob
-    logger       = utils.NewLogger(jobBoardName, filepath)
     jobBoards[jobBoardName] = NewJobBoard(
         jobBoardName,
-        scraper.NewScraperFreelanceJob(logger),
-        scraper.NewCallBacksFreelanceJob(logger),
-        scraper.NewCallBacksFreelanceJob(logger),
-        logger,
+        scraper.NewScraperFreelanceJob(),
+        scraper.NewCallBacksFreelanceJob(),
+        scraper.NewCallBacksFreelanceJob(),
     )
 
     return jobBoards

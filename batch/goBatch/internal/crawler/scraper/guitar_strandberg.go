@@ -10,8 +10,6 @@ import (
 	"sync"
 	"time"
 
-	"log"
-
 	"github.com/PuerkitoBio/goquery"
 	"github.com/chromedp/cdproto/cdp"
 	"github.com/chromedp/chromedp"
@@ -22,6 +20,7 @@ import (
 )
 
 type CrawlerStrandberg struct {
+    name     string
     gScraper Crawler[*model.Guitar]
 }
 
@@ -30,7 +29,7 @@ type CallBacksStrandberg struct {
 }
 
 
-func NewScraperStrandberg(logger *log.Logger) Scraper[*model.Guitar] {
+func NewScraperStrandberg() Scraper[*model.Guitar] {
 	collector := colly.NewCollector(
 		colly.Async(true),
 		colly.MaxDepth(3),
@@ -40,19 +39,17 @@ func NewScraperStrandberg(logger *log.Logger) Scraper[*model.Guitar] {
 		Parallelism: 5, // URL収集漏れが発生するため5に制限
 	})
     return &CrawlerStrandberg{
+        "Strandberg",
         Crawler[*model.Guitar]{
             collector: collector,
             mutex:     &sync.Mutex{},
-            logger:    logger,
         },
     }
 }
 
-func NewCallBacksStrandberg(logger *log.Logger) *CallBacksStrandberg {
+func NewCallBacksStrandberg() *CallBacksStrandberg {
     return &CallBacksStrandberg{
-        CallBacks{
-            logger: logger,
-        },
+        CallBacks{},
     }
 }
 
@@ -194,7 +191,7 @@ func (c *CallBacksStrandberg) CollectAttributes() func(doc *goquery.Document, ur
 
 func (c *CallBacksStrandberg) BuildModel(url string) func(spec map[string]string) *model.Guitar {
     return func(spec map[string]string) *model.Guitar {
-        return buildGuitarFrame(spec, url, c.funcs.logger)
+        return buildGuitarFrame(spec, url)
     }
 }
 

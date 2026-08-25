@@ -24,6 +24,7 @@ import (
 )
 
 type CrawlerPRS struct {
+    name     string
     gScraper Crawler[*model.Guitar]
 }
 
@@ -31,7 +32,7 @@ type CallBacksPRS struct {
     funcs CallBacks
 }
 
-func NewScraperPRS(logger *log.Logger) *CrawlerPRS {
+func NewScraperPRS() *CrawlerPRS {
     collector := colly.NewCollector(
 		colly.Async(true),
 		colly.MaxDepth(3),
@@ -41,19 +42,17 @@ func NewScraperPRS(logger *log.Logger) *CrawlerPRS {
 		Parallelism: 5, // URL収集漏れが発生するため5に制限
 	})
     return &CrawlerPRS{
+        "PRS",
         Crawler[*model.Guitar]{
             collector: collector,
             mutex:     &sync.Mutex{},
-            logger:    logger,
         },
     }
 }
 
-func NewCallBacksPRS(logger *log.Logger) *CallBacksPRS {
+func NewCallBacksPRS() *CallBacksPRS {
     return &CallBacksPRS{
-        CallBacks{
-            logger: logger,
-        },
+        CallBacks{},
     }
 }
 
@@ -211,7 +210,7 @@ func (g *CrawlerPRS) CollectLinks(parentCtx context.Context) ([]string, error) {
 
     // クロールログ収集
     crawlStats := &crawlStats{}
-    statsCrawlLogs(c ,crawlStats, g.gScraper.logger)
+    collectStatsCrawl(c ,crawlStats)
 
     // URL収集、クロール
     visited := make(map[string]struct{}, 150)
@@ -226,7 +225,7 @@ func (g *CrawlerPRS) CollectLinks(parentCtx context.Context) ([]string, error) {
     c.Visit("https://www.prsguitars.jp/products")
     c.Wait()
 
-    loggingCrawlStats(crawlStats, g.gScraper.logger)
+    loggingCrawlStats(g.name, crawlStats)
 
     g.gScraper.urls = utils.MapToSliceUrl(visited)
     g.gScraper.urls = utils.GetNeedLinks(g.gScraper.urls, regNeedPatterPrs, 120)
@@ -357,7 +356,7 @@ func parseSpec(specSection string, spec map[string]string) map[string]string {
 
 func (c *CallBacksPRS) BuildModel(url string) func(spec map[string]string) *model.Guitar {
     return func(spec map[string]string) *model.Guitar {
-        return buildGuitarFrame(spec, url, c.funcs.logger)
+        return buildGuitarFrame(spec, url)
     }
 }
 

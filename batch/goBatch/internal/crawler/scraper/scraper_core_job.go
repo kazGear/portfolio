@@ -18,7 +18,7 @@ import (
 var _jst, _ = time.LoadLocation("Asia/Tokyo")
 
 // 案件構造体の構築フレームワーク
-func buildJobFrame(data map[string]string, logger *log.Logger) (*model.Job) {
+func buildJobFrame(data map[string]string) *model.Job {
     job  := model.Job{}
     trim := utils.TrimSpace()
 
@@ -29,7 +29,7 @@ func buildJobFrame(data map[string]string, logger *log.Logger) (*model.Job) {
     minSalaryAtMonth, err := utils.ParsePrice(data[C.MinSalaryAtMonth])
 
     if err != nil {
-        logger.Println(err)
+        log.Println(err)
         job.MinSalaryAtMonth = nil
     } else {
         job.MinSalaryAtMonth = &minSalaryAtMonth
@@ -38,7 +38,7 @@ func buildJobFrame(data map[string]string, logger *log.Logger) (*model.Job) {
     maxSalaryAtMonth, err := utils.ParsePrice(data[C.MaxSalaryAtMonth])
 
     if err != nil {
-        logger.Println(err)
+        log.Println(err)
         job.MaxSalaryAtMonth = nil
     } else {
         job.MaxSalaryAtMonth = &maxSalaryAtMonth

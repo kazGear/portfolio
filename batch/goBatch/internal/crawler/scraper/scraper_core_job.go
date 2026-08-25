@@ -1,7 +1,6 @@
 package scraper
 
 import (
-	"log"
 	"regexp"
 	"strconv"
 	"strings"
@@ -18,7 +17,7 @@ import (
 var _jst, _ = time.LoadLocation("Asia/Tokyo")
 
 // 案件構造体の構築フレームワーク
-func buildJobFrame(data map[string]string, logger *log.Logger) (*model.Job) {
+func buildJobFrame(data map[string]string) *model.Job {
     job  := model.Job{}
     trim := utils.TrimSpace()
 
@@ -26,23 +25,11 @@ func buildJobFrame(data map[string]string, logger *log.Logger) (*model.Job) {
 	job.Title       = trim(data[C.Title])
     job.Location    = trim(data[C.Location])
 
-    minSalaryAtMonth, err := utils.ParsePrice(data[C.MinSalaryAtMonth])
+    minSalaryAtMonth    := utils.ParsePrice(data[C.MinSalaryAtMonth])
+    job.MinSalaryAtMonth = &minSalaryAtMonth
 
-    if err != nil {
-        logger.Println(err)
-        job.MinSalaryAtMonth = nil
-    } else {
-        job.MinSalaryAtMonth = &minSalaryAtMonth
-    }
-
-    maxSalaryAtMonth, err := utils.ParsePrice(data[C.MaxSalaryAtMonth])
-
-    if err != nil {
-        logger.Println(err)
-        job.MaxSalaryAtMonth = nil
-    } else {
-        job.MaxSalaryAtMonth = &maxSalaryAtMonth
-    }
+    maxSalaryAtMonth    := utils.ParsePrice(data[C.MaxSalaryAtMonth])
+    job.MaxSalaryAtMonth = &maxSalaryAtMonth
 
     job.Description    = trim(data[C.Description])
     job.EmploymentType = trim(data[C.EmploymentType])

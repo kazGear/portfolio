@@ -7,8 +7,6 @@ import (
 	"sync"
 	"time"
 
-	"log"
-
 	"github.com/PuerkitoBio/goquery"
 	"github.com/chromedp/chromedp"
 	"github.com/gocolly/colly/v2"
@@ -18,6 +16,7 @@ import (
 )
 
 type CrawlerEspSig struct {
+	name     string
     gScraper Crawler[*model.Guitar]
 }
 
@@ -25,7 +24,7 @@ type CallBacksEspSig struct {
     funcs CallBacks
 }
 
-func NewScraperEspSig(logger *log.Logger) Scraper[*model.Guitar] {
+func NewScraperEspSig() Scraper[*model.Guitar] {
 	collector := colly.NewCollector(
 		colly.Async(true),
 		colly.MaxDepth(1),
@@ -35,19 +34,17 @@ func NewScraperEspSig(logger *log.Logger) Scraper[*model.Guitar] {
 		Parallelism: 5, // URL収集漏れが発生するため5に制限
 	})
     return &CrawlerEspSig{
+		"EspSig",
         Crawler[*model.Guitar]{
             collector: collector,
             mutex:     &sync.Mutex{},
-			logger:    logger,
-        },
-    }
+		},
+	}
 }
 
-func NewCallBacksEspSig(logger *log.Logger) *CallBacksEspSig {
+func NewCallBacksEspSig() *CallBacksEspSig {
     return &CallBacksEspSig{
-        CallBacks{
-			logger: logger,
-		},
+        CallBacks{},
     }
 }
 
@@ -56,7 +53,7 @@ func (g *CrawlerEspSig) CollectLinks(parentCtx context.Context) ([]string, error
 
 	// クロールログ収集
     crawlStats := &crawlStats{}
-    statsCrawlLogs(c ,crawlStats, g.gScraper.logger)
+    collectStatsCrawl(c ,crawlStats)
 
     // URL収集、クロール
     mutex   := &sync.Mutex{}
@@ -73,7 +70,7 @@ func (g *CrawlerEspSig) CollectLinks(parentCtx context.Context) ([]string, error
     c.Visit("https://espguitars.co.jp/signatureseries/")
     c.Wait()
 
-	loggingCrawlStats(crawlStats, g.gScraper.logger)
+	loggingCrawlStats(g.name, crawlStats)
 
     g.gScraper.urls = utils.MapToSliceUrl(visited)
     return g.gScraper.urls, nil
@@ -176,7 +173,7 @@ func (c *CallBacksEspSig) CollectAttributes() func(doc *goquery.Document, url st
 
 func (c *CallBacksEspSig) BuildModel(url string) func(spec map[string]string) *model.Guitar {
 	return func(spec map[string]string) *model.Guitar {
-		return buildGuitarFrame(spec, url, c.funcs.logger)
+		return buildGuitarFrame(spec, url)
     }
 }
 

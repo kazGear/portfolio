@@ -21,6 +21,7 @@ import (
 )
 
 type CrawlerFreelanceJob struct {
+    name     string
     jScraper Crawler[*model.Job]
 }
 
@@ -28,7 +29,7 @@ type CallBacksFreelanceJob struct {
     funcs CallBacks
 }
 
-func NewScraperFreelanceJob(logger *log.Logger) Scraper[*model.Job] {
+func NewScraperFreelanceJob() Scraper[*model.Job] {
 	collector := colly.NewCollector(
 		colly.Async(true),
 		colly.MaxDepth(1),
@@ -38,19 +39,17 @@ func NewScraperFreelanceJob(logger *log.Logger) Scraper[*model.Job] {
 		Parallelism: 1, // URL収集漏れが発生するため5に制限
 	})
     return &CrawlerFreelanceJob{
+        "FreelanceJob",
         Crawler[*model.Job]{
             collector: collector,
             mutex:     &sync.Mutex{},
-            logger:    logger,
         },
     }
 }
 
-func NewCallBacksFreelanceJob(logger *log.Logger) *CallBacksFreelanceJob {
+func NewCallBacksFreelanceJob() *CallBacksFreelanceJob {
     return &CallBacksFreelanceJob{
-        CallBacks{
-            logger: logger,
-        },
+        CallBacks{},
     }
 }
 
@@ -58,12 +57,12 @@ func NewCallBacksFreelanceJob(logger *log.Logger) *CallBacksFreelanceJob {
 var _parentCtxFreelanceJob context.Context
 
 func (c *CrawlerFreelanceJob) CollectLinks(parentCtx context.Context) ([]string, error) {
-    collector              := c.jScraper.collector
+    collector             := c.jScraper.collector
     _parentCtxFreelanceJob = parentCtx
 
     // クロールログ収集
     crawlStats := &crawlStats{}
-    statsCrawlLogs(collector ,crawlStats, c.jScraper.logger)
+    collectStatsCrawl(collector ,crawlStats)
 
     mutex   := &sync.Mutex{}
 
@@ -79,7 +78,7 @@ func (c *CrawlerFreelanceJob) CollectLinks(parentCtx context.Context) ([]string,
         isFirstVisit(mutex, url, visited)
     }
 
-    loggingCrawlStats(crawlStats, c.jScraper.logger)
+    loggingCrawlStats(c.name, crawlStats)
 
     c.jScraper.urls = utils.MapToSliceUrl(visited)
     return c.jScraper.urls, nil
@@ -218,7 +217,7 @@ func salvageFeaturesFreelanceJob(normalizedText string) []*model.JobFeature {
 
 func (c *CallBacksFreelanceJob) BuildModel(url string) func(data map[string]string) *model.Job {
     return func(data map[string]string) *model.Job {
-        return buildJobFrame(data, c.funcs.logger)
+        return buildJobFrame(data)
     }
 }
 

@@ -21,6 +21,7 @@ import (
 )
 
 type CrawlerCrowdworksTech struct {
+    name     string
     jScraper Crawler[*model.Job]
 }
 
@@ -28,7 +29,7 @@ type CallBacksCrowdworksTech struct {
     funcs CallBacks
 }
 
-func NewScraperCrowdworksTech(logger *log.Logger) Scraper[*model.Job] {
+func NewScraperCrowdworksTech() Scraper[*model.Job] {
 	collector := colly.NewCollector(
 		colly.Async(true),
 		colly.MaxDepth(1),
@@ -38,19 +39,17 @@ func NewScraperCrowdworksTech(logger *log.Logger) Scraper[*model.Job] {
 		Parallelism: 1, // URL収集漏れが発生するため5に制限
 	})
     return &CrawlerCrowdworksTech{
+        "CrowdworksTech",
         Crawler[*model.Job]{
             collector: collector,
             mutex:     &sync.Mutex{},
-            logger:    logger,
         },
     }
 }
 
-func NewCallBacksCrowdworksTech(logger *log.Logger) *CallBacksCrowdworksTech {
+func NewCallBacksCrowdworksTech() *CallBacksCrowdworksTech {
     return &CallBacksCrowdworksTech{
-        CallBacks{
-            logger: logger,
-        },
+        CallBacks{},
     }
 }
 
@@ -63,7 +62,7 @@ func (c *CrawlerCrowdworksTech) CollectLinks(parentCtx context.Context) ([]strin
 
     // クロールログ収集
     crawlStats := &crawlStats{}
-    statsCrawlLogs(collector ,crawlStats, c.jScraper.logger)
+    collectStatsCrawl(collector ,crawlStats)
 
     mutex   := &sync.Mutex{}
 
@@ -79,7 +78,7 @@ func (c *CrawlerCrowdworksTech) CollectLinks(parentCtx context.Context) ([]strin
         isFirstVisit(mutex, url, visited)
     }
 
-    loggingCrawlStats(crawlStats, c.jScraper.logger)
+    loggingCrawlStats(c.name, crawlStats)
 
     c.jScraper.urls = utils.MapToSliceUrl(visited)
     return c.jScraper.urls, nil
@@ -206,7 +205,7 @@ func salvageJobDataCrowdworksTech(normalizedText string) []*model.JobFeature {
 
 func (c *CallBacksCrowdworksTech) BuildModel(url string) func(data map[string]string) *model.Job {
     return func(data map[string]string) *model.Job {
-        return buildJobFrame(data, c.funcs.logger)
+        return buildJobFrame(data)
     }
 }
 

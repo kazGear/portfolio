@@ -21,6 +21,7 @@ import (
 )
 
 type CrawlerFreelanceHub struct {
+    name     string
     jScraper Crawler[*model.Job]
 }
 
@@ -28,7 +29,7 @@ type CallBacksFreelanceHub struct {
     funcs CallBacks
 }
 
-func NewScraperFreelanceHub(logger *log.Logger) Scraper[*model.Job] {
+func NewScraperFreelanceHub() Scraper[*model.Job] {
 	collector := colly.NewCollector(
 		colly.Async(true),
 		colly.MaxDepth(1),
@@ -38,19 +39,17 @@ func NewScraperFreelanceHub(logger *log.Logger) Scraper[*model.Job] {
 		Parallelism: 1,
 	})
     return &CrawlerFreelanceHub{
+        "FreelanceHub",
         Crawler[*model.Job]{
             collector: collector,
             mutex:     &sync.Mutex{},
-            logger:    logger,
         },
     }
 }
 
-func NewCallBacksFreelanceHub(logger *log.Logger) *CallBacksFreelanceHub {
+func NewCallBacksFreelanceHub() *CallBacksFreelanceHub {
     return &CallBacksFreelanceHub{
-        CallBacks{
-            logger: logger,
-        },
+        CallBacks{},
     }
 }
 
@@ -63,7 +62,7 @@ func (c *CrawlerFreelanceHub) CollectLinks(parentCtx context.Context) ([]string,
 
     // クロールログ収集
     crawlStats := &crawlStats{}
-    statsCrawlLogs(collector ,crawlStats, c.jScraper.logger)
+    collectStatsCrawl(collector ,crawlStats)
 
     mutex   := &sync.Mutex{}
 
@@ -79,7 +78,7 @@ func (c *CrawlerFreelanceHub) CollectLinks(parentCtx context.Context) ([]string,
         isFirstVisit(mutex, url, visited)
     }
 
-    loggingCrawlStats(crawlStats, c.jScraper.logger)
+    loggingCrawlStats(c.name, crawlStats)
 
     c.jScraper.urls = utils.MapToSliceUrl(visited)
     return c.jScraper.urls, nil
@@ -241,7 +240,7 @@ func salvageFeaturesFreelanceHub(doc *goquery.Document) []*model.JobFeature {
 
 func (c *CallBacksFreelanceHub) BuildModel(url string) func(data map[string]string) *model.Job {
     return func(data map[string]string) *model.Job {
-        return buildJobFrame(data, c.funcs.logger)
+        return buildJobFrame(data)
     }
 }
 

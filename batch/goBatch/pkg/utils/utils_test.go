@@ -17,6 +17,9 @@ func TestParsePrice(t *testing.T) {
 		want  int
 	}{
 		{
+			price: "スキル見合い", want: C.OpenPrice,
+		},
+		{
 			price: "10000", want: 10000,
 		},
 		{
@@ -62,7 +65,7 @@ func TestParsePrice(t *testing.T) {
 
 	for _, p := range prices {
 		p := p // 並列テスト時の罠回避
-		actual, _ := ParsePrice(p.price)
+		actual := ParsePrice(p.price)
 		assert.Equal(t, p.want, actual)
 	}
 }
@@ -329,7 +332,7 @@ func TestConvertColorCd(t *testing.T) {
 	}
 }
 
-func TestParseWight(t *testing.T) {
+func TestParseWeight(t *testing.T) {
 	weights := []struct {
 		weight string
 		want   float64
@@ -341,7 +344,7 @@ func TestParseWight(t *testing.T) {
 			weight: "２.３０ +/- 10% Kg", want: 2.3,
 		},
 		{
-			weight: "2 +/- 10% Kg", want: -1,
+			weight: "2 +/- 10% Kg", want: float64(C.ParseErrorPrice),
 		},
 		{
 			weight: "2.30 +/- 10%", want: 2.3,
@@ -350,7 +353,7 @@ func TestParseWight(t *testing.T) {
 
 	for _, w := range weights {
 		w := w
-		actual, _ := ParseWight(w.weight)
+		actual := ParseWeight(w.weight)
 		assert.Equal(t, w.want, actual)
 	}
 }

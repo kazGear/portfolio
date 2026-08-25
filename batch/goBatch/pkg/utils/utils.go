@@ -57,15 +57,15 @@ func TruncateString(s string, maxLength int) string {
 }
 
 var _regPriceSpliter   = regexp.MustCompile(`[()（）/／:、]`)
-var _regUndefinedPrice = regexp.MustCompile(`(?i)(ask|open|オープン)`)
+var _regUndefinedPrice = regexp.MustCompile(`(?i)(ask|open|オープン|スキル見合い)`)
 const _initPrice int   = 999999999
 // 金額表記を数値に変換 "¥128,000" → 128000
-func ParsePrice(price string) (int, error) {
+func ParsePrice(price string) int {
 	if len(price) <= 0 {
-		return C.UndefinedPrice, nil
+		return C.UndefinedPrice
 	}
 	if _regUndefinedPrice.MatchString(price) {
-		return C.OpenPrice, nil
+		return C.OpenPrice
 	}
 	var result int = _initPrice
 	var err error
@@ -77,10 +77,10 @@ func ParsePrice(price string) (int, error) {
 	} else {
 		result, err = parseSinglePrice(price)
 	}
-	if err != nil { return C.ParseErrorPrice, err }
-	if result == _initPrice { return C.ParseErrorPrice, err }
-	if result <= 10 /*円*/ { return C.ParseErrorPrice, err }
-	return result, nil
+	if err != nil { return C.ParseErrorPrice }
+	if result == _initPrice { return C.ParseErrorPrice }
+	if result <= 10 /*円*/ { return C.ParseErrorPrice }
+	return result
 }
 
 var _regNotNumber = regexp.MustCompile(`\D`)
@@ -179,13 +179,6 @@ func NewLogger(makerName string, filepath string) *log.Logger {
         Compress:   false,
     }
     return log.New(writer, "", log.LstdFlags)
-}
-
-// 取得したリンクを表示
-func LoggingCollectedLinks(links []string, logger *log.Logger) {
-	for _, link := range links {
-		logger.Printf("[Collected link]: %v\n", link)
-	}
 }
 
 // スレッドセーフなappend 注：mutexに直接&sync.Mutex{}を渡すのは禁止
@@ -314,16 +307,16 @@ func TrimSpace() func(string) string {
 
 var regWight = regexp.MustCompile(`\d\.\d{1,2}`)
 // 重量を抽出する（Kg単位）
-func ParseWight(weight string) (float64, error) {
+func ParseWeight(weight string) float64 {
 	w := width.Narrow.String(weight)
 	w  = regWight.FindString(w)
 
 	result, err := strconv.ParseFloat(w, 64)
 
 	if err != nil {
-		return -1, fmt.Errorf("[Weight parse error] %v %w\n", weight, err)
+		return float64(C.ParseErrorPrice)
 	}
-	return result, nil
+	return result
 }
 
 // サイトの項目名をフィールド名に変換
@@ -360,7 +353,7 @@ func GetExchangeUSDtoJPY() float64 {
 
 // 国外価格 * rate >> 日本価格
 func CalcExchangedPrice(foreignPrice string, rate float64) string {
-	parsed, _ := ParsePrice(foreignPrice)
+	parsed    := ParsePrice(foreignPrice)
 	foreignP  := decimal.NewFromInt(int64(parsed))
 	exchange  := decimal.NewFromFloat(rate)
 	// 小数点以下は切り捨て

@@ -8,8 +8,6 @@ import (
 	"sync"
 	"time"
 
-	"log"
-
 	"github.com/PuerkitoBio/goquery"
 	"github.com/chromedp/cdproto/cdp"
 	"github.com/chromedp/chromedp"
@@ -20,6 +18,7 @@ import (
 )
 
 type CrawlerIbanez struct {
+    name     string
     gScraper Crawler[*model.Guitar]
 }
 
@@ -27,7 +26,7 @@ type CallBacksIbanez struct {
     funcs CallBacks
 }
 
-func NewScraperIbanez(logger *log.Logger) Scraper[*model.Guitar] {
+func NewScraperIbanez() Scraper[*model.Guitar] {
 	collector := colly.NewCollector(
 		colly.Async(true),
 		colly.MaxDepth(3),
@@ -37,19 +36,17 @@ func NewScraperIbanez(logger *log.Logger) Scraper[*model.Guitar] {
 		Parallelism: 5, // URL収集漏れが発生するため5に制限
 	})
     return &CrawlerIbanez{
+        "Ibanez",
         Crawler[*model.Guitar]{
             collector: collector,
             mutex:     &sync.Mutex{},
-            logger:    logger,
         },
     }
 }
 
-func NewCallBacksIbanez(logger *log.Logger) *CallBacksIbanez {
+func NewCallBacksIbanez() *CallBacksIbanez {
     return &CallBacksIbanez{
-        CallBacks{
-            logger: logger,
-        },
+        CallBacks{},
     }
 }
 
@@ -238,10 +235,11 @@ func (c *CallBacksIbanez) CollectAttributes() func(doc *goquery.Document, url st
         spec[C.CenterPickup] = doc.Find(`.rt_cf_p_data_middle_pickup`).Text()
         spec[C.BridgePickup] = doc.Find(`.rt_cf_p_data_bridge_pickup`).Text()
         spec[C.Price]  = doc.Find(`.rt_cf_p_cm_price`).Text()
+
         src, _        := doc.Find(`.products-detail-main-modal-img`).Attr(`src`)
         spec[C.Src]    = src
         spec[C.Series] = doc.Find(`ul a:contains("` + spec[C.Name] + `")`).
-                            Parent().Parent().Prev().Children().Text()
+                             Parent().Parent().Prev().Children().Text()
 
         spec[C.ScaleLengthMM] = doc.Find(`.rt_cf_p_data_scale_mm`).Text()
         spec[C.Weight]        = strconv.Itoa(C.InvalidNumber)
@@ -253,7 +251,7 @@ func (c *CallBacksIbanez) CollectAttributes() func(doc *goquery.Document, url st
 
 func (c *CallBacksIbanez) BuildModel(url string) func(spec map[string]string) *model.Guitar {
     return func(spec map[string]string) *model.Guitar {
-        return buildGuitarFrame(spec, url, c.funcs.logger)
+        return buildGuitarFrame(spec, url)
     }
 }
 

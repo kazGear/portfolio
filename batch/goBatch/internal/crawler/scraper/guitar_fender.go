@@ -22,6 +22,7 @@ import (
 )
 
 type CrawlerFender struct {
+    name     string
     gScraper Crawler[*model.Guitar]
 }
 
@@ -29,7 +30,7 @@ type CallBacksFender struct {
     funcs CallBacks
 }
 
-func NewScraperFender(logger *log.Logger) Scraper[*model.Guitar] {
+func NewScraperFender() Scraper[*model.Guitar] {
 	collector := colly.NewCollector(
 		colly.Async(true),
 		colly.MaxDepth(3),
@@ -39,19 +40,17 @@ func NewScraperFender(logger *log.Logger) Scraper[*model.Guitar] {
 		Parallelism: 5, // URL収集漏れが発生するため5に制限
 	})
     return &CrawlerFender{
+        "Fender",
         Crawler[*model.Guitar]{
             collector: collector,
             mutex:     &sync.Mutex{},
-            logger:    logger,
         },
     }
 }
 
-func NewCallBacksFender(logger *log.Logger) *CallBacksFender {
+func NewCallBacksFender() *CallBacksFender {
     return &CallBacksFender{
-        CallBacks{
-            logger: logger,
-        },
+        CallBacks{},
     }
 }
 
@@ -195,7 +194,7 @@ func (c *CallBacksFender) CollectAttributes() func(doc *goquery.Document, url st
 
 func (c *CallBacksFender) BuildModel(url string) func(spec map[string]string) *model.Guitar {
     return func(spec map[string]string) *model.Guitar {
-        return buildGuitarFrame(spec, url, c.funcs.logger)
+        return buildGuitarFrame(spec, url)
     }
 }
 

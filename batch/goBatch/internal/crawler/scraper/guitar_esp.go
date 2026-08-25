@@ -8,8 +8,6 @@ import (
 	"sync"
 	"time"
 
-	"log"
-
 	"github.com/PuerkitoBio/goquery"
 	"github.com/chromedp/chromedp"
 	"github.com/gocolly/colly/v2"
@@ -19,6 +17,7 @@ import (
 )
 
 type CrawlerEsp struct {
+    name     string
     gScraper Crawler[*model.Guitar]
 }
 
@@ -27,7 +26,7 @@ type CallBacksEsp struct {
 }
 
 
-func NewScraperEsp(logger *log.Logger) Scraper[*model.Guitar] {
+func NewScraperEsp() Scraper[*model.Guitar] {
 	collector := colly.NewCollector(
 		colly.Async(true),
 		colly.MaxDepth(4),
@@ -37,19 +36,17 @@ func NewScraperEsp(logger *log.Logger) Scraper[*model.Guitar] {
 		Parallelism: 5, // URL収集漏れが発生するため5に制限
 	})
     return &CrawlerEsp{
+        "Esp",
         Crawler[*model.Guitar]{
             collector: collector,
             mutex:     &sync.Mutex{},
-            logger:    logger,
         },
     }
 }
 
-func NewCallBacksEsp(logger *log.Logger) *CallBacksEsp {
+func NewCallBacksEsp() *CallBacksEsp {
     return &CallBacksEsp{
-        CallBacks{
-            logger: logger,
-        },
+        CallBacks{},
     }
 }
 
@@ -61,7 +58,7 @@ func (g *CrawlerEsp) CollectLinks(parentCtx context.Context) ([]string, error) {
 
     // クロールログ収集
     crawlStats := &crawlStats{}
-    statsCrawlLogs(c ,crawlStats, g.gScraper.logger)
+    collectStatsCrawl(c ,crawlStats)
 
     // URL収集、クロール
     visited := make(map[string]struct{}, 500)
@@ -88,7 +85,7 @@ func (g *CrawlerEsp) CollectLinks(parentCtx context.Context) ([]string, error) {
     c.Visit("https://espguitars.co.jp/products/esp")
     c.Wait()
 
-    loggingCrawlStats(crawlStats, g.gScraper.logger)
+    loggingCrawlStats(g.name, crawlStats)
 
     g.gScraper.urls = utils.MapToSliceUrl(visited)
     g.gScraper.urls = utils.GetNeedLinks(g.gScraper.urls, regNeedPatterEsp, 400)
@@ -187,7 +184,7 @@ func (c *CallBacksEsp) CollectAttributes() func(doc *goquery.Document, url strin
 
 func (c *CallBacksEsp) BuildModel(url string) func(spec map[string]string) *model.Guitar {
     return func(spec map[string]string) *model.Guitar {
-        return buildGuitarFrame(spec, url, c.funcs.logger)
+        return buildGuitarFrame(spec, url)
     }
 }
 

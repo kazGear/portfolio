@@ -8,8 +8,6 @@ import (
 	"sync"
 	"time"
 
-	"log"
-
 	"github.com/PuerkitoBio/goquery"
 	"github.com/chromedp/chromedp"
 	"github.com/gocolly/colly/v2"
@@ -19,6 +17,7 @@ import (
 )
 
 type CrawlerZemaitis struct {
+    name     string
     gScraper Crawler[*model.Guitar]
 }
 
@@ -26,7 +25,7 @@ type CallBacksZemaitis struct {
     funcs CallBacks
 }
 
-func NewScraperZemaitis(logger *log.Logger) Scraper[*model.Guitar] {
+func NewScraperZemaitis() Scraper[*model.Guitar] {
 	collector := colly.NewCollector(
 		colly.Async(true),
 		colly.MaxDepth(3),
@@ -36,19 +35,17 @@ func NewScraperZemaitis(logger *log.Logger) Scraper[*model.Guitar] {
 		Parallelism: 5, // URL収集漏れが発生するため5に制限
 	})
     return &CrawlerZemaitis{
+        "Zemaitis",
         Crawler[*model.Guitar]{
             collector: collector,
             mutex:     &sync.Mutex{},
-            logger:    logger,
         },
     }
 }
 
-func NewCallBacksZemaitis(logger *log.Logger) *CallBacksZemaitis {
+func NewCallBacksZemaitis() *CallBacksZemaitis {
     return &CallBacksZemaitis{
-        CallBacks{
-            logger: logger,
-        },
+        CallBacks{},
     }
 }
 
@@ -61,7 +58,7 @@ func (g *CrawlerZemaitis) CollectLinks(parentCtx context.Context) ([]string, err
 
     // クロールログ収集
     crawlStats := &crawlStats{}
-    statsCrawlLogs(c ,crawlStats, g.gScraper.logger)
+    collectStatsCrawl(c ,crawlStats)
 
     // URL収集、クロール
     visited := make(map[string]struct{}, 130)
@@ -83,7 +80,7 @@ func (g *CrawlerZemaitis) CollectLinks(parentCtx context.Context) ([]string, err
     c.Visit("https://www.zemaitis-guitars.jp/")
     c.Wait()
 
-    loggingCrawlStats(crawlStats, g.gScraper.logger)
+    loggingCrawlStats(g.name, crawlStats)
 
     g.gScraper.urls = utils.MapToSliceUrl(visited)
     g.gScraper.urls = utils.GetNeedLinks(g.gScraper.urls, regNeedPatterZemaitis, 110)
@@ -169,7 +166,7 @@ func (c *CallBacksZemaitis) CollectAttributes() func(doc *goquery.Document, url 
 
 func (c *CallBacksZemaitis) BuildModel(url string) func(spec map[string]string) *model.Guitar {
     return func(spec map[string]string) *model.Guitar {
-        return buildGuitarFrame(spec, url, c.funcs.logger)
+        return buildGuitarFrame(spec, url)
     }
 }
 

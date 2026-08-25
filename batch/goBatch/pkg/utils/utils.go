@@ -57,15 +57,15 @@ func TruncateString(s string, maxLength int) string {
 }
 
 var _regPriceSpliter   = regexp.MustCompile(`[()（）/／:、]`)
-var _regUndefinedPrice = regexp.MustCompile(`(?i)(ask|open|オープン)`)
+var _regUndefinedPrice = regexp.MustCompile(`(?i)(ask|open|オープン|スキル見合い)`)
 const _initPrice int   = 999999999
 // 金額表記を数値に変換 "¥128,000" → 128000
-func ParsePrice(price string) (int, error) {
+func ParsePrice(price string) int {
 	if len(price) <= 0 {
-		return C.UndefinedPrice, nil
+		return C.UndefinedPrice
 	}
 	if _regUndefinedPrice.MatchString(price) {
-		return C.OpenPrice, nil
+		return C.OpenPrice
 	}
 	var result int = _initPrice
 	var err error
@@ -77,10 +77,10 @@ func ParsePrice(price string) (int, error) {
 	} else {
 		result, err = parseSinglePrice(price)
 	}
-	if err != nil { return C.ParseErrorPrice, err }
-	if result == _initPrice { return C.ParseErrorPrice, err }
-	if result <= 10 /*円*/ { return C.ParseErrorPrice, err }
-	return result, nil
+	if err != nil { return C.ParseErrorPrice }
+	if result == _initPrice { return C.ParseErrorPrice }
+	if result <= 10 /*円*/ { return C.ParseErrorPrice }
+	return result
 }
 
 var _regNotNumber = regexp.MustCompile(`\D`)
@@ -353,7 +353,7 @@ func GetExchangeUSDtoJPY() float64 {
 
 // 国外価格 * rate >> 日本価格
 func CalcExchangedPrice(foreignPrice string, rate float64) string {
-	parsed, _ := ParsePrice(foreignPrice)
+	parsed    := ParsePrice(foreignPrice)
 	foreignP  := decimal.NewFromInt(int64(parsed))
 	exchange  := decimal.NewFromFloat(rate)
 	// 小数点以下は切り捨て

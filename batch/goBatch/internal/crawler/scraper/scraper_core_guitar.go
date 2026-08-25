@@ -65,12 +65,8 @@ func buildGuitarFrame(spec map[string]string, url string) (*model.Guitar) {
         guitar.Pickups = trim(spec[C.NeckPickup]) + " / " + trim(spec[C.BridgePickup])
     }
 
-    var errPrice error
-	guitar.Price, errPrice = utils.ParsePrice(spec[C.Price])
+	guitar.Price = utils.ParsePrice(spec[C.Price])
 
-    if errPrice != nil {
-        // log.Println(errPrice)
-    }
     scaleLengthMM       := trim(spec[C.ScaleLengthMM])
     guitar.ScaleLengthMM = int(utils.ParseScale(scaleLengthMM))
 	guitar.Series        = trim(spec[C.Series])

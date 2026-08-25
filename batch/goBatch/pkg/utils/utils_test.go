@@ -17,6 +17,9 @@ func TestParsePrice(t *testing.T) {
 		want  int
 	}{
 		{
+			price: "スキル見合い", want: C.OpenPrice,
+		},
+		{
 			price: "10000", want: 10000,
 		},
 		{
@@ -62,7 +65,7 @@ func TestParsePrice(t *testing.T) {
 
 	for _, p := range prices {
 		p := p // 並列テスト時の罠回避
-		actual, _ := ParsePrice(p.price)
+		actual := ParsePrice(p.price)
 		assert.Equal(t, p.want, actual)
 	}
 }

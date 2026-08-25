@@ -40,7 +40,7 @@ func NewScraperSesJobLink() Scraper[*model.Job] {
 		Parallelism: 1, // URL収集漏れが発生するため5に制限
 	})
     return &CrawlerSesJobLink{
-        "SesJobLink",
+        "SES_JOB_LINK",
         Crawler[*model.Job]{
             collector: collector,
             mutex:     &sync.Mutex{},

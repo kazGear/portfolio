@@ -39,7 +39,7 @@ func NewScraperEngineerFactory() Scraper[*model.Job] {
 		Parallelism: 1,
 	})
     return &CrawlerEngineerFactory{
-        "EngineerFactory",
+        "エンジニアファクトリー",
         Crawler[*model.Job]{
             collector: collector,
             mutex:     &sync.Mutex{},

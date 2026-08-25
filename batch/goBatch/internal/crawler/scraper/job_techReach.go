@@ -39,7 +39,7 @@ func NewScraperTechReach() Scraper[*model.Job] {
 		Parallelism: 1,
 	})
     return &CrawlerTechReach{
-        "TechReach",
+        "テックリーチ",
         Crawler[*model.Job]{
             collector: collector,
             mutex:     &sync.Mutex{},

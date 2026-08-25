@@ -39,7 +39,7 @@ func NewScraperFreelanceJob() Scraper[*model.Job] {
 		Parallelism: 1, // URL収集漏れが発生するため5に制限
 	})
     return &CrawlerFreelanceJob{
-        "FreelanceJob",
+        "フリーランスジョブ",
         Crawler[*model.Job]{
             collector: collector,
             mutex:     &sync.Mutex{},

@@ -39,7 +39,7 @@ func NewScraperFreelanceHub() Scraper[*model.Job] {
 		Parallelism: 1,
 	})
     return &CrawlerFreelanceHub{
-        "FreelanceHub",
+        "freelance_hub",
         Crawler[*model.Job]{
             collector: collector,
             mutex:     &sync.Mutex{},

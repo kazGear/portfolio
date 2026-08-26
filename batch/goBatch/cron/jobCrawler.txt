@@ -1,0 +1,1 @@
+0 10 * * * . /etc/environment && cd /app && ./job >> /proc/1/fd/1 2>&1

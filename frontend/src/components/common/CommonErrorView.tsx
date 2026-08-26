@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import ErrorImage from "../../images/background/error.png";
+import ErrorImage from "../../images/background/error2.jpg";
 import { SIZE } from "../../lib/Constants";
 
 const Frame = styled.div`
@@ -9,7 +9,7 @@ const Frame = styled.div`
 `;
 const Div = styled.div`
     background: url(${ErrorImage});
-    background-size: contain;
+    background-size: 100% 100%;
     height: 100%;
     overflow-y: hidden;
 `;

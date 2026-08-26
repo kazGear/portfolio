@@ -8,7 +8,7 @@ type GuitarRepository interface {
 
 type JobRepository interface {
 	Saver[*model.Job]
-	Selector[string, map[int64]struct{}]
+	Selector[string, map[int]struct{}]
 }
 
 type Saver[T any] interface {

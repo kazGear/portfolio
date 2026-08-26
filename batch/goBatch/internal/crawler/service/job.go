@@ -122,14 +122,6 @@ func jobBoardFactory() map[string]*JobBoard {
         scraper.NewCallBacksFreelanceHub(),
     )
 
-    jobBoardName = C.CrowdWorksTech
-    jobBoards[jobBoardName] = NewJobBoard(
-        jobBoardName,
-        scraper.NewScraperCrowdworksTech(),
-        scraper.NewCallBacksCrowdworksTech(),
-        scraper.NewCallBacksCrowdworksTech(),
-    )
-
     jobBoardName = C.AGELESS
     jobBoards[jobBoardName] = NewJobBoard(
         jobBoardName,
@@ -161,6 +153,14 @@ func jobBoardFactory() map[string]*JobBoard {
         scraper.NewCallBacksFreelanceJob(),
         scraper.NewCallBacksFreelanceJob(),
     )
+
+    // jobBoardName = C.CrowdWorksTech
+    // jobBoards[jobBoardName] = NewJobBoard(
+    //     jobBoardName,
+    //     scraper.NewScraperCrowdworksTech(),
+    //     scraper.NewCallBacksCrowdworksTech(),
+    //     scraper.NewCallBacksCrowdworksTech(),
+    // )
 
     return jobBoards
 }

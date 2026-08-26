@@ -17,6 +17,7 @@ import (
 	"github.com/kazGear/portfolio/goBatch/internal/crawler/model"
 	"github.com/kazGear/portfolio/goBatch/internal/crawler/repository"
 	C "github.com/kazGear/portfolio/goBatch/pkg/constants"
+	"github.com/kazGear/portfolio/goBatch/pkg/db"
 	"github.com/kazGear/portfolio/goBatch/pkg/utils"
 	"golang.org/x/text/width"
 )
@@ -73,15 +74,25 @@ func (c *CrawlerSesJobLink) CollectLinks(parentCtx context.Context) ([]string, e
 
     validatePageIdFromTo(pageIdFrom, pageIdTo)
 
+    // 保存済ページID取得
+    repository   := repository.NewJobRepository(db.GetInstance())
+    savedPageIds := repository.Select(c.name)
+
+    log.Printf("%v savedPageIds: %v件\n", c.name, len(savedPageIds))
+
     // URL生成
     for pageId := pageIdFrom; pageId <= pageIdTo; pageId++ {
+        if _, exist := savedPageIds[pageId]; exist {
+            continue
+        }
         url := fmt.Sprintf("https://ses-job-link.com/projects/%v", pageId)
         isFirstVisit(mutex, url, visited)
     }
-
     loggingCrawlStats(c.name, crawlStats)
 
     c.jScraper.urls = utils.MapToSliceUrl(visited)
+    log.Printf("%v visit urls: %v件\n", c.name, len(c.jScraper.urls))
+
     return c.jScraper.urls, nil
 }
 

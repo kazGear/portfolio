@@ -98,8 +98,8 @@ func (r *jobRepository) updates(job *model.Job, savedFeatureJobIds map[int64]str
     }
     defer transaction.Rollback()
 
-    // 案件基本情報 update or insert
-    if err := upsert(job, transaction); err != nil {
+    // 案件基本情報
+    if err := insert(job, transaction); err != nil {
         return err
     }
 
@@ -148,24 +148,9 @@ func (r *jobRepository) updates(job *model.Job, savedFeatureJobIds map[int64]str
     return nil
 }
 
-func upsert(job *model.Job, transaction *sqlx.Tx) error {
-    // UPDATE（存在すれば更新）
-    res, err := transaction.NamedExec(sql.UpdateJob(), job)
-
-    if err != nil {
+func insert(job *model.Job, transaction *sqlx.Tx) error {
+    if _, err := transaction.NamedExec(sql.InsertJob(), job); err != nil {
         return err
-    }
-    // UPDATE で更新された行数を確認
-    updateRows, err := res.RowsAffected()
-
-    if err != nil {
-        return err
-    }
-    // UPDATE されてないなら INSERT
-    if updateRows == 0 {
-        if _, err := transaction.NamedExec(sql.InsertJob(), job); err != nil {
-            return err
-        }
     }
     return nil
 }
@@ -295,13 +280,13 @@ func createSqlBulkInsertOptions(url string) string {
     return builder.String()
 }
 
-func (r *jobRepository) Select(sourceSite string) map[int64]struct{} {
-    var tmpPageIds []int64
+func (r *jobRepository) Select(sourceSite string) map[int]struct{} {
+    tmpPageIds := make([]int, 0)
 
     if err := r.db.Select(&tmpPageIds, sql.SelectSavedPageIds(), sourceSite); err != nil {
         log.Panic(err)
     }
-    pageIds := make(map[int64]struct{}, len(tmpPageIds))
+    pageIds := make(map[int]struct{}, len(tmpPageIds))
 
     for _, id := range tmpPageIds {
         pageIds[id] = struct{}{}

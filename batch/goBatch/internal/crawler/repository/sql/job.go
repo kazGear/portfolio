@@ -82,11 +82,11 @@ func InsertJobId() string {
 func SelectSavedPageIds() string {
 	return `
         SELECT
-              (regexp_match(url, '\d{1,7}'))[1]::INT AS page_id
+              (regexp_match(url, '\d{1,7}'))[1]::INT
           FROM
                t_jobs
          WHERE
-               source_site = $1 -- :source_site
+               source_site = $1
              ;
     `
 }

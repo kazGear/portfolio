@@ -17,6 +17,7 @@ import (
 	"github.com/kazGear/portfolio/goBatch/internal/crawler/model"
 	"github.com/kazGear/portfolio/goBatch/internal/crawler/repository"
 	C "github.com/kazGear/portfolio/goBatch/pkg/constants"
+	"github.com/kazGear/portfolio/goBatch/pkg/db"
 	"github.com/kazGear/portfolio/goBatch/pkg/utils"
 )
 
@@ -72,15 +73,22 @@ func (c *CrawlerCrowdworksTech) CollectLinks(parentCtx context.Context) ([]strin
 
     validatePageIdFromTo(pageIdFrom, pageIdTo)
 
+    // 保存済ページID取得
+    repository   := repository.NewJobRepository(db.GetInstance())
+    savedPageIds := repository.Select(c.name)
+
+    log.Printf("%v savedPageIds: %v件\n", c.name, len(savedPageIds))
+
     // URL生成
     for pageId := pageIdFrom; pageId <= pageIdTo; pageId++ {
         url := fmt.Sprintf("https://tech.crowdworks.jp/job_offers/%v", pageId)
         isFirstVisit(mutex, url, visited)
     }
-
     loggingCrawlStats(c.name, crawlStats)
 
     c.jScraper.urls = utils.MapToSliceUrl(visited)
+    log.Printf("%v visit urls: %v件\n", c.name, len(c.jScraper.urls))
+
     return c.jScraper.urls, nil
 }
 

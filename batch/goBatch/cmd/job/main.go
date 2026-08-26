@@ -3,8 +3,6 @@ package main
 import (
 	"fmt"
 	"log"
-	"os"
-	"strconv"
 	"time"
 
 	"github.com/kazGear/portfolio/goBatch/internal/batchLogger/model"
@@ -51,14 +49,6 @@ func main() {
 	// サービス作成・起動
 	crawler := crawlerService.NewJobCrawlerService(jobRepository)
 	crawler.RunCrawler()
-
-	// 過去ログの整理
-	logPath 		 := os.Getenv("LOGS_PATH_JOB")
-	logsKeepCount, _ := strconv.Atoi(os.Getenv("LOGS_KEEP_COUNT"))
-	utils.CleanupLogs(
-		logPath,
-		logsKeepCount,
-	)
 
 	timeSpan := time.Since(stopWatch)
 	dbLogger.UpdateStatus(config, &timeSpan)

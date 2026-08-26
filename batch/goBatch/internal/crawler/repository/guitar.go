@@ -12,7 +12,7 @@ type guitarRepository struct {
     db *sqlx.DB
 }
 
-func NewGuitarRepository(db *sqlx.DB) Repository[*model.Guitar] {
+func NewGuitarRepository(db *sqlx.DB) GuitarRepository {
     return &guitarRepository{ db: db }
 }
 

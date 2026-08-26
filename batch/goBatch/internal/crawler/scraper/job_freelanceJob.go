@@ -17,6 +17,7 @@ import (
 	"github.com/kazGear/portfolio/goBatch/internal/crawler/model"
 	"github.com/kazGear/portfolio/goBatch/internal/crawler/repository"
 	C "github.com/kazGear/portfolio/goBatch/pkg/constants"
+	"github.com/kazGear/portfolio/goBatch/pkg/db"
 	"github.com/kazGear/portfolio/goBatch/pkg/utils"
 )
 
@@ -39,7 +40,7 @@ func NewScraperFreelanceJob() Scraper[*model.Job] {
 		Parallelism: 1, // URL収集漏れが発生するため5に制限
 	})
     return &CrawlerFreelanceJob{
-        "FreelanceJob",
+        "フリーランスジョブ",
         Crawler[*model.Job]{
             collector: collector,
             mutex:     &sync.Mutex{},
@@ -72,15 +73,25 @@ func (c *CrawlerFreelanceJob) CollectLinks(parentCtx context.Context) ([]string,
 
     validatePageIdFromTo(pageIdFrom, pageIdTo)
 
+    // 保存済ページID取得
+    repository   := repository.NewJobRepository(db.GetInstance())
+    savedPageIds := repository.Select(c.name)
+
+    log.Printf("%v savedPageIds: %v件\n", c.name, len(savedPageIds))
+
     // URL生成
     for pageId := pageIdFrom; pageId <= pageIdTo; pageId++ {
+        if _, exist := savedPageIds[pageId]; exist {
+            continue
+        }
         url := fmt.Sprintf("https://freelance-job.com/job/detail/%v", pageId)
         isFirstVisit(mutex, url, visited)
     }
-
     loggingCrawlStats(c.name, crawlStats)
 
     c.jScraper.urls = utils.MapToSliceUrl(visited)
+    log.Printf("%v visit urls: %v件\n", c.name, len(c.jScraper.urls))
+
     return c.jScraper.urls, nil
 }
 

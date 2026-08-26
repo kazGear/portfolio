@@ -1,4 +1,6 @@
-﻿namespace Repository.Repository.sql
+﻿using CSLib.Const;
+
+namespace Repository.Repository.sql
 {
     /// <summary>
     /// SQL文格納クラス
@@ -49,7 +51,7 @@
                           AND max_salary_at_month  <= @max_salary_at_month_specified_max
                           AND work_place            = @work_place
                           AND source_site           = @source_site 
-                          AND NOW() - j.updated_at <= '3 month' */
+                          AND NOW() - j.updated_at <= 'xx month' */
 
                      GROUP BY
                               j.url
@@ -94,7 +96,7 @@
                       AND max_salary_at_month  <= @max_salary_at_month_specified_max
                       AND work_place            = @work_place
                       AND source_site           = @source_site 
-                      AND NOW() - j.updated_at <= '3 month' */
+                      AND NOW() - j.updated_at <= 'xx month' */
 
                       {featureConditions}
     /* 動的検索条件 AND EXISTS (
@@ -142,7 +144,7 @@
 
                  WHERE
                        f.category          = @category
-                   AND NOW() - updated_at <= '3 month'
+                   AND NOW() - updated_at <= '{Const.RECENCY_THRESHOLD}'
 
               GROUP BY
                        f.feature_name
@@ -155,7 +157,7 @@
 
         public static string SelectWorkPlaceByPrefecture()
         {
-            string SQL = @"
+            string SQL = @$"
                 SELECT
                        location                                                   AS Location,
                        sum(CASE work_place WHEN 'フルリモート' THEN 1 ELSE 0 END ) AS FullRemote,
@@ -214,7 +216,7 @@
                   FROM
                        t_jobs
                  WHERE
-                       NOW() - updated_at <= '3 month'
+                       NOW() - updated_at <= '{Const.RECENCY_THRESHOLD}'
               GROUP BY
                        location
               ORDER BY
@@ -243,7 +245,7 @@
 
                  WHERE
                        f.category           = @category
-                   AND NOW() - updated_at  <= '3 month'
+                   AND NOW() - updated_at  <= '{Const.RECENCY_THRESHOLD}'
                    AND min_salary_at_month >  0 AND max_salary_at_month > 0
 
               GROUP BY

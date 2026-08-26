@@ -1,4 +1,5 @@
-﻿using CSLib.Lib;
+﻿using CSLib.Const;
+using CSLib.Lib;
 using Dapper;
 using PrivateApi.Domain.DTO;
 using Repository.Repository;
@@ -133,7 +134,7 @@ namespace PrivateApi.Service
             if (req.IsHideOldJob)
             {
                 // 掲載するのは更新日（取得日）から○○ヵ月以内の案件
-                conditions.AppendLine($"AND NOW() - updated_at <= '3 month'");
+                conditions.AppendLine($"AND NOW() - updated_at <= '{Const.RECENCY_THRESHOLD}'");
             }
             return conditions.ToString();
         }

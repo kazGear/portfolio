@@ -11,6 +11,7 @@ COPY . .
 RUN go build -o /app/guitar ./cmd/guitar
 RUN go build -o /app/batchMonitor ./cmd/batchMonitor
 RUN go build -o /app/dbArchiver ./cmd/dbArchiver
+RUN go build -o /app/job ./cmd/job
 
 # runtime stage
 FROM debian:bookworm-slim
@@ -35,12 +36,10 @@ WORKDIR /app
 COPY --from=build /app/guitar /app/guitar
 COPY --from=build /app/batchMonitor /app/batchMonitor
 COPY --from=build /app/dbArchiver /app/dbArchiver
+COPY --from=build /app/job /app/job
 
 COPY entrypoint.sh /entrypoint.sh
 
 RUN chmod +x /entrypoint.sh
-
-RUN mkdir -p /app/internal/crawler/logs/job
-RUN mkdir -p /app/internal/crawler/logs/guitar
 
 CMD ["/entrypoint.sh"]

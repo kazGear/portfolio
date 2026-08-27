@@ -1,3 +1,5 @@
+# 普段使いしないため、devは凍結（2026.08.26）
+
 services:
   frontend:
     build:

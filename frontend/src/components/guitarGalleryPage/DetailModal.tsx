@@ -18,8 +18,8 @@ const Background = styled.div`
 `;
 
 const Modal = styled.div`
-    width: 80%;
-    height: 80%;
+    width: 90%;
+    height: 82%;
     display: flex;
     justify-content: space-evenly;
     border-radius: 20px;
@@ -55,7 +55,7 @@ const DetailModal = ({selectedGuitars, isShow, callback}: ArgProps) => {
                             position: "absolute",
                             right: "0",
                             bottom: "0",
-                            margin: "0px 40px 40px 0px"}}
+                            margin: "0px 40px 30px 0px"}}
                             />
             </Modal>
         </Background>

@@ -118,7 +118,7 @@ const GuitarGalleryPage = () => {
                                     callback={getSelectedGuitarHandler}>
                         </GuitarCards>
                     ) : (
-                        <div style={{textAlign: "center", marginTop: "35%"}}>
+                        <div style={{textAlign: "center", marginTop: "200px"}}>
                             <CommonNowLoading alt="guitar cards"/>
                         </div>
                     )}

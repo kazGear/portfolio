@@ -5,7 +5,7 @@ import { GUITAR } from "../../lib/Constants";
 const Div = styled.div`
     width: 50%;
     height: 85%;
-    margin: 20px 40px 40px 40px;
+    margin: 20px 40px 40px 20px;
     overflow-y: auto;
 `;
 

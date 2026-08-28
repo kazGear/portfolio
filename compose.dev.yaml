@@ -106,13 +106,10 @@ services:
     restart: "no"
     volumes:
       - ./batch/goBatch/cron/guitarCrawler.txt:/etc/cron.d/app-cron:ro
+    env_file:
+      - .env.dev
     environment:
       ENV_FILE: .env.dev
-      DB_USER: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
-      DB_NAME: ${DB_NAME}
-      DB_HOST: db
-      DB_PORT: ${DB_PORT}
 
   batch-job-crawler:
     build:
@@ -121,13 +118,10 @@ services:
     restart: "no"
     volumes:
       - ./batch/goBatch/cron/jobCrawler.txt:/etc/cron.d/app-cron:ro
+    env_file:
+      - .env.dev
     environment:
       ENV_FILE: .env.dev
-      DB_USER: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
-      DB_NAME: ${DB_NAME}
-      DB_HOST: db
-      DB_PORT: ${DB_PORT}
 
   batch-monitor:
     build:
@@ -136,14 +130,10 @@ services:
     restart: "no"
     volumes:
       - ./batch/goBatch/cron/batchMonitor.txt:/etc/cron.d/app-cron:ro
+    env_file:
+      - .env.dev
     environment:
       ENV_FILE: .env.dev
-      DB_USER: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
-      DB_NAME: ${DB_NAME}
-      DB_HOST: db
-      DB_PORT: ${DB_PORT}
-      DISCORD_WEBHOOK_URL: ${DISCORD_WEBHOOK_URL}
 
   batch-db-archiver:
     build:
@@ -153,10 +143,7 @@ services:
     volumes:
       - ./infrastructure/db/backup:/app/backup
       - ./batch/goBatch/cron/dbArchiver.txt:/etc/cron.d/app-cron:ro
+    env_file:
+      - .env.dev
     environment:
       ENV_FILE: .env.dev
-      DB_USER: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
-      DB_NAME: ${DB_NAME}
-      DB_HOST: db
-      DB_PORT: ${DB_PORT}

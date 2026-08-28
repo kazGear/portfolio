@@ -478,14 +478,14 @@ var colorKeywords = []colorKeyword{
             "red", "cherry", "apple", "fiesta", "burgundy", "cranberry",
             "garnet", "cardinal", "tomato", "ember", "lava",
             "vermillion", "rose",
-			"SFFR", "RRD", "SRD", "FDRD", "OCAR",
+			"SFFR", "RRD", "SRD", "FDRD", "OCAR", "YS", "CAR",
         },
     },
     {
         Cd: C.Pink,
         Keywords: []string{
             "pink", "coral", "sakura", "rose", "twinkle",
-            "PNK", "LPK", "SKP",
+            "PNK", "LPK", "SKP", "SLP",
         },
     },
     {
@@ -493,7 +493,7 @@ var colorKeywords = []colorKeyword{
         Keywords: []string{
             "orange", "sunset", "sunrise", "autumn", "coral",
             "tangerine", "poppy",
-            "ORG", "ORGD",
+            "ORG", "ORGD", "ITB",
         },
     },
     {
@@ -508,7 +508,7 @@ var colorKeywords = []colorKeyword{
         Keywords: []string{
             "green", "citron", "ivy", "forest", "olive", "mint",
             "snake", "iguana", "malachite",
-            "GRN",
+            "GRN", "SGM",
         },
     },
     {
@@ -524,7 +524,7 @@ var colorKeywords = []colorKeyword{
             "blue", "marine", "supreme", "nebula", "peacock", "mercury",
             "aqua", "turquoise", "azure", "navy", "bonnet",
             "BLU", "BLUE", "FBL", "DBL", "DOBL", "RBL", "VBL", "NBL", "LBL",
-            "MBL", "PBL", "DLPB", "SPBD", "STB", "OBL", "CHBL", "IBM",
+            "MBL", "PBL", "DLPB", "SPBD", "STB", "OBL", "CHBL", "IBM", "LPB", "OLB",
         },
     },
     {
@@ -532,7 +532,7 @@ var colorKeywords = []colorKeyword{
         Keywords: []string{
             "purple", "indigo", "violet", "lavender", "plum",
             "amethyst", "sugilite", "tanzanite",
-            "PPL", "VLT", "LVD", "LAV", "LPP", "BPL", "YZP",
+            "PPL", "VLT", "LVD", "LAV", "LPP", "BPL", "YZP", "BGM",
         },
     },
     {
@@ -547,14 +547,14 @@ var colorKeywords = []colorKeyword{
         Cd: C.Brown,
         Keywords: []string{
             "brown", "walnut", "mahogany", "chocolate", "bourbon", "tobacco",
-            "BR", "BROWN", "BRW", "LBR", "HB", "TEB", "TBS", "ITB",
+            "BR", "BROWN", "BRW", "LBR", "HB", "TEB", "TBS", "ITB", "SDR",
         },
     },
     {
         Cd: C.Natural,
         Keywords: []string{
             "natural", "raw", "naked", "plain", "wood", "driftwood", "burnt",
-            "NA", "CN", "MNA", "NAMT", "NAMAT", "ANA", "NAOIL",
+            "NA", "CN", "MNA", "NAMT", "NAMAT", "ANA", "NAOIL", "VNT",
         },
     },
     {
@@ -566,21 +566,21 @@ var colorKeywords = []colorKeyword{
     {
         Cd: C.Silver,
         Keywords: []string{
-            "silver", "chrome",
+            "silver", "chrome", "USB",
         },
     },
     {
         Cd: C.Black,
         Keywords: []string{
             "black", "obsidian", "onyx", "ebony", "jet", "pitch",
-            "BLK", "TBK",
+            "BLK", "TBK", "BB",
         },
     },
     {
         Cd: C.White,
         Keywords: []string{
             "white", "snow", "ivory", "cream", "pearl", "fox",
-            "WBD", "OWH", "AWH", "SWH",
+            "WBD", "OWH", "AWH", "SWH", "OWH",
         },
     },
 }

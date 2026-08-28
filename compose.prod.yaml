@@ -110,13 +110,10 @@ services:
     restart: unless-stopped
     volumes:
       - ./batch/goBatch/cron/guitarCrawler.txt:/etc/cron.d/app-cron:ro
+    env_file:
+      - .env.prod
     environment:
-      DB_USER: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
-      DB_NAME: ${DB_NAME}
-      DB_HOST: ${DB_HOST}
-      DB_PORT: ${DB_PORT}
-      PARALLEL_COUNT_GUITAR: ${PARALLEL_COUNT_GUITAR}
+      ENV_FILE: .env.prod
     depends_on:
       - db
 
@@ -127,13 +124,10 @@ services:
     restart: unless-stopped
     volumes:
       - ./batch/goBatch/cron/jobCrawler.txt:/etc/cron.d/app-cron:ro
+    env_file:
+      - .env.prod
     environment:
-      DB_USER: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
-      DB_NAME: ${DB_NAME}
-      DB_HOST: ${DB_HOST}
-      DB_PORT: ${DB_PORT}
-      PARALLEL_COUNT_JOB: ${PARALLEL_COUNT_JOB}
+      ENV_FILE: .env.prod
     depends_on:
       - db
 
@@ -144,13 +138,10 @@ services:
     restart: unless-stopped
     volumes:
       - ./batch/goBatch/cron/batchMonitor.txt:/etc/cron.d/app-cron:ro
+    env_file:
+      - .env.prod
     environment:
-      DB_USER: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
-      DB_NAME: ${DB_NAME}
-      DB_HOST: ${DB_HOST}
-      DB_PORT: ${DB_PORT}
-      DISCORD_WEBHOOK_URL: ${DISCORD_WEBHOOK_URL}
+      ENV_FILE: .env.prod
     depends_on:
       - db
 
@@ -162,12 +153,10 @@ services:
     volumes:
       - ./infrastructure/db/backup:/app/backup
       - ./batch/goBatch/cron/dbArchiver.txt:/etc/cron.d/app-cron:ro
+    env_file:
+      - .env.prod
     environment:
-      DB_USER: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
-      DB_NAME: ${DB_NAME}
-      DB_HOST: ${DB_HOST}
-      DB_PORT: ${DB_PORT}
+      ENV_FILE: .env.prod
     depends_on:
       - db
 

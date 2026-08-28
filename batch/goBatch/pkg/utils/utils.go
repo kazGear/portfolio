@@ -129,18 +129,18 @@ func parseMultiPrice(s string) (int, error) {
 var _regFretStr   = regexp.MustCompile(`(1[5-9]|[2-3][0-9])\s*[Ff]+`)
 var _refNotNumber = regexp.MustCompile(`\D`)
 // ギターのフレット数を取得
-func GetFretCount(s string) (int, error) {
+func GetFretCount(s string) int {
 	try, err := strconv.Atoi(s)
-	if err == nil { return try, nil }
+	if err == nil { return try }
 
 	fretStr := _regFretStr.FindString(s)
 	fret    := _refNotNumber.ReplaceAllString(fretStr, "")
 
 	if len(fret) <= 0 {
-		return -1, fmt.Errorf("[Get fretOfNumber error]: %v\n", s)
+		return C.ParseErrorPrice
 	}
 	result, _ := strconv.Atoi(fret)
-	return result, nil
+	return result
 }
 
 var regScale = regexp.MustCompile(`(\d{3}\.\d{1,3})|(\d{2}\.\d{1,5})|(\d{2,3})`)
@@ -478,14 +478,14 @@ var colorKeywords = []colorKeyword{
             "red", "cherry", "apple", "fiesta", "burgundy", "cranberry",
             "garnet", "cardinal", "tomato", "ember", "lava",
             "vermillion", "rose",
-			"SFFR", "RRD", "SRD", "FDRD", "OCAR",
+			"SFFR", "RRD", "SRD", "FDRD", "OCAR", "YS", "CAR",
         },
     },
     {
         Cd: C.Pink,
         Keywords: []string{
             "pink", "coral", "sakura", "rose", "twinkle",
-            "PNK", "LPK", "SKP",
+            "PNK", "LPK", "SKP", "SLP",
         },
     },
     {
@@ -493,7 +493,7 @@ var colorKeywords = []colorKeyword{
         Keywords: []string{
             "orange", "sunset", "sunrise", "autumn", "coral",
             "tangerine", "poppy",
-            "ORG", "ORGD",
+            "ORG", "ORGD", "ITB",
         },
     },
     {
@@ -508,7 +508,7 @@ var colorKeywords = []colorKeyword{
         Keywords: []string{
             "green", "citron", "ivy", "forest", "olive", "mint",
             "snake", "iguana", "malachite",
-            "GRN",
+            "GRN", "SGM",
         },
     },
     {
@@ -524,7 +524,7 @@ var colorKeywords = []colorKeyword{
             "blue", "marine", "supreme", "nebula", "peacock", "mercury",
             "aqua", "turquoise", "azure", "navy", "bonnet",
             "BLU", "BLUE", "FBL", "DBL", "DOBL", "RBL", "VBL", "NBL", "LBL",
-            "MBL", "PBL", "DLPB", "SPBD", "STB", "OBL", "CHBL", "IBM",
+            "MBL", "PBL", "DLPB", "SPBD", "STB", "OBL", "CHBL", "IBM", "LPB", "OLB",
         },
     },
     {
@@ -532,7 +532,7 @@ var colorKeywords = []colorKeyword{
         Keywords: []string{
             "purple", "indigo", "violet", "lavender", "plum",
             "amethyst", "sugilite", "tanzanite",
-            "PPL", "VLT", "LVD", "LAV", "LPP", "BPL", "YZP",
+            "PPL", "VLT", "LVD", "LAV", "LPP", "BPL", "YZP", "BGM",
         },
     },
     {
@@ -547,14 +547,14 @@ var colorKeywords = []colorKeyword{
         Cd: C.Brown,
         Keywords: []string{
             "brown", "walnut", "mahogany", "chocolate", "bourbon", "tobacco",
-            "BR", "BROWN", "BRW", "LBR", "HB", "TEB", "TBS", "ITB",
+            "BR", "BROWN", "BRW", "LBR", "HB", "TEB", "TBS", "ITB", "SDR",
         },
     },
     {
         Cd: C.Natural,
         Keywords: []string{
             "natural", "raw", "naked", "plain", "wood", "driftwood", "burnt",
-            "NA", "CN", "MNA", "NAMT", "NAMAT", "ANA", "NAOIL",
+            "NA", "CN", "MNA", "NAMT", "NAMAT", "ANA", "NAOIL", "VNT",
         },
     },
     {
@@ -566,21 +566,21 @@ var colorKeywords = []colorKeyword{
     {
         Cd: C.Silver,
         Keywords: []string{
-            "silver", "chrome",
+            "silver", "chrome", "USB",
         },
     },
     {
         Cd: C.Black,
         Keywords: []string{
             "black", "obsidian", "onyx", "ebony", "jet", "pitch",
-            "BLK", "TBK",
+            "BLK", "TBK", "BB",
         },
     },
     {
         Cd: C.White,
         Keywords: []string{
             "white", "snow", "ivory", "cream", "pearl", "fox",
-            "WBD", "OWH", "AWH", "SWH",
+            "WBD", "OWH", "AWH", "SWH", "OWH",
         },
     },
 }

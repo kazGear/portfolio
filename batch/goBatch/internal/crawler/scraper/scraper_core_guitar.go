@@ -44,12 +44,9 @@ func buildGuitarFrame(spec map[string]string, url string) (*model.Guitar) {
 	guitar.Controls          = trim(spec[C.Controls])
     guitar.Fingerboard       = searchWoodCode(spec[C.Fingerboard])
 
-	var errFretCount error
-	fretCount                     := trim(spec[C.FretCount])
-    guitar.FretCount, errFretCount = utils.GetFretCount(fretCount)
-    if errFretCount != nil {
-        // log.Println(errFretCount)
-    }
+	fretCount       := trim(spec[C.FretCount])
+    guitar.FretCount = utils.GetFretCount(fretCount)
+
 	guitar.Inlays       = trim(spec[C.Inlays])
 	guitar.Joint        = trim(spec[C.Joint])
     guitar.NeckMaterial = searchWoodCode(spec[C.NeckMaterial])

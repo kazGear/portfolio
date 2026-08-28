@@ -37,6 +37,8 @@ func NewScraperStrandberg() Scraper[*model.Guitar] {
 	collector.Limit(&colly.LimitRule{
 		DomainGlob:  "*",
 		Parallelism: 5, // URL収集漏れが発生するため5に制限
+        Delay:       500 * time.Millisecond,
+        RandomDelay: 500 * time.Millisecond,
 	})
     return &CrawlerStrandberg{
         "Strandberg",

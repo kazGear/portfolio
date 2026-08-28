@@ -41,6 +41,14 @@ services:
     environment:
       TZ: Asia/Tokyo
 
+  batch-job-crawler:
+    depends_on:
+      - db
+    networks:
+      - portfolio-net
+    environment:
+      TZ: Asia/Tokyo
+
   batch-monitor:
     depends_on:
       - db

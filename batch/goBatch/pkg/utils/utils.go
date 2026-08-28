@@ -516,8 +516,9 @@ func CleanupLogs(dir string, keep int) {
 	}
 }
 
-func RandSleep() {
-	delay := time.Duration(rand.Int63n(int64(2250 * time.Millisecond))) + 250 * time.Millisecond
+// ミリ秒で指定する
+func RandSleep(minWait time.Duration, maxWait time.Duration) {
+	delay := time.Duration(rand.Int63n(int64(maxWait * time.Millisecond))) + minWait * time.Millisecond
 	time.Sleep(delay)
 }
 

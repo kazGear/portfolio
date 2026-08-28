@@ -129,18 +129,18 @@ func parseMultiPrice(s string) (int, error) {
 var _regFretStr   = regexp.MustCompile(`(1[5-9]|[2-3][0-9])\s*[Ff]+`)
 var _refNotNumber = regexp.MustCompile(`\D`)
 // ギターのフレット数を取得
-func GetFretCount(s string) (int, error) {
+func GetFretCount(s string) int {
 	try, err := strconv.Atoi(s)
-	if err == nil { return try, nil }
+	if err == nil { return try }
 
 	fretStr := _regFretStr.FindString(s)
 	fret    := _refNotNumber.ReplaceAllString(fretStr, "")
 
 	if len(fret) <= 0 {
-		return -1, fmt.Errorf("[Get fretOfNumber error]: %v\n", s)
+		return C.ParseErrorPrice
 	}
 	result, _ := strconv.Atoi(fret)
-	return result, nil
+	return result
 }
 
 var regScale = regexp.MustCompile(`(\d{3}\.\d{1,3})|(\d{2}\.\d{1,5})|(\d{2,3})`)

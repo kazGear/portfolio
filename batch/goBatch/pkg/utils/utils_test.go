@@ -81,7 +81,7 @@ func TestGetFretCount(t *testing.T) {
 		},
 		{
 			input: "JESCAR FW57110-NS, 14frets",
-			want:  -1,
+			want:  C.ParseErrorPrice,
 		},
 		{
 			input: "JESCAR FW57110-NS15frets",
@@ -93,7 +93,7 @@ func TestGetFretCount(t *testing.T) {
 		},
 		{
 			input: "JESCAR FW57110-NS40frets",
-			want:  -1,
+			want:  C.ParseErrorPrice,
 		},
 		{
 			input: "JESCAR FW58118-NS, 22frets",
@@ -132,14 +132,10 @@ func TestGetFretCount(t *testing.T) {
 	for _, fret := range frets {
 		fret := fret
 
-		actual, err := GetFretCount(fret.input)
+		actual := GetFretCount(fret.input)
 
-		if err != nil || actual == -1 {
-			assert.Error(t, err)
-		} else {
-			if fret.want != actual {
-				t.Fatalf(errMessage, fret.want, actual)
-			}
+		if fret.want != actual {
+			t.Fatalf(errMessage, fret.want, actual)
 		}
 	}
 }

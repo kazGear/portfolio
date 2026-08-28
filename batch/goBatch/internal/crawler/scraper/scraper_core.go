@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"math/rand"
 	"net/http"
 	"os"
 	"regexp"
@@ -65,8 +64,7 @@ func (g *Crawler[T]) scrapeFrame(provider PageProvider,
         url := url
 
         // アクセス間隔をずらし、bot感を薄める（ランダム待ち時間 + 最低待ち時間）
-        delay := time.Duration(rand.Int63n(int64(2250 * time.Millisecond))) + 250 * time.Millisecond
-        time.Sleep(delay)
+        utils.RandSleep()
 
         // 静的/動的を判定してHTMLを取得
         html := fetchPage(url, provider.IsStaticPage(), provider.FetchDynamicPage(ctx))

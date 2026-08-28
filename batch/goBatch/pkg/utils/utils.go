@@ -7,6 +7,7 @@ import (
 	"io"
 	"log"
 	"math"
+	"math/rand"
 	"net/http"
 	"net/url"
 	"os"
@@ -465,6 +466,61 @@ func ConvertColorCd(colorName string) int {
 	return C.OthersColor
 }
 
+// ログを最新版だけ維持する
+func CleanupLogs(dir string, keep int) {
+	entries, err := os.ReadDir(dir)
+
+	if err != nil {
+		log.Printf("[WARN] failed to read log directory: %v", err)
+		return
+	}
+	// 各種ログ
+	groups := make(map[string][]string)
+
+	for _, entry := range entries {
+		if entry.IsDir() {
+			continue
+		}
+		name := entry.Name()
+
+		// ログ種ごとにグルーピング。アンダーバーより前の文字列をグループとみなす
+		idx := strings.Index(name, "_")
+		if idx < 0 {
+			continue
+		}
+		logType := name[:idx]
+		groups[logType] = append(groups[logType], name)
+	}
+
+	for logType, files := range groups {
+		// 必要な数は残す
+		if len(files) <= keep {
+			continue
+		}
+		// 新しい順
+		sort.Sort(sort.Reverse(sort.StringSlice(files)))
+
+		for _, file := range files[keep:] { // 不要なファイルが在る分だけループ
+			path := filepath.Join(dir, file)
+
+			if err := os.Remove(path); err != nil {
+				log.Printf(
+					"[WARN] failed to remove old log file: type=%s file=%s err=%v",
+					logType,
+					file,
+					err,
+				)
+				continue
+			}
+		}
+	}
+}
+
+func RandSleep() {
+	delay := time.Duration(rand.Int63n(int64(2250 * time.Millisecond))) + 250 * time.Millisecond
+	time.Sleep(delay)
+}
+
 // color > colorCd 変換用
 type colorKeyword struct {
     Cd       int
@@ -583,54 +639,4 @@ var colorKeywords = []colorKeyword{
             "WBD", "OWH", "AWH", "SWH", "OWH",
         },
     },
-}
-
-// ログを最新版だけ維持する
-func CleanupLogs(dir string, keep int) {
-	entries, err := os.ReadDir(dir)
-
-	if err != nil {
-		log.Printf("[WARN] failed to read log directory: %v", err)
-		return
-	}
-	// 各種ログ
-	groups := make(map[string][]string)
-
-	for _, entry := range entries {
-		if entry.IsDir() {
-			continue
-		}
-		name := entry.Name()
-
-		// ログ種ごとにグルーピング。アンダーバーより前の文字列をグループとみなす
-		idx := strings.Index(name, "_")
-		if idx < 0 {
-			continue
-		}
-		logType := name[:idx]
-		groups[logType] = append(groups[logType], name)
-	}
-
-	for logType, files := range groups {
-		// 必要な数は残す
-		if len(files) <= keep {
-			continue
-		}
-		// 新しい順
-		sort.Sort(sort.Reverse(sort.StringSlice(files)))
-
-		for _, file := range files[keep:] { // 不要なファイルが在る分だけループ
-			path := filepath.Join(dir, file)
-
-			if err := os.Remove(path); err != nil {
-				log.Printf(
-					"[WARN] failed to remove old log file: type=%s file=%s err=%v",
-					logType,
-					file,
-					err,
-				)
-				continue
-			}
-		}
-	}
 }

@@ -37,6 +37,8 @@ func NewScraperMidworks() Scraper[*model.Job] {
 	collector.Limit(&colly.LimitRule{
 		DomainGlob:  "*",
 		Parallelism: 1,
+        Delay:       500 * time.Millisecond,
+        RandomDelay: 500 * time.Millisecond,
 	})
     return &CrawlerMidworks{
         "Midworks",

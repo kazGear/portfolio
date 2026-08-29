@@ -134,7 +134,7 @@ namespace PrivateApi.Service
             if (req.IsHideOldJob)
             {
                 // 掲載するのは更新日（取得日）から○○ヵ月以内の案件
-                conditions.AppendLine($"AND NOW() - updated_at <= '{Const.RECENCY_THRESHOLD}'");
+                conditions.AppendLine($"AND updated_at >= NOW() - INTERVAL '{Const.RECENCY_THRESHOLD}'");
             }
             return conditions.ToString();
         }
@@ -151,7 +151,7 @@ namespace PrivateApi.Service
                         (
                            SELECT 1
                              FROM t_job_features AS f
-                            WHERE v.id           = f.job_id
+                            WHERE id             = f.job_id
                               AND f.feature_name = @feature_{id}
                         )
                 ";

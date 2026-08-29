@@ -12,66 +12,72 @@ namespace Repository.Repository.sql
             // 検索結果の案件カード用
             string SQL = @$"
                 SELECT
-                       v.*
+                       j.id                                     AS Id,
+                       max(j.url)                               AS Url,
+                       max(j.title)                             AS Title,
+                       max(j.location)                          AS Location,
+                       max(j.min_salary_at_month)               AS MinSalaryAtMonth,
+                       max(j.max_salary_at_month)               AS MaxSalaryAtMonth,
+                       max(j.employment_type)                   AS EmploymentType,
+                       max(j.work_place)                        AS WorkPlace,
+                       max(j.source_site)                       AS SourceSite, 
+                       max(j.created_at)                        AS CreatedAt,
+                       max(j.updated_at)                        AS UpdatedAt,
+                       string_agg(DISTINCT f.feature_name, ',') AS FeatureNamesCSV,
+                       string_agg(DISTINCT o.option, ',')       AS OptionsCSV
                   FROM 
-                      (
-                       SELECT
-                              max(j.id)                                AS Id,
-                              max(j.url)                               AS Url,
-                              max(j.title)                             AS Title,
-                              max(j.location)                          AS Location,
-                              max(j.min_salary_at_month)               AS MinSalaryAtMonth,
-                              max(j.max_salary_at_month)               AS MaxSalaryAtMonth,
-                              max(j.employment_type)                   AS EmploymentType,
-                              max(j.work_place)                        AS WorkPlace,
-                              max(j.source_site)                       AS SourceSite, 
-                              max(j.created_at)                        AS CreatedAt,
-                              max(j.updated_at)                        AS UpdatedAt,
-                              string_agg(DISTINCT f.feature_name, ',') AS FeatureNamesCSV,
-                              string_agg(DISTINCT o.option, ',')       AS OptionsCSV
- 
-                         FROM
-                              t_jobs AS j
-                   INNER JOIN
-                              t_job_features AS f
-                           ON j.id = f.job_id
-        
-              LEFT OUTER JOIN
-                              t_job_options AS o
-                           ON j.id = o.job_id
- 
-                        WHERE TRUE
-                             {conditions}
+                     (
+                          SELECT 
+                                 *
+                            FROM
+                                 t_jobs
+                           WHERE
+                                 TRUE
 
-           /* 動的検索条件 AND title            iLIKE '%' || @title || '%'
-                          AND location              = @location
-                          AND min_salary_at_month  >= @min_salary_at_month_specified_min
-                          AND min_salary_at_month  <= @min_salary_at_month_specified_max
-                          AND max_salary_at_month  >= @max_salary_at_month_specified_min
-                          AND max_salary_at_month  <= @max_salary_at_month_specified_max
-                          AND work_place            = @work_place
-                          AND source_site           = @source_site 
-                          AND NOW() - j.updated_at <= 'xx month' */
+                          -- 動的検索条件
+                                {conditions}
 
-                     GROUP BY
-                              j.url
-                  ) AS v
+                          -- AND title            iLIKE '%react%' --@title
+                          -- AND location             = '福岡県' --@location
+                          -- AND min_salary_at_month >= 500000 --@min_salary_at_month_specified_min
+                          -- AND min_salary_at_month <= 600000 --@min_salary_at_month_specified_max
+                          -- AND max_salary_at_month >= 900000 --@max_salary_at_month_specified_min
+                          -- AND max_salary_at_month <= 1100000 --@max_salary_at_month_specified_max
+                          -- AND work_place           = 'フルリモート' --@work_place
+                          -- AND source_site          = 'SES_JOB_LINK' --@source_site
+                          -- AND updated_at          >= NOW() - INTERVAL '1 month'
 
-                 WHERE TRUE
-                      {featureConditions}
+                          -- 動的検索条件
+                                {featureConditions}
 
-    /* 動的検索条件 AND EXISTS (
-                           SELECT 1
-                             FROM t_job_features AS f
-                            WHERE v.id = f.job_id
-                              AND f.feature_name = @feature_name
-                     )
-                     ... */
+                          -- AND EXISTS (
+                          --     SELECT 1
+                          --       FROM t_job_features AS f
+                          --      WHERE t_jobs.id      = f.job_id
+                          --        AND f.feature_name = 'ABAP' --@feature_name
+                          -- )
+                          -- ...
 
-                 LIMIT
-                       @page_size
-                OFFSET
-                       (@page - 1) * @page_size -- ページネーション
+                        ORDER BY
+                                 updated_at DESC
+                           LIMIT
+                                 @page_size
+                          OFFSET
+                                (@page - 1) * @page_size -- ページネーション
+
+                     ) AS j
+            INNER JOIN
+                       t_job_features AS f
+                    ON j.id = f.job_id
+
+       LEFT OUTER JOIN
+                       t_job_options AS o
+                    ON j.id = o.job_id
+
+              GROUP BY
+                       j.id
+              ORDER BY
+                       UpdatedAt DESC
                      ;
             ";
             return SQL;
@@ -86,6 +92,7 @@ namespace Repository.Repository.sql
                        t_jobs AS v -- サブクエリのテーブル名に合わせておく
                  WHERE
                        TRUE
+
                       {conditions}
 
        /* 動的検索条件 AND title            iLIKE '%' || @title || '%'
@@ -99,6 +106,7 @@ namespace Repository.Repository.sql
                       AND NOW() - j.updated_at <= 'xx month' */
 
                       {featureConditions}
+
     /* 動的検索条件 AND EXISTS (
                            SELECT 1
                              FROM t_job_features AS f

@@ -10,7 +10,7 @@ type MetaData = {
 };
 
 export const metaData: MetaData = {
-    "lastUpdate": "2026/08/12",
+    "lastUpdate": "2026/08/30",
 };
 
 /**

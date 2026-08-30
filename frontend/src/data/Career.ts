@@ -53,6 +53,7 @@ export const skills: string[] = [
     "リーダブルコーディング",
     "レイヤードアーキテクチャ",
     "テーブルドリブンテスト",
+    "SQLチューニング(実行計画分析)",
 ];
 
 /**
@@ -60,7 +61,6 @@ export const skills: string[] = [
  */
 export const littleSkills: string[] = [
     "クリーンアーキテクチャ",
-    "SQLチューニング",
     "docker",
     "Linux(ubunts)"
 ];
@@ -77,7 +77,8 @@ export const useTools: string[] = [
     "Visual Studio",
     "Visual Studio Code",
     "A5Mk2",
-    "DBeaver"
+    "DBeaver",
+    "ChatGPT",
 ];
 
 /**

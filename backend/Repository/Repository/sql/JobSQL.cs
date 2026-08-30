@@ -45,7 +45,7 @@ namespace Repository.Repository.sql
                           -- AND max_salary_at_month <= 1100000 --@max_salary_at_month_specified_max
                           -- AND work_place           = 'フルリモート' --@work_place
                           -- AND source_site          = 'SES_JOB_LINK' --@source_site
-                          -- AND updated_at          >= NOW() - INTERVAL '1 month'
+                          -- AND updated_at          >= NOW() - INTERVAL 'xx month'
 
                           -- 動的検索条件
                                 {featureConditions}

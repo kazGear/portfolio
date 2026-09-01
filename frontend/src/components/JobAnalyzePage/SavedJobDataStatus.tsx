@@ -42,7 +42,8 @@ const SavedJobDataStatus = () => {
             </thead>
             <tbody>
                 {
-                    data.length <= 0 ? <CommonNowLoading alt='Now Loading ...'/> :
+                    data.length <= 0 ?
+                        <CommonNowLoading alt='Now Loading ...'/> :
                     data.map((data, index) => {
                         return (
                             <CommonBorderTr key={data.SourceSite + index}>

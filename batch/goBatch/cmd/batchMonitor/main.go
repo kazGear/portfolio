@@ -53,8 +53,12 @@ func main() {
 	}
 
 	// サービス作成・実行
-	batchMonitor   := batchMonitorService.NewBatchMonitorService(batchMonitorRepository)
-	batchMonitor.Notify(discordWebHook)
+	batchMonitor := batchMonitorService.NewBatchMonitorService(batchMonitorRepository)
+	err           = batchMonitor.Notify(discordWebHook)
+
+	if err != nil {
+		log.Panicf("Batch monitor notify error: %v", err)
+	}
 
 	timeSpan := time.Since(stopWatch)
 	dbLogger.UpdateStatus(config, &timeSpan)

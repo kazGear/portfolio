@@ -223,7 +223,7 @@ docker compose \
 docker compose up -d
 docker compose down
 docker compose ps
-docker compose logs
+docker compose logs ... (> xxx.log でコンテナ外部にファイル出力可能)
 docker compose exec
 docker compose build
 docker images

@@ -45,7 +45,7 @@ namespace Repository.Repository.sql
                           -- AND max_salary_at_month <= 1100000 --@max_salary_at_month_specified_max
                           -- AND work_place           = 'フルリモート' --@work_place
                           -- AND source_site          = 'SES_JOB_LINK' --@source_site
-                          -- AND updated_at          >= NOW() - INTERVAL '1 month'
+                          -- AND updated_at          >= NOW() - INTERVAL 'xx month'
 
                           -- 動的検索条件
                                 {featureConditions}
@@ -93,27 +93,29 @@ namespace Repository.Repository.sql
                  WHERE
                        TRUE
 
+                    -- 動的検索条件
                       {conditions}
 
-       /* 動的検索条件 AND title            iLIKE '%' || @title || '%'
-                      AND location              = @location
-                      AND min_salary_at_month  >= @min_salary_at_month_specified_min
-                      AND min_salary_at_month  <= @min_salary_at_month_specified_max
-                      AND max_salary_at_month  >= @max_salary_at_month_specified_min
-                      AND max_salary_at_month  <= @max_salary_at_month_specified_max
-                      AND work_place            = @work_place
-                      AND source_site           = @source_site 
-                      AND NOW() - j.updated_at <= 'xx month' */
+                -- AND title             iLIKE '%' || @title || '%'
+                -- AND location              = @location
+                -- AND min_salary_at_month  >= @min_salary_at_month_specified_min
+                -- AND min_salary_at_month  <= @min_salary_at_month_specified_max
+                -- AND max_salary_at_month  >= @max_salary_at_month_specified_min
+                -- AND max_salary_at_month  <= @max_salary_at_month_specified_max
+                -- AND work_place            = @work_place
+                -- AND source_site           = @source_site 
+                -- AND updated_at           >= NOW() - INTERVAL 'xx month'
 
+                    -- 動的検索条件 
                       {featureConditions}
 
-    /* 動的検索条件 AND EXISTS (
-                           SELECT 1
-                             FROM t_job_features AS f
-                            WHERE v.id = f.job_id
-                              AND f.feature_name = @feature_name
-                     )
-                     ... */
+                -- AND EXISTS (
+                --             SELECT 1
+                --               FROM t_job_features AS f
+                --              WHERE v.id = f.job_id
+                --                AND f.feature_name = @feature_name
+                --            )
+                -- ...
                      ;
             ";
             return SQL;

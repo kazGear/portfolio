@@ -5,6 +5,7 @@ import useApiErrorHandler from '../../hooks/useApiErrorHandler';
 import { SavedJobData } from '../../types/Job';
 import CommonBorderTr from '../common/CommonBorderTr';
 import styled from 'styled-components';
+import CommonNowLoading from '../common/CommonNowLoading';
 
 const Th = styled.th`
     text-align: left;
@@ -41,6 +42,7 @@ const SavedJobDataStatus = () => {
             </thead>
             <tbody>
                 {
+                    data.length <= 0 ? <CommonNowLoading alt='Now Loading ...'/> :
                     data.map((data, index) => {
                         return (
                             <CommonBorderTr key={data.SourceSite + index}>

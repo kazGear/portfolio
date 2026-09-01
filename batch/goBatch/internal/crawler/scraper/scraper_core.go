@@ -311,6 +311,7 @@ func fetchApiData(apiURL string) (*http.Response, error) {
     // 200系は成功扱いとする
     if response.StatusCode < 200 || response.StatusCode >= 300 {
         isShouldStopCrawler(response.StatusCode)
+        isSlowDownRequest(250, 2250, response.StatusCode)
 
         return nil, fmt.Errorf(
             "Unexpected HTTP status: %d %v\n",
@@ -333,6 +334,7 @@ func checkHttpStatusOK(client *http.Client, url string) error {
     // 200系は成功扱いとする
     if response.StatusCode < 200 || response.StatusCode >= 300 {
         isShouldStopCrawler(response.StatusCode)
+        isSlowDownRequest(250, 2250, response.StatusCode)
 
         return fmt.Errorf(
             "Unexpected HTTP status: %d, url=%s",
@@ -347,6 +349,12 @@ func checkHttpStatusOK(client *http.Client, url string) error {
 func isShouldStopCrawler(httpStatus int) {
     if httpStatus == http.StatusForbidden {
         log.Panicf("Stop crawler. unexpected HTTP status: %v\n", httpStatus)
+    }
+}
+
+func isSlowDownRequest(minWait time.Duration, maxWait time.Duration, httpStatus int) {
+    if httpStatus == http.StatusTooManyRequests {
+        utils.RandSleep(minWait, maxWait)
     }
 }
 

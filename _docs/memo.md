@@ -132,6 +132,12 @@ npm run build -- --mode prod（本番、.env.prodが在る前提）
 
 package.json の script に "dev": "vite --mode dev", "build": "vite build --mode prod" の設定していれば、-- --mode dev 等のコマンド入力は不要。
 
+## sitemap
+
+`npm run build` の最後に `frontend/scripts/generate-sitemap.mjs` が実行され、`dist/sitemap.xml` を生成する。Docker の本番ビルドも同じコマンドを実行するため、デプロイ時に自動公開される。
+
+対象は `src/App.jsx` の公開ルート。ログイン必須・エラー画面はスクリプトの `nonIndexableRoutes` から除外する。新しい非公開画面を追加した場合は同じ除外リストに追加する。
+
 # README スクショ
 
 - htmlで書く。

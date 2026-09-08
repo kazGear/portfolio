@@ -126,9 +126,10 @@ func parseMultiPrice(s string) (int, error) {
 	return minPrice, nil
 }
 
-// フレット数は１５～３０であると思われる
-var _regFretStr   = regexp.MustCompile(`(1[5-9]|[2-3][0-9])\s*[Ff]+`)
+// フレット数は19～30であると思われる
+var _regFretStr   = regexp.MustCompile(`(19|[2-3][0-9])\s*[Ff ]?`)
 var _refNotNumber = regexp.MustCompile(`\D`)
+
 // ギターのフレット数を取得
 func GetFretCount(s string) int {
 	try, err := strconv.Atoi(s)
@@ -309,6 +310,10 @@ func TrimSpace() func(string) string {
 var regWight = regexp.MustCompile(`\d\.\d{1,2}`)
 // 重量を抽出する（Kg単位）
 func ParseWeight(weight string) float64 {
+	if weight <= strconv.Itoa(C.InvalidNumber) {
+		return float64(C.InvalidNumber)
+	}
+
 	w := width.Narrow.String(weight)
 	w  = regWight.FindString(w)
 

@@ -37,8 +37,8 @@ func NewScraperFreelanceStart() Scraper[*model.Job] {
 	collector.Limit(&colly.LimitRule{
 		DomainGlob:  "*",
 		Parallelism: 1, // URL収集漏れが発生するため5に制限
-        Delay:       500 * time.Millisecond,
-        RandomDelay: 500 * time.Millisecond,
+        Delay:       250 * time.Millisecond,
+        RandomDelay: 750 * time.Millisecond,
 	})
     return &CrawlerFreelanceStart{
         "フリーランススタート",

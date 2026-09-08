@@ -86,11 +86,19 @@ func (g *guitarCrawlerService) RunCrawler() {
     wg.Wait()
 }
 
-// 各種メーカー作成
+// 各種メーカー作成 (callbacksは複数のインターフェイスを実装)
 func makersFactory() map[string]*Maker {
     makers := map[string]*Maker{}
 
-    makerName := "Momose"
+    makerName := "MAYONES"
+    makers[makerName] = NewMaker(
+        makerName,
+        scraper.NewScraperMayones(),
+        scraper.NewCallBacksMayones(),
+        scraper.NewCallBacksMayones(),
+    )
+
+    makerName = "Momose"
     makers[makerName] = NewMaker(
         makerName,
         scraper.NewScraperMomose(),
@@ -102,7 +110,7 @@ func makersFactory() map[string]*Maker {
     makers[makerName] = NewMaker(
         makerName,
         scraper.NewScraperEspSig(),
-        scraper.NewCallBacksEspSig(), // callbacksは複数のインターフェイスを実装
+        scraper.NewCallBacksEspSig(),
         scraper.NewCallBacksEspSig(),
     )
 

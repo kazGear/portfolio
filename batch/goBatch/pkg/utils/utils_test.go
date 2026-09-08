@@ -2,6 +2,7 @@ package utils
 
 import (
 	"log"
+	"strconv"
 	"strings"
 	"testing"
 
@@ -76,6 +77,10 @@ func TestGetFretCount(t *testing.T) {
 		want  int
 	}{
 		{
+			input: "24 jumbo, Ferd Wagner 9665, 18% N/S HardCrown dimensions: 2.64 × 1.20 mm (w × h)",
+			want:  24,
+		},
+		{
 			input: "JESCAR FW57110-NS, 24frets",
 			want:  24,
 		},
@@ -84,8 +89,8 @@ func TestGetFretCount(t *testing.T) {
 			want:  C.ParseErrorPrice,
 		},
 		{
-			input: "JESCAR FW57110-NS15frets",
-			want:  15,
+			input: "JESCAR FW57110-NS19frets",
+			want:  19,
 		},
 		{
 			input: "JESCAR FW57110-NS39frets",
@@ -333,6 +338,9 @@ func TestParseWeight(t *testing.T) {
 		weight string
 		want   float64
 	}{
+		{
+			weight: strconv.Itoa(C.InvalidNumber), want: float64(C.InvalidNumber),
+		},
 		{
 			weight: "2.30 +/- 10% Kg", want: 2.3,
 		},

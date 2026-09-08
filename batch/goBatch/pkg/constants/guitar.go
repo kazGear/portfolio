@@ -14,6 +14,8 @@ const (
     MusicMan
     ZEMAITIS
     Momose
+    Fernandes
+    MAYONES
 )
 
 // format of date

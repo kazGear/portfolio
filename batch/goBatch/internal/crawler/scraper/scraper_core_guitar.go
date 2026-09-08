@@ -61,6 +61,10 @@ func buildGuitarFrame(spec map[string]string, url string) (*model.Guitar) {
     } else {
         guitar.Pickups = trim(spec[C.NeckPickup]) + " / " + trim(spec[C.BridgePickup])
     }
+	// まとめて取得してあればそちらを使用
+	if len(spec[C.Pickups]) > 0 {
+		guitar.Pickups = trim(spec[C.Pickups])
+	}
 
 	guitar.Price = utils.ParsePrice(spec[C.Price])
 

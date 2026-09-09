@@ -33,8 +33,8 @@ func NewScraperZemaitis() Scraper[*model.Guitar] {
 	collector.Limit(&colly.LimitRule{
 		DomainGlob:  "*",
 		Parallelism: 5, // URL収集漏れが発生するため5に制限
-        Delay:       500 * time.Millisecond,
-        RandomDelay: 500 * time.Millisecond,
+        Delay:       250 * time.Millisecond,
+        RandomDelay: 750 * time.Millisecond,
 	})
     return &CrawlerZemaitis{
         "Zemaitis",
@@ -72,6 +72,7 @@ func (g *CrawlerZemaitis) CollectLinks(parentCtx context.Context) ([]string, err
             c.Visit(link)
         }
     })
+
     c.OnHTML("#mainList ul li a", func(html *colly.HTMLElement) {
         link := html.Request.AbsoluteURL(html.Attr("href"))
         if isFirstVisit(mutex, link, visited) {
@@ -86,6 +87,7 @@ func (g *CrawlerZemaitis) CollectLinks(parentCtx context.Context) ([]string, err
 
     g.gScraper.urls = utils.MapToSliceUrl(visited)
     g.gScraper.urls = utils.GetNeedLinks(g.gScraper.urls, regNeedPatterZemaitis, 110)
+
     return g.gScraper.urls, nil
 }
 

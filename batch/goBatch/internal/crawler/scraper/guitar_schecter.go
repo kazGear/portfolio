@@ -34,8 +34,8 @@ func NewScraperSchecter() Scraper[*model.Guitar] {
 	collector.Limit(&colly.LimitRule{
 		DomainGlob:  "*",
 		Parallelism: 5, // URL収集漏れが発生するため5に制限
-        Delay:       500 * time.Millisecond,
-        RandomDelay: 500 * time.Millisecond,
+        Delay:       250 * time.Millisecond,
+        RandomDelay: 750 * time.Millisecond,
 	})
     return &CrawlerSchecter{
         "Schecter",
@@ -71,12 +71,14 @@ func (g *CrawlerSchecter) CollectLinks(parentCtx context.Context) ([]string, err
             c.Visit(link)
         }
     })
+
     c.OnHTML("#products a", func(html *colly.HTMLElement) {
         link := html.Request.AbsoluteURL(html.Attr("href"))
         if isFirstVisit(mutex, link, visited) {
             c.Visit(link)
         }
     })
+
     c.OnHTML("#main_visual aside a", func(html *colly.HTMLElement) {
         link := html.Request.AbsoluteURL(html.Attr("href"))
         if isFirstVisit(mutex, link, visited) {
@@ -91,6 +93,7 @@ func (g *CrawlerSchecter) CollectLinks(parentCtx context.Context) ([]string, err
 
     g.gScraper.urls = utils.MapToSliceUrl(visited)
     g.gScraper.urls = utils.GetNeedLinks(g.gScraper.urls, regNeedPatterSchecter, 130)
+
     return g.gScraper.urls, nil
 }
 

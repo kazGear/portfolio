@@ -29,13 +29,13 @@ type CallBacksMomose struct {
 func NewScraperMomose() Scraper[*model.Guitar] {
 	collector := colly.NewCollector(
 		colly.Async(true),
-		colly.MaxDepth(4),
+		colly.MaxDepth(2),
 	)
 	collector.Limit(&colly.LimitRule{
 		DomainGlob:  "*",
 		Parallelism: 5, // URL収集漏れが発生するため5に制限
-        Delay:       500 * time.Millisecond,
-        RandomDelay: 500 * time.Millisecond,
+        Delay:       250 * time.Millisecond,
+        RandomDelay: 750 * time.Millisecond,
 	})
     return &CrawlerMomose{
         "Momose",
@@ -60,46 +60,29 @@ func (g *CrawlerMomose) CollectLinks(parentCtx context.Context) ([]string, error
     collectStatsCrawl(c ,crawlStats)
 
     // URL収集、クロール
-    visited := make(map[string]struct{}, 500)
+    visited := make(map[string]struct{}, 1450)
     mutex   := &sync.Mutex{}
 
-    // product >>> guitars, base, accessory
-    c.OnHTML("ul.c-gnav__items #menu-item-39605 .sub-menu a", func(html *colly.HTMLElement) {
-        link := html.Request.AbsoluteURL(html.Attr("href"))
-        if isFirstVisit(mutex, link, visited) {
-            c.Visit(link)
-        }
-    })
-    // special model >>> limited, premium
-    c.OnHTML("ul.c-gnav__items #menu-item-142109 .sub-menu a", func(html *colly.HTMLElement) {
-        link := html.Request.AbsoluteURL(html.Attr("href"))
-        if isFirstVisit(mutex, link, visited) {
-            c.Visit(link)
-        }
-    })
     // ページネーション
-    c.OnHTML("div.pagination a", func(html *colly.HTMLElement) {
-        link := html.Request.AbsoluteURL(html.Attr("href"))
-        if isFirstVisit(mutex, link, visited) {
-            c.Visit(link)
-        }
-    })
-    // 商品カード custom guitars
-    c.OnHTML("div.p-product-list .p-product-list__item a", func(html *colly.HTMLElement) {
-        link := html.Request.AbsoluteURL(html.Attr("href"))
-        if isFirstVisit(mutex, link, visited) {
-            c.Visit(link)
-        }
-    })
-    // 商品カード limited, premium  guitars
-    c.OnHTML("article div.p-product-list a", func(html *colly.HTMLElement) {
+    c.OnHTML(`div.pagination a[title^="ページ"]`, func(html *colly.HTMLElement) {
         link := html.Request.AbsoluteURL(html.Attr("href"))
         if isFirstVisit(mutex, link, visited) {
             c.Visit(link)
         }
     })
 
-    c.Visit("https://www.deviser.co.jp/momose")
+    // 商品カード
+    c.OnHTML(`.p-product-list__item a[href^="https://www.deviser.co.jp/products/"]`, func(html *colly.HTMLElement) {
+        link := html.Request.AbsoluteURL(html.Attr("href"))
+        if isFirstVisit(mutex, link, visited) {
+            c.Visit(link)
+        }
+    })
+
+    c.Visit("https://www.deviser.co.jp/products/brand/momose/?_sft_products-cat=guitar")
+    c.Visit("https://www.deviser.co.jp/products/brand/momose/?_sft_products-cat=base")
+    c.Visit("https://www.deviser.co.jp/momose/momose-limited-model-gallery")
+    c.Visit("https://www.deviser.co.jp/momose/gallery") // Premium Collection Gallery
     c.Wait()
 
     loggingCrawlStats(g.name, crawlStats)

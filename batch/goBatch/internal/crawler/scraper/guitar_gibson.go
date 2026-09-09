@@ -35,8 +35,8 @@ func NewScraperGibson() Scraper[*model.Guitar] {
 	collector.Limit(&colly.LimitRule{
 		DomainGlob:  "*",
 		Parallelism: 5, // URL収集漏れが発生するため5に制限
-        Delay:       500 * time.Millisecond,
-        RandomDelay: 500 * time.Millisecond,
+        Delay:       250 * time.Millisecond,
+        RandomDelay: 750 * time.Millisecond,
 	})
     return &CrawlerGibson{
         "Gibson",
@@ -72,19 +72,29 @@ func (g *CrawlerGibson) CollectLinks(parentCtx context.Context) ([]string, error
             c.Visit(link)
         }
     })
-    c.OnHTML(".category-wrapper .model-card a", func(html *colly.HTMLElement) {
+
+    c.OnHTML(`.model-card a[href^="https://gibson.jp/electric/"]`, func(html *colly.HTMLElement) {
         link := html.Request.AbsoluteURL(html.Attr("href"))
         if isFirstVisit(mutex, link, visited) {
             c.Visit(link)
         }
     })
+
+    c.OnHTML(`.model-card a[href^="https://gibson.jp/acoustic/"]`, func(html *colly.HTMLElement) {
+        link := html.Request.AbsoluteURL(html.Attr("href"))
+        if isFirstVisit(mutex, link, visited) {
+            c.Visit(link)
+        }
+    })
+
     c.Visit("https://gibson.jp/")
     c.Wait()
 
     loggingCrawlStats(g.name, crawlStats)
 
     g.gScraper.urls = utils.MapToSliceUrl(visited)
-    g.gScraper.urls = utils.GetNeedLinks(g.gScraper.urls, regNeedPatterGibson, 490)
+    g.gScraper.urls = utils.GetNeedLinks(g.gScraper.urls, regNeedPatterGibson, 450)
+
     return g.gScraper.urls, nil
 }
 

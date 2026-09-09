@@ -72,6 +72,7 @@ func (g *CrawlerZemaitis) CollectLinks(parentCtx context.Context) ([]string, err
             c.Visit(link)
         }
     })
+
     c.OnHTML("#mainList ul li a", func(html *colly.HTMLElement) {
         link := html.Request.AbsoluteURL(html.Attr("href"))
         if isFirstVisit(mutex, link, visited) {
@@ -86,6 +87,7 @@ func (g *CrawlerZemaitis) CollectLinks(parentCtx context.Context) ([]string, err
 
     g.gScraper.urls = utils.MapToSliceUrl(visited)
     g.gScraper.urls = utils.GetNeedLinks(g.gScraper.urls, regNeedPatterZemaitis, 110)
+
     return g.gScraper.urls, nil
 }
 

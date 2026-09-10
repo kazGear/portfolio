@@ -16,6 +16,7 @@ const (
     Momose
     Fernandes
     MAYONES
+    Jackson
 )
 
 // format of date

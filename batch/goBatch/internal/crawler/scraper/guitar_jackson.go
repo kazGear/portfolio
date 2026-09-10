@@ -61,17 +61,19 @@ func (g *CrawlerJackson) CollectLinks(parentCtx context.Context) ([]string, erro
     // URL収集、クロール
     visited := make(map[string]struct{}, 300)
 
+    mutex := &sync.Mutex{}
+
     // ページネーション
     c.OnHTML(`.pagination a[href^="?page="]`, func(html *colly.HTMLElement) {
         link := html.Request.AbsoluteURL(html.Attr("href"))
-        visited[link] = struct{}{}
+        utils.LockedAddSet(mutex, visited, link)
         c.Visit(link)
     })
 
     // 詳細ページ
     c.OnHTML(`.product-tile a[href^="/gear/"]`, func(html *colly.HTMLElement) {
         link := html.Request.AbsoluteURL(html.Attr("href"))
-        visited[link] = struct{}{}
+        utils.LockedAddSet(mutex, visited, link)
         c.Visit(link)
     })
 

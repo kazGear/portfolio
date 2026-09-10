@@ -17,6 +17,7 @@ const (
     Fernandes
     MAYONES
     Jackson
+    CHARVEL
 )
 
 // format of date

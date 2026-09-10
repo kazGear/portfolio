@@ -16,19 +16,19 @@ import (
 	"github.com/kazGear/portfolio/goBatch/pkg/utils"
 )
 
-type CrawlerJackson struct {
+type CrawlerCharvel struct {
     name     string
     gScraper Crawler[*model.Guitar]
 }
 
-type CallBacksJackson struct {
+type CallBacksCharvel struct {
     funcs CallBacks
 }
 
-func NewScraperJackson() Scraper[*model.Guitar] {
+func NewScraperCharvel() Scraper[*model.Guitar] {
 	collector := colly.NewCollector(
 		colly.Async(true),
-		colly.MaxDepth(3),
+		colly.MaxDepth(4),
 	)
 	collector.Limit(&colly.LimitRule{
 		DomainGlob:  "*",
@@ -36,8 +36,8 @@ func NewScraperJackson() Scraper[*model.Guitar] {
         Delay:       250 * time.Millisecond,
         RandomDelay: 750 * time.Millisecond,
 	})
-    return &CrawlerJackson{
-        "Jackson",
+    return &CrawlerCharvel{
+        "CHARVEL",
         Crawler[*model.Guitar]{
             collector: collector,
             mutex:     &sync.Mutex{},
@@ -45,13 +45,13 @@ func NewScraperJackson() Scraper[*model.Guitar] {
     }
 }
 
-func NewCallBacksJackson() *CallBacksJackson {
-    return &CallBacksJackson{
+func NewCallBacksCharvel() *CallBacksCharvel {
+    return &CallBacksCharvel{
         CallBacks{},
     }
 }
 
-func (g *CrawlerJackson) CollectLinks(parentCtx context.Context) ([]string, error) {
+func (g *CrawlerCharvel) CollectLinks(parentCtx context.Context) ([]string, error) {
     c := g.gScraper.collector
 
     // クロールログ収集
@@ -59,12 +59,12 @@ func (g *CrawlerJackson) CollectLinks(parentCtx context.Context) ([]string, erro
     collectStatsCrawl(c ,crawlStats)
 
     // URL収集、クロール
-    visited := make(map[string]struct{}, 300)
+    visited := make(map[string]struct{}, 250)
 
     mutex := &sync.Mutex{}
 
     // ページネーション
-    c.OnHTML(`.pagination a[href^="?page="]`, func(html *colly.HTMLElement) {
+    c.OnHTML(`a[href^="?sort=latest&page="]`, func(html *colly.HTMLElement) {
         link := html.Request.AbsoluteURL(html.Attr("href"))
         utils.LockedAddSet(mutex, visited, link)
         c.Visit(link)
@@ -77,9 +77,14 @@ func (g *CrawlerJackson) CollectLinks(parentCtx context.Context) ([]string, erro
         c.Visit(link)
     })
 
-    c.Visit("https://www.jacksonguitars.jp/gear/guitars/")
-    c.Visit("https://www.jacksonguitars.jp/gear/bass-guitars/")
-    c.Visit("https://www.jacksonguitars.jp/gear/-new/")
+    // 詳細ぺージ > カラーバリエーション
+    c.OnHTML(`.tile-placeholder[href^="/gear/"]`, func(html *colly.HTMLElement) {
+        link := html.Request.AbsoluteURL(html.Attr("href"))
+        utils.LockedAddSet(mutex, visited, link)
+        c.Visit(link)
+    })
+
+    c.Visit("https://www.charvel.jp/gear/?sort=latest")
     c.Wait()
 
     loggingCrawlStats(g.name, crawlStats)
@@ -89,7 +94,7 @@ func (g *CrawlerJackson) CollectLinks(parentCtx context.Context) ([]string, erro
     return g.gScraper.urls, nil
 }
 
-func (g *CrawlerJackson) Scrape(provider  PageProvider,
+func (g *CrawlerCharvel) Scrape(provider  PageProvider,
                                 parser    ModelParser[*model.Guitar],
                                 parentCtx context.Context,
 ) []*model.Guitar {
@@ -97,7 +102,7 @@ func (g *CrawlerJackson) Scrape(provider  PageProvider,
     return guitars
 }
 
-func (c *CallBacksJackson) FetchDynamicPage(parentCtx context.Context) func(url string) (string, error) {
+func (c *CallBacksCharvel) FetchDynamicPage(parentCtx context.Context) func(url string) (string, error) {
     return func(url string) (string, error) {
         if !isDetailPage(``, url) {
             return "", nil
@@ -125,50 +130,50 @@ func (c *CallBacksJackson) FetchDynamicPage(parentCtx context.Context) func(url 
     }
 }
 
-func (c *CallBacksJackson) CollectAttributes() func(doc *goquery.Document, url string) []map[string]string {
+func (c *CallBacksCharvel) CollectAttributes() func(doc *goquery.Document, url string) []map[string]string {
     return func(doc *goquery.Document, url string) []map[string]string {
         specs := make([]map[string]string, 0, 1)
         mutex := &sync.Mutex{}
 
         spec := map[string]string{} // 捨てる属性は基本的に空文字を割り当てる
 
-        spec[C.Maker] = strconv.Itoa(C.Jackson)
-        spec[C.Name]  = doc.Find(`.sku-number`).Next().Text()
-        spec[C.Color] = doc.Find(`.spec-name:contains("カラー")`).Next().Text()
+        spec[C.Maker] = strconv.Itoa(C.CHARVEL)
+        spec[C.Name]  = doc.Find(`.product-title`).Text()
+        spec[C.Color] = doc.Find(`.spec-name:contains("Color")`).Next().Text()
 
-        spec[C.BodyFinish]       = doc.Find(`.spec-name:contains("ボディフィニッシュ")`).Next().Text()
-        spec[C.BodyMaterialBack] = doc.Find(`.spec-name:contains("ボディ材")`).Next().Text()
+        spec[C.BodyFinish]       = doc.Find(`.spec-name:contains("Body Finish")`).Next().Text()
+        spec[C.BodyMaterialBack] = doc.Find(`.spec-name:contains("Body Material")`).Next().Text()
         spec[C.BodyMaterialTop]  = "" // 記載なし
 
-        spec[C.Bridge]   = doc.Find(`.spec-name:contains("ブリッジ")`).Next().Text()
-        spec[C.Controls] = doc.Find(`.spec-name:contains("コントロール")`).Next().Text()
-        spec[C.Comment]  = doc.Find(`.sku-description`).Text()
+        spec[C.Bridge]   = doc.Find(`#product-spec-tuning-machines`).Prev().Find(`.spec-value`).Text()
+        spec[C.Controls] = doc.Find(`.spec-name:contains("Controls")`).Next().Text()
+        spec[C.Comment]  = doc.Find(`.overview-desc`).Text()
 
-        spec[C.Fingerboard]  = doc.Find(`.spec-name:contains("フィンガーボード材")`).Next().Text()
-        spec[C.FretCount]    = doc.Find(`.spec-name:contains("フレット数")`).Next().Text()
-        spec[C.Inlays]       = doc.Find(`.spec-name:contains("ポジションマーク")`).Next().Text()
-        spec[C.Joint]        = ""
-        spec[C.NeckMaterial] = doc.Find(`.spec-name:contains("ネック材")`).Next().Text()
+        spec[C.Fingerboard]  = doc.Find(`.spec-name:contains("Fingerboard Material")`).Next().Text()
+        spec[C.FretCount]    = doc.Find(`.spec-name:contains("Number of Frets")`).Next().Text()
+        spec[C.Inlays]       = doc.Find(`.spec-name:contains("Position Inlays")`).Next().Text()
+        spec[C.Joint]        = doc.Find(`.spec-name:contains("Neck Plate")`).Next().Text()
+        spec[C.NeckMaterial] = doc.Find(`.spec-name:contains("Neck Material")`).Next().Text()
 
         // 基本的にはNeck, Center, Bridgeを取得してフレーム側で組み立てる。分割して取得できなければ Pickups へ
         spec[C.Pickups]      = ""
-        spec[C.NeckPickup]   = doc.Find(`.spec-name:contains("フロントピックアップ")`).Next().Text()
+        spec[C.NeckPickup]   = doc.Find(`.spec-name:contains("Neck Pickup")`).Next().Text()
 
-        pickupLayout := doc.Find(`.spec-name:contains("ピックアップ構成")`).Next().Text()
+        pickupLayout := doc.Find(`.spec-name:contains("Configuration")`).Next().Text()
 
-        if pickupLayout == "HSS" {
+        if strings.Contains(pickupLayout, "HSS") {
             // 3 pickup 構成でも記載なし。センターが存在することだけを示す
             spec[C.CenterPickup] = "??"
         } else {
             spec[C.CenterPickup] = ""
         }
-        spec[C.BridgePickup] = doc.Find(`.spec-name:contains("リアピックアップ")`).Next().Text()
+        spec[C.BridgePickup] = doc.Find(`.spec-name:contains("Bridge Pickup")`).Next().Text()
 
-        spec[C.Price]         = doc.Find(`.sku-price`).Text()
+        spec[C.Price]         = doc.Find(`.currency`).Text()
         spec[C.ScaleLengthMM] = ""
-        spec[C.Series]        = doc.Find(`.spec-name:contains("シリーズ")`).Next().Text()
+        spec[C.Series]        = doc.Find(`.spec-name:contains("Series")`).Next().Text()
 
-        src, _        := doc.Find(`.sku-main-image img[src*="/media/CACHE/images/products/"]`).Attr(`src`)
+        src, _        := doc.Find(`.pdp-image img[src*="/media/CACHE/images/products/"]`).Attr(`src`)
         spec[C.Src]    = src
         spec[C.Weight] = strconv.Itoa(C.InvalidNumber)
 
@@ -178,13 +183,13 @@ func (c *CallBacksJackson) CollectAttributes() func(doc *goquery.Document, url s
     }
 }
 
-func (c *CallBacksJackson) BuildModel(url string) func(spec map[string]string) *model.Guitar {
+func (c *CallBacksCharvel) BuildModel(url string) func(spec map[string]string) *model.Guitar {
     return func(spec map[string]string) *model.Guitar {
         return buildGuitarFrame(spec, url)
     }
 }
 
-func (c *CallBacksJackson) IsStaticPage() func(html string) bool {
+func (c *CallBacksCharvel) IsStaticPage() func(html string) bool {
     return func(html string) bool {
         return strings.Contains(html, "body")
     }

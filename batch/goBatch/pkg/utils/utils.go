@@ -192,6 +192,14 @@ func LockedAppend[T any](mutex *sync.Mutex, slice []T, elem ...T) []T {
 	return slice
 }
 
+// スレッドセーフなset(map)への追加 注：mutexに直接&sync.Mutex{}を渡すのは禁止
+func LockedAddSet[T comparable](mutex *sync.Mutex, set map[T]struct{}, add T) {
+	mutex.Lock()
+	defer mutex.Unlock()
+
+	set[add] = struct{}{}
+}
+
 // URLを使用できる形式に変換（next.jsの謎パス等
 func ConvertRealUrl(proxyUrl string) (string, error) {
 	u, err := url.Parse(proxyUrl)

@@ -339,6 +339,9 @@ func TestParseWeight(t *testing.T) {
 		want   float64
 	}{
 		{
+			weight: "3.0", want: 3.0,
+		},
+		{
 			weight: strconv.Itoa(C.InvalidNumber), want: float64(C.InvalidNumber),
 		},
 		{

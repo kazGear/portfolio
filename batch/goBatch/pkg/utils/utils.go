@@ -374,6 +374,12 @@ func CalcExchangedPrice(foreignPrice string, rate float64) string {
 	return foreignP.Mul(exchange).Truncate(0).String()
 }
 
+// lbs > kg（小数点第一までを使用）
+func PoundsToKilograms(lbs float64) string {
+	kg := math.Floor(lbs * 0.45359237 * 10) / 10
+	return strconv.FormatFloat(kg, 'f', 1, 64) //
+}
+
 // リンクの重複を排除する
 func GetDistinctLinks(links []string) []string {
 	removed := map[string]struct{}{}

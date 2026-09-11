@@ -19,6 +19,7 @@ const (
     Jackson
     CHARVEL
     KIESEL
+    FUJIGEN
 )
 
 // format of date

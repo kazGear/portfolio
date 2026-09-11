@@ -18,6 +18,7 @@ const (
     MAYONES
     Jackson
     CHARVEL
+    KIESEL
 )
 
 // format of date

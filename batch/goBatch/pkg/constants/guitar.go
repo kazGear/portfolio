@@ -20,6 +20,7 @@ const (
     CHARVEL
     KIESEL
     FUJIGEN
+    GRETSCH
 )
 
 // format of date

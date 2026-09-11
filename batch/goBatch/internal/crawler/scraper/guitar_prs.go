@@ -260,6 +260,7 @@ func mergePrice(guitars []*model.Guitar, priceSet map[string]string) {
 // 必要に応じて、基盤のTryWaitReadyを組み込む
 func (c *CallBacksPRS) FetchDynamicPage(parentCtx context.Context) func(url string) (string, error) {
     return func(url string) (string, error) {
+        // 動的ページを取得しない場合、引数のパターンは記載しないで良い
         if !isDetailPage(`^https://www.prsguitars.jp/products/[\w-]+/[\w-]+`, url) {
             return "", nil
         }
@@ -364,6 +365,7 @@ func (c *CallBacksPRS) BuildModel(url string) func(spec map[string]string) *mode
 
 func (c *CallBacksPRS) IsStaticPage() func(html string) bool {
     return func(html string) bool {
+        // 静的ソースのみからデータを取得する場合、必ず存在する bodyタグ(bodyの文字列)を指定しておく
         return strings.Contains(html, "Tuning")
     }
 }

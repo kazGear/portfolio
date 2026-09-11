@@ -106,6 +106,7 @@ func (c *CrawlerMidworks) Scrape(provider  PageProvider,
 
 func (c *CallBacksMidworks) FetchDynamicPage(parentCtx context.Context) func(url string) (string, error) {
     return func(url string) (string, error) {
+        // 動的ページを取得しない場合、引数のパターンは記載しないで良い
         if !isDetailPage(`https://mid-works.com/projects/\d+`, url) {
             return "", nil
         }
@@ -235,6 +236,7 @@ func (c *CallBacksMidworks) BuildModel(url string) func(data map[string]string) 
 
 func (c *CallBacksMidworks) IsStaticPage() func(html string) bool {
     return func(html string) bool {
+        // 静的ソースのみからデータを取得する場合、必ず存在する bodyタグ(bodyの文字列)を指定しておく
         return strings.Contains(html, "body")
     }
 }

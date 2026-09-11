@@ -159,6 +159,7 @@ func (g *CrawlerIbanez) Scrape(provider  PageProvider,
 
 func (c *CallBacksIbanez) FetchDynamicPage(parentCtx context.Context) func(url string) (string, error) {
     return func(url string) (string, error) {
+        // 動的ページを取得しない場合、引数のパターンは記載しないで良い
         if !isDetailPage(`https://www/ibanez/com/jp/products/detail/[a-z]+\d+`, url) {
             return "", nil
         }
@@ -259,6 +260,7 @@ func (c *CallBacksIbanez) BuildModel(url string) func(spec map[string]string) *m
 
 func (c *CallBacksIbanez) IsStaticPage() func(html string) bool {
     return func(html string) bool {
+        // 静的ソースのみからデータを取得する場合、必ず存在する bodyタグ(bodyの文字列)を指定しておく
         return strings.Contains(html, "products-spec-table-li")
     }
 }

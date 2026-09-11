@@ -107,6 +107,7 @@ func (c *CrawlerFreelanceHub) Scrape(provider  PageProvider,
 
 func (c *CallBacksFreelanceHub) FetchDynamicPage(parentCtx context.Context) func(url string) (string, error) {
     return func(url string) (string, error) {
+        // 動的ページを取得しない場合、引数のパターンは記載しないで良い
         if !isDetailPage(``, url) {
             return "", nil
         }
@@ -259,6 +260,7 @@ func (c *CallBacksFreelanceHub) BuildModel(url string) func(data map[string]stri
 
 func (c *CallBacksFreelanceHub) IsStaticPage() func(html string) bool {
     return func(html string) bool {
+        // 静的ソースのみからデータを取得する場合、必ず存在する bodyタグ(bodyの文字列)を指定しておく
         return strings.Contains(html, "body")
     }
 }

@@ -94,6 +94,7 @@ func (g *CrawlerStrandberg) Scrape(provider  PageProvider,
 
 func (c *CallBacksStrandberg) FetchDynamicPage(parentCtx context.Context) func(url string) (string, error) {
     return func(url string) (string, error) {
+        // 動的ページを取得しない場合、引数のパターンは記載しないで良い
         if !isDetailPage(`https://strandbergguitars.com/en-US/product/[a-z0-9\-]+`, url) {
             return "", nil
         }
@@ -199,7 +200,7 @@ func (c *CallBacksStrandberg) BuildModel(url string) func(spec map[string]string
 
 func (c *CallBacksStrandberg) IsStaticPage() func(html string) bool {
     return func(html string) bool {
-        // ありえない文字列、確実に動的ページを取得させる。
+        // 静的ソースのみからデータを取得する場合、必ず存在する bodyタグ(bodyの文字列)を指定しておく
         return strings.Contains(html, "@abcd1234@")
     }
 }

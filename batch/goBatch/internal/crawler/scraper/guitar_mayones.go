@@ -127,7 +127,7 @@ func (c *CallBacksMayones) CollectAttributes() func(doc *goquery.Document, url s
 
         spec[C.Maker] = strconv.Itoa(C.MAYONES)
         spec[C.Name]  = doc.Find(`.model_name h1`).Text()
-        spec[C.Color] = ""
+        spec[C.Color] = " " // pk制約回避。カラー取れないけど登録したい
 
         spec[C.BodyFinish]       = doc.Find(`div:contains("Available finishes")`).Next().Find(`h3`).Text()
         spec[C.BodyMaterialBack] = doc.Find(`.acf_label:contains("Body:")`).Next().Find(`h3`).Text()

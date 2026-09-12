@@ -35,10 +35,11 @@ func (r *guitarRepository) Save(guitars []*model.Guitar) (ok int, ng int, errors
 
 func (r *guitarRepository) upsert(guitar *model.Guitar) error {
     // pkチェック
-    if guitar.Maker <= 0 || len(guitar.Name) <= 0 {
-        return fmt.Errorf("[Required: maker and name]: maker=%v, name=%v\n",
+    if guitar.Maker <= 0 || len(guitar.Name) <= 0 || len(guitar.Color) <= 0 {
+        return fmt.Errorf("[Invalid primary key]: maker=%v, name=%v, color=%v\n",
             guitar.Maker,
             guitar.Name,
+            guitar.Color,
         )
     }
     // 画像確認

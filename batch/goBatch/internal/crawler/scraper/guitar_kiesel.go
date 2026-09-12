@@ -129,7 +129,7 @@ func (c *CallBacksKiesel) CollectAttributes() func(doc *goquery.Document, url st
 
         spec[C.Maker] = strconv.Itoa(C.KIESEL)
         spec[C.Name]  = doc.Find(`title`).Text()
-        spec[C.Color] = "" // 記載なし
+        spec[C.Color] = " " // pk制約回避。カラー取れないけど登録したい
 
         // First(): 通常のセレクターだと大量の後続謎要素を引っ張ってきてしまうので、先頭だけ取得しノイズ除去
 

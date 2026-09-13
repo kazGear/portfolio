@@ -21,6 +21,7 @@ const (
     KIESEL
     FUJIGEN
     GRETSCH
+    Caparison
 )
 
 // format of date

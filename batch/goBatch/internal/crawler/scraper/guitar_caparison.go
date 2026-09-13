@@ -148,8 +148,6 @@ func (c *CallBacksCaparison) CollectAttributes() func(doc *goquery.Document, url
         for _, color := range colors {
             spec := map[string]string{} // 捨てる属性は基本的に空文字を割り当てる
 
-            // 画像URLからギター名を抽出
-            // src, _ := doc.Find(`.collage-card img`).Eq(index).Attr("src")
             url := getUrlCaparison(urls, color)
 
             spec[C.Maker] = strconv.Itoa(C.Caparison)
@@ -247,19 +245,23 @@ func getUrlCaparison(urls map[string]struct{}, color string) string {
             return url
         }
     }
-
     color            = strings.TrimSpace(color)
-    colorWithHyphen := strings.ReplaceAll(color, " ", "-")
+    normalizedColor := normalizeForCompareCaparison(color)
 
     for url := range urls {
-        if strings.Contains(url, colorWithHyphen) {
+        // カラー名を完全に含むか
+        normalizedUrl := normalizeForCompareCaparison(url)
+
+        if strings.Contains(normalizedUrl, normalizedColor) {
             return url
         }
 
+        // 正規化したカラー名が含まれているか
         if strings.Contains(url, _regNormalizeColorCaparison.ReplaceAllString(color, "")) {
             return url
         }
 
+        // 部分的なカラー名が含まれるか
         colorParts := strings.Split(color, " ")
 
         for _, colorPart := range colorParts {
@@ -269,6 +271,15 @@ func getUrlCaparison(urls map[string]struct{}, color string) string {
         }
     }
     return "" // url (名称の源泉) がないため、DBには登録されない
+}
+
+func normalizeForCompareCaparison(target string) string {
+    normalized := strings.TrimSpace(target)
+    normalized  = strings.ReplaceAll(normalized, " ", "")
+    normalized  = strings.ReplaceAll(normalized, "-", "")
+    normalized  = strings.ReplaceAll(normalized, "_", "")
+
+    return normalized
 }
 
 func (c *CallBacksCaparison) BuildModel(url string) func(spec map[string]string) *model.Guitar {

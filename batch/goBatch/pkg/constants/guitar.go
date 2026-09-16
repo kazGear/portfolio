@@ -22,6 +22,7 @@ const (
     FUJIGEN
     GRETSCH
     Caparison
+    Killer
 )
 
 // format of date

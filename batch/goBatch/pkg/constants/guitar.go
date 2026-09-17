@@ -23,6 +23,7 @@ const (
     GRETSCH
     Caparison
     Killer
+    TOM_ANDERSON
 )
 
 // format of date

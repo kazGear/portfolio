@@ -24,6 +24,7 @@ const (
     Caparison
     Killer
     TOM_ANDERSON
+    BCRich
 )
 
 // format of date

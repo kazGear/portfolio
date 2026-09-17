@@ -439,3 +439,14 @@ func isNotFountPage(searchWord string, ctx context.Context) bool {
     }
     return false
 }
+
+// 指定したラベルと完全一致するHTML要素を取得。tagOrClassOrId: tagName, .className, #idName
+func getExactMatchedDoc(doc *goquery.Document, tagOrClassOrId string, label string) *goquery.Selection {
+    selector := fmt.Sprintf(`%v:contains("%v")`, tagOrClassOrId, label)
+
+    exactMatchedDoc := doc.Find(selector).FilterFunction(func(_ int, s *goquery.Selection) bool {
+        // 指定ラベルと一致すればその要素を取得
+        return strings.TrimSpace(s.Text()) == label
+    })
+    return exactMatchedDoc
+}

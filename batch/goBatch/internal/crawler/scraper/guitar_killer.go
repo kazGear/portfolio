@@ -2,7 +2,6 @@ package scraper
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"regexp"
 	"strconv"
@@ -147,8 +146,8 @@ func (c *CallBacksKiller) CollectAttributes() func(doc *goquery.Document, url st
             spec[C.Name]  = doc.Find(`h1`).Text()
             spec[C.Color] = color
 
-            spec[C.BodyFinish]       = getExactMatchedDocKiller(doc, "Paint").Next().Text()
-            spec[C.BodyMaterialBack] = getExactMatchedDocKiller(doc, "Body").Next().Text()
+            spec[C.BodyFinish]       = getExactMatchedDoc(doc, "td", "Paint").Next().Text()
+            spec[C.BodyMaterialBack] = getExactMatchedDoc(doc, "td", "Body").Next().Text()
             spec[C.BodyMaterialTop]  = ""
 
             spec[C.Bridge]   = ""
@@ -205,7 +204,7 @@ func getColorCountKiller(doc *goquery.Document) int {
         return colorCount
     }
 
-    selector        := getExactMatchedDocKiller(doc, "Color")
+    selector        := getExactMatchedDoc(doc, "td", "Color")
     colorCountStr, _ = selector.Attr("rowspan")
     colorCount, err  = strconv.Atoi(colorCountStr)
 
@@ -227,7 +226,7 @@ func getAllColorsKiller(doc *goquery.Document, colorCount int) map[string]struct
         colorStartingPoint = doc.Find(`tr:contains("Body color")`)
 
         if len(colorStartingPoint.Text()) <= 0 {
-            colorStartingPoint = getExactMatchedDocKiller(doc, "Color")
+            colorStartingPoint = getExactMatchedDoc(doc, "td", "Color")
         }
     }
 
@@ -282,17 +281,6 @@ func getPickupsKiller(doc *goquery.Document) string {
         pickups += " / " + pickup
     }
     return pickups
-}
-
-// 指定したラベルと完全一致するHTML要素を取得
-func getExactMatchedDocKiller(doc *goquery.Document, label string) *goquery.Selection {
-    selector := fmt.Sprintf(`td:contains("%v")`, label)
-
-    exactMatchedDoc := doc.Find(selector).FilterFunction(func(_ int, s *goquery.Selection) bool {
-        // 指定ラベルと一致すればその要素を取得
-        return strings.TrimSpace(s.Text()) == label
-    })
-    return exactMatchedDoc
 }
 
 func normalizeForCompareKiller(target string) string {

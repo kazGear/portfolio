@@ -171,9 +171,16 @@ func (c *CallBacksKiller) CollectAttributes() func(doc *goquery.Document, url st
 
             spec[C.Price]         = doc.Find(`div.price`).Text()
             spec[C.ScaleLengthMM] = doc.Find(`td:contains("Scale length")`).Next().Text()
-            spec[C.Series]        = strings.Split(doc.Find(`h1`).Text(), " ")[0]
-            spec[C.Src]           = "https://killer.jp/guitar/" + src
-            spec[C.Weight]        = strconv.Itoa(C.InvalidNumber)
+            spec[C.Series]        = strings.Split(spec[C.Name], " ")[0]
+
+            // ギター名の先頭は KG 、ベース名の先頭は KB
+            if strings.Contains(spec[C.Name], "KG") {
+                spec[C.Src] = "https://killer.jp/guitar/" + src
+            } else if strings.Contains(spec[C.Name], "KB") {
+                spec[C.Src] = "https://killer.jp/bass/" + src
+            }
+
+            spec[C.Weight] = strconv.Itoa(C.InvalidNumber)
 
             specs = utils.LockedAppend(mutex, specs, spec)
         }

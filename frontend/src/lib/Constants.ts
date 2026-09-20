@@ -186,3 +186,12 @@ export const GUITAR = {
     INVALID_NUMBER: -1,
     UNkNOWN: 99,
 } as const;
+
+export const HTML_HEAD_DATA = {
+    DEFAULT_TITLE: "KazApp",
+    DEFAULT_DESCRIPTION: "ITエンジニアの個人ポートフォリオサイト。これまでに開発したWebアプリケーションやシステムが稼働しています。",
+
+    GUITAR_GALLERY_TITLE: "ギター検索・ギターデータベース | Guitar Gallery | KazApp",
+    GUITAR_GALLERY_DESCRIPTION: "国内外のギターメーカー・モデルを検索できるGuitar Gallery。メーカー、カラー、名称、トップ材、ボディ材、価格などの条件からギターを探せます。" +
+        "ESP, Fender, Gibson, .strandberg, SCHECTER, Ibanez, PRS, MusicMan, ZEMAITIS, Momose, Fernandes, MAYONES, Jackson, CHARVEL, KIESEL, FUJIGEN, GRETSCH, Caparison, Killer, TOM ANDERSON, B.C.Rich, DEAN 等",
+} as const;

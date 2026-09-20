@@ -11,6 +11,7 @@ import DetailModal from "../components/guitarGalleryPage/DetailModal";
 import { PUBLIC_API_BASE_URL } from "../config/env"
 import useApiErrorHandler from "../hooks/useApiErrorHandler";
 import CommonNowLoading from "../components/common/CommonNowLoading";
+import { HTML_HEAD_DATA } from "../lib/Constants"
 
 const GuitarGalleryPage = () => {
     // プルダウン用 params
@@ -73,6 +74,22 @@ const GuitarGalleryPage = () => {
     const getSelectedGuitarHandler = useCallback((guitar: Guitar | null) => {
         setSelectedGuitar(guitar)
         setIsShowDetail(true)
+    }, []);
+
+    // SEO対策
+    useEffect(() => {
+        document.title = HTML_HEAD_DATA.GUITAR_GALLERY_TITLE;
+
+        const description = document.querySelector('meta[name="description"]');
+        console.log(description)
+        description?.setAttribute("content", HTML_HEAD_DATA.GUITAR_GALLERY_DESCRIPTION);
+        console.log(description)
+
+        // meta data 初期化
+        return () => {
+            document.title = HTML_HEAD_DATA.DEFAULT_TITLE;
+            description?.setAttribute("content", HTML_HEAD_DATA.DEFAULT_DESCRIPTION);
+        }
     }, []);
 
     // 検索条件を選択した時点で検索実行

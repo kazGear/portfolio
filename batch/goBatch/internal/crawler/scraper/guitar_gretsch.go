@@ -81,9 +81,49 @@ func (g *CrawlerGretsch) CollectLinks(parentCtx context.Context) ([]string, erro
     c.Visit("https://www.gretschguitars.jp/gear/")
     c.Wait()
 
-    loggingCrawlStats(g.name, crawlStats)
+    loggingCrawlStats(g.name, crawlStats) // 詳細ページのリンク数。カラバリは含まない
 
-    g.gScraper.urls = utils.MapToSliceUrl(visited)
+    // 後続では、chromedp でページを動かしつつカラバリのリンクを取得。カラバリリンクは静的ソースに存在しない
+
+    // タブごとに独立した context を作る
+    tabCtx, tabCancel := chromedp.NewContext(parentCtx)
+    defer tabCancel()
+    // タブにだけ timeout を付ける
+    ctx, cancel := context.WithTimeout(tabCtx, 600 * time.Second)
+    defer cancel()
+
+    urls := make([]string, 0, 210)
+
+    // 詳細ページからカラバリのリンクを取得
+    for url := range visited {
+        html := ""
+
+        err := chromedp.Run(ctx,
+            chromedp.Navigate(url), // ギター一覧ページ
+            chromedp.WaitReady(".shrink", chromedp.ByQuery),
+            chromedp.OuterHTML("html", &html, chromedp.ByQuery), // 最終的なHTML出力
+        )
+
+        if err != nil {
+            log.Printf("[Chromedp error from CollectLinks GRETSCH guitars]: %v", err)
+            continue
+        }
+
+        doc, err := goquery.NewDocumentFromReader(strings.NewReader(html))
+
+        if err != nil {
+            log.Printf("[NewDocumentFromReader error from CollectLinks GRETSCH guitars]: %v", err)
+            continue
+        }
+
+        // 各カラバリのリンク
+        doc.Find(`#variant-tiles .shrink a[href*="/gear/"]`).Each(func(_ int, selector *goquery.Selection) {
+            href, _ := selector.Attr("href")
+            urls     = utils.LockedAppend(mutex, urls, "https://www.gretschguitars.jp" + href)
+        })
+    }
+
+    g.gScraper.urls = urls
 
     return g.gScraper.urls, nil
 }

@@ -25,6 +25,7 @@ const (
     Killer
     TOM_ANDERSON
     BCRich
+    DEAN
 )
 
 // format of date

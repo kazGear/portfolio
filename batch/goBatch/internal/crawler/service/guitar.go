@@ -90,7 +90,15 @@ func (g *guitarCrawlerService) RunCrawler() {
 func makersFactory() map[string]*Maker {
     makers := map[string]*Maker{}
 
-    makerName := "B.C.Rich"
+    makerName := "DEAN"
+    makers[makerName] = NewMaker(
+        makerName,
+        scraper.NewScraperDean(),
+        scraper.NewCallBacksDean(),
+        scraper.NewCallBacksDean(),
+    )
+
+    makerName = "B.C.Rich"
     makers[makerName] = NewMaker(
         makerName,
         scraper.NewScraperBCRich(),

@@ -81,9 +81,7 @@ const GuitarGalleryPage = () => {
         document.title = HTML_HEAD_DATA.GUITAR_GALLERY_TITLE;
 
         const description = document.querySelector('meta[name="description"]');
-        console.log(description)
         description?.setAttribute("content", HTML_HEAD_DATA.GUITAR_GALLERY_DESCRIPTION);
-        console.log(description)
 
         // meta data 初期化
         return () => {

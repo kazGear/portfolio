@@ -26,7 +26,7 @@ const GuitarSpec = ({selectedGuitars}: ArgProps) => {
 
     return (
         <Div>
-            <h1 style={{marginTop: 0}}>Guitars spec</h1>
+            <h2 style={{marginTop: 0}}>Guitars spec</h2>
             <table>
                 <tbody>
                     <Tr>
@@ -35,7 +35,7 @@ const GuitarSpec = ({selectedGuitars}: ArgProps) => {
                     </Tr>
                     <Tr>
                         <Th>Name:&emsp;</Th>
-                        <td><h2 style={{margin: 0}}>{guitar?.name}</h2></td>
+                        <td><h1 style={{margin: 0, fontSize: "1.75em"}}>{guitar?.name}</h1></td>
                     </Tr>
                     <Tr>
                         <Th>Color:&emsp;</Th>

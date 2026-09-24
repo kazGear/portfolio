@@ -15,8 +15,7 @@ const P = styled.p`
     overflow-y: auto;
     font-size: 14px;
     width: 100%;
-    height: 30%;
-    margin-bottom: 0px;
+    height: 20%;
 `;
 
 const GuitarGalleryDetailPage = () => {
@@ -37,7 +36,7 @@ const GuitarGalleryDetailPage = () => {
                }
             })
            .catch(useApiErrorHandler);
-    }, []);
+    }, [makerCd, name, color]);
 
     // meta data
     useEffect(() => {
@@ -73,14 +72,14 @@ const GuitarGalleryDetailPage = () => {
 
                             <CommonZoomableImage
                                 imgURL={guitar?.src}
-                                alt={guitar?.name}
+                                alt={guitar?.makerName + " | " + guitar?.name + " | " + guitar?.color}
                                 width={450}
                                 height={300}
                                 zoomRate={300}/>
 
-                            <h3 style={{margin: "0px"}}>
+                            <h2 style={{margin: "0px"}}>
                                 price:&emsp;{parseGuitarPrice(guitar?.price!)}
-                            </h3>
+                            </h2>
 
                             <P>{guitar?.comment}</P>
                         </div>

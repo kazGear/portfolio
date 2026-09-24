@@ -139,7 +139,7 @@ const GuitarGalleryPage = () => {
                     )}
             </CommonFrame>
 
-            <DetailModal selectedGuitars={selectedGuitar}
+            <DetailModal selectedGuitar={selectedGuitar}
                          isShow={isShowDetail}
                          callback={setIsShowDetail}>
             </DetailModal>

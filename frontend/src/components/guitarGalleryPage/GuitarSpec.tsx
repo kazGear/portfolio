@@ -22,7 +22,7 @@ interface ArgProps {
     selectedGuitars: Guitar | null;
 }
 
-const DetailRightSide = ({selectedGuitars}: ArgProps) => {
+const GuitarSpec = ({selectedGuitars}: ArgProps) => {
     const guitar = selectedGuitars;
 
     return (
@@ -109,4 +109,5 @@ const DetailRightSide = ({selectedGuitars}: ArgProps) => {
         </Div>
     );
 }
-export default DetailRightSide;
+
+export default GuitarSpec;

@@ -2,8 +2,9 @@ import styled from "styled-components";
 import { Guitar } from "../../types/Guitar";
 import { COLORS } from "../../lib/Constants";
 import CommonButton from "../common/CommonButton";
-import DetailLeftSide from "./DetailLeftSide";
-import DetailRightSide from "./DetailRightSide";
+import GuitarSpec from "./GuitarSpec";
+import CommonZoomableImage from "../common/CommonZoomableImage";
+import { parseGuitarPrice } from "./GuitarFuncs";
 
 const Background = styled.div`
     width: 100%;
@@ -34,22 +35,49 @@ const Modal = styled.div`
         inset 0 -8px 40px rgba(0,0,0,0.8);
 `;
 
+const P = styled.p`
+    overflow-y: auto;
+    font-size: 14px;
+    width: 100%;
+    height: 30%;
+`;
+
 interface ArgProps {
-    selectedGuitars: Guitar | null;
+    selectedGuitar : Guitar | null;
     isShow         : boolean;
     callback       : React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const DetailModal = ({selectedGuitars, isShow, callback}: ArgProps) => {
+const DetailModal = ({selectedGuitar, isShow, callback}: ArgProps) => {
     const isShowDetail = isShow ? "block" : "none"; // 詳細画面の表示制御
-    const guitar = selectedGuitars;
+    const guitar = selectedGuitar;
 
     return (
         <Background style={{display: isShowDetail}}>
             <Modal>
-                <DetailLeftSide selectedGuitars={guitar}/>
-                <DetailRightSide selectedGuitars={guitar}/>
-                <CommonButton text="閉じる"
+                <div style={{width: "50%", margin: "0px 20px 0px 40px"}}>
+                    <p>最終更新日：{guitar?.updated}</p>
+
+                    <CommonZoomableImage
+                        imgURL={guitar?.src}
+                        alt={guitar?.name}
+                        width={400}
+                        height={250}
+                        zoomRate={200}/>
+
+                    <h3 style={{margin: "0px"}}>
+                        price:&emsp;{parseGuitarPrice(guitar?.price!)}
+                    </h3>
+
+                    <p>comment.</p>
+
+                    <P>{guitar?.comment}</P>
+                </div>
+
+                <GuitarSpec selectedGuitars={guitar}/>
+
+                <CommonButton
+                        text="閉じる"
                         onClick={() => callback(false)}
                         styleObj={{
                             position: "absolute",

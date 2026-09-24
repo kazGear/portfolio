@@ -22,7 +22,8 @@
   },
   "scripts": {
     "dev": "vite --mode dev",
-    "build": "vite build --mode prod && node scripts/generate-sitemap.mjs",
+    "build": "vite build --mode prod",
+    "sitemap": "node scripts/generate-sitemap.mjs",
     "preview": "vite preview"
   }
 }

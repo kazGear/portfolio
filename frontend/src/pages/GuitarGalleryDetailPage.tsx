@@ -9,6 +9,7 @@ import GuitarSpec from "../components/guitarGalleryPage/GuitarSpec";
 import CommonZoomableImage from "../components/common/CommonZoomableImage";
 import { parseGuitarPrice } from "../components/guitarGalleryPage/GuitarFuncs";
 import styled from "styled-components";
+import { HTML_HEAD_DATA } from "../lib/Constants";
 
 const P = styled.p`
     overflow-y: auto;
@@ -18,7 +19,7 @@ const P = styled.p`
     margin-bottom: 0px;
 `;
 
-const GuitarGalleryPage = () => {
+const GuitarGalleryDetailPage = () => {
     const { makerCd, name, color } = useParams();
     const [ guitar, setGuitar ]    = useState<Guitar | null>(null);
 
@@ -37,6 +38,27 @@ const GuitarGalleryPage = () => {
             })
            .catch(useApiErrorHandler);
     }, []);
+
+    // meta data
+    useEffect(() => {
+        const description = document.querySelector('meta[name="description"]');
+
+        if (guitar) {
+            const guitarFeatures = `${guitar.makerName} | ${guitar.name} | ${guitar.color}`;
+
+            document.title = `${guitarFeatures}` + " | " + HTML_HEAD_DATA.DEFAULT_TITLE;
+
+            description?.setAttribute(
+                "content", `【${guitarFeatures}】` + `価格:${guitar.price.toLocaleString()}円。${guitar.comment}`
+            );
+        }
+
+        // meta data 初期化
+        return () => {
+            document.title = HTML_HEAD_DATA.DEFAULT_TITLE;
+            description?.setAttribute("content", HTML_HEAD_DATA.DEFAULT_DESCRIPTION);
+        }
+    }, [guitar]);
 
     return (
         <CommonFrame styleObj={{margin: 0, borderRadius: 0, height: "92vh", overflowY: "hidden"}}>
@@ -71,4 +93,4 @@ const GuitarGalleryPage = () => {
     );
 }
 
-export default GuitarGalleryPage;
+export default GuitarGalleryDetailPage;

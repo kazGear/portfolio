@@ -76,7 +76,7 @@ const GuitarGalleryPage = () => {
         setIsShowDetail(true)
     }, []);
 
-    // SEO対策
+    // meta data
     useEffect(() => {
         document.title = HTML_HEAD_DATA.GUITAR_GALLERY_TITLE;
 

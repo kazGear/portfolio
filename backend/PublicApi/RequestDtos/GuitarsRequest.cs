@@ -21,6 +21,10 @@ namespace PublicApi.RequestDtos
         [FromQuery(Name = "colorCd")]
         public int? ColorCd { get; init; }
 
+        [MaxLength(200)]
+        [FromQuery(Name = "color")]
+        public string? Color { get; init; }
+
         [Range(0, 99)]
         [FromQuery(Name = "bodyMaterialTopCd")]
         public int? BodyMaterialTopCd { get; init; }

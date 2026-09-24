@@ -55,6 +55,7 @@ namespace PublicApi.Services
             param.Add("name", string.IsNullOrWhiteSpace(req.Name) ? null : $"%{req.Name}%");
             param.Add("series", string.IsNullOrWhiteSpace(req.Series) ? null : $"%{req.Series}%");
             param.Add("color_cd", req.ColorCd);
+            param.Add("color", req.Color);
             param.Add("body_material_top_cd", req.BodyMaterialTopCd);
             param.Add("body_material_back_cd", req.BodyMaterialBackCd);
             param.Add("min_price", req.MinPrice);
@@ -84,6 +85,10 @@ namespace PublicApi.Services
             if (req.ColorCd != null)
             {
                 conditions.AppendLine("AND color_cd = @color_cd");
+            }
+            if (!string.IsNullOrWhiteSpace(req.Color))
+            {
+                conditions.AppendLine("AND color = @color");
             }
             if (req.BodyMaterialTopCd != null && req.BodyMaterialTopCd >= 0)
             {

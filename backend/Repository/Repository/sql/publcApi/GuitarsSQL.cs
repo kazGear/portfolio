@@ -59,6 +59,7 @@ public static class GuitarsSQL
                    AND name           ilike '%' || @name || '%'
                    AND series         ilike '%' || @series || '%'
                    AND color_cd           = @color_cd
+                   AND color              = @color
                    AND body_material_top  = @body_material_top_cd
                    AND body_material_back = @body_material_back_cd
                    AND price             >= @min_price
@@ -92,6 +93,7 @@ public static class GuitarsSQL
                    AND name ilike '%' || @name || '%'
                    AND series ilike '%' || @series || '%'
                    AND color_cd = @color_cd
+                   AND color    = @color
                    AND body_material_top = @body_material_top_cd
                    AND body_material_back = @body_material_back_cd
                    AND price >= @min_price

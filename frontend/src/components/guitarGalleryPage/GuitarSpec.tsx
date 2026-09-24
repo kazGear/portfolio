@@ -4,8 +4,7 @@ import { GUITAR } from "../../lib/Constants";
 
 const Div = styled.div`
     width: 50%;
-    height: 85%;
-    margin: 20px 40px 40px 20px;
+    margin: 20px;
     overflow-y: auto;
 `;
 
@@ -27,7 +26,7 @@ const GuitarSpec = ({selectedGuitars}: ArgProps) => {
 
     return (
         <Div>
-            <h2>Guitars spec</h2>
+            <h1 style={{marginTop: 0}}>Guitars spec</h1>
             <table>
                 <tbody>
                     <Tr>
@@ -36,7 +35,7 @@ const GuitarSpec = ({selectedGuitars}: ArgProps) => {
                     </Tr>
                     <Tr>
                         <Th>Name:&emsp;</Th>
-                        <td>{guitar?.name}</td>
+                        <td><h2 style={{margin: 0}}>{guitar?.name}</h2></td>
                     </Tr>
                     <Tr>
                         <Th>Color:&emsp;</Th>

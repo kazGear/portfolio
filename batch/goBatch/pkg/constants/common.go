@@ -6,4 +6,5 @@ const (
 	JsonDecodeError     = "failed to decode JSON: %v\n"
 	GetUrlError         = "failed get url: %v\n"
 	This404page         = "404ページです。url: %v\n"
+	ColorUndefined      = "undefined"
 )

@@ -5,6 +5,18 @@ import { api } from "../lib/apiClient";
 import { Guitar, GuitarsResponse } from "../types/Guitar";
 import useApiErrorHandler from "../hooks/useApiErrorHandler";
 import { PUBLIC_API_BASE_URL } from "../config/env";
+import GuitarSpec from "../components/guitarGalleryPage/GuitarSpec";
+import CommonZoomableImage from "../components/common/CommonZoomableImage";
+import { parseGuitarPrice } from "../components/guitarGalleryPage/GuitarFuncs";
+import styled from "styled-components";
+
+const P = styled.p`
+    overflow-y: auto;
+    font-size: 14px;
+    width: 100%;
+    height: 30%;
+    margin-bottom: 0px;
+`;
 
 const GuitarGalleryPage = () => {
     const { makerCd, name, color } = useParams();
@@ -27,21 +39,30 @@ const GuitarGalleryPage = () => {
     }, []);
 
     return (
-        <CommonFrame>
-            <h1>req param makerCd {makerCd}</h1>
-            <h1>req param guitar {name}</h1>
-            <h1>req param color {color}</h1>
+        <CommonFrame styleObj={{margin: 0, borderRadius: 0, height: "92vh", overflowY: "hidden"}}>
             <Link to={"/GuitarGalleryPage"} target="_blank">Guitar Gallery へ</Link>
             {
                 guitar !== null ? (
-                    <>
-                        <h1>{guitar.name}</h1>
-                        <img
-                            style={{width:"50%", height:"50%", objectFit: "contain"}}
-                            src={guitar.src}
-                            alt={guitar.maker + " " + guitar.name}
-                            />
-                    </>
+                    <div style={{display: "flex", justifyContent: "space-evenly"}}>
+                        <GuitarSpec selectedGuitars={guitar}/>
+
+                        <div style={{width: "50%", margin: "20px"}}>
+                            <p style={{marginTop: 0}}>最終更新日：{guitar?.updated}</p>
+
+                            <CommonZoomableImage
+                                imgURL={guitar?.src}
+                                alt={guitar?.name}
+                                width={450}
+                                height={300}
+                                zoomRate={300}/>
+
+                            <h3 style={{margin: "0px"}}>
+                                price:&emsp;{parseGuitarPrice(guitar?.price!)}
+                            </h3>
+
+                            <P>{guitar?.comment}</P>
+                        </div>
+                    </div>
                 ) : (
                     <h1>ギター情報の取得に失敗しました。</h1>
                 )

@@ -63,7 +63,7 @@ const DetailModal = ({selectedGuitar, isShow, callback}: ArgProps) => {
                         alt={guitar?.name}
                         width={400}
                         height={250}
-                        zoomRate={200}/>
+                        zoomRate={300}/>
 
                     <h3 style={{margin: "0px"}}>
                         price:&emsp;{parseGuitarPrice(guitar?.price!)}

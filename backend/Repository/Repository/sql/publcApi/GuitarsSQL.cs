@@ -38,14 +38,17 @@ public static class GuitarsSQL
 
               FROM
                    t_guitars AS guitars
+
         INNER JOIN
                    m_code AS maker
                 ON guitars.maker = maker.VALUE
                AND maker.code_id = 'guitar_makers'
+
         INNER JOIN
                    m_code AS neck
                 ON guitars.neck_material = neck.VALUE
                AND neck.code_id          = 'guitar_woods'
+
         INNER JOIN
                    m_code AS fingerboard
                 ON guitars.fingerboard = fingerboard.VALUE
@@ -55,10 +58,11 @@ public static class GuitarsSQL
                    TRUE
                    {conditions}
         /* 動的検索
-                   AND maker = @maker
+                   AND maker              = @maker
                    AND name           ilike '%' || @name || '%'
                    AND series         ilike '%' || @series || '%'
                    AND color_cd           = @color_cd
+                   AND color              = @color
                    AND body_material_top  = @body_material_top_cd
                    AND body_material_back = @body_material_back_cd
                    AND price             >= @min_price
@@ -88,14 +92,15 @@ public static class GuitarsSQL
                    TRUE
                    {conditions}
         /* 動的検索
-                   AND maker = @maker
-                   AND name ilike '%' || @name || '%'
-                   AND series ilike '%' || @series || '%'
-                   AND color_cd = @color_cd
-                   AND body_material_top = @body_material_top_cd
+                   AND maker              = @maker
+                   AND name           ilike '%' || @name || '%'
+                   AND series         ilike '%' || @series || '%'
+                   AND color_cd           = @color_cd
+                   AND color              = @color
+                   AND body_material_top  = @body_material_top_cd
                    AND body_material_back = @body_material_back_cd
-                   AND price >= @min_price
-                   AND price <= @max_price */
+                   AND price             >= @min_price
+                   AND price             <= @max_price */
         ";
         return SQL;
     }

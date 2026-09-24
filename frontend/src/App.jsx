@@ -10,6 +10,7 @@ import BattleResultPage from './pages/BattleResultPage';
 import UserPage from "./pages/UserPage";
 import EditPage from "./pages/EditPage";
 import GuitarGalleryPage from "./pages/GuitarGalleryPage";
+import GuitarGalleryDetailPage from "./pages/GuitarGalleryDetailPage";
 import CareerPage from "./pages/CareerPage";
 import JobPage from "./pages/JobPage";
 import JobAnalyzePage from "./pages/JobAnalyzePage";
@@ -34,6 +35,7 @@ function App() {
                     <Route path={"/UserPage"} element={<UserPage />} />
                     <Route path={"/EditPage"} element={<EditPage />} />
                     <Route path={"/GuitarGalleryPage"} element={<GuitarGalleryPage />} />
+                    <Route path={"/GuitarGalleryPage/:makerCd/:name/:color"} element={<GuitarGalleryDetailPage />} />
                     <Route path={"/CareerPage"} element={<CareerPage />} />
                     <Route path={"/JobPage"} element={<JobPage />} />
                     <Route path={"/JobAnalyzePage"} element={<JobAnalyzePage />} />

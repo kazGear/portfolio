@@ -59,7 +59,7 @@ const GuitarCard = ({guitar, callback}: ArgProps) => {
                     {/* モーダルにギター情報を渡す */}
                     <img style={{width:"100%", height:"100%", objectFit: "contain"}}
                          src={guitar?.src}
-                         alt={guitar?.maker + " " + guitar?.name}
+                         alt={guitar?.makerName + " | " + guitar?.name + " | " + guitar?.color}
                          loading="lazy"
                          />
                 </div>

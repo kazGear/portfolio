@@ -162,7 +162,7 @@ func (c *CallBacksZemaitis) CollectAttributes() func(doc *goquery.Document, url 
         }
 
         if len(spec[C.Color]) <= 0 {
-            spec[C.Color] = "undefined" // アコギは色の定義がない
+            spec[C.Color] = C.ColorUndefined // アコギは色の定義がない
         }
         specs = utils.LockedAppend(mutex, specs, spec)
         return specs

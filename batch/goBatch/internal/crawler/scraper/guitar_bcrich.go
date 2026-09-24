@@ -142,7 +142,7 @@ func (c *CallBacksBCRich) CollectAttributes() func(doc *goquery.Document, url st
         // ギター以外の情報も流れてくる。それらはカラーを取得できておらず、そのまま破棄する
         if len(spec[C.Color]) >= 1 {
             // pk制約回避。カラーを画像と対応させて取得できないためカラー情報を破棄
-            spec[C.Color] = "..."
+            spec[C.Color] = C.ColorUndefined
         }
 
         spec[C.BodyFinish]       = doc.Find(`.product-spec-title:contains("Body Finish")`).Next().Text()

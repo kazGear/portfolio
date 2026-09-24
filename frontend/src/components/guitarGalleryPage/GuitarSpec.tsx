@@ -4,8 +4,7 @@ import { GUITAR } from "../../lib/Constants";
 
 const Div = styled.div`
     width: 50%;
-    height: 85%;
-    margin: 20px 40px 40px 20px;
+    margin: 20px;
     overflow-y: auto;
 `;
 
@@ -22,12 +21,12 @@ interface ArgProps {
     selectedGuitars: Guitar | null;
 }
 
-const DetailRightSide = ({selectedGuitars}: ArgProps) => {
+const GuitarSpec = ({selectedGuitars}: ArgProps) => {
     const guitar = selectedGuitars;
 
     return (
         <Div>
-            <h2>Guitars spec</h2>
+            <h2 style={{marginTop: 0}}>Guitars spec</h2>
             <table>
                 <tbody>
                     <Tr>
@@ -36,7 +35,7 @@ const DetailRightSide = ({selectedGuitars}: ArgProps) => {
                     </Tr>
                     <Tr>
                         <Th>Name:&emsp;</Th>
-                        <td>{guitar?.name}</td>
+                        <td><h1 style={{margin: 0, fontSize: "1.75em"}}>{guitar?.name}</h1></td>
                     </Tr>
                     <Tr>
                         <Th>Color:&emsp;</Th>
@@ -109,4 +108,5 @@ const DetailRightSide = ({selectedGuitars}: ArgProps) => {
         </Div>
     );
 }
-export default DetailRightSide;
+
+export default GuitarSpec;

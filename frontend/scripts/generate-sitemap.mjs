@@ -14,7 +14,9 @@ dotenv.config({
 
 const frontendDirectory = fileURLToPath(new URL("..", import.meta.url));
 const appFile = new URL("../src/App.jsx", import.meta.url);
-const sitemapFile = new URL("../dist/sitemap.xml", import.meta.url);
+const sitemapFile = fileURLToPath(
+    new URL("../dist/sitemap.xml", import.meta.url)
+);
 
 // ログイン必須・補助画面は検索結果に出さない。
 const nonIndexableRoutes = new Set([

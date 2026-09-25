@@ -16,7 +16,7 @@ echo "=== Start DB ==="
 $COMPOSE_CMD up -d db
 
 echo "=== Generate sitemap ==="
-$COMPOSE_CMD run --rm sitemap-generator npm run sitemap-generator
+$COMPOSE_CMD run --rm sitemap-generator npm run sitemap
 
 echo "=== Build and deploy ==="
 $COMPOSE_CMD up --build --detach

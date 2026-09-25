@@ -4,22 +4,24 @@ set -e
 
 cd "$(dirname "$0")"
 
-echo "=== Pull latest main ==="
-git pull origin main
-
-echo "=== Build and deploy ==="
-docker compose \
-  --env-file .env.prod \
-  -f compose.base.yaml \
-  -f compose.prod.yaml \
-  up --build --detach
-
-echo "=== Container status ==="
-
 COMPOSE_CMD="docker compose \
   --env-file .env.prod \
   -f compose.base.yaml \
   -f compose.prod.yaml"
+
+echo "=== Pull latest main ==="
+git pull origin main
+
+echo "=== Start DB ==="
+$COMPOSE_CMD up -d db
+
+echo "=== Generate sitemap ==="
+$COMPOSE_CMD run --rm sitemap-generator npm run sitemap-generator
+
+echo "=== Build and deploy ==="
+$COMPOSE_CMD up --build --detach
+
+echo "=== Container status ==="
 
 echo "=== Wait for containers to start ==="
 sleep 10
@@ -50,4 +52,4 @@ if [ "$ERROR" -ne 0 ]; then
 fi
 
 echo "=== All containers are running ==="
-echo "=== Deploy completed === "
+echo "=== Deploy completed ==="

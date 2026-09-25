@@ -25,7 +25,8 @@ const nonIndexableRoutes = new Set([
     "/BattleResultPage",
     "/UserPage",
     "/EditPage",
-    "/ErrorPage"
+    "/ErrorPage",
+    "/GuitarGalleryPage/:makerCd/:name/:color"
 ]);
 
 const siteUrl = (

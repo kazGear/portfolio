@@ -65,6 +65,15 @@ services:
     environment:
       TZ: Asia/Tokyo
 
+  sitemap-generator:
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - portfolio-net
+    environment:
+      TZ: Asia/Tokyo
+
 volumes:
   pg-data:
 

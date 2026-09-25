@@ -2,7 +2,7 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import pg from "pg";
 import dotenv from "dotenv";
-import { path, dirname } from "node:path";
+import path, { dirname } from "node:path";
 
 const { Client } = pg;
 

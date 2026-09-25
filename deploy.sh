@@ -36,6 +36,12 @@ ERROR=0
 
 for CONTAINER in $CONTAINERS; do
     NAME=$(docker inspect -f '{{.Name}}' "$CONTAINER" | sed 's|^/||')
+
+    if [[ "$NAME" == "portfolio-sitemap-generator-1" ]]; then
+        echo "$NAME: skip (one-shot container)"
+        continue
+    fi
+
     STATUS=$(docker inspect -f '{{.State.Status}}' "$CONTAINER")
 
     echo "$NAME: $STATUS"

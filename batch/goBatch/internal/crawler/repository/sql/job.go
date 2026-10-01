@@ -79,10 +79,10 @@ func InsertJobId() string {
     `
 }
 
-func SelectSavedPageIds() string {
+func SelectSavedUrls() string {
 	return `
         SELECT
-              (regexp_match(url, '\d{1,7}'))[1]::INT
+               url
           FROM
                t_jobs
          WHERE

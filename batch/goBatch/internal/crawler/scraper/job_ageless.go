@@ -32,13 +32,13 @@ type CallBacksAgeless struct {
 func NewScraperAgeless() Scraper[*model.Job] {
 	collector := colly.NewCollector(
 		colly.Async(true),
-		colly.MaxDepth(1),
+		colly.MaxDepth(3),
 	)
 	collector.Limit(&colly.LimitRule{
 		DomainGlob:  "*",
-		Parallelism: 1, // URL収集漏れが発生するため5に制限
-        Delay:       250 * time.Millisecond,
-        RandomDelay: 750 * time.Millisecond,
+		Parallelism: 5, // URL収集漏れが発生するため5に制限
+        Delay:       500 * time.Millisecond,
+        RandomDelay: 1500 * time.Millisecond,
 	})
     return &CrawlerAgeless{
         "AGELESS",
@@ -55,43 +55,51 @@ func NewCallBacksAgeless() *CallBacksAgeless {
     }
 }
 
-// CollectAttributesへ
-var _parentCtxAgeless context.Context
-
 func (c *CrawlerAgeless) CollectLinks(parentCtx context.Context) ([]string, error) {
-    collector              := c.jScraper.collector
-    _parentCtxAgeless = parentCtx
+    collector := c.jScraper.collector
+    mutex     := c.jScraper.mutex
+    visited   := make(map[string]struct{}, 1000)
 
     // クロールログ収集
     crawlStats := &crawlStats{}
     collectStatsCrawl(collector ,crawlStats)
 
-    mutex   := &sync.Mutex{}
+    // 詳細ページ収集
+    collector.OnHTML(`.card-project a[href*="/projects/"]`, func(html *colly.HTMLElement) {
+        link := html.Request.AbsoluteURL(html.Attr("href"))
+        utils.LockedAddSet(mutex, visited, link)
+    })
 
-    // URL生成の設定
-    pageIdFrom, pageIdTo := loadPageIdFromTo("PAGE_ID_FROM_AGELESS", "PAGE_ID_TO_AGELESS")
-    visited              := make(map[string]struct{}, pageIdTo - pageIdFrom)
+    // ページネーションの url を取得
+    paginationUrls := collectPaginationUrls(
+        parentCtx,
+        `.pagination .next a`,
+        "https://freelance.ageless.co.jp/projects/search",
+    )
+    paginationUrls[`/projects/search`] = struct{}{} // 1ページ目だけ拾えていないので手動で追加
 
-    validatePageIdFromTo(pageIdFrom, pageIdTo)
+    // 詳細ページの url を取得
+    for url := range paginationUrls {
+        collector.Visit(fmt.Sprintf(`https://freelance.ageless.co.jp%v`, url))
+    }
+    collector.Wait()
 
     // 保存済ページID取得
-    repository   := repository.NewJobRepository(db.GetInstance())
-    savedPageIds := repository.Select(c.name)
+    repository := repository.NewJobRepository(db.GetInstance())
+    savedUrls  := repository.Select(c.name)
+    log.Printf("%v savedUrls: %v件\n", c.name, len(savedUrls))
 
-    log.Printf("%v savedPageIds: %v件\n", c.name, len(savedPageIds))
-
-    // URL生成
-    for pageId := pageIdFrom; pageId <= pageIdTo; pageId++ {
-        if _, exist := savedPageIds[pageId]; exist {
-            continue
+    // 保存されていない案件urlだけを残す
+    needUrls := make(map[string]struct{}, 1000)
+    for url := range visited {
+        if _, exist := savedUrls[url]; !exist {
+            utils.LockedAddSet(mutex, needUrls, url)
         }
-        url := fmt.Sprintf("https://freelance.ageless.co.jp/projects/%v", pageId)
-        isFirstVisit(mutex, url, visited)
     }
+
     loggingCrawlStats(c.name, crawlStats)
 
-    c.jScraper.urls = utils.MapToSliceUrl(visited)
-    log.Printf("%v visit urls: %v件\n", c.name, len(c.jScraper.urls))
+    c.jScraper.urls = utils.MapToSliceUrl(needUrls)
 
     return c.jScraper.urls, nil
 }

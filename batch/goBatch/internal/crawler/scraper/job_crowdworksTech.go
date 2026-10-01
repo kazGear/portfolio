@@ -38,8 +38,8 @@ func NewScraperCrowdworksTech() Scraper[*model.Job] {
 	collector.Limit(&colly.LimitRule{
 		DomainGlob:  "*",
 		Parallelism: 1, // URL収集漏れが発生するため5に制限
-        Delay:       250 * time.Millisecond,
-        RandomDelay: 750 * time.Millisecond,
+        Delay:       500 * time.Millisecond,
+        RandomDelay: 1500 * time.Millisecond,
 	})
     return &CrawlerCrowdworksTech{
         "CrowdworksTech",
@@ -56,40 +56,73 @@ func NewCallBacksCrowdworksTech() *CallBacksCrowdworksTech {
     }
 }
 
-// CollectAttributesへ
-var _parentCtxCrowdworksTech context.Context
-
 func (c *CrawlerCrowdworksTech) CollectLinks(parentCtx context.Context) ([]string, error) {
-    collector              := c.jScraper.collector
-    _parentCtxCrowdworksTech = parentCtx
+    collector := c.jScraper.collector
+    mutex     := c.jScraper.mutex
+    visited   := make(map[string]struct{}, 1000)
 
     // クロールログ収集
     crawlStats := &crawlStats{}
     collectStatsCrawl(collector ,crawlStats)
 
-    mutex   := &sync.Mutex{}
+    // クロールでリンクを取得できないので url を作成
+    paginationUrls := make(map[string]struct{}, C.PaginationLimit)
+    for i := 1; i <= C.PaginationLimit; i++ {
+        paginationUrls[
+            fmt.Sprintf(`https://tech.crowdworks.jp/job_offers?openonly=true&page=%v`, i),
+            ] = struct{}{}
+    }
 
-    // URL生成の設定
-    pageIdFrom, pageIdTo := loadPageIdFromTo("PAGE_ID_FROM_CROWDWORKS_TECH", "PAGE_ID_TO_CROWDWORKS_TECH")
-    visited              := make(map[string]struct{}, pageIdTo - pageIdFrom)
+    // 詳細ページの url を取得
+    for url := range paginationUrls {
+        pageCtx, cancel := context.WithTimeout(parentCtx, 60 * time.Second)
+        defer cancel()
 
-    validatePageIdFromTo(pageIdFrom, pageIdTo)
+        var html string
+        // html 取得
+        err := chromedp.Run(pageCtx,
+            chromedp.Navigate(url),
+            chromedp.WaitVisible(`div[data-cy="job-offer-card"]`, chromedp.ByQuery),
+            chromedp.OuterHTML(`body`, &html, chromedp.ByQueryAll),
+        )
+        if err != nil {
+            log.Println(err)
+            cancel()
+            break
+        }
+
+        doc, err := goquery.NewDocumentFromReader(strings.NewReader(html))
+        if err != nil {
+            log.Println(err)
+            cancel()
+            break
+        }
+
+        // 案件詳細への url を取得
+        doc.Find(`div[data-cy="job-offer-card"] a[href*="/job_offers/"]`).Each(func(_ int, selector *goquery.Selection) {
+            url, _ := selector.Attr("href")
+            utils.LockedAddSet(mutex, visited, "https://tech.crowdworks.jp/" + url)
+        })
+        // JS が動かすための猶予
+        time.Sleep(1 * time.Second)
+    }
 
     // 保存済ページID取得
-    repository   := repository.NewJobRepository(db.GetInstance())
-    savedPageIds := repository.Select(c.name)
+    repository := repository.NewJobRepository(db.GetInstance())
+    savedUrls  := repository.Select(c.name)
+    log.Printf("%v savedUrls: %v件\n", c.name, len(savedUrls))
 
-    log.Printf("%v savedPageIds: %v件\n", c.name, len(savedPageIds))
-
-    // URL生成
-    for pageId := pageIdFrom; pageId <= pageIdTo; pageId++ {
-        url := fmt.Sprintf("https://tech.crowdworks.jp/job_offers/%v", pageId)
-        isFirstVisit(mutex, url, visited)
+    // 保存されていない案件urlだけを残す
+    needUrls := make(map[string]struct{}, 1000)
+    for url := range visited {
+        if _, exist := savedUrls[url]; !exist {
+            utils.LockedAddSet(mutex, needUrls, url)
+        }
     }
+
     loggingCrawlStats(c.name, crawlStats)
 
-    c.jScraper.urls = utils.MapToSliceUrl(visited)
-    log.Printf("%v visit urls: %v件\n", c.name, len(c.jScraper.urls))
+    c.jScraper.urls = utils.MapToSliceUrl(needUrls)
 
     return c.jScraper.urls, nil
 }

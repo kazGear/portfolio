@@ -5,9 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
 	"regexp"
-	"strconv"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -16,6 +14,7 @@ import (
 	"github.com/PuerkitoBio/goquery"
 	"github.com/chromedp/chromedp"
 	"github.com/gocolly/colly/v2"
+	C "github.com/kazGear/portfolio/goBatch/pkg/constants"
 	"github.com/kazGear/portfolio/goBatch/pkg/utils"
 )
 
@@ -68,7 +67,6 @@ func (g *Crawler[T]) scrapeFrame(provider PageProvider,
 
         // 静的/動的を判定してHTMLを取得
         html := fetchPage(url, provider.IsStaticPage(), provider.FetchDynamicPage(ctx))
-
         if html == "" {
             continue
         }
@@ -90,7 +88,7 @@ func (g *Crawler[T]) scrapeFrame(provider PageProvider,
                 attribute := attribute
                 model     := funcBuildModel(attribute)
 
-				models = utils.LockedAppend(g.mutex, models, model)
+                models = utils.LockedAppend(g.mutex, models, model)
             }
         }(html, url)
     }
@@ -359,41 +357,41 @@ func isSlowDownRequest(minWait time.Duration, maxWait time.Duration, httpStatus 
 }
 
 // from: .envのPAGE_ID_FROM_..., to: .envのPAGE_ID_TO_...
-func loadPageIdFromTo(envKeyFrom string, envKeyTo string) (int, int) {
-    from := os.Getenv(envKeyFrom)
-    to   := os.Getenv(envKeyTo)
+// func loadPageIdFromTo(envKeyFrom string, envKeyTo string) (int, int) {
+//     from := os.Getenv(envKeyFrom)
+//     to   := os.Getenv(envKeyTo)
 
-    fromId, err:= strconv.Atoi(from)
+//     fromId, err:= strconv.Atoi(from)
 
-    if err != nil {
-        log.Panicf("From pageId parse error: %v", err)
-    }
-    toId, err := strconv.Atoi(to)
+//     if err != nil {
+//         log.Panicf("From pageId parse error: %v", err)
+//     }
+//     toId, err := strconv.Atoi(to)
 
-    if err != nil {
-        log.Panicf("To pageId parse error: %v",err)
-    }
-    return fromId, toId
-}
+//     if err != nil {
+//         log.Panicf("To pageId parse error: %v",err)
+//     }
+//     return fromId, toId
+// }
 
 // 連番詳細ページIDの設定値が正しくなければ処理中止
-func validatePageIdFromTo(fromId int, toId int) {
-    if fromId > toId {
-        log.Panicf(
-            "連番pageIdの設定値は from <= to である必要があります。from: %v, to: %v\n",
-            fromId,
-            toId,
-        )
-    }
+// func validatePageIdFromTo(fromId int, toId int) {
+//     if fromId > toId {
+//         log.Panicf(
+//             "連番pageIdの設定値は from <= to である必要があります。from: %v, to: %v\n",
+//             fromId,
+//             toId,
+//         )
+//     }
 
-    if toId - fromId > 100000 {
-        log.Panicf(
-            "クロール対象(pageIdの範囲)は 10万件以下 に設定してください。from: %v, to: %v\n",
-            fromId,
-            toId,
-        )
-    }
-}
+//     if toId - fromId > 100000 {
+//         log.Panicf(
+//             "クロール対象(pageIdの範囲)は 10万件以下 に設定してください。from: %v, to: %v\n",
+//             fromId,
+//             toId,
+//         )
+//     }
+// }
 
 // not found pageか調べる
 func isNotFountPage(searchWord string, ctx context.Context) bool {
@@ -449,4 +447,69 @@ func getExactMatchedDoc(doc *goquery.Document, tagOrClassOrId string, label stri
         return strings.TrimSpace(s.Text()) == label
     })
     return exactMatchedDoc
+}
+
+/*
+動的ページのページネーションをからURLセットを取得する
+context がセッション、ブラウザの状態を持ち回っている
+※ この関数外で context の timeout は設定しないこと。
+※ ページネーションの１ページ目だけ url が拾えていないので、関数外で例外的に追加する必要がある。
+*/
+func collectPaginationUrls(ctx context.Context, cssSelector string, startUrl string) map[string]struct{} {
+	err := chromedp.Run(ctx,
+		chromedp.Navigate(startUrl),
+	)
+	if err != nil {
+        log.Println(err)
+		return map[string]struct{}{}
+	}
+
+    urls := make(map[string]struct{}, C.PaginationLimit)
+
+	for i := 0; i < C.PaginationLimit; i++ {
+		pageCtx, cancel := context.WithTimeout(ctx, 20 * time.Second)
+
+		// 現在ページのデータを取得
+		var url string
+		err := chromedp.Run(pageCtx,
+			chromedp.WaitVisible(cssSelector, chromedp.ByQuery),
+			chromedp.AttributeValue(cssSelector, `href`, &url, nil, chromedp.ByQuery),
+		)
+		if err != nil {
+            log.Println(err)
+			cancel()
+			break
+		}
+
+        urls[url] = struct{}{}
+
+		// 「次へ」が存在するか確認。最終ページチェック
+		var exists bool
+		err = chromedp.Run(pageCtx,
+			chromedp.Evaluate(fmt.Sprintf(`document.querySelector("%v") !== null`, cssSelector), &exists),
+		)
+		if err != nil {
+            log.Println(err)
+			cancel()
+			break
+		}
+		if !exists { // 最終ページである場合
+			cancel()
+			break
+		}
+
+		// 次へをクリック
+		err = chromedp.Run(pageCtx,
+			chromedp.Click(cssSelector, chromedp.ByQuery),
+		)
+		if err != nil {
+            log.Println(err)
+			cancel()
+			break
+		}
+
+        time.Sleep(1 * time.Second) // DOM 更新を待つ
+		cancel()
+	}
+    return urls
 }

@@ -280,16 +280,16 @@ func createSqlBulkInsertOptions(url string) string {
     return builder.String()
 }
 
-func (r *jobRepository) Select(sourceSite string) map[int]struct{} {
-    tmpPageIds := make([]int, 0)
+func (r *jobRepository) Select(sourceSite string) map[string]struct{} {
+    tmpUrls := make([]string, 0)
 
-    if err := r.db.Select(&tmpPageIds, sql.SelectSavedPageIds(), sourceSite); err != nil {
+    if err := r.db.Select(&tmpUrls, sql.SelectSavedUrls(), sourceSite); err != nil {
         log.Panic(err)
     }
-    pageIds := make(map[int]struct{}, len(tmpPageIds))
+    pageUrls := make(map[string]struct{}, len(tmpUrls))
 
-    for _, id := range tmpPageIds {
-        pageIds[id] = struct{}{}
+    for _, url := range tmpUrls {
+        pageUrls[url] = struct{}{}
     }
-    return pageIds
+    return pageUrls
 }

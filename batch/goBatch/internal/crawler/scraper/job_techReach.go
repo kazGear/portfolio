@@ -37,9 +37,9 @@ func NewScraperTechReach() Scraper[*model.Job] {
 	)
 	collector.Limit(&colly.LimitRule{
 		DomainGlob:  "*",
-		Parallelism: 1,
-        Delay:       250 * time.Millisecond,
-        RandomDelay: 750 * time.Millisecond,
+		Parallelism: 5,
+        Delay:       500 * time.Millisecond,
+        RandomDelay: 1500 * time.Millisecond,
 	})
     return &CrawlerTechReach{
         "テックリーチ",
@@ -56,43 +56,43 @@ func NewCallBacksTechReach() *CallBacksTechReach {
     }
 }
 
-// CollectAttributesへ
-var _parentCtxTechReach context.Context
-
 func (c *CrawlerTechReach) CollectLinks(parentCtx context.Context) ([]string, error) {
-    collector              := c.jScraper.collector
-    _parentCtxTechReach = parentCtx
+    collector := c.jScraper.collector
+    mutex     := c.jScraper.mutex
+    visited   := make(map[string]struct{}, 2500)
 
     // クロールログ収集
     crawlStats := &crawlStats{}
     collectStatsCrawl(collector ,crawlStats)
 
-    mutex   := &sync.Mutex{}
+    // 詳細ページ
+    collector.OnHTML(`.m-result a[href^="/jobs/"]`, func(html *colly.HTMLElement) {
+        url := html.Request.AbsoluteURL(html.Attr("href"))
+        utils.LockedAddSet(mutex, visited, url)
+    })
 
-    // URL生成の設定
-    pageIdFrom, pageIdTo := loadPageIdFromTo("PAGE_ID_FROM_TECH_REACH", "PAGE_ID_TO_TECH_REACH")
-    visited              := make(map[string]struct{}, pageIdTo - pageIdFrom)
-
-    validatePageIdFromTo(pageIdFrom, pageIdTo)
+    // ページネーション。ページ数を限定してアクセス
+    for i := 1; i <= C.PaginationLimit; i++ {
+        collector.Visit(fmt.Sprintf(`https://tech-reach.jp/jobs/?page=%v`, i))
+    }
+    collector.Wait()
 
     // 保存済ページID取得
     repository   := repository.NewJobRepository(db.GetInstance())
-    savedPageIds := repository.Select(c.name)
+    savedUrls := repository.Select(c.name)
+    log.Printf("%v savedUrls: %v件\n", c.name, len(savedUrls))
 
-    log.Printf("%v savedPageIds: %v件\n", c.name, len(savedPageIds))
-
-    // URL生成
-    for pageId := pageIdFrom; pageId <= pageIdTo; pageId++ {
-        if _, exist := savedPageIds[pageId]; exist {
-            continue
+    // 保存されていない案件urlだけを残す
+    needUrls := make(map[string]struct{}, 2500)
+    for url := range visited {
+        if _, exist := savedUrls[url]; !exist {
+            utils.LockedAddSet(mutex, needUrls, url)
         }
-        url := fmt.Sprintf("https://tech-reach.jp/jobs/%v", pageId)
-        isFirstVisit(mutex, url, visited)
     }
+
     loggingCrawlStats(c.name, crawlStats)
 
-    c.jScraper.urls = utils.MapToSliceUrl(visited)
-    log.Printf("%v visit urls: %v件\n", c.name, len(c.jScraper.urls))
+    c.jScraper.urls = utils.MapToSliceUrl(needUrls)
 
     return c.jScraper.urls, nil
 }

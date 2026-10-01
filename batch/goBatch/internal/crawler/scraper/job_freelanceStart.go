@@ -36,9 +36,9 @@ func NewScraperFreelanceStart() Scraper[*model.Job] {
 	)
 	collector.Limit(&colly.LimitRule{
 		DomainGlob:  "*",
-		Parallelism: 1, // URL収集漏れが発生するため5に制限
-        Delay:       250 * time.Millisecond,
-        RandomDelay: 750 * time.Millisecond,
+		Parallelism: 5, // URL収集漏れが発生するため5に制限
+        Delay:       500 * time.Millisecond,
+        RandomDelay: 1500 * time.Millisecond,
 	})
     return &CrawlerFreelanceStart{
         "フリーランススタート",
@@ -55,43 +55,71 @@ func NewCallBacksFreelanceStart() *CallBacksFreelanceStart {
     }
 }
 
-// CollectAttributesへ
-var _parentCtxFreelanceStart context.Context
-
 func (c *CrawlerFreelanceStart) CollectLinks(parentCtx context.Context) ([]string, error) {
-    collector              := c.jScraper.collector
-    _parentCtxFreelanceStart = parentCtx
+    collector := c.jScraper.collector
+    mutex     := c.jScraper.mutex
+    visited   := make(map[string]struct{}, 2500)
 
     // クロールログ収集
     crawlStats := &crawlStats{}
     collectStatsCrawl(collector ,crawlStats)
 
-    mutex   := &sync.Mutex{}
+    // pagination urls を作成
+    paginationUrls := make(map[string]struct{}, C.PaginationLimit)
+    for i := 1; i <= C.PaginationLimit; i++ {
+        paginationUrls[fmt.Sprintf(`https://freelance-start.com/jobs?page=%v`, i)] = struct{}{}
+    }
 
-    // URL生成の設定
-    pageIdFrom, pageIdTo := loadPageIdFromTo("PAGE_ID_FROM_FREELANCE_START", "PAGE_ID_TO_FREELANCE_START")
-    visited              := make(map[string]struct{}, pageIdTo - pageIdFrom)
+    // 詳細ページの url を取得
+    for url := range paginationUrls {
+        pageCtx, cancel := context.WithTimeout(parentCtx, 60 * time.Second)
+        defer cancel()
 
-    validatePageIdFromTo(pageIdFrom, pageIdTo)
+        var html string
+        // html 取得
+        err := chromedp.Run(pageCtx,
+            chromedp.Navigate(url),
+            chromedp.WaitVisible(`#job-list`, chromedp.ByQuery),
+            chromedp.OuterHTML(`#job-list`, &html, chromedp.ByQueryAll),
+        )
+        if err != nil {
+            log.Println(err)
+            cancel()
+            break
+        }
+
+        doc, err := goquery.NewDocumentFromReader(strings.NewReader(html))
+        if err != nil {
+            log.Println(err)
+            cancel()
+            break
+        }
+
+        // 案件詳細への url を取得
+        doc.Find(`a[href^="/jobs/detail/"]`).Each(func(_ int, selector *goquery.Selection) {
+            url, _ := selector.Attr("href")
+            utils.LockedAddSet(mutex, visited, "https://freelance-start.com" + url)
+        })
+        // JS が動かすための猶予
+        time.Sleep(1 * time.Second)
+    }
 
     // 保存済ページID取得
-    repository   := repository.NewJobRepository(db.GetInstance())
-    savedPageIds := repository.Select(c.name)
+    repository := repository.NewJobRepository(db.GetInstance())
+    savedUrls  := repository.Select(c.name)
+    log.Printf("%v savedUrls: %v件\n", c.name, len(savedUrls))
 
-    log.Printf("%v savedPageIds: %v件\n", c.name, len(savedPageIds))
-
-    // URL生成
-    for pageId := pageIdFrom; pageId <= pageIdTo; pageId++ {
-        if _, exist := savedPageIds[pageId]; exist {
-            continue
+    // 保存されていない案件urlだけを残す
+    needUrls := make(map[string]struct{}, 1000)
+    for url := range visited {
+        if _, exist := savedUrls[url]; !exist {
+            utils.LockedAddSet(mutex, needUrls, url)
         }
-        url := fmt.Sprintf("https://freelance-start.com/jobs/detail/%v", pageId)
-        isFirstVisit(mutex, url, visited)
     }
+
     loggingCrawlStats(c.name, crawlStats)
 
     c.jScraper.urls = utils.MapToSliceUrl(visited)
-    log.Printf("%v visit urls: %v件\n", c.name, len(c.jScraper.urls))
 
     return c.jScraper.urls, nil
 }
@@ -119,7 +147,7 @@ func (c *CallBacksFreelanceStart) FetchDynamicPage(parentCtx context.Context) fu
         tabCtx, tabCancel := chromedp.NewContext(parentCtx)
         defer tabCancel()
         // // タブにだけ timeout を付ける
-        ctx, cancel := context.WithTimeout(tabCtx, 3 * time.Second)
+        ctx, cancel := context.WithTimeout(tabCtx, 10 * time.Second)
         defer cancel()
 
         // 404ページに対する対応
@@ -137,7 +165,7 @@ func (c *CallBacksFreelanceStart) FetchDynamicPage(parentCtx context.Context) fu
         )
 
         if err != nil {
-            log.Printf("Chromedp error: %v", err)
+            log.Printf("Chromedp error %v: %v, %v", "フリーランススタート", err, url)
             return "", err
         }
         return html, nil

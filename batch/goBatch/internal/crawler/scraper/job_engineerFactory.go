@@ -33,13 +33,13 @@ type CallBacksEngineerFactory struct {
 func NewScraperEngineerFactory() Scraper[*model.Job] {
 	collector := colly.NewCollector(
 		colly.Async(true),
-		colly.MaxDepth(1),
+		colly.MaxDepth(3),
 	)
 	collector.Limit(&colly.LimitRule{
 		DomainGlob:  "*",
-		Parallelism: 1,
-        Delay:       250 * time.Millisecond,
-        RandomDelay: 750 * time.Millisecond,
+		Parallelism: 5,
+        Delay:       500 * time.Millisecond,
+        RandomDelay: 1500 * time.Millisecond,
 	})
     return &CrawlerEngineerFactory{
         "エンジニアファクトリー",
@@ -56,43 +56,43 @@ func NewCallBacksEngineerFactory() *CallBacksEngineerFactory {
     }
 }
 
-// CollectAttributesへ
-var _parentCtxEngineerFactory context.Context
-
 func (c *CrawlerEngineerFactory) CollectLinks(parentCtx context.Context) ([]string, error) {
     collector              := c.jScraper.collector
-    _parentCtxEngineerFactory = parentCtx
+    mutex   := c.jScraper.mutex
+    visited   := make(map[string]struct{}, 1000)
 
     // クロールログ収集
     crawlStats := &crawlStats{}
     collectStatsCrawl(collector ,crawlStats)
 
-    mutex   := &sync.Mutex{}
+    // 詳細ページ
+    collector.OnHTML(`.modJobBlock a[href^="/freelance/jobs/"]`, func(html *colly.HTMLElement) {
+        url := html.Request.AbsoluteURL(html.Attr("href"))
+        utils.LockedAddSet(mutex, visited, url)
+    })
 
-    // URL生成の設定
-    pageIdFrom, pageIdTo := loadPageIdFromTo("PAGE_ID_FROM_ENGINEER_FACTORY", "PAGE_ID_TO_ENGINEER_FACTORY")
-    visited              := make(map[string]struct{}, pageIdTo - pageIdFrom)
-
-    validatePageIdFromTo(pageIdFrom, pageIdTo)
+    // ページネーション。ページ数を限定してアクセス
+    for i := 1; i <= C.PaginationLimit; i++ {
+        collector.Visit(fmt.Sprintf(`https://www.engineer-factory.com/freelance/jobs?page=%v`, i))
+    }
+    collector.Wait()
 
     // 保存済ページID取得
-    repository   := repository.NewJobRepository(db.GetInstance())
-    savedPageIds := repository.Select(c.name)
+    repository := repository.NewJobRepository(db.GetInstance())
+    savedUrls  := repository.Select(c.name)
+    log.Printf("%v savedUrls: %v件\n", c.name, len(savedUrls))
 
-    log.Printf("%v savedPageIds: %v件\n", c.name, len(savedPageIds))
-
-    // URL生成
-    for pageId := pageIdFrom; pageId <= pageIdTo; pageId++ {
-        if _, exist := savedPageIds[pageId]; exist {
-            continue
+    // 保存されていない案件urlだけを残す
+    needUrls := make(map[string]struct{}, 1000)
+    for url := range visited {
+        if _, exist := savedUrls[url]; !exist {
+            utils.LockedAddSet(mutex, needUrls, url)
         }
-        url := fmt.Sprintf("https://www.engineer-factory.com/freelance/jobs/%v", pageId)
-        isFirstVisit(mutex, url, visited)
     }
+
     loggingCrawlStats(c.name, crawlStats)
 
-    c.jScraper.urls = utils.MapToSliceUrl(visited)
-    log.Printf("%v visit urls: %v件\n", c.name, len(c.jScraper.urls))
+    c.jScraper.urls = utils.MapToSliceUrl(needUrls)
 
     return c.jScraper.urls, nil
 }

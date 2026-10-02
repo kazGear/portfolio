@@ -70,17 +70,9 @@ func (c *CrawlerAgeless) CollectLinks(parentCtx context.Context) ([]string, erro
         utils.LockedAddSet(mutex, visited, link)
     })
 
-    // ページネーションの url を取得
-    paginationUrls := collectPaginationUrls(
-        parentCtx,
-        `.pagination .next a`,
-        "https://freelance.ageless.co.jp/projects/search",
-    )
-    paginationUrls[`/projects/search`] = struct{}{} // 1ページ目だけ拾えていないので手動で追加
-
-    // 詳細ページの url を取得
-    for url := range paginationUrls {
-        collector.Visit(fmt.Sprintf(`https://freelance.ageless.co.jp%v`, url))
+    // ページネーション
+    for i := 1; i < C.PaginationLimit; i++ {
+        collector.Visit(fmt.Sprintf(`https://freelance.ageless.co.jp/projects/search?page=%v`, i))
     }
     collector.Wait()
 

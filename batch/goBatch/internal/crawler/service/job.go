@@ -74,7 +74,7 @@ func (j *jobCrawlerService) RunCrawler() {
             okCnt, ngCnt, errs := j.repository.Save(jobs)
 
             // ログ
-            log.Printf("[Upsert result %v]: OK %v 件, NG %v 件", jobBoard.name, okCnt, ngCnt)
+            log.Printf("[Insert result %v]: OK %v 件, NG %v 件", jobBoard.name, okCnt, ngCnt)
 
             for _, err := range errs {
                 log.Println(err)
@@ -98,14 +98,13 @@ func jobBoardFactory() map[string]*JobBoard {
         scraper.NewCallBacksTechReach(),
     )
 
-    // 要メンテ。案件データ取得部分。features ログインしないとテキストが表示されない
-    // jobBoardName := C.SES_JOB_LINK
-    // jobBoards[jobBoardName] = NewJobBoard(
-    //     jobBoardName,
-    //     scraper.NewScraperSesJobLink(),
-    //     scraper.NewCallBacksSesJobLink(),
-    //     scraper.NewCallBacksSesJobLink(),
-    // )
+    jobBoardName = C.SES_JOB_LINK
+    jobBoards[jobBoardName] = NewJobBoard(
+        jobBoardName,
+        scraper.NewScraperSesJobLink(),
+        scraper.NewCallBacksSesJobLink(),
+        scraper.NewCallBacksSesJobLink(),
+    )
 
     jobBoardName = C.Midworks
     jobBoards[jobBoardName] = NewJobBoard(

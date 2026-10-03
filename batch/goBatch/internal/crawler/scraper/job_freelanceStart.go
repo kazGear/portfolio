@@ -72,26 +72,25 @@ func (c *CrawlerFreelanceStart) CollectLinks(parentCtx context.Context) ([]strin
 
     // 詳細ページの url を取得
     for url := range paginationUrls {
-        pageCtx, cancel := context.WithTimeout(parentCtx, 60 * time.Second)
-        defer cancel()
+        pageCtx, pageCtxCancel := chromedp.NewContext(parentCtx) // 独立したコンテキストの作成
+        ctx, ctxCancel         := context.WithTimeout(pageCtx, 60 * time.Second)
 
         var html string
-        // html 取得
-        err := chromedp.Run(pageCtx,
+        err := chromedp.Run(ctx,
             chromedp.Navigate(url),
             chromedp.WaitVisible(`#job-list`, chromedp.ByQuery),
             chromedp.OuterHTML(`#job-list`, &html, chromedp.ByQueryAll),
         )
+        ctxCancel()
+        pageCtxCancel()
         if err != nil {
             log.Println(err)
-            cancel()
             break
         }
 
         doc, err := goquery.NewDocumentFromReader(strings.NewReader(html))
         if err != nil {
             log.Println(err)
-            cancel()
             break
         }
 
@@ -100,7 +99,8 @@ func (c *CrawlerFreelanceStart) CollectLinks(parentCtx context.Context) ([]strin
             url, _ := selector.Attr("href")
             utils.LockedAddSet(mutex, visited, "https://freelance-start.com" + url)
         })
-        // JS が動かすための猶予
+
+        // JS が動くための猶予
         time.Sleep(1 * time.Second)
     }
 
@@ -110,7 +110,7 @@ func (c *CrawlerFreelanceStart) CollectLinks(parentCtx context.Context) ([]strin
     log.Printf("%v savedUrls: %v件\n", c.name, len(savedUrls))
 
     // 保存されていない案件urlだけを残す
-    needUrls := make(map[string]struct{}, 1000)
+    needUrls := make(map[string]struct{}, 2500)
     for url := range visited {
         if _, exist := savedUrls[url]; !exist {
             utils.LockedAddSet(mutex, needUrls, url)
@@ -119,7 +119,7 @@ func (c *CrawlerFreelanceStart) CollectLinks(parentCtx context.Context) ([]strin
 
     loggingCrawlStats(c.name, crawlStats)
 
-    c.jScraper.urls = utils.MapToSliceUrl(visited)
+    c.jScraper.urls = utils.MapToSliceUrl(needUrls)
 
     return c.jScraper.urls, nil
 }
@@ -147,27 +147,20 @@ func (c *CallBacksFreelanceStart) FetchDynamicPage(parentCtx context.Context) fu
         tabCtx, tabCancel := chromedp.NewContext(parentCtx)
         defer tabCancel()
         // // タブにだけ timeout を付ける
-        ctx, cancel := context.WithTimeout(tabCtx, 10 * time.Second)
+        ctx, cancel := context.WithTimeout(tabCtx, 20 * time.Second)
         defer cancel()
 
-        // 404ページに対する対応
-        isNotFount := isNotFountPage("職務内容", ctx)
-
-        if isNotFount { return "", fmt.Errorf(C.This404page, url)}
-
-        // クロームで対応
         var html string
-
         err := chromedp.Run(ctx,
             chromedp.Navigate(url),
-            chromedp.WaitReady(`.job-title`, chromedp.ByQuery), // 求める要素が出るまで待つ
-            chromedp.OuterHTML("html", &html, chromedp.ByQuery), // 最終的なHTML出力
+            chromedp.WaitVisible(`.job-title`, chromedp.ByQuery),
+            chromedp.OuterHTML("html", &html, chromedp.ByQuery),
         )
-
         if err != nil {
             log.Printf("Chromedp error %v: %v, %v", "フリーランススタート", err, url)
             return "", err
         }
+
         return html, nil
     }
 }
@@ -181,6 +174,7 @@ func (c *CallBacksFreelanceStart) CollectAttributes() func(doc *goquery.Document
 
         // 案件の特徴を収集し、repositoryへ
         features := salvageFeaturesFreelanceStart(normalizedDescription)
+
         // 保存するべき案件か
         if len(features) <= 0 {
             return []map[string]string{}

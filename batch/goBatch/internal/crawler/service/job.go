@@ -98,8 +98,8 @@ func jobBoardFactory() map[string]*JobBoard {
         scraper.NewCallBacksTechReach(),
     )
 
-    // TODO: 要メンテ。案件データ取得部分
-    // jobBoardName = C.SES_JOB_LINK
+    // 要メンテ。案件データ取得部分。features ログインしないとテキストが表示されない
+    // jobBoardName := C.SES_JOB_LINK
     // jobBoards[jobBoardName] = NewJobBoard(
     //     jobBoardName,
     //     scraper.NewScraperSesJobLink(),
@@ -115,14 +115,13 @@ func jobBoardFactory() map[string]*JobBoard {
         scraper.NewCallBacksMidworks(),
     )
 
-    // TODO: 要メンテ。案件データ取得部分
-    // jobBoardName := C.FreelanceStart
-    // jobBoards[jobBoardName] = NewJobBoard(
-    //     jobBoardName,
-    //     scraper.NewScraperFreelanceStart(),
-    //     scraper.NewCallBacksFreelanceStart(),
-    //     scraper.NewCallBacksFreelanceStart(),
-    // )
+    jobBoardName = C.FreelanceStart
+    jobBoards[jobBoardName] = NewJobBoard(
+        jobBoardName,
+        scraper.NewScraperFreelanceStart(),
+        scraper.NewCallBacksFreelanceStart(),
+        scraper.NewCallBacksFreelanceStart(),
+    )
 
     jobBoardName = C.FreelanceJob
     jobBoards[jobBoardName] = NewJobBoard(

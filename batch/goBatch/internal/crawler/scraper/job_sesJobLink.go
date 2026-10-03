@@ -3,6 +3,7 @@ package scraper
 import (
 	"context"
 	"fmt"
+	"os"
 	"regexp"
 	"strconv"
 	"strings"
@@ -58,6 +59,8 @@ func NewCallBacksSesJobLink() *CallBacksSesJobLink {
 }
 
 func (c *CrawlerSesJobLink) CollectLinks(parentCtx context.Context) ([]string, error) {
+    doLoginSesJobLink(parentCtx) // ログイン後でないと案件情報が表示されない
+
     collector := c.jScraper.collector
     mutex     := c.jScraper.mutex
     visited   := make(map[string]struct{}, 1000)
@@ -98,6 +101,32 @@ func (c *CrawlerSesJobLink) CollectLinks(parentCtx context.Context) ([]string, e
     return c.jScraper.urls, nil
 }
 
+var _loggedInCtxSesJobLink context.Context
+
+func doLoginSesJobLink(parentCtx context.Context) {
+    // ※ context cancel() すると後続の chromedp の使用ができなくなる
+    // タブごとに独立した context を作る
+    tabCtx, _ := chromedp.NewContext(parentCtx)
+    // タブにだけ timeout を付ける。
+    ctx, _ := context.WithTimeout(tabCtx, 1 * time.Hour) // 全案件の HTML を取得するまで生かす必要がある
+
+    log.Println("try login. SES JOB LINKS.")
+
+    err := chromedp.Run(ctx,
+        chromedp.Navigate(`https://ses-job-link.com/login`),
+        chromedp.SendKeys(`input[name="email"]`, os.Getenv("LOGIN_EMAIL_SES_JOB_LINK"), chromedp.ByQuery),
+        chromedp.SendKeys(`input[name="password"]`, os.Getenv("LOGIN_PASS_SES_JOB_LINK"), chromedp.ByQuery),
+        chromedp.Click(`button.login-button`, chromedp.ByQuery),
+        chromedp.WaitVisible(`#sys_my_page`, chromedp.ByQuery), // ログイン成功すればマイページが表示される
+    )
+    if err != nil {
+        log.Panicf("login failed SES JOB LINK >>> error = %v\n", err)
+    } else {
+        log.Println("login success. SES JOB LINKS")
+        _loggedInCtxSesJobLink = ctx
+    }
+}
+
 func (c *CrawlerSesJobLink) Scrape(provider  PageProvider,
                                    parser    ModelParser[*model.Job],
                                    parentCtx context.Context,
@@ -109,26 +138,21 @@ func (c *CrawlerSesJobLink) Scrape(provider  PageProvider,
 func (c *CallBacksSesJobLink) FetchDynamicPage(parentCtx context.Context) func(url string) (string, error) {
     return func(url string) (string, error) {
         // 動的ページを取得しない場合、引数のパターンは記載しないで良い
-        if !isDetailPage(``, url) {
+        if !isDetailPage(`https://ses-job-link.com/projects/\d+`, url) {
             return "", nil
-        }
-        // 無駄なchromedpの起動を回避
-        if err := checkHttpStatusOK(_httpClient, url); err != nil {
-            return "", err
         }
 
         // タブごとに独立した context を作る
-        tabCtx, tabCancel := chromedp.NewContext(parentCtx)
+        tabCtx, tabCancel := chromedp.NewContext(_loggedInCtxSesJobLink)
         defer tabCancel()
         // // タブにだけ timeout を付ける
         ctx, cancel := context.WithTimeout(tabCtx, 10 * time.Second)
         defer cancel()
 
         var html string
-
         err := chromedp.Run(ctx,
             chromedp.Navigate(url),
-            chromedp.WaitReady(".job-btn", chromedp.ByQuery), // 求める要素が出るまで待つ
+            chromedp.WaitVisible(".job-case-summary_title", chromedp.ByQuery), // 求める要素が出るまで待つ
             chromedp.OuterHTML("html", &html, chromedp.ByQuery), // 最終的なHTML出力
         )
 
@@ -209,6 +233,6 @@ func (c *CallBacksSesJobLink) BuildModel(url string) func(data map[string]string
 func (c *CallBacksSesJobLink) IsStaticPage() func(html string) bool {
     return func(html string) bool {
         // 静的ソースのみからデータを取得する場合、必ず存在する bodyタグ(bodyの文字列)を指定しておく
-        return strings.Contains(html, "body")
+        return strings.Contains(html, "job-case-summary_title")
     }
 }

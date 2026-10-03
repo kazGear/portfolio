@@ -77,7 +77,7 @@ var (
     _regJobPriceMinSuffix = regexp.MustCompile(`(〜|～|~|-)$`)
 )
 
-func getJobPrice(text string) (min int, max int) {
+func getJobPrice(text string) (int, int) {
     text   = normalizeJobPrice(text)
     price := ""
 
@@ -101,7 +101,7 @@ func getJobPrice(text string) (min int, max int) {
     return C.UndefinedPrice, C.UndefinedPrice
 }
 
-func parseJobPrices(price string) (min int, max int) {
+func parseJobPrices(price string) (int, int) {
     // price = normalizeJobPrice(price)
     minPrice := C.UndefinedPrice
     maxPrice := C.UndefinedPrice

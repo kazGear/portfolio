@@ -175,7 +175,7 @@ func (c *CallBacksFreelanceJob) CollectAttributes() func(doc *goquery.Document, 
         data[C.MinSalaryAtMonth] = strconv.Itoa(minPrice)
         data[C.MaxSalaryAtMonth] = strconv.Itoa(maxPrice)
 
-        data[C.Description]    = description
+        data[C.Description]    = normalizedDescription
         data[C.EmploymentType] = salvageEmploymentType(normalizedDescription)
         data[C.WorkPlace]      = salvageWorkPlace(normalizedDescription)
         data[C.SourceSite]     = C.FreelanceJob

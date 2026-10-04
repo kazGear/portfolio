@@ -168,7 +168,7 @@ func (c *CallBacksAgeless) CollectAttributes() func(doc *goquery.Document, url s
         data[C.MinSalaryAtMonth] = doc.Find(".income-num").Text()
         data[C.MaxSalaryAtMonth] = doc.Find(".income-num").Text()
 
-        data[C.Description]    = description
+        data[C.Description]    = normalizedDescription
         data[C.EmploymentType] = salvageEmploymentType(normalizedDescription)
         data[C.WorkPlace]      = salvageWorkPlace(normalizedDescription)
         data[C.SourceSite]     = C.AGELESS

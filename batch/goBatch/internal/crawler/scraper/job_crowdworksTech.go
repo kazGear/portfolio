@@ -231,7 +231,7 @@ func (c *CallBacksCrowdworksTech) CollectAttributes() func(doc *goquery.Document
         data[C.MinSalaryAtMonth] = maxSalaryAtMonth
         data[C.MaxSalaryAtMonth] = maxSalaryAtMonth
 
-        data[C.Description]    = description
+        data[C.Description]    = normalizedDescription
         data[C.EmploymentType] = salvageEmploymentType(normalizedDescription)
         data[C.WorkPlace]      = salvageWorkPlace(normalizedDescription)
         data[C.SourceSite]     = C.CrowdWorksTech

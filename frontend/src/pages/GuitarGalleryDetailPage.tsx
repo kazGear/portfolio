@@ -9,7 +9,7 @@ import GuitarSpec from "../components/guitarGalleryPage/GuitarSpec";
 import CommonZoomableImage from "../components/common/CommonZoomableImage";
 import { parseGuitarPrice } from "../components/guitarGalleryPage/GuitarFuncs";
 import styled from "styled-components";
-import { HTML_HEAD_DATA } from "../lib/Constants";
+import { HTML_HEAD_DATA, SIZE } from "../lib/Constants";
 
 const P = styled.p`
     overflow-y: auto;
@@ -60,7 +60,12 @@ const GuitarGalleryDetailPage = () => {
     }, [guitar]);
 
     return (
-        <CommonFrame styleObj={{margin: 0, borderRadius: 0, height: "92vh", overflowY: "hidden"}}>
+        <CommonFrame styleObj={{
+            margin: 0,
+            borderRadius: 0,
+            height: `calc(99.8vh - ${SIZE.HEADER_HEIGHT})`,
+            overflowY: "hidden"
+        }}>
             <Link to={"/GuitarGalleryPage"} target="_blank">Guitar Gallery へ</Link>
             {
                 guitar !== null ? (

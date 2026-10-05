@@ -10,16 +10,15 @@ const Div = styled.div`
     text-align: center;
 `;
 type Props = {
-    $enable: boolean;
+    enable: boolean;
 };
 const Button = styled.button<Props>`
     color: ${COLORS.ACCENT_FONT_GREEN};
     border: none;
-    cursor: pointer;
     background: none;
-    pointer-events: ${$enable => $enable ? "auto" : "none"};
-    opacity: ${$enable => $enable ? 1.0 : 0.2};
-    cursor: ${$enable => $enable ? "pointer" : "not-allowed"};
+    pointer-events: ${props => props.enable ? "auto" : "none"};
+    opacity: ${props => props.enable ? 1.0 : 0.2};
+    cursor: ${props => props.enable ? "pointer" : "not-allowed"};
 `;
 const Span = styled.span`
     font-size: 16px;
@@ -48,10 +47,10 @@ const CommonPagination = ({children,
 ) => {
     return (
         <Div style={styleObj}>
-            <Button onClick={changePrevPageHandler} $enable={hasPrev}><Span> ◀ </Span></Button>
+            <Button onClick={changePrevPageHandler} enable={hasPrev}><Span> ◀ </Span></Button>
                 {/* childrenはインライン要素が望ましい */}
                 {children}
-            <Button onClick={changeNextPageHandler} $enable={hasNext}><Span> ▶ </Span></Button>
+            <Button onClick={changeNextPageHandler} enable={hasNext}><Span> ▶ </Span></Button>
         </Div>
     );
 }

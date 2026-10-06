@@ -53,10 +53,9 @@ const GuitarCard = ({guitar, callback}: ArgProps) => {
     }
 
     return (
-        <Button onClick={() => callback(guitar)}>
+        <Button onClick={() => callback(guitar)}> {/* 選択したギターを親へ通知 */}
             <CardFrame>
                 <div style={{textAlign: "center", margin: "10px 20px" ,height: "55%"}}>
-                    {/* モーダルにギター情報を渡す */}
                     <img style={{width:"100%", height:"100%", objectFit: "contain"}}
                          src={guitar?.src}
                          alt={guitar?.makerName + " | " + guitar?.name + " | " + guitar?.color}

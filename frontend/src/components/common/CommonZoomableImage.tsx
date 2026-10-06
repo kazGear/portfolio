@@ -8,8 +8,8 @@ type Position = {
 interface ArgProps {
     imgURL: string | undefined;
     alt:    string | undefined;
-    width:  number;
-    height: number;
+    width:  string;
+    height: string;
     zoomRate: number;
 }
 
@@ -60,8 +60,8 @@ const CommonZoomableImage = ({ imgURL, alt,  width, height, zoomRate }: ArgProps
                 onMouseLeave={mouseLeaveHandler}
                 style={{
                     opacity: `${isShow ? 1.0 : 0.0}`,
-                    width: `${width}px`,
-                    height: `${height}px`,
+                    width: width,
+                    height: height,
                     objectFit: "contain",
             }}/>
         </div>

@@ -5,6 +5,12 @@ import { GUITAR } from "../../lib/Constants";
 const Div = styled.div`
     width: 50%;
     margin: 20px;
+    @media (max-width: 900px) {
+        width: 100%;
+        margin: 0px;
+        margin-top: 30px;
+    }
+
     overflow-y: auto;
 `;
 

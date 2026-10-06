@@ -7,7 +7,7 @@ import { createQueryParamsGuitar } from "../components/guitarGalleryPage/GuitarF
 import CommonFrame from "../components/common/CommonFrame";
 import GuitarCards from "../components/guitarGalleryPage/GuitarCards";
 import SearchConditionsGuitar from "../components/guitarGalleryPage/SearchConditionsGuitar";
-import DetailModal from "../components/guitarGalleryPage/DetailModal";
+import GuitarDetailModal from "../components/guitarGalleryPage/GuitarDetailModal";
 import { PUBLIC_API_BASE_URL } from "../config/env"
 import useApiErrorHandler from "../hooks/useApiErrorHandler";
 import CommonNowLoading from "../components/common/CommonNowLoading";
@@ -139,10 +139,11 @@ const GuitarGalleryPage = () => {
                     )}
             </CommonFrame>
 
-            <DetailModal selectedGuitar={selectedGuitar}
-                         isShow={isShowDetail}
-                         callback={setIsShowDetail}>
-            </DetailModal>
+            <GuitarDetailModal
+                selectedGuitar={selectedGuitar}
+                isShow={isShowDetail}
+                callback={setIsShowDetail}>
+            </GuitarDetailModal>
         </div>
     );
 }

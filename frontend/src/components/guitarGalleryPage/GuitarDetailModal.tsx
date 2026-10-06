@@ -48,7 +48,7 @@ interface ArgProps {
     callback       : React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const DetailModal = ({selectedGuitar, isShow, callback}: ArgProps) => {
+const GuitarDetailModal = ({selectedGuitar, isShow, callback}: ArgProps) => {
     const isShowDetail = isShow ? "block" : "none"; // 詳細画面の表示制御
     const guitar = selectedGuitar;
 
@@ -96,4 +96,4 @@ const DetailModal = ({selectedGuitar, isShow, callback}: ArgProps) => {
         </Background>
     );
 }
-export default DetailModal;
+export default GuitarDetailModal;

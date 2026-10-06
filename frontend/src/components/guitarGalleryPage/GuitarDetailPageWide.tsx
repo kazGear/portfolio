@@ -1,4 +1,3 @@
-import styled from "styled-components";
 import { Guitar } from "../../types/Guitar";
 import { SIZE } from "../../lib/Constants";
 import GuitarSpec from "./GuitarSpec";
@@ -7,18 +6,15 @@ import { parseGuitarPrice } from "./GuitarFuncs";
 import CommonFrame from "../common/CommonFrame";
 import { Link } from "react-router-dom";
 
-const P = styled.p`
-    overflow-y: auto;
-    font-size: 14px;
-    width: 100%;
-    height: 30%;
-`;
-
 interface ArgProps {
     guitar : Guitar | null;
 }
 
 const GuitarDetailPageWide = ({guitar}: ArgProps) => {
+    // 画面に合わせた動的サイズ
+    const imgHeight     = window.innerHeight / 2 - 100;
+    const commentHeight = window.innerHeight / 3;
+
     return (
         <CommonFrame styleObj={{
             margin: 0,
@@ -38,8 +34,9 @@ const GuitarDetailPageWide = ({guitar}: ArgProps) => {
                             <CommonZoomableImage
                                 imgURL={guitar?.src}
                                 alt={guitar?.makerName + " | " + guitar?.name + " | " + guitar?.color}
-                                width={"450px"}
-                                height={"300px"}
+                                width={"100%"}
+                                //height={`${imgHeight} px`}
+                                height={`${imgHeight}px`}
                                 zoomRate={300}
                             />
 
@@ -47,7 +44,12 @@ const GuitarDetailPageWide = ({guitar}: ArgProps) => {
                                 price:&emsp;{parseGuitarPrice(guitar?.price!)}
                             </h2>
 
-                            <P>{guitar?.comment}</P>
+                            <p style={{
+                                overflowY: "auto",
+                                fontSize: "14px",
+                                width: "100%",
+                                height: `${commentHeight}px`
+                            }}>{guitar?.comment}</p>
                         </div>
                     </div>
                 ) : (

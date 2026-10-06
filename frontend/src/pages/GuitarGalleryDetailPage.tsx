@@ -63,7 +63,7 @@ const GuitarGalleryDetailPage = () => {
         <CommonFrame styleObj={{
             margin: 0,
             borderRadius: 0,
-            height: `calc(99.8vh - ${SIZE.HEADER_HEIGHT})`,
+            height: `calc(100vh - ${SIZE.HEADER_HEIGHT} - 2px)`,
             overflowY: "hidden"
         }}>
             <Link to={"/GuitarGalleryPage"} target="_blank">Guitar Gallery へ</Link>
@@ -80,7 +80,8 @@ const GuitarGalleryDetailPage = () => {
                                 alt={guitar?.makerName + " | " + guitar?.name + " | " + guitar?.color}
                                 width={450}
                                 height={300}
-                                zoomRate={300}/>
+                                zoomRate={300}
+                            />
 
                             <h2 style={{margin: "0px"}}>
                                 price:&emsp;{parseGuitarPrice(guitar?.price!)}

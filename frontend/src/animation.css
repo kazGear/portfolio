@@ -94,3 +94,22 @@
     transform: translateX(0px);
   }
 }
+
+/*
+ギター 一覧ページの検索パネル（モバイル用）
+*/
+.searchViewMobileMove {
+  animation: searchViewMobileMove 0.5s ease-out;
+}
+
+@keyframes searchViewMobileMove {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

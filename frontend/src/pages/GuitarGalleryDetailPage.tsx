@@ -70,15 +70,17 @@ const GuitarGalleryDetailPage = () => {
     }, [guitar]);
 
     return (
-        <>
+        <div>
+            {/* PC, タブレット向け */}
             <DetailPageWide>
                 <GuitarDetailPageWide guitar={guitar}/>
             </DetailPageWide>
 
+            {/* モバイル向け */}
             <DetailPageMobile>
                 <GuitarDetailPageMobile guitar={guitar}/>
             </DetailPageMobile>
-        </>
+        </div>
     );
 }
 

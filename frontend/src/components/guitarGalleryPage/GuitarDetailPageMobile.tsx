@@ -17,7 +17,7 @@ const GuitarDetailPageMobile = ({guitar}: ArgProps) => {
             borderRadius: 0,
             height: `calc(100vh - ${SIZE.HEADER_HEIGHT} - 2px)`,
         }}>
-            <Link to={"/GuitarGalleryPage"} target="_blank">Guitar Gallery へ</Link>
+            <Link to={"/GuitarGalleryPage"}>Guitar Gallery へ</Link>
             {
                 guitar !== null ? (
                     <div style={{margin: "20px"}}>
@@ -49,7 +49,7 @@ const GuitarDetailPageMobile = ({guitar}: ArgProps) => {
                     <h1>ギター情報の取得に失敗しました。</h1>
                 )
             }
-            <Link to={"/GuitarGalleryPage"} target="_blank">Guitar Gallery へ</Link>
+            <Link to={"/GuitarGalleryPage"}>Guitar Gallery へ</Link>
         </CommonFrame>
     );
 }

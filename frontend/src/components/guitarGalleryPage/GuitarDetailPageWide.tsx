@@ -22,7 +22,7 @@ const GuitarDetailPageWide = ({guitar}: ArgProps) => {
             height: `calc(100vh - ${SIZE.HEADER_HEIGHT} - 2px)`,
             overflowY: "hidden"
         }}>
-            <Link to={"/GuitarGalleryPage"} target="_blank">Guitar Gallery へ</Link>
+            <Link to={"/GuitarGalleryPage"}>Guitar Gallery へ</Link>
             {
                 guitar !== null ? (
                     <div style={{display: "flex", justifyContent: "space-evenly"}}>

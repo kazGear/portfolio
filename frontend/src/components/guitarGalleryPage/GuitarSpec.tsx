@@ -1,11 +1,11 @@
 import styled from "styled-components";
 import { Guitar } from "../../types/Guitar";
-import { GUITAR } from "../../lib/Constants";
+import { GUITAR, SIZE } from "../../lib/Constants";
 
 const Div = styled.div`
     width: 50%;
     margin: 20px;
-    @media (max-width: 900px) {
+    @media (max-width: ${SIZE.MOBILE_LAYOUT_BREAKPOINT}) {
         width: 100%;
         margin: 0px;
         margin-top: 30px;

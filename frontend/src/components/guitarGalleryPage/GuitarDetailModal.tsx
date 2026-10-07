@@ -48,9 +48,13 @@ interface ArgProps {
     callback       : React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const DetailModal = ({selectedGuitar, isShow, callback}: ArgProps) => {
+const GuitarDetailModal = ({selectedGuitar, isShow, callback}: ArgProps) => {
     const isShowDetail = isShow ? "block" : "none"; // 詳細画面の表示制御
     const guitar = selectedGuitar;
+
+    // 画面に合わせた動的サイズ
+    const imgHeight     = window.innerHeight / 2 - 100;
+    const commentHeight = window.innerHeight / 3 - 40;
 
     return (
         <Background style={{display: isShowDetail}}>
@@ -63,15 +67,20 @@ const DetailModal = ({selectedGuitar, isShow, callback}: ArgProps) => {
                     <CommonZoomableImage
                         imgURL={guitar?.src}
                         alt={guitar?.makerName + " | " + guitar?.name + " | " + guitar?.color}
-                        width={450}
-                        height={300}
+                        width={"100%"}
+                        height={`${imgHeight}px`}
                         zoomRate={300}/>
 
                     <h2 style={{margin: "0px"}}>
                         price:&emsp;{parseGuitarPrice(guitar?.price!)}
                     </h2>
 
-                    <P>{guitar?.comment}</P>
+                    <p style={{
+                        overflowY: "auto",
+                        fontSize: "14px",
+                        width: "100%",
+                        height: `${commentHeight}px`
+                    }}>{guitar?.comment}</p>
                 </div>
 
                 <CommonButton
@@ -87,4 +96,4 @@ const DetailModal = ({selectedGuitar, isShow, callback}: ArgProps) => {
         </Background>
     );
 }
-export default DetailModal;
+export default GuitarDetailModal;

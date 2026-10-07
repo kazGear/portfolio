@@ -1,7 +1,8 @@
 import styled from "styled-components";
-import { COLORS } from "../../lib/Constants";
+import { COLORS, SIZE } from "../../lib/Constants";
 import { Guitar } from "../../types/Guitar";
 import { getColorString, parseGuitarPrice } from "./GuitarFuncs";
+import { useNavigate } from "react-router-dom";
 
 const CardFrame = styled.div`
     font-weight: 900;
@@ -43,6 +44,8 @@ interface ArgProps {
 }
 
 const GuitarCard = ({guitar, callback}: ArgProps) => {
+    const navigate = useNavigate();
+
     const color = getColorString(guitar?.colorCd);
 
     let fontShadow = "";
@@ -52,11 +55,21 @@ const GuitarCard = ({guitar, callback}: ArgProps) => {
         fontShadow = "-1px -1px 0 #999999, 1px -1px 0 #999999, -1px  1px 0 #999999, 1px  1px 0 #999999"
     }
 
+    // 画面幅で詳細情報の表示を切り替える
+    const cardClickHandler = () => {
+        const isMobile = window.innerWidth < Number(SIZE.MOBILE_LAYOUT_BREAKPOINT.replace("px", ""));
+
+        if (isMobile) {
+            navigate(`/GuitarGalleryPage/${guitar?.maker}/${guitar?.name}/${guitar?.color}`);
+        } else {
+            callback(guitar) // 選択したギターを親へ通知
+        }
+    }
+
     return (
-        <Button onClick={() => callback(guitar)}>
+        <Button onClick={() => cardClickHandler()}>
             <CardFrame>
                 <div style={{textAlign: "center", margin: "10px 20px" ,height: "55%"}}>
-                    {/* モーダルにギター情報を渡す */}
                     <img style={{width:"100%", height:"100%", objectFit: "contain"}}
                          src={guitar?.src}
                          alt={guitar?.makerName + " | " + guitar?.name + " | " + guitar?.color}

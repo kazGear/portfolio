@@ -5,14 +5,14 @@ import { Guitar, GuitarsResponse } from "../types/Guitar";
 import useApiErrorHandler from "../hooks/useApiErrorHandler";
 import { PUBLIC_API_BASE_URL } from "../config/env";
 import styled from "styled-components";
-import { HTML_HEAD_DATA } from "../lib/Constants";
+import { HTML_HEAD_DATA, SIZE } from "../lib/Constants";
 import GuitarDetailPageWide from "../components/guitarGalleryPage/GuitarDetailPageWide";
 import GuitarDetailPageMobile from "../components/guitarGalleryPage/GuitarDetailPageMobile";
 
 const DetailPageMobile = styled.div`
     display: none;
 
-    @media (max-width: 900px) {
+    @media (max-width: ${SIZE.MOBILE_LAYOUT_BREAKPOINT}) {
         display: block;
     }
 
@@ -23,7 +23,7 @@ const DetailPageMobile = styled.div`
 const DetailPageWide = styled.div`
     display: block;
 
-    @media (max-width: 900px) {
+    @media (max-width: ${SIZE.MOBILE_LAYOUT_BREAKPOINT}) {
         display: none;
     }
 `;
@@ -70,15 +70,17 @@ const GuitarGalleryDetailPage = () => {
     }, [guitar]);
 
     return (
-        <>
+        <div>
+            {/* PC, タブレット向け */}
             <DetailPageWide>
                 <GuitarDetailPageWide guitar={guitar}/>
             </DetailPageWide>
 
+            {/* モバイル向け */}
             <DetailPageMobile>
                 <GuitarDetailPageMobile guitar={guitar}/>
             </DetailPageMobile>
-        </>
+        </div>
     );
 }
 

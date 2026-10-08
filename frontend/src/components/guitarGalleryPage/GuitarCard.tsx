@@ -56,11 +56,15 @@ const GuitarCard = ({guitar, callback}: ArgProps) => {
     }
 
     // 画面幅で詳細情報の表示を切り替える
-    const cardClickHandler = () => {
+    const cardClickHandler = async () => {
         const isMobile = window.innerWidth < Number(SIZE.MOBILE_LAYOUT_BREAKPOINT.replace("px", ""));
 
         if (isMobile) {
-            navigate(`/GuitarGalleryPage/${guitar?.maker}/${guitar?.name}/${guitar?.color}`);
+            const makerCd = encodeURIComponent(guitar?.maker ?? "");
+            const name    = encodeURIComponent(guitar?.name ?? "");
+            const color   = encodeURIComponent(guitar?.color ?? "");
+
+            await navigate(`/GuitarGalleryPage/${makerCd}/${name}/${color}`);
         } else {
             callback(guitar) // 選択したギターを親へ通知
         }

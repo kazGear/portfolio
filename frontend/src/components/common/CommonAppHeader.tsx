@@ -28,6 +28,10 @@ const Header = styled.header`
     background-color: white;
     z-index: 2000;
     position: fixed;
+
+    @media (max-width: ${SIZE.MOBILE_LAYOUT_BREAKPOINT}) {
+        display: none;
+    }
 `;
 const CommonButtonFrame = styled.div`
     display: flex;
@@ -78,7 +82,7 @@ const CommonAppHeader = ({title}: ArgProps) => {
 
             if (user) setUserImage(PREFIX.BASE64 + user.UserImage);
         }
-        selectName();
+        void selectName();
     }, [loginId]);
 
     return (

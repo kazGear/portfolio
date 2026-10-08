@@ -10,15 +10,14 @@ import GuitarDetailPageWide from "../components/guitarGalleryPage/GuitarDetailPa
 import GuitarDetailPageMobile from "../components/guitarGalleryPage/GuitarDetailPageMobile";
 
 const DetailPageMobile = styled.div`
-    display: none;
-
-    @media (max-width: ${SIZE.MOBILE_LAYOUT_BREAKPOINT}) {
-        display: block;
-    }
-
     background: rgba(255, 255, 255, 0.2);
     width: 100%;
     height: 100%;
+
+    display: none;
+    @media (max-width: ${SIZE.MOBILE_LAYOUT_BREAKPOINT}) {
+        display: block;
+    }
 `;
 const DetailPageWide = styled.div`
     display: block;

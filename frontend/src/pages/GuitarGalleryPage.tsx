@@ -32,7 +32,6 @@ const GuitarGalleryMobile = styled.div`
     }
 `;
 const SearchViewMobile = styled.div`
-    // display: none;
     background: ${COLORS.BASE_BACKGROUND};
 `;
 

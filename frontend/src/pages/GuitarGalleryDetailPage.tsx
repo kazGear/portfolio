@@ -29,8 +29,8 @@ const DetailPageWide = styled.div`
 `;
 
 const GuitarGalleryDetailPage = () => {
-    const { makerCd, name, color } = useParams();
-    const [ guitar, setGuitar ]    = useState<Guitar | null>(null);
+    let { makerCd, name, color } = useParams();
+    const [ guitar, setGuitar ]  = useState<Guitar | null>(null);
 
     // 特定のギター情報を取得
     useEffect(() => {

@@ -24,9 +24,9 @@ const GuitarDetailPageMobile = ({guitar}: ArgProps) => {
                         <p style={{marginTop: 0, textAlign: "right", fontSize: "14  px"}}>最終更新日：{guitar?.updated}</p>
 
                         <div style={{ textAlign: "center" }}>
-                            <h2 style={{margin: 0, textAlign: "left"}}>{guitar.makerName}</h2>
+                            <h2 style={{margin: "10px 0px", textAlign: "left"}}>{guitar.makerName}</h2>
                             <h1 style={{margin: 0}}>{guitar.name}</h1>
-                            <h3 style={{margin: 0}}>{guitar.color}</h3>
+                            <h3 style={{margin: "15px 0px"}}>{guitar.color}</h3>
                         </div>
 
                         <CommonZoomableImage

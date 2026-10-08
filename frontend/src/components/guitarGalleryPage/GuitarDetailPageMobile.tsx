@@ -1,5 +1,4 @@
 import { Guitar } from "../../types/Guitar";
-import { SIZE } from "../../lib/Constants";
 import GuitarSpec from "./GuitarSpec";
 import CommonZoomableImage from "../common/CommonZoomableImage";
 import { parseGuitarPrice } from "./GuitarFuncs";
@@ -15,7 +14,7 @@ const GuitarDetailPageMobile = ({guitar}: ArgProps) => {
         <CommonFrame styleObj={{
             margin: 0,
             borderRadius: 0,
-            height: `calc(100vh - ${SIZE.HEADER_HEIGHT} - 2px)`,
+            height: `calc(100vh)`,
         }}>
             <Link to={"/GuitarGalleryPage"}>Guitar Gallery へ</Link>
             {

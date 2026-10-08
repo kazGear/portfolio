@@ -179,6 +179,10 @@ const GuitarGalleryPage = () => {
 
             {/* モバイル向け */}
             <GuitarGalleryMobile>
+                <div style={{background: COLORS.BASE_BACKGROUND}}>
+                    <h1 style={{textAlign: "center", margin: "0"}}>Guitar Gallery</h1>
+                </div>
+
                 <CommonButton
                     text={isShowMobileSearch ? "閉じる" : "検索"}
                     onClick={() => toggleSearchViewMobile()}
@@ -188,7 +192,7 @@ const GuitarGalleryPage = () => {
                         margin: 0,
                         borderRadius: 0,
                     }}
-                    ></CommonButton>
+                ></CommonButton>
 
                 { isShowMobileSearch ? (
                         <div className={isShowMobileSearch ? "searchViewMobileMove" : ""}>

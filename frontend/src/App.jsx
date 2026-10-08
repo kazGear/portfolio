@@ -17,13 +17,22 @@ import JobAnalyzePage from "./pages/JobAnalyzePage";
 import ErrorPage from "./pages/ErrorPage";
 import CommonErrorBoundary from "./components/common/CommonErrorBoundary";
 import { SIZE } from "./lib/Constants";
+import styled from 'styled-components';
+
+const Main = styled.main`
+    padding-top: ${SIZE.HEADER_HEIGHT};
+
+    @media (max-width: ${SIZE.MOBILE_LAYOUT_BREAKPOINT}) {
+        padding-top: 0px;
+    }
+`;
 
 function App() {
 
     return (
         <CommonErrorBoundary>
             <CommonAppHeader title="KazApp" />
-            <main style={{paddingTop: SIZE.HEADER_HEIGHT}}>
+            <Main>
                 <Routes>
                     {/* 新しいページを作成したらここに追加（要:import） */}
                     <Route path={"/"} element={<IndexPage />} />
@@ -41,7 +50,7 @@ function App() {
                     <Route path={"/JobAnalyzePage"} element={<JobAnalyzePage />} />
                     <Route path={"/ErrorPage"} element={<ErrorPage />} />
                 </Routes>
-            </main>
+            </Main>
         </CommonErrorBoundary>
     );
 }

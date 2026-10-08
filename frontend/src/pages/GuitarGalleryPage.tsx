@@ -132,6 +132,8 @@ const GuitarGalleryPage = () => {
     // ページ初期化なしの検索
     useEffect(() => {
         void guitarSearchHandler(gParams)
+        document.querySelector(".guitarCardsFrame")?.scrollTo({top: 0, behavior: "smooth"}); // PC等向け
+        document.querySelector("#root")?.scrollTo({top: 0, behavior: "smooth"}); // モバイル向け
     }, [
         gParams.sort,
         gParams.order,
@@ -157,7 +159,10 @@ const GuitarGalleryPage = () => {
                         bodyMaterials={bodyMaterials}
                     />
                 </CommonFrame>
-                <CommonFrame styleObj={{width: "80%", minWidth: "280px",height: "87vh", margin: "20px 20px 0px 10px"}}>
+                <CommonFrame
+                    className="guitarCardsFrame"
+                    styleObj={{width: "80%", minWidth: "280px",height: "87vh", margin: "20px 20px 0px 10px"}}
+                >
                     {
                         guitars !== null ? (
                             <GuitarCards guitarsRes={guitars}

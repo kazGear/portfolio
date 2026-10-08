@@ -12,13 +12,14 @@ const Frame = styled.div`
 `;
 
 interface ArgProps {
-    children:  React.ReactNode;
-    styleObj?: React.CSSProperties;
+    className?: string;
+    children:   React.ReactNode;
+    styleObj?:  React.CSSProperties;
 }
 
-const CommonFrame = ({children, styleObj}: ArgProps) => {
+const CommonFrame = ({className, children, styleObj}: ArgProps) => {
     return (
-        <Frame style={styleObj}>
+        <Frame className={className ?? ""} style={styleObj}>
             {children}
         </Frame>
     );

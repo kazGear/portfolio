@@ -115,7 +115,7 @@ const GuitarGalleryPage = () => {
 
     // 検索条件を選択した時点で検索実行
     useEffect(() => {
-        guitarSearchHandler(gParams)
+        void guitarSearchHandler(gParams)
         gParams.setPage(1)
     }, [
         gParams.makerCd,
@@ -131,7 +131,7 @@ const GuitarGalleryPage = () => {
 
     // ページ初期化なしの検索
     useEffect(() => {
-        guitarSearchHandler(gParams)
+        void guitarSearchHandler(gParams)
     }, [
         gParams.sort,
         gParams.order,

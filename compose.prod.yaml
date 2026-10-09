@@ -112,6 +112,7 @@ services:
     restart: unless-stopped
     volumes:
       - ./batch/goBatch/cron/guitarCrawler.txt:/etc/cron.d/app-cron:ro
+      - ./logs/guitar:/app/portfolio/logs/guitar
     env_file:
       - .env.prod
     environment:
@@ -126,6 +127,7 @@ services:
     restart: unless-stopped
     volumes:
       - ./batch/goBatch/cron/jobCrawler.txt:/etc/cron.d/app-cron:ro
+      - ./logs/job:/app/portfolio/logs/job
     env_file:
       - .env.prod
     environment:

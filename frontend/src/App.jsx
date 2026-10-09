@@ -20,8 +20,9 @@ import { COLORS, SIZE } from "./lib/Constants";
 import styled from 'styled-components';
 
 const Main = styled.main`
-    padding-top: ${SIZE.HEADER_HEIGHT};
+    color: ${COLORS.MAIN_FONT};
 
+    padding-top: ${SIZE.HEADER_HEIGHT};
     @media (max-width: ${SIZE.MOBILE_LAYOUT_BREAKPOINT}) {
         padding-top: 0px;
     }
@@ -32,7 +33,7 @@ function App() {
     return (
         <CommonErrorBoundary>
             <CommonAppHeader title="KazApp" />
-            <Main style={{color: COLORS.MAIN_FONT}}>
+            <Main>
                 <Routes>
                     {/* 新しいページを作成したらここに追加（要:import） */}
                     <Route path={"/"} element={<IndexPage />} />

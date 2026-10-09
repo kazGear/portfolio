@@ -30,14 +30,15 @@ func main() {
 	jobRepository := jobRepository.NewJobRepository(database)
 	loggerRepository := loggerRepository.NewBatchLoggerRepository(database)
 
-	// DBロガー
+	// ロガー
 	dbLogger    := batchLoggerService.NewBatchLogger(*loggerRepository)
 	config, err := dbLogger.InsertStartLog("JobCrawler")
+	utils.InitLogger("jobCrawler", utils.GetLogPath("job"))
 
 	defer func(config *model.BatchConfig) {
 		if r := recover(); r != nil {
-			panic := fmt.Errorf("panic: %v\n", r)
-			dbLogger.UpdateError(config, panic)
+			p := fmt.Errorf("panic: %v\n", r)
+			dbLogger.UpdateError(config, p)
 		}
 	}(config)
 

@@ -13,6 +13,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"runtime"
 	"sort"
 	"strconv"
 	"strings"
@@ -164,6 +165,34 @@ func ParseScale(s string) float64 {
 
 func InchToMM(inch float64) float64 {
 	return math.Floor((inch * 25.4))
+}
+
+// name: guitar or job etc...
+func GetLogPath(dirName string) string {
+	if runtime.GOOS == "windows" {
+		return filepath.Join(`logs`, dirName)
+	}
+	return filepath.Join(`/app/portfolio/logs`, dirName)
+}
+
+// グローバル設定
+func InitLogger(fileName string, dirPath string) {
+	// 日付入りのログファイル名
+	date     := time.Now().Format(C.DateTime)
+	filePath := filepath.Join(dirPath, fileName + `_` + date + `.log`)
+
+    fileWriter := &lumberjack.Logger{
+        Filename:   filePath,
+        MaxSize:    5,
+        MaxBackups: 7,
+        MaxAge:     10,
+        Compress:   false,
+    }
+	// Dockerの標準エラー出力とログファイルの両方へ出力
+	multiWriter := io.MultiWriter(os.Stderr, fileWriter)
+
+	// 既存の log.Println / log.Printf も出力先が切り替わる
+	log.SetOutput(multiWriter)
 }
 
 // ログインスタンスを作成
@@ -407,8 +436,8 @@ func MapToSliceUrl(visited map[string]struct{}) []string {
 }
 
 // 必要なリンクだけ取得
-func GetNeedLinks(links []string, needPattern *regexp.Regexp, cap int) []string {
-    needLinks := make([]string, 0, cap)
+func GetNeedLinks(links []string, needPattern *regexp.Regexp, capacity int) []string {
+    needLinks := make([]string, 0, capacity)
 
     for _, link := range links {
         if needPattern.MatchString(link) {
@@ -419,8 +448,8 @@ func GetNeedLinks(links []string, needPattern *regexp.Regexp, cap int) []string 
 }
 
 // 相対パスから絶対パスへ変換
-func ToAbsLinks(links []string, prefix string, cap int) []string {
-    absLinks := make([]string, 0, cap)
+func ToAbsLinks(links []string, prefix string, capacity int) []string {
+    absLinks := make([]string, 0, capacity)
 
     for _, link := range links {
         absLinks = append(absLinks, prefix + link)
@@ -429,8 +458,8 @@ func ToAbsLinks(links []string, prefix string, cap int) []string {
 }
 
 // link収集
-func CollectLinks(eachSelector string, doc *goquery.Document, cap int) []string {
-    var links = make([]string, 0, cap)
+func CollectLinks(eachSelector string, doc *goquery.Document, capacity int) []string {
+    var links = make([]string, 0, capacity)
 
     // 複数リンクを収集
     doc.Find(eachSelector).Each(func(idx int, selector *goquery.Selection) {

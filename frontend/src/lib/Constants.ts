@@ -6,12 +6,11 @@ const ALERT_COLOR: string = "red";
 const SHADOW_COLOR: string = "#15400e";
 
 export const COLORS = {
-    MAIN_FONT: "gray",
+    MAIN_FONT: "#545454",
     ACCENT_FONT_GREEN: `${ACCENT_COLOR}`,
     ACCENT_FONT_PINK: `${ACCENT_COLOR2}`,
     LOSER_FONT: "#EC008C",
     CAPTION_FONT: "#33cc99",
-    BUTTON_FONT: "gray",
 
     ALERT_MESSAGE: `${ALERT_COLOR}`,
 

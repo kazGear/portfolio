@@ -17,7 +17,7 @@ public static class ColorsSQL
                  WHERE
                        code_id = 'guitar_colors'
               ORDER BY
-                       code ASC
+                       Name ASC
                      ;
         ";
         return SQL;

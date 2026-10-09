@@ -20,7 +20,7 @@ public static class SeriesSQL
               GROUP BY
                        series
               ORDER BY
-                       series ASC
+                       Name ASC
                      ;
         ";
         return SQL;

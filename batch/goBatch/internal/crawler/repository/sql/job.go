@@ -1,23 +1,5 @@
 package sql
 
-func UpdateJob() string {
-	return `
-        UPDATE
-               t_jobs
-           SET
-               title               = :title,
-               location            = :location,
-               min_salary_at_month = :min_salary_at_month,
-               max_salary_at_month = :max_salary_at_month,
-               employment_type     = :employment_type,
-               work_place          = :work_place,
-               updated_at          = :updated_at
-         WHERE
-               url = :url
-             ;
-    `
-}
-
 func InsertJob() string {
 	return `
         INSERT INTO t_jobs

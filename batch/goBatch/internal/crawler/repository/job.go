@@ -148,6 +148,7 @@ func (r *jobRepository) updates(job *model.Job, savedFeatureJobIds map[int64]str
     return nil
 }
 
+// 主キー衝突で失敗する場合、DBの確認を行う。保存済の max(id) と採番シーケンスに乖離がないか確認する。
 func insert(job *model.Job, transaction *sqlx.Tx) error {
     if _, err := transaction.NamedExec(sql.InsertJob(), job); err != nil {
         return err

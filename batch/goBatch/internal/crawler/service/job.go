@@ -90,7 +90,15 @@ func (j *jobCrawlerService) RunCrawler() {
 func jobBoardFactory() map[string]*JobBoard {
     jobBoards := map[string]*JobBoard{}
 
-    jobBoardName := C.TechReach
+    jobBoardName := C.LancersTechAgent
+    jobBoards[jobBoardName] = NewJobBoard(
+        jobBoardName,
+        scraper.NewScraperLancersTechAgent(),
+        scraper.NewCallBacksLancersTechAgent(),
+        scraper.NewCallBacksLancersTechAgent(),
+    )
+
+    jobBoardName = C.TechReach
     jobBoards[jobBoardName] = NewJobBoard(
         jobBoardName,
         scraper.NewScraperTechReach(),

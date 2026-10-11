@@ -355,43 +355,6 @@ func isSlowDownRequest(minWait time.Duration, maxWait time.Duration, httpStatus 
     }
 }
 
-// from: .envのPAGE_ID_FROM_..., to: .envのPAGE_ID_TO_...
-// func loadPageIdFromTo(envKeyFrom string, envKeyTo string) (int, int) {
-//     from := os.Getenv(envKeyFrom)
-//     to   := os.Getenv(envKeyTo)
-
-//     fromId, err:= strconv.Atoi(from)
-
-//     if err != nil {
-//         log.Panicf("From pageId parse error: %v", err)
-//     }
-//     toId, err := strconv.Atoi(to)
-
-//     if err != nil {
-//         log.Panicf("To pageId parse error: %v",err)
-//     }
-//     return fromId, toId
-// }
-
-// 連番詳細ページIDの設定値が正しくなければ処理中止
-// func validatePageIdFromTo(fromId int, toId int) {
-//     if fromId > toId {
-//         log.Panicf(
-//             "連番pageIdの設定値は from <= to である必要があります。from: %v, to: %v\n",
-//             fromId,
-//             toId,
-//         )
-//     }
-
-//     if toId - fromId > 100000 {
-//         log.Panicf(
-//             "クロール対象(pageIdの範囲)は 10万件以下 に設定してください。from: %v, to: %v\n",
-//             fromId,
-//             toId,
-//         )
-//     }
-// }
-
 // not found pageか調べる
 func isNotFountPage(searchWord string, ctx context.Context) bool {
     // 確認は1.5秒間

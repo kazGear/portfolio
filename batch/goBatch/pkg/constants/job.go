@@ -35,15 +35,16 @@ const (
 )
 
 const (
-	CrowdWorksTech  string = "CrowdWorksTech"
-	AGELESS         string = "AGELESS"
-	SES_JOB_LINK    string = "SES_JOB_LINK"
-	FreelanceStart  string = "フリーランススタート"
-	FreelanceJob    string = "フリーランスジョブ"
-	FreelanceHub    string = "freelance_hub"
-	EngineerFactory string = "エンジニアファクトリー"
-	TechReach       string = "テックリーチ"
-	Midworks        string = "Midworks"
+	CrowdWorksTech   string = "CrowdWorksTech"
+	AGELESS          string = "AGELESS"
+	SES_JOB_LINK     string = "SES_JOB_LINK"
+	FreelanceStart   string = "フリーランススタート"
+	FreelanceJob     string = "フリーランスジョブ"
+	FreelanceHub     string = "freelance_hub"
+	EngineerFactory  string = "エンジニアファクトリー"
+	TechReach        string = "テックリーチ"
+	Midworks         string = "Midworks"
+	LancersTechAgent string = "ランサーズテックエージェント"
 )
 
 // スキル分類

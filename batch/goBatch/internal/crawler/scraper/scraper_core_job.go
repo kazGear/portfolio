@@ -381,7 +381,7 @@ var languageDictionary = []*SearchFeature{
             "java script",
         },
         Patterns: []*regexp.Regexp{
-            regexp.MustCompile(`\bjs\b`),
+            // regexp.MustCompile(`\bjs\b`),
         },
     },
     {
@@ -419,17 +419,14 @@ var languageDictionary = []*SearchFeature{
         Name:     "C#",
         Category: C.Language,
         Keywords: []string{
-            "C#",
-            "C#",
-            "Ｃ＃",
-            "C♯",
-            "C﹟",
+            "c#",
+            "c＃",
+            "c♯",
+            "c﹟",
+            "c＃",
             "csharp",
             "c sharp",
             "unity",
-            ".net framework",
-            "dotnet framework",
-
         },
         Patterns: []*regexp.Regexp{
             regexp.MustCompile(`\b\.net\b`),
@@ -470,13 +467,13 @@ var languageDictionary = []*SearchFeature{
             "c language",
             "c++",
             "c ++",
-            "Ｃ＋＋",
+            "c＋＋",
             "cpp",
             "c plus plus",
             "c plusplus",
         },
         Patterns: []*regexp.Regexp{
-            regexp.MustCompile(`\bc\b`),
+            // regexp.MustCompile(`\bc\b`),
             regexp.MustCompile(`\bc\+\+\b`),
             regexp.MustCompile(`\bc \+\+\b`),
 

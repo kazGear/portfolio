@@ -57,16 +57,16 @@ const SearchConditionsGuitarMobile = ({
                         <Td><SearchMaker guitarParams={gParams} makers={makers} /></Td>
                     </CommonBorderTr>
                     <CommonBorderTr>
+                        <Th>ギター名</Th>
+                        <Td><SearchName guitarParams={gParams} styleObj={styleObj}/></Td>
+                    </CommonBorderTr>
+                    <CommonBorderTr>
                         <Th>カラー</Th>
                         <Td><SearchColor guitarParams={gParams} colors={colors} /></Td>
                     </CommonBorderTr>
                     <CommonBorderTr>
                         <Th>シリーズ</Th>
                         <Td><SearchSeries guitarParams={gParams} series={series} /></Td>
-                    </CommonBorderTr>
-                    <CommonBorderTr>
-                        <Th>ギター名</Th>
-                        <Td><SearchName guitarParams={gParams} styleObj={styleObj}/></Td>
                     </CommonBorderTr>
                     <CommonBorderTr>
                         <Th>最低価格</Th>

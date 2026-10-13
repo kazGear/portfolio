@@ -3,20 +3,38 @@ import GuitarSpec from "./GuitarSpec";
 import CommonZoomableImage from "../common/CommonZoomableImage";
 import { parseGuitarPrice } from "./GuitarFuncs";
 import CommonFrame from "../common/CommonFrame";
-import { Link } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import CommonButton from "../common/CommonButton";
 
 interface ArgProps {
     guitar : Guitar | null;
 }
 
 const GuitarDetailPageMobile = ({guitar}: ArgProps) => {
+    const location = useLocation();
+    const navigate = useNavigate();
+
+    const buttonStyle = {width: "50%", height: "40px"}
+
+    const linkClickHandler = async () => {
+        if (location.state?.returnUrl) {
+            await navigate(location.state.returnUrl);
+        } else {
+            await navigate("/GuitarGalleryPage");
+        }
+    }
+
     return (
         <CommonFrame styleObj={{
             margin: 0,
             borderRadius: 0,
             height: `calc(100vh)`,
         }}>
-            <Link to={"/GuitarGalleryPage"}>Guitar Gallery へ</Link>
+            <CommonButton
+                text="Guitar Gallery へ"
+                onClick={() => linkClickHandler()}
+                styleObj={buttonStyle}
+            />
             {
                 guitar !== null ? (
                     <div style={{margin: "20px"}}>
@@ -48,7 +66,11 @@ const GuitarDetailPageMobile = ({guitar}: ArgProps) => {
                     <h1>ギター情報の取得に失敗しました。</h1>
                 )
             }
-            <Link to={"/GuitarGalleryPage"}>Guitar Gallery へ</Link>
+            <CommonButton
+                text="Guitar Gallery へ"
+                onClick={() => linkClickHandler()}
+                styleObj={buttonStyle}
+            />
         </CommonFrame>
     );
 }

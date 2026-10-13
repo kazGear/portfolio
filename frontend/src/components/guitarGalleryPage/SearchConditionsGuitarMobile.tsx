@@ -2,13 +2,10 @@ import { GuitarParams } from "../../types/Guitar";
 import { Code } from "../../types/Code";
 import SearchMaker from "./SearchMaker";
 import SearchColor from "./SearchColor";
-import SearchSeries from "./SearchSeries";
 import SearchName from "./SearchName";
 import SearchMinPrice from "./SearchMinPrice";
 import SearchMaxPrice from "./SearchMaxPrice";
 import styled from "styled-components";
-import SelectorOrder from "./SelectorOrder";
-import SelectorSort from "./SelectorSort";
 import CommonBorderTr from "../common/CommonBorderTr";
 
 const Th = styled.th`
@@ -30,14 +27,12 @@ const styleObj = {
 interface ArgProps {
     guitarParams: GuitarParams;
     makers:       Code[] | null;
-    series:       Code[] | null;
     colors:       Code[] | null;
 }
 
 const SearchConditionsGuitarMobile = ({
     guitarParams,
     makers,
-    series,
     colors}: ArgProps
 ) => {
     const gParams = guitarParams;
@@ -65,24 +60,12 @@ const SearchConditionsGuitarMobile = ({
                         <Td><SearchColor guitarParams={gParams} colors={colors} /></Td>
                     </CommonBorderTr>
                     <CommonBorderTr>
-                        <Th>シリーズ</Th>
-                        <Td><SearchSeries guitarParams={gParams} series={series} /></Td>
-                    </CommonBorderTr>
-                    <CommonBorderTr>
                         <Th>最低価格</Th>
                         <Td><SearchMinPrice guitarParams={gParams} styleObj={styleObj}/></Td>
                     </CommonBorderTr>
                     <CommonBorderTr>
                         <Th>最大価格</Th>
                         <Td><SearchMaxPrice guitarParams={gParams} styleObj={styleObj}/></Td>
-                    </CommonBorderTr>
-                    <CommonBorderTr>
-                        <Th>ソート</Th>
-                        <Td><SelectorSort guitarParams={gParams} /></Td>
-                    </CommonBorderTr>
-                    <CommonBorderTr>
-                        <Th>並び順</Th>
-                        <Td><SelectorOrder guitarParams={gParams} /></Td>
                     </CommonBorderTr>
                     <CommonBorderTr styleObj={{borderBottom: "none"}}>
                         <Th>検索方法</Th>

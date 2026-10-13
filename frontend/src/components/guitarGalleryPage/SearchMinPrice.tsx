@@ -1,4 +1,3 @@
-import { GUITAR } from "../../lib/Constants";
 import { GuitarParams } from "../../types/Guitar";
 import CommonInput from "../common/CommonInput";
 
@@ -12,8 +11,7 @@ const SearchMinPrice = ({guitarParams, styleObj}: ArgProps) => {
 
     const changeMinPriceHandler = (e: React.FocusEvent<HTMLInputElement>) => {
         if (e.currentTarget.value === "") {
-            // 0で更新すると全件検索されなくなる
-            gParams.setMinPrice(GUITAR.PARSE_ERROR_PRICE);
+            gParams.setMinPrice(0);
         } else {
             gParams.setMinPrice(Number(e.currentTarget.value));
         }
@@ -24,6 +22,7 @@ const SearchMinPrice = ({guitarParams, styleObj}: ArgProps) => {
                      onBlur={changeMinPriceHandler}
                      min="-3"
                      placeholder="（金額を入力）"
+                     defaultValue={gParams.minPrice === 0 ? "" : gParams.minPrice}
                      styleObj={styleObj}
                      />
     );

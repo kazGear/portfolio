@@ -16,7 +16,7 @@ const SearchColor = ({guitarParams, colors}: ArgProps) => {
     }
 
     return (
-        <CommonSelect onChange={changeColorHandler} >
+        <CommonSelect onChange={changeColorHandler} value={gParams.colorCd === 0 ? undefined : gParams.colorCd} >
             <option value="0">未選択</option>
             {
                 colors?.map(color =>

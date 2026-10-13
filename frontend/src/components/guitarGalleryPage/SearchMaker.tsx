@@ -16,7 +16,7 @@ const SearchMaker = ({guitarParams, makers}: ArgProps) => {
     }
 
     return (
-        <CommonSelect onChange={changeMakerHandler} >
+        <CommonSelect onChange={changeMakerHandler} value={gParams.makerCd === 0 ? undefined : gParams.makerCd} >
             <option value="0">未選択</option>
             {
                 makers?.map(maker =>

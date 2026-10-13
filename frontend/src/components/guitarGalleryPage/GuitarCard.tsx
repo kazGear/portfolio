@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { COLORS, SIZE } from "../../lib/Constants";
 import { Guitar } from "../../types/Guitar";
 import { getColorString, parseGuitarPrice } from "./GuitarFuncs";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const CardFrame = styled.div`
     font-weight: 900;
@@ -39,12 +39,13 @@ const P = styled.p`
 `
 
 interface ArgProps {
-    guitar:   Guitar | null;
-    callback: (guitar: Guitar | null) => void;
+    guitar: Guitar | null;
+    getSelectedGuitarHandler: (guitar: Guitar | null) => void;
 }
 
-const GuitarCard = ({guitar, callback}: ArgProps) => {
+const GuitarCard = ({guitar, getSelectedGuitarHandler}: ArgProps) => {
     const navigate = useNavigate();
+    const location = useLocation();
 
     const color = getColorString(guitar?.colorCd);
 
@@ -64,9 +65,15 @@ const GuitarCard = ({guitar, callback}: ArgProps) => {
             const name    = encodeURIComponent(guitar?.name ?? "");
             const color   = encodeURIComponent(guitar?.color ?? "");
 
-            await navigate(`/GuitarGalleryPage/${makerCd}/${name}/${color}`);
+            await navigate(
+                `/GuitarGalleryPage/${makerCd}/${name}/${color}`, {
+                    state: {
+                        returnUrl: location.pathname + location.search,
+                    }
+                }
+            );
         } else {
-            callback(guitar) // 選択したギターを親へ通知
+            getSelectedGuitarHandler(guitar) // 選択したギターを親へ通知
         }
     }
 

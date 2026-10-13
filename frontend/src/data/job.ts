@@ -64,4 +64,5 @@ export const sourceSites: string[] = [
 	"エンジニアファクトリー",
 	"テックリーチ",
 	"Midworks",
+    "ランサーズテックエージェント",
 ];

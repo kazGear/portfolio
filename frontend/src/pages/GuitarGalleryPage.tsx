@@ -16,6 +16,7 @@ import styled from "styled-components";
 import CommonButton from "../components/common/CommonButton";
 import SelectorPage from "../components/guitarGalleryPage/SelectorPage";
 import SearchConditionsGuitarMobile from "../components/guitarGalleryPage/SearchConditionsGuitarMobile";
+import { useSearchParams } from "react-router-dom";
 
 const GuitarGalleryWide = styled.div`
     display: flex;
@@ -36,6 +37,9 @@ const SearchViewMobile = styled.div`
 `;
 
 const GuitarGalleryPage = () => {
+    // 初期表示以外の API アクセスを制御する。複数の API アクセスを競合させない。
+    const [isInitialized, setIsInitialized] = useState(false);
+
     // プルダウン用 params
     const [makers, setMakers]               = useState<Code[]>([]);
     const [series, setSeries]               = useState<Code[]>([]);
@@ -51,38 +55,8 @@ const GuitarGalleryPage = () => {
     const gParams: GuitarParams = useGuitarParams();
     const errorHandler          = useApiErrorHandler();
 
-    // プルダウンデータ等取得
-    useEffect(() => {
-        api.GET<Code[]>(`${PUBLIC_API_BASE_URL}/public/v1/makers`)
-           .then(result => setMakers(result ?? []))
-           .catch(errorHandler);
-        api.GET<Code[]>(`${PUBLIC_API_BASE_URL}/public/v1/Colors`)
-           .then(result => setColors(result ?? []))
-           .catch(errorHandler);
-        api.GET<Code[]>(`${PUBLIC_API_BASE_URL}/public/v1/bodyMaterials`)
-           .then(result => setBodyMaterials(result ?? []))
-           .catch(errorHandler)
-
-           // 初期画面用、条件なし検索
-        api.GET<GuitarsResponse>(`${PUBLIC_API_BASE_URL}/public/v1/guitars?`)
-           .then(result => setGuitars(result))
-           .catch(errorHandler);
-    }, [])
-
-    // 変動プルダウンデータ取得
-    useEffect(() => {
-        if (gParams.makerCd === 0) {
-            setSeries([]);
-            gParams.setSeries("")
-            return;
-        }
-
-        api.GET<Code[]>(`${PUBLIC_API_BASE_URL}/public/v1/series?makerCd=${gParams.makerCd}`)
-           .then(result => setSeries(result ?? []))
-           .catch(errorHandler);
-
-        gParams.setSeries("") // 初期化しないと、他メーカーのシリーズを選択したままになってしまう。
-    }, [gParams.makerCd])
+    // url 反映用のパラーメータ
+    const [searchParams, setSearchParams] = useSearchParams();
 
     // ギターデータ取得
     const guitarSearchHandler = async (gParams: GuitarParams) => {
@@ -99,6 +73,63 @@ const GuitarGalleryPage = () => {
         setIsShowDetail(true)
     }, []);
 
+    // モバイル用検索画面の切り替え
+    const toggleSearchViewMobile = () => {
+        setIsShowMobileSearch(!isShowMobileSearch)
+    }
+
+    // 初期表示処理
+    useEffect(() => {
+        // 存在する値だけを使用して検索 url parameter を構築
+//         const urlParams = new URLSearchParams();
+//         searchParams.forEach((value, key) => {
+//             if (value !== "" && value !== "0") {
+//                 urlParams.append(key, value);
+//             }
+// console.log(`key: ${key}, value: ${value}`)
+//         });
+
+        // 検索値を復元
+        gParams.setMakerCd(Number(searchParams.get("makerCd") ?? null));
+        gParams.setName(searchParams.get("name") ?? "");
+        gParams.setColorCd(Number(searchParams.get("colorCd") ?? null));
+        gParams.setMinPrice(Number(searchParams.get("minPrice") ?? null));
+        gParams.setMaxPrice(Number(searchParams.get("maxPrice") ?? null));
+
+        // プルダウンデータ取得
+        api.GET<Code[]>(`${PUBLIC_API_BASE_URL}/public/v1/makers`)
+           .then(result => setMakers(result ?? []))
+           .catch(errorHandler);
+        api.GET<Code[]>(`${PUBLIC_API_BASE_URL}/public/v1/Colors`)
+           .then(result => setColors(result ?? []))
+           .catch(errorHandler);
+        api.GET<Code[]>(`${PUBLIC_API_BASE_URL}/public/v1/bodyMaterials`)
+           .then(result => setBodyMaterials(result ?? []))
+           .catch(errorHandler)
+
+           // 初期画面用、条件なし検索
+        api.GET<GuitarsResponse>(`${PUBLIC_API_BASE_URL}/public/v1/guitars?${searchParams.toString()/*queryParams.toString()*/}`)
+           .then(result => setGuitars(result))
+           .catch(errorHandler);
+
+        setIsInitialized(true);
+    }, []);
+
+    // 変動プルダウンデータ取得
+    useEffect(() => {
+        if (gParams.makerCd === 0) {
+            setSeries([]);
+            gParams.setSeries("")
+            return;
+        }
+
+        api.GET<Code[]>(`${PUBLIC_API_BASE_URL}/public/v1/series?makerCd=${gParams.makerCd}`)
+           .then(result => setSeries(result ?? []))
+           .catch(errorHandler);
+
+        gParams.setSeries("") // 初期化しないと、他メーカーのシリーズを選択したままになってしまう。
+    }, [gParams.makerCd]);
+
     // meta data
     useEffect(() => {
         document.title = HTML_HEAD_DATA.GUITAR_GALLERY_TITLE;
@@ -113,37 +144,45 @@ const GuitarGalleryPage = () => {
         }
     }, []);
 
-    // 検索条件を選択した時点で検索実行
+    // 検索条件を選択した時点で検索実行、検索条件を保存
     useEffect(() => {
-        void guitarSearchHandler(gParams)
-        gParams.setPage(1)
+        if (isInitialized) {
+            void guitarSearchHandler(gParams)
+            gParams.setPage(1)
+
+        }
+        // URLへ検索条件を反映（モバイル版は画面遷移するため）
+        setSearchParams({
+            makerCd : gParams.makerCd.toString(),
+            name    : gParams.name,
+            colorCd : gParams.colorCd.toString(),
+            minPrice: gParams.minPrice.toString() ?? null,
+            maxPrice: gParams.maxPrice.toString() ?? null,
+        });
     }, [
         gParams.makerCd,
+        gParams.name,
         gParams.colorCd,
         gParams.series,
-        gParams.name,
         gParams.bodyMaterialTopCd,
         gParams.bodyMaterialBackCd,
         gParams.minPrice,
         gParams.maxPrice,
         gParams.pageSize,
-    ])
+    ]);
 
     // ページ初期化なしの検索
     useEffect(() => {
-        void guitarSearchHandler(gParams)
-        document.querySelector(".guitarCardsFrame")?.scrollTo({top: 0, behavior: "smooth"}); // PC等向け
-        document.querySelector("#root")?.scrollTo({top: 0, behavior: "smooth"}); // モバイル向け
+        if (isInitialized) {
+            void guitarSearchHandler(gParams)
+            document.querySelector(".guitarCardsFrame")?.scrollTo({top: 0, behavior: "smooth"}); // PC等向け
+            document.querySelector("#root")?.scrollTo({top: 0, behavior: "smooth"}); // モバイル向け
+        }
     }, [
         gParams.sort,
         gParams.order,
         gParams.page,
-    ])
-
-    // モバイル用検索画面の切り替え
-    const toggleSearchViewMobile = () => {
-        setIsShowMobileSearch(!isShowMobileSearch)
-    }
+    ]);
 
     return (
         <div>
@@ -166,7 +205,7 @@ const GuitarGalleryPage = () => {
                     {
                         guitars !== null ? (
                             <GuitarCards guitarsRes={guitars}
-                                        callback={getSelectedGuitarHandler}>
+                                         getSelectedGuitarHandler={getSelectedGuitarHandler}>
                             </GuitarCards>
                         ) : (
                             <div style={{textAlign: "center", marginTop: "200px"}}>
@@ -206,7 +245,6 @@ const GuitarGalleryPage = () => {
                                     guitarParams={gParams}
                                     makers={makers}
                                     colors={colors}
-                                    series={series}
                                 />
                             </SearchViewMobile>
                         </div>
@@ -225,7 +263,7 @@ const GuitarGalleryPage = () => {
                                 ></SelectorPage>
 
                                 <GuitarCards guitarsRes={guitars}
-                                             callback={getSelectedGuitarHandler}>
+                                             getSelectedGuitarHandler={getSelectedGuitarHandler}>
                                 </GuitarCards>
 
                                 <SelectorPage

@@ -18,6 +18,7 @@ const SearchName = ({guitarParams, styleObj}: ArgProps) => {
         <CommonInput inputType="text"
                      onBlur={changeNameHandler}
                      placeholder="（部分一致検索）"
+                     defaultValue={gParams.name}
                      styleObj={styleObj}/>
     );
 }

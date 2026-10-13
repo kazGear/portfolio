@@ -11,8 +11,7 @@ const SearchMaxPrice = ({guitarParams, styleObj}: ArgProps) => {
 
     const changeMaxPriceHandler = (e: React.FocusEvent<HTMLInputElement>) => {
         if (e.currentTarget.value === "") {
-            // 多額で更新して全件ヒットさせる
-            gParams.setMaxPrice(100000000);
+            gParams.setMaxPrice(0);
         } else {
             gParams.setMaxPrice(Number(e.currentTarget.value));
         }
@@ -23,6 +22,7 @@ const SearchMaxPrice = ({guitarParams, styleObj}: ArgProps) => {
                      onBlur={changeMaxPriceHandler}
                      min="-3"
                      placeholder="（金額を入力）"
+                     defaultValue={gParams.maxPrice === 0 ? "" : gParams.maxPrice}
                      styleObj={styleObj}/>
     );
 }

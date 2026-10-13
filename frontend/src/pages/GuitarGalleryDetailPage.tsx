@@ -55,7 +55,6 @@ const GuitarGalleryDetailPage = () => {
             const guitarFeatures = `${guitar.makerName} | ${guitar.name} | ${guitar.color}`;
 
             document.title = `${guitarFeatures}` + " | " + HTML_HEAD_DATA.DEFAULT_TITLE;
-
             description?.setAttribute(
                 "content", `【${guitarFeatures}】` + `価格:${guitar.price.toLocaleString()}円。${guitar.comment}`
             );

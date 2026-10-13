@@ -21,14 +21,15 @@ interface ArgProps {
     children: |React.ReactNode[] | React.ReactNode;
     onChange?: ChangeEventHandler<HTMLSelectElement>;
     styleObj?: React.CSSProperties;
+    value?: string | number;
     defaultValue?: string | number;
 }
 
-const CommonSelect = ({title, children, onChange, styleObj, defaultValue}: ArgProps) => {
+const CommonSelect = ({title, children, onChange, styleObj, value, defaultValue}: ArgProps) => {
     return (
         <Frame>
             <label>{title}
-                <Select onChange={onChange} style={styleObj} defaultValue={defaultValue}>
+                <Select onChange={onChange} style={styleObj} value={value} defaultValue={defaultValue}>
                     {children}
                 </Select>
             </label>

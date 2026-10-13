@@ -70,7 +70,7 @@ namespace PublicApi.Services
         {
             StringBuilder conditions = new StringBuilder();
 
-            if (req.MakerCd != null) 
+            if (req.MakerCd != null && req.MakerCd != 0) 
             {
                 conditions.AppendLine("AND maker = @maker");
             }
@@ -82,7 +82,7 @@ namespace PublicApi.Services
             {
                 conditions.AppendLine("AND series ilike @series");
             }
-            if (req.ColorCd != null)
+            if (req.ColorCd != null && req.ColorCd != 0)
             {
                 conditions.AppendLine("AND color_cd = @color_cd");
             }
@@ -90,19 +90,19 @@ namespace PublicApi.Services
             {
                 conditions.AppendLine("AND color = @color");
             }
-            if (req.BodyMaterialTopCd != null && req.BodyMaterialTopCd >= 0)
+            if (req.BodyMaterialTopCd != null && req.BodyMaterialTopCd != 0)
             {
                 conditions.AppendLine("AND body_material_top = @body_material_top_cd");
             }
-            if (req.BodyMaterialBackCd != null && req.BodyMaterialBackCd >= 0)
+            if (req.BodyMaterialBackCd != null && req.BodyMaterialBackCd != 0)
             {
                 conditions.AppendLine("AND body_material_back = @body_material_back_cd");
             }
-            if (req.MinPrice != null)
+            if (req.MinPrice != null && req.MinPrice != 0)
             {
                 conditions.AppendLine("AND price >= @min_price");
             }
-            if (req.MaxPrice != null)
+            if (req.MaxPrice != null && req.MaxPrice != 0)
             {
                 conditions.AppendLine("AND price <= @max_price");
             }
